@@ -19,43 +19,6 @@
         <!-- Logo -->
         <div>
           <router-link class="flex" to="/explore">
-            <!-- <svg width="40" height="40" viewBox="0 0 32 32">
-            <defs>
-              <linearGradient
-                x1="28.538%"
-                y1="20.229%"
-                x2="100%"
-                y2="108.156%"
-                id="logo-a"
-              >
-                <stop stop-color="#A5B4FC" stop-opacity="0" offset="0%" />
-                <stop stop-color="#A5B4FC" offset="100%" />
-              </linearGradient>
-              <linearGradient
-                x1="88.638%"
-                y1="29.267%"
-                x2="22.42%"
-                y2="100%"
-                id="logo-b"
-              >
-                <stop stop-color="#38BDF8" stop-opacity="0" offset="0%" />
-                <stop stop-color="#38BDF8" offset="100%" />
-              </linearGradient>
-            </defs>
-            <rect fill="#6366F1" width="32" height="32" rx="16" />
-            <path
-              d="M18.277.16C26.035 1.267 32 7.938 32 16c0 8.837-7.163 16-16 16a15.937 15.937 0 01-10.426-3.863L18.277.161z"
-              fill="#4F46E5"
-            />
-            <path
-              d="M7.404 2.503l18.339 26.19A15.93 15.93 0 0116 32C7.163 32 0 24.837 0 16 0 10.327 2.952 5.344 7.404 2.503z"
-              fill="url(#logo-a)"
-            />
-            <path
-              d="M2.223 24.14L29.777 7.86A15.926 15.926 0 0132 16c0 8.837-7.163 16-16 16-5.864 0-10.991-3.154-13.777-7.86z"
-              fill="url(#logo-b)"
-            />
-          </svg> -->
             <img
               class="rounded-[50%] ml-[-20px]"
               src="../../public/logo icon.jpg"
@@ -89,83 +52,208 @@
 
       <!-- Links -->
       <div class="space-y-5">
-        <!-- Dashboard -->
-        <SidebarLinkGroup
-          v-slot="parentLink"
-          :activeCondition="
-            currentRoute.fullPath === '/' ||
-            currentRoute.fullPath.includes('dashboard')
-          "
-        >
-          <a
-            class="block text-slate-200 truncate transition duration-150"
-            :class="
-              currentRoute.fullPath === '/' ||
-              currentRoute.fullPath.includes('dashboard')
-                ? 'hover:text-slate-200'
-                : 'hover:text-white'
-            "
-            href="#0"
-            @click.prevent="
-              sidebarExpanded
-                ? parentLink.handleClick()
-                : (sidebarExpanded = true)
-            "
-          >
-            <div class="flex items-center justify-between">
-              <div class="flex items-center">
-                <img
-                  class="shrink-0 h-8 w-8"
-                  viewBox="0 0 24 24"
-                  src="https://cdn2.iconfinder.com/data/icons/business-yuk/32/analytic-512.png"
-                  alt="package-"
-                />
-
-                <span
-                  class="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
-                  >Dashboard</span
-                >
-              </div>
-              <!-- Icon -->
-              <div class="flex shrink-0 ml-2">
-                <svg
-                  class="w-3 h-3 shrink-0 ml-1 fill-current text-slate-400"
-                  :class="parentLink.expanded && 'rotate-180'"
-                  viewBox="0 0 12 12"
-                >
-                  <path d="M5.9 11.4L.5 6l1.4-1.4 4 4 4-4L11.3 6z" />
-                </svg>
-              </div>
-            </div>
-          </a>
-          <div class="lg:hidden lg:sidebar-expanded:block 2xl:block">
-            <ul class="pl-9 mt-1" :class="!parentLink.expanded && 'hidden'">
-              <router-link
-                to="/explore"
-                custom
-                v-slot="{ href, navigate, isExactActive }"
+        <!-- Dashboard-->
+        <div>
+          <h3 class="text-xs uppercase text-slate-500 font-semibold pl-3">
+            <span class="lg:hidden lg:sidebar-expanded:block 2xl:block"></span>
+          </h3>
+          <ul class="mt-3">
+            <!-- Dashboard items -->
+            <SidebarLinkGroup
+              v-slot="parentLink"
+              :activeCondition="
+                currentRoute.fullPath === '/' ||
+                currentRoute.fullPath.includes('dashboard')
+              "
+            >
+              <a
+                class="block text-slate-200 truncate transition duration-150"
+                :class="
+                  currentRoute.fullPath === '/' ||
+                  currentRoute.fullPath.includes('dashboard')
+                    ? 'hover:text-slate-200'
+                    : 'hover:text-white'
+                "
+                href="#0"
+                @click.prevent="
+                  sidebarExpanded
+                    ? parentLink.handleClick()
+                    : (sidebarExpanded = true)
+                "
               >
-                <li class="mb-1 last:mb-0">
-                  <a
-                    class="block transition duration-150 truncate"
-                    :class="
-                      isExactActive
-                        ? 'text-[#36d887]'
-                        : 'text-slate-400 hover:text-slate-200'
-                    "
-                    :href="href"
-                    @click="navigate"
-                  >
-                    <span
-                      class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
-                      >Graphical statistics</span
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
                     >
-                  </a>
-                </li>
-              </router-link>
-            </ul>
-          </div>
-        </SidebarLinkGroup>
+                      <rect width="2.8" height="12" x="1" y="6" fill="#24a8e5">
+                        <animate
+                          attributeName="y"
+                          begin="svgSpinnersBarsScaleMiddle0.begin+0.4s"
+                          calcMode="spline"
+                          dur="0.6s"
+                          keySplines=".14,.73,.34,1;.65,.26,.82,.45"
+                          values="6;1;6"
+                        />
+                        <animate
+                          attributeName="height"
+                          begin="svgSpinnersBarsScaleMiddle0.begin+0.4s"
+                          calcMode="spline"
+                          dur="0.6s"
+                          keySplines=".14,.73,.34,1;.65,.26,.82,.45"
+                          values="12;22;12"
+                        />
+                      </rect>
+                      <rect
+                        width="2.8"
+                        height="12"
+                        x="5.8"
+                        y="6"
+                        fill="#24a8e5"
+                      >
+                        <animate
+                          attributeName="y"
+                          begin="svgSpinnersBarsScaleMiddle0.begin+0.2s"
+                          calcMode="spline"
+                          dur="0.6s"
+                          keySplines=".14,.73,.34,1;.65,.26,.82,.45"
+                          values="6;1;6"
+                        />
+                        <animate
+                          attributeName="height"
+                          begin="svgSpinnersBarsScaleMiddle0.begin+0.2s"
+                          calcMode="spline"
+                          dur="0.6s"
+                          keySplines=".14,.73,.34,1;.65,.26,.82,.45"
+                          values="12;22;12"
+                        />
+                      </rect>
+                      <rect
+                        width="2.8"
+                        height="12"
+                        x="10.6"
+                        y="6"
+                        fill="#24a8e5"
+                      >
+                        <animate
+                          id="svgSpinnersBarsScaleMiddle0"
+                          attributeName="y"
+                          begin="0;svgSpinnersBarsScaleMiddle1.end-0.1s"
+                          calcMode="spline"
+                          dur="0.6s"
+                          keySplines=".14,.73,.34,1;.65,.26,.82,.45"
+                          values="6;1;6"
+                        />
+                        <animate
+                          attributeName="height"
+                          begin="0;svgSpinnersBarsScaleMiddle1.end-0.1s"
+                          calcMode="spline"
+                          dur="0.6s"
+                          keySplines=".14,.73,.34,1;.65,.26,.82,.45"
+                          values="12;22;12"
+                        />
+                      </rect>
+                      <rect
+                        width="2.8"
+                        height="12"
+                        x="15.4"
+                        y="6"
+                        fill="#24a8e5"
+                      >
+                        <animate
+                          attributeName="y"
+                          begin="svgSpinnersBarsScaleMiddle0.begin+0.2s"
+                          calcMode="spline"
+                          dur="0.6s"
+                          keySplines=".14,.73,.34,1;.65,.26,.82,.45"
+                          values="6;1;6"
+                        />
+                        <animate
+                          attributeName="height"
+                          begin="svgSpinnersBarsScaleMiddle0.begin+0.2s"
+                          calcMode="spline"
+                          dur="0.6s"
+                          keySplines=".14,.73,.34,1;.65,.26,.82,.45"
+                          values="12;22;12"
+                        />
+                      </rect>
+                      <rect
+                        width="2.8"
+                        height="12"
+                        x="20.2"
+                        y="6"
+                        fill="#24a8e5"
+                      >
+                        <animate
+                          id="svgSpinnersBarsScaleMiddle1"
+                          attributeName="y"
+                          begin="svgSpinnersBarsScaleMiddle0.begin+0.4s"
+                          calcMode="spline"
+                          dur="0.6s"
+                          keySplines=".14,.73,.34,1;.65,.26,.82,.45"
+                          values="6;1;6"
+                        />
+                        <animate
+                          attributeName="height"
+                          begin="svgSpinnersBarsScaleMiddle0.begin+0.4s"
+                          calcMode="spline"
+                          dur="0.6s"
+                          keySplines=".14,.73,.34,1;.65,.26,.82,.45"
+                          values="12;22;12"
+                        />
+                      </rect>
+                    </svg>
+                    <span
+                      class="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                      >Dashboard</span
+                    >
+                  </div>
+                  <!-- Icon -->
+                  <div class="flex shrink-0 ml-2">
+                    <svg
+                      class="w-3 h-3 shrink-0 ml-1 fill-current text-slate-400"
+                      :class="parentLink.expanded && 'rotate-180'"
+                      viewBox="0 0 12 12"
+                    >
+                      <path d="M5.9 11.4L.5 6l1.4-1.4 4 4 4-4L11.3 6z" />
+                    </svg>
+                  </div>
+                </div>
+              </a>
+              <div class="lg:hidden lg:sidebar-expanded:block 2xl:block">
+                <ul class="pl-9 mt-1" :class="!parentLink.expanded && 'hidden'">
+                  <router-link
+                    to="/explore"
+                    custom
+                    v-slot="{ href, navigate, isExactActive }"
+                  >
+                    <li class="mb-1 last:mb-0">
+                      <a
+                        class="block transition duration-150 truncate"
+                        :class="
+                          isExactActive
+                            ? 'text-[#36d887]'
+                            : 'text-slate-400 hover:text-slate-200'
+                        "
+                        :href="href"
+                        @click="navigate"
+                      >
+                        <span
+                          class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                          >Graphical statistics</span
+                        >
+                      </a>
+                    </li>
+                  </router-link>
+                </ul>
+              </div>
+            </SidebarLinkGroup>
+          </ul>
+        </div>
+
         <!-- Buyurtmalar-->
         <div v-if="role == 1 || role === 1000">
           <h3 class="text-xs uppercase text-slate-500 font-semibold pl-3">
@@ -200,12 +288,95 @@
               >
                 <div class="flex items-center justify-between">
                   <div class="flex items-center">
-                    <img
-                      class="shrink-0 h-7 w-7"
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
                       viewBox="0 0 24 24"
-                      src="https://cdn4.iconfinder.com/data/icons/back-to-school-151/64/file-sheet-document-paper-report-512.png"
-                      alt="package-"
-                    />
+                    >
+                      <rect
+                        width="10"
+                        height="10"
+                        x="1"
+                        y="1"
+                        fill="#24a8e5"
+                        rx="1"
+                      >
+                        <animate
+                          id="svgSpinnersBlocksShuffle20"
+                          fill="freeze"
+                          attributeName="x"
+                          begin="0;svgSpinnersBlocksShuffle27.end"
+                          dur="0.2s"
+                          values="1;13"
+                        />
+                        <animate
+                          id="svgSpinnersBlocksShuffle21"
+                          fill="freeze"
+                          attributeName="y"
+                          begin="svgSpinnersBlocksShuffle24.end"
+                          dur="0.2s"
+                          values="1;13"
+                        />
+                        <animate
+                          id="svgSpinnersBlocksShuffle22"
+                          fill="freeze"
+                          attributeName="x"
+                          begin="svgSpinnersBlocksShuffle25.end"
+                          dur="0.2s"
+                          values="13;1"
+                        />
+                        <animate
+                          id="svgSpinnersBlocksShuffle23"
+                          fill="freeze"
+                          attributeName="y"
+                          begin="svgSpinnersBlocksShuffle26.end"
+                          dur="0.2s"
+                          values="13;1"
+                        />
+                      </rect>
+                      <rect
+                        width="10"
+                        height="10"
+                        x="1"
+                        y="13"
+                        fill="#24a8e5"
+                        rx="1"
+                      >
+                        <animate
+                          id="svgSpinnersBlocksShuffle24"
+                          fill="freeze"
+                          attributeName="y"
+                          begin="svgSpinnersBlocksShuffle20.end"
+                          dur="0.2s"
+                          values="13;1"
+                        />
+                        <animate
+                          id="svgSpinnersBlocksShuffle25"
+                          fill="freeze"
+                          attributeName="x"
+                          begin="svgSpinnersBlocksShuffle21.end"
+                          dur="0.2s"
+                          values="1;13"
+                        />
+                        <animate
+                          id="svgSpinnersBlocksShuffle26"
+                          fill="freeze"
+                          attributeName="y"
+                          begin="svgSpinnersBlocksShuffle22.end"
+                          dur="0.2s"
+                          values="1;13"
+                        />
+                        <animate
+                          id="svgSpinnersBlocksShuffle27"
+                          fill="freeze"
+                          attributeName="x"
+                          begin="svgSpinnersBlocksShuffle23.end"
+                          dur="0.2s"
+                          values="13;1"
+                        />
+                      </rect>
+                    </svg>
                     <span
                       class="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
                       >Sotuv
@@ -321,13 +492,17 @@
               >
                 <div class="flex items-center justify-between">
                   <div class="flex items-center">
-                    <img
-                      class="shrink-0 h-7 w-7"
-                      viewBox="0 0 24 24"
-                      src="https://cdn3.iconfinder.com/data/icons/leto-finance-money-1/64/finance_growth_money_income-512.png"
-                      alt="package-"
-                    />
-
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="25"
+                      height="25"
+                      viewBox="0 0 1024 1024"
+                    >
+                      <path
+                        fill="#24a8e5"
+                        d="M512 1024q-139 0-257-68.5T68.5 769T0 512t68.5-257T255 68.5T512 0q112 0 152 27.5T704 128q0 32-15 61t-33 47t-33 40.5t-15 43.5q0 96 96 96q21 0 43.5-15t40.5-33t47-33t61-15q72 0 100 41t28 151q0 104-40.5 199t-109 163.5t-163.5 109t-199 40.5M288 832q40 0 68-28t28-68t-28-68t-68-28t-68 28t-28 68t28 68t68 28m-64-512q-40 0-68 28t-28 68t28 68t68 28t68-28t28-68t-28-68t-68-28m192-192q-40 0-68 28t-28 68t28 68t68 28t68-28t28-68t-28-68t-68-28m192 576q-40 0-68 28t-28 68t28 68t68 28t68-28t28-68t-28-68t-68-28m192-192q-40 0-68 28t-28 68t28 68t68 28t68-28t28-68t-28-68t-68-28"
+                      />
+                    </svg>
                     <span
                       class="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
                       >Bo'yash harakati
@@ -677,13 +852,25 @@
               >
                 <div class="flex items-center justify-between">
                   <div class="flex items-center">
-                    <img
-                      class="shrink-0 h-7 w-7"
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
                       viewBox="0 0 24 24"
-                      src="https://cdn0.iconfinder.com/data/icons/business-and-management-flat-8/24/PRODUCT_products_new_product_cube_product_design-512.png"
-                      alt="package-"
-                    />
-
+                    >
+                      <path
+                        fill="#24a8e5"
+                        d="M20.27,4.74a4.93,4.93,0,0,1,1.52,4.61,5.32,5.32,0,0,1-4.1,4.51,5.12,5.12,0,0,1-5.2-1.5,5.53,5.53,0,0,0,6.13-1.48A5.66,5.66,0,0,0,20.27,4.74ZM12.32,11.53a5.49,5.49,0,0,0-1.47-6.2A5.57,5.57,0,0,0,4.71,3.72,5.17,5.17,0,0,1,9.53,2.2,5.52,5.52,0,0,1,13.9,6.45,5.28,5.28,0,0,1,12.32,11.53ZM19.2,20.29a4.92,4.92,0,0,1-4.72,1.49,5.32,5.32,0,0,1-4.34-4.05A5.2,5.2,0,0,1,11.6,12.5a5.6,5.6,0,0,0,1.51,6.13A5.63,5.63,0,0,0,19.2,20.29ZM3.79,19.38A5.18,5.18,0,0,1,2.32,14a5.3,5.3,0,0,1,4.59-4,5,5,0,0,1,4.58,1.61,5.55,5.55,0,0,0-6.32,1.69A5.46,5.46,0,0,0,3.79,19.38ZM12.23,12a5.11,5.11,0,0,0,3.66-5,5.75,5.75,0,0,0-3.18-6,5,5,0,0,1,4.42,2.3,5.21,5.21,0,0,1,.24,5.92A5.4,5.4,0,0,1,12.23,12ZM11.76,12a5.18,5.18,0,0,0-3.68,5.09,5.58,5.58,0,0,0,3.19,5.79c-1,.35-2.9-.46-4-1.68A5.51,5.51,0,0,1,11.76,12ZM23,12.63a5.07,5.07,0,0,1-2.35,4.52,5.23,5.23,0,0,1-5.91.2,5.24,5.24,0,0,1-2.67-4.77,5.51,5.51,0,0,0,5.45,3.33A5.52,5.52,0,0,0,23,12.63ZM1,11.23a5,5,0,0,1,2.49-4.5,5.23,5.23,0,0,1,5.81-.06,5.3,5.3,0,0,1,2.61,4.74A5.56,5.56,0,0,0,6.56,8.06,5.71,5.71,0,0,0,1,11.23Z"
+                      >
+                        <animateTransform
+                          attributeName="transform"
+                          dur="1.5s"
+                          repeatCount="indefinite"
+                          type="rotate"
+                          values="0 12 12;360 12 12"
+                        />
+                      </path>
+                    </svg>
                     <span
                       class="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
                       >To'quv harakatlari
@@ -907,12 +1094,17 @@
               >
                 <div class="flex items-center justify-between">
                   <div class="flex items-center">
-                    <img
-                      class="shrink-0 h-7 w-7"
-                      viewBox="0 0 24 24"
-                      src="https://cdn0.iconfinder.com/data/icons/business-and-management-flat-8/24/PRODUCT_products_new_product_cube_product_design-512.png"
-                      alt="package-"
-                    />
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="25"
+                      height="25"
+                      viewBox="0 0 1025 1023"
+                    >
+                      <path
+                        fill="#24a8e5"
+                        d="M996.413 959h-234q-115-638-122-895h224q13 0 22.5 9.5t9.5 22.5q0 79 12 181.5t26 179t44 231t46 239.5q2 13-6 22.5t-22 9.5m-320 64h-648q-14 0-22-9.5t-5-22.5q127-703 127-959q0-13 9.5-22.5t22.5-9.5h384q13 0 22.5 9.5t9.5 22.5q0 256 128 959q2 13-6 22.5t-22 9.5"
+                      />
+                    </svg>
 
                     <span
                       class="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
@@ -1214,12 +1406,17 @@
               >
                 <div class="flex items-center justify-between">
                   <div class="flex items-center">
-                    <img
-                      class="shrink-0 h-7 w-7"
-                      viewBox="0 0 24 24"
-                      src="https://cdn4.iconfinder.com/data/icons/success-filloutline/64/Income-cash-money-banking-business-512.png"
-                      alt="package-"
-                    />
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="25"
+                      height="25"
+                      viewBox="0 0 1025 1024"
+                    >
+                      <path
+                        fill="#24a8e5"
+                        d="M896.428 1024h-768q-53 0-90.5-37.5T.428 896V128q0-53 37.5-90.5t90.5-37.5h768q53 0 90.5 37.5t37.5 90.5v768q0 53-37.5 90.5t-90.5 37.5m-288-768h-256q-13 0-22.5 9.5t-9.5 22.5t9.5 22.5t22.5 9.5h96v416q0 13 9.5 22.5t22.5 9.5t22.5-9.5t9.5-22.5V320h96q13 0 22.5-9.5t9.5-22.5t-9.5-22.5t-22.5-9.5"
+                      />
+                    </svg>
 
                     <span
                       class="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
@@ -1450,12 +1647,17 @@
               >
                 <div class="flex items-center justify-between">
                   <div class="flex items-center">
-                    <img
-                      class="shrink-0 h-7 w-7"
-                      viewBox="0 0 24 24"
-                      src="https://cdn4.iconfinder.com/data/icons/success-filloutline/64/Income-cash-money-banking-business-512.png"
-                      alt="package-"
-                    />
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="25"
+                      height="25"
+                      viewBox="0 0 896 1024"
+                    >
+                      <path
+                        fill="#24a8e5"
+                        d="M832 238v402q0 87-43 160.5T672.5 917T512 960v64L320 896l192-128v64q80 0 136-56t56-136V238q-29-17-46.5-46T640 128q0-53 37.5-90.5T768 0t90.5 37.5T896 128q0 35-17.5 64T832 238M768 64q-27 0-45.5 18.5T704 128t18.5 45.5t45 18.5t45.5-19t19-45.5t-18.5-45T768 64M384 192q-80 0-136 56t-56 136v402q29 17 46.5 46t17.5 64q0 53-37.5 90.5T128 1024t-90.5-37.5T0 896q0-35 17.5-64T64 786V384q0-87 43-160.5T223.5 107T384 64V0l192 128l-192 128zM128.5 832Q102 832 83 850.5T64 896t18.5 45.5T128 960t45.5-19t18.5-45.5t-18.5-45t-45-18.5"
+                      />
+                    </svg>
 
                     <span
                       class="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
@@ -1539,12 +1741,59 @@
               >
                 <div class="flex items-center justify-between">
                   <div class="flex items-center">
-                    <img
-                      class="shrink-0 h-7 w-7"
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
                       viewBox="0 0 24 24"
-                      src="https://cdn4.iconfinder.com/data/icons/back-to-school-151/64/file-sheet-document-paper-report-512.png"
-                      alt="package-"
-                    />
+                    >
+                      <ellipse cx="12" cy="5" fill="#24a8e5" rx="4" ry="4">
+                        <animate
+                          id="svgSpinnersBouncingBall0"
+                          fill="freeze"
+                          attributeName="cy"
+                          begin="0;svgSpinnersBouncingBall2.end"
+                          calcMode="spline"
+                          dur="0.375s"
+                          keySplines=".33,0,.66,.33"
+                          values="5;20"
+                        />
+                        <animate
+                          attributeName="rx"
+                          begin="svgSpinnersBouncingBall0.end"
+                          calcMode="spline"
+                          dur="0.05s"
+                          keySplines=".33,0,.66,.33;.33,.66,.66,1"
+                          values="4;4.8;4"
+                        />
+                        <animate
+                          attributeName="ry"
+                          begin="svgSpinnersBouncingBall0.end"
+                          calcMode="spline"
+                          dur="0.05s"
+                          keySplines=".33,0,.66,.33;.33,.66,.66,1"
+                          values="4;3;4"
+                        />
+                        <animate
+                          id="svgSpinnersBouncingBall1"
+                          attributeName="cy"
+                          begin="svgSpinnersBouncingBall0.end"
+                          calcMode="spline"
+                          dur="0.025s"
+                          keySplines=".33,0,.66,.33"
+                          values="20;20.5"
+                        />
+                        <animate
+                          id="svgSpinnersBouncingBall2"
+                          attributeName="cy"
+                          begin="svgSpinnersBouncingBall1.end"
+                          calcMode="spline"
+                          dur="0.4s"
+                          keySplines=".33,.66,.66,1"
+                          values="20.5;5"
+                        />
+                      </ellipse>
+                    </svg>
                     <span
                       class="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
                     >
@@ -1650,13 +1899,17 @@
               >
                 <div class="flex items-center justify-between">
                   <div class="flex items-center">
-                    <img
-                      class="shrink-0 h-7 w-7"
-                      viewBox="0 0 24 24"
-                      src="https://cdn4.iconfinder.com/data/icons/success-filloutline/64/Income-cash-money-banking-business-512.png"
-                      alt="package-"
-                    />
-
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="25"
+                      height="25"
+                      viewBox="0 0 26 26"
+                    >
+                      <path
+                        fill="#24a8e5"
+                        d="M16.563 15.9c-.159-.052-1.164-.505-.536-2.414h-.009c1.637-1.686 2.888-4.399 2.888-7.07c0-4.107-2.731-6.26-5.905-6.26c-3.176 0-5.892 2.152-5.892 6.26c0 2.682 1.244 5.406 2.891 7.088c.642 1.684-.506 2.309-.746 2.396c-3.324 1.203-7.224 3.394-7.224 5.557v.811c0 2.947 5.714 3.617 11.002 3.617c5.296 0 10.938-.67 10.938-3.617v-.811c0-2.228-3.919-4.402-7.407-5.557m-5.516 8.709c0-2.549 1.623-5.99 1.623-5.99l-1.123-.881c0-.842 1.453-1.723 1.453-1.723s1.449.895 1.449 1.723l-1.119.881s1.623 3.428 1.623 6.018c0 .406-3.906.312-3.906-.028"
+                      />
+                    </svg>
                     <span
                       class="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
                       >Admin
@@ -1761,14 +2014,19 @@
               >
                 <div class="flex items-center justify-between">
                   <div class="flex items-center">
-                    <svg class="shrink-0 h-6 w-6" viewBox="0 0 24 24">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="25"
+                      height="25"
+                      viewBox="0 0 32 32"
+                    >
                       <path
-                        class="fill-current text-slate-600"
-                        d="M8.07 16H10V8H8.07a8 8 0 110 8z"
+                        fill="#24a8e5"
+                        d="m11 23.18l-2-2.001l-1.411 1.41L11 26l6-6l-1.41-1.41zM28 30h-4v-2h4V16h-4V8a4.005 4.005 0 0 0-4-4V2a6.007 6.007 0 0 1 6 6v6h2a2.002 2.002 0 0 1 2 2v12a2.002 2.002 0 0 1-2 2"
                       />
                       <path
-                        class="fill-current text-slate-400"
-                        d="M15 12L8 6v5H0v2h8v5z"
+                        fill="#24a8e5"
+                        d="M20 14h-2V8A6 6 0 0 0 6 8v6H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V16a2 2 0 0 0-2-2M8 8a4 4 0 0 1 8 0v6H8Zm12 20H4V16h16Z"
                       />
                     </svg>
                     <span
@@ -1860,12 +2118,19 @@
                 >
                   <div class="flex items-center justify-between">
                     <div class="grow flex items-center">
-                      <img
-                        class="shrink-0 h-8 w-8"
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="27"
+                        height="27"
                         viewBox="0 0 24 24"
-                        src="https://cdn4.iconfinder.com/data/icons/online-shop-7/128/message-envelope-email-512.png"
-                        alt="package-"
-                      />
+                      >
+                        <path
+                          fill="#24a8e5"
+                          fill-rule="evenodd"
+                          d="M3 5.983C3 4.888 3.895 4 5 4h14c1.105 0 2 .888 2 1.983v8.923a1.992 1.992 0 0 1-2 1.983h-6.6l-2.867 2.7c-.955.899-2.533.228-2.533-1.08v-1.62H5c-1.105 0-2-.888-2-1.983zm5.706 3.809a1 1 0 1 0-1.412 1.417a1 1 0 1 0 1.412-1.417m2.585.002a1 1 0 1 1 .003 1.414a1 1 0 0 1-.003-1.414m5.415-.002a1 1 0 1 0-1.412 1.417a1 1 0 1 0 1.412-1.417"
+                          clip-rule="evenodd"
+                        />
+                      </svg>
                       <span
                         class="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
                         >Messages</span
@@ -1874,7 +2139,7 @@
                     <!-- Badge -->
                     <div class="flex flex-shrink-0 ml-2">
                       <span
-                        class="inline-flex items-center justify-center h-5 text-xs font-medium text-white bg-[#6563FF] px-2 rounded"
+                        class="inline-flex items-center justify-center h-5 text-xs font-medium text-white bg-[#24a8e5] px-2 rounded"
                         >4</span
                       >
                     </div>
