@@ -15,29 +15,11 @@
       :class="sidebarOpen ? 'translate-x-0' : '-translate-x-64'"
     >
       <!-- Sidebar header -->
-      <div class="flex justify-between mb-10 pr-3 sm:px-2">
-        <!-- Close button -->
-        <button
-          ref="trigger"
-          class="lg:hidden text-slate-500 hover:text-slate-400"
-          @click.stop="$emit('close-sidebar')"
-          aria-controls="sidebar"
-          :aria-expanded="sidebarOpen"
-        >
-          <span class="sr-only">Close sidebar</span>
-          <svg
-            class="w-6 h-6 fill-current"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M10.7 18.7l1.4-1.4L7.8 13H20v-2H7.8l4.3-4.3-1.4-1.4L4 12z"
-            />
-          </svg>
-        </button>
+      <div class="flex justify-between mb-5 ml-2 sm:px-2">
         <!-- Logo -->
-        <router-link class="flex" to="/explore">
-          <svg width="40" height="40" viewBox="0 0 32 32">
+        <div>
+          <router-link class="flex" to="/explore">
+            <!-- <svg width="40" height="40" viewBox="0 0 32 32">
             <defs>
               <linearGradient
                 x1="28.538%"
@@ -73,9 +55,36 @@
               d="M2.223 24.14L29.777 7.86A15.926 15.926 0 0132 16c0 8.837-7.163 16-16 16-5.864 0-10.991-3.154-13.777-7.86z"
               fill="url(#logo-b)"
             />
+          </svg> -->
+            <img
+              class="rounded-[50%] ml-[-20px]"
+              src="../../public/logo icon.jpg"
+              style="width: 50px; height: 50px"
+              alt="logo"
+            />
+            <h5 class="text-white mt-3 ml-7 font-serif font-bold">HAJ ERP</h5>
+          </router-link>
+          <div class="mt-4 ml-[-30px] border-b-[0.2px] w-screen"></div>
+        </div>
+        <!-- Close button -->
+        <button
+          ref="trigger"
+          class="lg:hidden text-slate-500 hover:text-slate-400"
+          @click.stop="$emit('close-sidebar')"
+          aria-controls="sidebar"
+          :aria-expanded="sidebarOpen"
+        >
+          <span class="sr-only">Close sidebar</span>
+          <svg
+            class="w-6 h-6 fill-current"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M10.7 18.7l1.4-1.4L7.8 13H20v-2H7.8l4.3-4.3-1.4-1.4L4 12z"
+            />
           </svg>
-          <h5 class="text-white mt-2 ml-7 font-serif font-bold">HAJ ERP</h5>
-        </router-link>
+        </button>
       </div>
 
       <!-- Links -->
