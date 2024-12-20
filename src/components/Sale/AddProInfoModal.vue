@@ -7,7 +7,6 @@ const { plus_type_modal, plus_name_modal } = storeToRefs(store_sale);
 const proRef = ref();
 const PlusName = async () => {
   await store_sale.CreateProName(model.value);
-  console.log(model.value);
 };
 const CreateName = async (proRef) => {
   await proRef.validate((valid) => {

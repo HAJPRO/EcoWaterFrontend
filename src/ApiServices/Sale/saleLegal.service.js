@@ -3,7 +3,6 @@ import api from "@/helpers/api";
 
 export const SaleLegalService = {
   CreateProName(data) {
-    console.log(data);
     let url = "sale/add_pro_name";
     return api.post(url, data);
   },
