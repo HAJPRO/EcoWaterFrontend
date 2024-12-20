@@ -2,6 +2,15 @@ import api from "@/helpers/api";
 // import $api from "../../helpers/$api";
 
 export const SaleLegalService = {
+  CreateProName(data) {
+    console.log(data);
+    let url = "sale/add_pro_name";
+    return api.post(url, data);
+  },
+  CreateProType(data) {
+    let url = "sale/add_pro_type";
+    return api.post(url, data);
+  },
   getModel() {
     let url = "sale/legal_model";
     return api.get(url);

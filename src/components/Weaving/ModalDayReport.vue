@@ -5,7 +5,6 @@ const store = WeavingPlanStore();
 import { storeToRefs } from "pinia";
 const { is_report_modal, order_report, report_weaving, DoneWeaving } =
   storeToRefs(store);
-console.log(report_weaving);
 const addDayReportInProcess = async () => {
   await store.addDayReportInProcess(model.value);
 };

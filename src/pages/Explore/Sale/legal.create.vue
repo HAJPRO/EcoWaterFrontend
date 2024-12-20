@@ -1,10 +1,16 @@
 <script setup>
 import { onMounted, ref } from "vue";
 import Title from "@/components/Title.vue";
+import AddProInfoModal from "../../../components/Sale/AddProInfoModal.vue";
 import { SaleLegalService } from "@/ApiServices/Sale/saleLegal.service";
 import { ToastifyService } from "../../../utils/Toastify.js";
 import { useRouter } from "vue-router";
 const router = useRouter();
+import { SaleStore } from "../../../stores/Sale/sale.store";
+const store_sale = SaleStore();
+import { storeToRefs } from "pinia";
+const { plus_type_modal, plus_name_modal } = storeToRefs(store_sale);
+
 const units = ref([
   { id: 1, name: "Kg" },
   { id: 2, name: "Metr" },
@@ -48,11 +54,11 @@ const Save = async () => {
     return ToastifyService.ToastError({ msg: error.message });
   }
 };
-const PlusType = () => {
-  console.log("Type");
+const PlusProType = () => {
+  store_sale.PlusProTypeModal();
 };
-const PlusProduct = () => {
-  console.log("Product");
+const PlusProName = () => {
+  store_sale.PlusProNameModal();
 };
 onMounted(async () => {
   try {
@@ -69,6 +75,7 @@ const rules = ref({
 </script>
 
 <template>
+  <AddProInfoModal v-if="plus_type_modal || plus_name_modal" />
   <div>
     <Title>
       <template v-slot:title>
@@ -130,7 +137,10 @@ const rules = ref({
             placeholder="..."
           >
             <template #prepend>
-              <i class="fa-solid fa-plus mr-2 fa-md"></i>
+              <i
+                @click="PlusProName()"
+                class="fa-solid fa-plus mr-2 fa-md cursor-pointer"
+              ></i>
             </template>
             <template #append>
               <el-select size="smal" style="width: 100px">
@@ -154,7 +164,10 @@ const rules = ref({
             placeholder="..."
           >
             <template #prepend>
-              <i class="fa-solid fa-plus mr-2 fa-md"></i>
+              <i
+                @click="PlusProType()"
+                class="fa-solid fa-plus mr-2 fa-md cursor-pointer"
+              ></i>
             </template>
             <template #append>
               <el-select size="smal" style="width: 100px">
@@ -281,7 +294,7 @@ const rules = ref({
         class="w-full"
         header-align="center"
         hight="4"
-        style="width: 100%"
+        style="width: 100%; font-size: 13px"
         empty-text="Mahsulot tanlanmagan... "
         :data="orders"
         border

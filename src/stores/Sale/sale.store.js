@@ -19,13 +19,31 @@ export const SaleStore = defineStore("saleStore", {
         spinning: [],
       },
       paint_process: [],
-
       is_active: "",
+      plus_name_modal: false,
+      plus_type_modal: false,
     };
   },
   actions: {
     IsActive(payload) {
       this.is_active = payload.is_active;
+    },
+    PlusProNameModal() {
+      this.plus_name_modal = true;
+    },
+    PlusProTypeModal() {
+      this.plus_type_modal = true;
+    },
+    async CreateProType(payload) {
+      console.log(payload);
+
+      const type = await SaleLegalService.CreateProType(payload);
+    },
+    async CreateProName(payload) {
+      console.log(payload);
+
+      const name = await SaleLegalService.CreateProName(payload);
+      console.log(type);
     },
     async getAll(payload) {
       const loader = loading.show();

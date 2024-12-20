@@ -5,11 +5,13 @@ import ProccessModal from "../../../components/Sale/ProccessModal.component.vue"
 // import StatusInfoModal from "../../../components/Sale/StatusModal.component.vue";
 import { SaleLegalService } from "@/ApiServices/Sale/saleLegal.service";
 import { ToastifyService } from "../../../utils/Toastify";
-import { loading } from ".././../../utils/Loader";
 import SaleUpdateCardModal from "../../../components/Sale/SaleUpdateCardModal.vue";
 import HeaderTabLink from "../../../components/Sale/HeaderTabLink.vue";
 import MainTable from "../../../components/Sale/MainTable.vue";
-
+import AddProInfoModal from "../../../components/Sale/AddProInfoModal.vue";
+import { SaleStore } from "../../../stores/Sale/sale.store.js";
+const store_sale = SaleStore();
+import { storeToRefs } from "pinia";
 const is_status_info_modal = ref(false);
 const StatusModal = (id) => {
   is_status_info_modal.value = !is_status_info_modal.value;
@@ -46,6 +48,5 @@ onMounted(async () => {
     <!-- // EDIT Modal -->
     <SaleUpdateCardModal />
     <!-- // -->
-    <!-- <StatusInfoModal /> -->
   </div>
 </template>
