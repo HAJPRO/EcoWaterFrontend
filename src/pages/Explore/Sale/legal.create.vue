@@ -18,14 +18,22 @@ const getModel = async () => {
 };
 
 const formRef = ref();
-const CreateValidate = async (formRef) => {
+const PlusValidate = async (formRef) => {
   await formRef.validate((valid) => {
     if (valid === true) {
-      Save();
+      PlusOrder();
     } else {
       return false;
     }
   });
+};
+const orders = ref([]);
+const PlusOrder = async () => {
+  try {
+    orders.value.push(model.value);
+  } catch (error) {
+    return ToastifyService.ToastError({ msg: error.message });
+  }
 };
 const Save = async () => {
   try {
@@ -39,6 +47,12 @@ const Save = async () => {
   } catch (error) {
     return ToastifyService.ToastError({ msg: error.message });
   }
+};
+const PlusType = () => {
+  console.log("Type");
+};
+const PlusProduct = () => {
+  console.log("Product");
 };
 onMounted(async () => {
   try {
@@ -65,11 +79,11 @@ const rules = ref({
       ref="formRef"
       :model="model"
       label-width="auto"
-      class="filter-box bg-white md:grid md:grid-cols-9 gap-1 sm:flex sm:flex-wrap rounded shadow-sm p-2 mt-2 mb-2 text-[13px]"
+      class="filter-box bg-white md:grid md:grid-cols-10 gap-1 sm:flex sm:flex-wrap rounded shadow-sm p-2 mt-2 mb-2 text-[13px]"
       size="small"
       label-position="top"
     >
-      <div class="mb-1 col-span-3">
+      <div class="mb-1 col-span-2">
         <el-form-item
           label="Buyurtmachi nomi"
           prop="customer_name"
@@ -86,7 +100,7 @@ const rules = ref({
           />
         </el-form-item>
       </div>
-      <div class="mb-1 col-span-3">
+      <div class="mb-1 col-span-2">
         <el-form-item
           label="Buyurtma nomeri"
           prop="order_number"
@@ -104,7 +118,7 @@ const rules = ref({
           />
         </el-form-item>
       </div>
-      <div class="mb-1 col-span-3">
+      <div class="mb-1 col-span-2">
         <el-form-item label="Mahsulot nomi" prop="pro_name" :rules="rules">
           <el-input
             required
@@ -114,10 +128,21 @@ const rules = ref({
             size="smal"
             type="String"
             placeholder="..."
-          />
+          >
+            <template #prepend>
+              <i class="fa-solid fa-plus mr-2 fa-md"></i>
+            </template>
+            <template #append>
+              <el-select size="smal" style="width: 100px">
+                <el-option label="Restaurant" value="1" />
+                <el-option label="Order No." value="2" />
+                <el-option label="Tel" value="3" />
+              </el-select>
+            </template>
+          </el-input>
         </el-form-item>
       </div>
-      <div class="mb-1 col-span-3">
+      <div class="mb-1 col-span-2">
         <el-form-item label="Mahsulot turi" prop="pro_type" :rules="rules">
           <el-input
             required
@@ -127,10 +152,21 @@ const rules = ref({
             size="smal"
             type="String"
             placeholder="..."
-          />
+          >
+            <template #prepend>
+              <i class="fa-solid fa-plus mr-2 fa-md"></i>
+            </template>
+            <template #append>
+              <el-select size="smal" style="width: 100px">
+                <el-option label="Restaurant" value="1" />
+                <el-option label="Order No." value="2" />
+                <el-option label="Tel" value="3" />
+              </el-select>
+            </template>
+          </el-input>
         </el-form-item>
       </div>
-      <div class="mb-1 col-span-3">
+      <div class="mb-1 col-span-2">
         <el-form-item label="Mahsulot rangi" prop="pro_color" :rules="rules">
           <el-input
             required
@@ -143,7 +179,7 @@ const rules = ref({
           />
         </el-form-item>
       </div>
-      <div class="mb-1 col-span-3">
+      <div class="mb-1 col-span-2">
         <el-form-item label="Eni" prop="pro_width" :rules="rules">
           <el-input
             required
@@ -156,7 +192,7 @@ const rules = ref({
           />
         </el-form-item>
       </div>
-      <div class="mb-1 col-span-3">
+      <div class="mb-1 col-span-2">
         <el-form-item label="Grammaji" prop="grammaj" :rules="rules">
           <el-input
             required
@@ -169,7 +205,7 @@ const rules = ref({
           />
         </el-form-item>
       </div>
-      <div class="mb-1 col-span-3">
+      <div class="mb-1 col-span-2">
         <el-form-item
           label="Buyurtma miqdori"
           prop="order_quantity"
@@ -186,7 +222,7 @@ const rules = ref({
           />
         </el-form-item>
       </div>
-      <div class="mb-1 col-span-3">
+      <div class="mb-1 col-span-2">
         <el-form-item label="Birligi" prop="unit" :rules="rules">
           <el-select
             required
@@ -205,13 +241,14 @@ const rules = ref({
           </el-select>
         </el-form-item>
       </div>
-      <div class="mb-1 col-span-3">
+      <div class="mb-1 col-span-2">
         <el-form-item
           label="Tayyorlash muddati"
           prop="delivery_time"
           :rules="rules"
         >
           <el-date-picker
+            :disabled="orders.length"
             required
             v-model="model.delivery_time"
             clearable
@@ -222,21 +259,147 @@ const rules = ref({
           />
         </el-form-item>
       </div>
+      <div class="flex justify-end col-span-10 p-2">
+        <el-button
+          @click="PlusValidate(formRef)"
+          style="
+            background-color: #36d887;
+            color: white;
+            border: none;
+            cursor: pointer;
+            padding: 15px;
+          "
+        >
+          <i class="fa-solid fa-plus mr-2 fa-md"></i> Qo'shish
+        </el-button>
+      </div>
     </el-form>
 
-    <div class="flex justify-end bg-white rounded-md shadow-md p-2">
-      <div></div>
-      <el-button
-        @click="CreateValidate(formRef)"
-        style="
-          background-color: #36d887;
-          color: white;
-          border: none;
-          cursor: pointer;
-        "
+    <div class="shadow-md rounded min-h-[15px]">
+      <el-table
+        load
+        class="w-full"
+        header-align="center"
+        hight="4"
+        style="width: 100%"
+        empty-text="Mahsulot tanlanmagan... "
+        :data="orders"
+        border
+        min-height="300"
+        max-height="400"
       >
-        <i class="fa-solid fa-check mr-2 fa-md"></i> Saqlash
-      </el-button>
+        <el-table-column
+          header-align="center"
+          align="center"
+          type="index"
+          prop="index"
+          fixed="left"
+          label="№"
+          width="60"
+        />
+
+        <el-table-column
+          header-align="center"
+          prop="customer_name"
+          label="Buyurtmachi"
+          width="200"
+        />
+
+        <el-table-column
+          header-align="center"
+          prop="order_number"
+          label="Buyurtma nomeri"
+          width="200"
+        />
+        <el-table-column
+          prop="pro_type"
+          label="Turi"
+          width="180"
+          header-align="center"
+          align="center"
+        />
+        <el-table-column
+          prop="pro_name"
+          label="Nomi"
+          width="180"
+          header-align="center"
+          align="center"
+        />
+        <el-table-column
+          prop="pro_color"
+          label="Rangi"
+          width="180"
+          header-align="center"
+          align="center"
+        />
+        <el-table-column
+          prop="order_quantity"
+          label="Miqdori"
+          width="180"
+          header-align="center"
+          align="center"
+        />
+        <el-table-column
+          prop="unit"
+          label="Birligi"
+          width="100"
+          header-align="center"
+          align="center"
+        />
+        <el-table-column
+          prop="delivery_time"
+          label="Muddati"
+          width="190"
+          header-align="center"
+          align="center"
+        >
+          <template #default="scope">
+            <el-date-picker
+              style="width: 100%"
+              disabled
+              v-model="scope.row.delivery_time"
+              clearable
+              type="date"
+              placeholder=""
+              size="smal"
+            />
+          </template>
+        </el-table-column>
+
+        <el-table-column
+          fixed="right"
+          prop="id"
+          label=""
+          width="200"
+          header-align="center"
+          align="center"
+        >
+          <template #default="scope">
+            <router-link
+              to=""
+              @click="deleteById(scope.row._id)"
+              class="inline-flex items-center mt-4 ml-2 text-white bg-red-500 hover:bg-red-600 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
+            >
+              <i class="text-black fa-sharp fa-solid fa-trash fa-xs"></i>
+            </router-link>
+          </template>
+        </el-table-column>
+      </el-table>
+      <div class="flex justify-end col-span-10 p-3">
+        <el-button
+          size="smal"
+          @click="PlusValidate(formRef)"
+          style="
+            background-color: #36d887;
+            color: white;
+            border: none;
+            cursor: pointer;
+            padding: 15px;
+          "
+        >
+          <i class="fa-solid fa-check mr-2 fa-md"></i> Saqlash
+        </el-button>
+      </div>
     </div>
   </div>
 </template>

@@ -8,7 +8,7 @@ const { items } = storeToRefs(store_sale);
 const isModal = ref(false);
 const getByIdForUpdate = async (id) => {
   const is_modal = !isModal.value;
-  store.openModalById({ is_modal, id });
+  store_sale.openModalById({ is_modal, id });
 };
 
 const confirm = async (id) => {
