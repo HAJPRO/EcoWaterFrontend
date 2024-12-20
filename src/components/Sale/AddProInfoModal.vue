@@ -96,7 +96,7 @@ const rules = ref({
         <div></div>
         <el-button
           size="small"
-          @click="CreateName(proRef)"
+          @click="CreateType(proRef)"
           style="
             background-color: #36d887;
             color: white;
@@ -163,7 +163,7 @@ const rules = ref({
         <div></div>
         <el-button
           size="small"
-          @click="CreateType(typeRef)"
+          @click="CreateName(typeRef)"
           style="
             background-color: #36d887;
             color: white;
