@@ -48,11 +48,11 @@ export const SaleStore = defineStore("saleStore", {
     },
     async GetProName() {
       const names = await SaleLegalService.GetProName();
-      this.pro_names = names.data.data
+      this.pro_names = names.data
     },
     async GetProType() {
       const types = await SaleLegalService.GetProType();
-      this.pro_types = types.data.data
+      this.pro_types = types.data
 
 
     },
