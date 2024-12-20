@@ -9,7 +9,8 @@ const router = useRouter();
 import { SaleStore } from "../../../stores/Sale/sale.store";
 const store_sale = SaleStore();
 import { storeToRefs } from "pinia";
-const { plus_type_modal, plus_name_modal } = storeToRefs(store_sale);
+const { plus_type_modal, plus_name_modal, pro_names, pro_types } =
+  storeToRefs(store_sale);
 
 const units = ref([
   { id: 1, name: "Kg" },
@@ -63,6 +64,7 @@ const PlusProName = () => {
 onMounted(async () => {
   try {
     await getModel();
+    await store_sale.GetProName(), await store_sale.GetProType();
   } catch (error) {
     return ToastifyService.ToastError({ msg: error.message });
   }
@@ -144,9 +146,12 @@ const rules = ref({
             </template>
             <template #append>
               <el-select size="smal" style="width: 100px">
-                <el-option label="Restaurant" value="1" />
-                <el-option label="Order No." value="2" />
-                <el-option label="Tel" value="3" />
+                <el-option
+                  v-for="item in pro_names"
+                  :key="item._id"
+                  :label="item.name"
+                  :value="item.name"
+                />
               </el-select>
             </template>
           </el-input>
@@ -171,9 +176,12 @@ const rules = ref({
             </template>
             <template #append>
               <el-select size="smal" style="width: 100px">
-                <el-option label="Restaurant" value="1" />
-                <el-option label="Order No." value="2" />
-                <el-option label="Tel" value="3" />
+                <el-option
+                  v-for="item in pro_types"
+                  :key="item._id"
+                  :label="item.name"
+                  :value="item.name"
+                />
               </el-select>
             </template>
           </el-input>

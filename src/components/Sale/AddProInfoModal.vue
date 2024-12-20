@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { SaleStore } from "../../stores/Sale/sale.store";
 const store_sale = SaleStore();
 import { storeToRefs } from "pinia";
@@ -48,6 +48,7 @@ const rules = ref({
   message: `Maydon to'ldirilishi zarur !`,
   trigger: "blur",
 });
+onMounted(() => {});
 </script>
 
 <template>

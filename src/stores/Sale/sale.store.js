@@ -22,6 +22,8 @@ export const SaleStore = defineStore("saleStore", {
       is_active: "",
       plus_name_modal: false,
       plus_type_modal: false,
+      pro_names: [],
+      pro_types: []
     };
   },
   actions: {
@@ -30,20 +32,29 @@ export const SaleStore = defineStore("saleStore", {
     },
     PlusProNameModal() {
       this.plus_name_modal = true;
+
     },
     PlusProTypeModal() {
       this.plus_type_modal = true;
+
     },
     async CreateProType(payload) {
-      console.log(payload);
-
       const type = await SaleLegalService.CreateProType(payload);
+      GetProType()
     },
     async CreateProName(payload) {
-      console.log(payload);
-
       const name = await SaleLegalService.CreateProName(payload);
-      console.log(type);
+      GetProName()
+    },
+    async GetProName() {
+      const names = await SaleLegalService.GetProName();
+      this.pro_names = names.data.data
+    },
+    async GetProType() {
+      const types = await SaleLegalService.GetProType();
+      this.pro_types = types.data.data
+
+
     },
     async getAll(payload) {
       const loader = loading.show();

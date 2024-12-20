@@ -10,6 +10,14 @@ export const SaleLegalService = {
     let url = "sale/add_pro_type";
     return api.post(url, data);
   },
+  GetProType() {
+    let url = "sale/pro_type";
+    return api.post(url);
+  },
+  GetProName() {
+    let url = "sale/pro_name";
+    return api.post(url);
+  },
   getModel() {
     let url = "sale/legal_model";
     return api.get(url);
