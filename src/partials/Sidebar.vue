@@ -1529,7 +1529,7 @@
                       </a>
                     </li>
                   </router-link>
-                  <router-link
+                  <!-- <router-link
                     to="/explore/products/lab"
                     custom
                     v-slot="{ href, navigate, isExactActive }"
@@ -1574,7 +1574,7 @@
                         >
                       </a>
                     </li>
-                  </router-link>
+                  </router-link> -->
                   <router-link
                     to="/explore/products/lab"
                     custom
