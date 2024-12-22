@@ -2,6 +2,7 @@
 import { ref, onMounted } from "vue";
 import { read, utils, writeFileXLSX } from "xlsx";
 import Scanner from "../../components/Seam/Scanner.vue";
+import Form from "../../components/Seam/Form.vue";
 import { ToastifyService } from "../../utils/Toastify";
 import { loading } from "./../../utils/Loader";
 import { SeamStore } from "../../stores/Seam/seam.store";
@@ -779,6 +780,7 @@ const rules = ref({
         </div>
       </div>
     </div>
+    <Form v-if="isActive === 4" />
   </div>
 </template>
 <style scoped>

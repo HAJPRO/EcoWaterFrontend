@@ -109,6 +109,21 @@ onMounted(async () => {
           ></span>
         </div>
       </router-link>
+      <router-link
+        @click="ActiveTabLink(4)"
+        to=""
+        :class="{ activeTab: isActive === 4 }"
+        class="inline-flex text-[13px] items-center mr-2 px-4 py-1 mb-1 text-sm font-medium text-center text-red hover:border-b-2 border-solid border-[#36d887] bg-[#e4e9e9] text-bold rounded"
+      >
+        <i class="fa-solid fa-vest mr-2 fa-xm"></i> Bichuv
+        <div class="flex flex-shrink-0 ml-2">
+          <span
+            class="inline-flex items-center justify-center h-5 text-[11px] font-medium text-white bg-[#36d887] px-2 py-2 rounded"
+          >
+            <span class=" "> <i class="fa-solid fa-vest fa-md"></i></span
+          ></span>
+        </div>
+      </router-link>
     </div>
   </div>
 </template>
