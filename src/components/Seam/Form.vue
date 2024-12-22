@@ -34,10 +34,10 @@ onMounted(async () => {
           class="w-full"
           header-align="right"
           header-hight="1"
+          max-height="400"
           empty-text="Mahsulot qo'shilmagan... "
           :data="items"
           border
-          min-height="300"
         >
           <el-table-column
             header-align="center"
