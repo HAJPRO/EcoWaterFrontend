@@ -9,7 +9,7 @@ const IsActive = (is_active) => {
 };
 
 const getAll = async () => {
-  await store_form.getAll();
+  await store_form.getAll(isActive.value);
   IsActive(isActive.value);
 };
 const isActive = ref(1);

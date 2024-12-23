@@ -1,5 +1,14 @@
 <script setup>
 import { ref } from "vue";
+import { SeamInFormStore } from "../../../stores/Seam/Form/form.store";
+import AddInfoFormModal from "../AddToFormModal.vue";
+const store_form = SeamInFormStore();
+import { storeToRefs } from "pinia";
+const { items, is_modal } = storeToRefs(store_form);
+
+const formModal = (id) => {
+  store_form.FormModal();
+};
 </script>
 <template>
   <div class="">
@@ -11,7 +20,7 @@ import { ref } from "vue";
           class="w-full"
           header-align="right"
           header-hight="1"
-          max-height="400"
+          max-height="600"
           empty-text="Mahsulot qo'shilmagan... "
           :data="items"
           border
@@ -110,10 +119,17 @@ import { ref } from "vue";
             header-align="center"
             align="center"
           >
-            <template #default="">
+            <template #default="scope">
+              <router-link
+                @click="formModal(scope.row._id)"
+                to=""
+                class="inline-flex items-center ml-2 text-red hover:bg-slate-200 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-2 text-center"
+              >
+                <i class="text-black fa-solid fa-check fa-md"></i>
+              </router-link>
               <router-link
                 to=""
-                class="inline-flex items-center ml-2 text-red hover:bg-red-600 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
+                class="inline-flex items-center ml-2 text-red hover:bg-slate-200 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
               >
                 <i class="text-black fa-trash fa-solid fa-trash fa-sm"></i>
               </router-link>
