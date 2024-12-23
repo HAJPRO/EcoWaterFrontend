@@ -217,6 +217,67 @@ const routes = [
           }
         },
       },
+      {
+        path: "department/seam/classification",
+        name: "SeamClassification",
+        component: () =>
+          import("../pages/Explore/Seam/classification/index.vue"),
+        beforeEnter(to, from, next) {
+          if (
+            JSON.parse(Cookies.get("account")).role === 5 ||
+            JSON.parse(Cookies.get("account")).role === 1000
+          ) {
+            next();
+          } else {
+            window.location.href = "/explore";
+          }
+        },
+      },
+      {
+        path: "department/seam/patoks",
+        name: "SeamPatoks",
+        component: () => import("../pages/Explore/Seam/patoks/index.vue"),
+        beforeEnter(to, from, next) {
+          if (
+            JSON.parse(Cookies.get("account")).role === 5 ||
+            JSON.parse(Cookies.get("account")).role === 1000
+          ) {
+            next();
+          } else {
+            window.location.href = "/explore";
+          }
+        },
+      },
+      {
+        path: "department/seam/packing",
+        name: "SeamPacking",
+        component: () => import("../pages/Explore/Seam/packing/index.vue"),
+        beforeEnter(to, from, next) {
+          if (
+            JSON.parse(Cookies.get("account")).role === 5 ||
+            JSON.parse(Cookies.get("account")).role === 1000
+          ) {
+            next();
+          } else {
+            window.location.href = "/explore";
+          }
+        },
+      },
+      {
+        path: "department/seam/clothes_warehouse",
+        name: "SeamClothesWarehouse",
+        component: () => import("../pages/Explore/Seam/c-warehouse/index.vue"),
+        beforeEnter(to, from, next) {
+          if (
+            JSON.parse(Cookies.get("account")).role === 5 ||
+            JSON.parse(Cookies.get("account")).role === 1000
+          ) {
+            next();
+          } else {
+            window.location.href = "/explore";
+          }
+        },
+      },
       //Taminot bolimi
       {
         path: "department/provide/working/plan",

@@ -1461,7 +1461,7 @@
                     </li>
                   </router-link>
                   <router-link
-                    to="/explore/department/seam/form"
+                    :to="{ name: 'SeamForm' }"
                     custom
                     v-slot="{ href, navigate, isExactActive }"
                   >
@@ -1484,7 +1484,7 @@
                     </li>
                   </router-link>
                   <router-link
-                    to="/explore/products/lab"
+                    :to="{ name: 'SeamClassification' }"
                     custom
                     v-slot="{ href, navigate, isExactActive }"
                   >
@@ -1507,7 +1507,7 @@
                     </li>
                   </router-link>
                   <router-link
-                    to="/explore/products/lab"
+                    :to="{ name: 'SeamPatoks' }"
                     custom
                     v-slot="{ href, navigate, isExactActive }"
                   >
@@ -1576,7 +1576,7 @@
                     </li>
                   </router-link> -->
                   <router-link
-                    to="/explore/products/lab"
+                    :to="{ name: 'SeamPacking' }"
                     custom
                     v-slot="{ href, navigate, isExactActive }"
                   >
@@ -1599,7 +1599,7 @@
                     </li>
                   </router-link>
                   <router-link
-                    to="/explore/products/lab"
+                    :to="{ name: 'SeamClothesWarehouse' }"
                     custom
                     v-slot="{ href, navigate, isExactActive }"
                   >
