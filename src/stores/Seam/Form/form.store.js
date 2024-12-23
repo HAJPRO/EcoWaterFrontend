@@ -1,4 +1,4 @@
-// import { ToastifyService } from "../../utils/Toastify";
+import { ToastifyService } from "../../../utils/Toastify";
 import { loading } from "../../../utils/Loader";
 import { SeamInFormService } from "../../../ApiServices/Seam/form/form.service";
 import { defineStore } from "pinia";
@@ -37,6 +37,15 @@ export const SeamInFormStore = defineStore("SeamInFormStore", {
         data: paload,
         id: this.card_id,
       });
+      this.is_modal = false
+
+      ToastifyService.ToastSuccess({
+        msg: data.data.msg,
+      });
+      const Refresh = () => {
+        window.location.href = "/explore/department/seam/form";
+      };
+      setTimeout(Refresh, 1000);
       loader.hide();
     },
   },
