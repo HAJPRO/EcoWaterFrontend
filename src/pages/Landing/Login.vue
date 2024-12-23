@@ -40,13 +40,23 @@ const rules = ref({
         class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700"
       >
         <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
+          <img
+            class="rounded-[50%]"
+            src="../../../public/logo icon.jpg"
+            width="80px"
+            height="80px"
+            alt="logo"
+            style="align-items: center; margin: 0 auto 0"
+          />
+
           <h1
-            class="bg-white rounded-md p-2 shadow-md border-t-[2px] border-[#36d887] text-xl font-bold leading-tight text-center tracking-tight text-gray-800 md:text-xl dark:text-white"
+            class="bg-white rounded-md p-2 shadow-md border-t-[2px] border-[#36d887] text-[18px] font-bold leading-tight text-center tracking-tight text-gray-700 dark:text-white"
           >
             HAJ ERP
           </h1>
+
           <h1
-            class="text-[18px] font-bold leading-tight text-center tracking-tight text-gray-500 md:text-md dark:text-white"
+            class="text-[15px] font-bold leading-tight text-center tracking-tight text-gray-500 md:text-md dark:text-white"
           >
             Kirish
           </h1>
@@ -56,7 +66,7 @@ const rules = ref({
             label-width="auto"
             size="large"
             label-position="top"
-            class="space-y-4 md:space-y-6"
+            class="space-y-4 md:space-y-6 text-[13px]"
           >
             <el-form-item label="Username" prop="username" :rules="rules">
               <el-input

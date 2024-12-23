@@ -37,7 +37,7 @@ const formModal = (id) => {
           <el-table-column
             prop="party_number"
             label="Partya nomeri"
-            width="300"
+            width="200"
             header-align="center"
             align="center"
           />
@@ -54,19 +54,19 @@ const formModal = (id) => {
             header-align="center"
             prop="material_name"
             label="Mato nomi"
-            width="200"
+            width="150"
           />
           <el-table-column
             prop="color"
             label="Rangi"
-            width="200"
+            width="150"
             header-align="center"
             align="center"
           />
           <el-table-column
             prop="quantity"
             label="Miqdori"
-            width="200"
+            width="150"
             header-align="center"
             align="center"
           />
@@ -75,20 +75,20 @@ const formModal = (id) => {
             align="center"
             prop="unit"
             label="Birligi"
-            width="180"
+            width="100"
             header-align="center"
           />
           <el-table-column
             align="center"
             prop="sort"
             label="Sorti"
-            width="180"
+            width="100"
             header-align="center"
           />
           <el-table-column
             prop="createdAt"
             label="Vaqti"
-            width="190"
+            width="200"
             header-align="center"
             align="center"
             ><template #default="scope">{{
@@ -98,7 +98,7 @@ const formModal = (id) => {
           <el-table-column
             fixed="right"
             label="Holati"
-            width="150"
+            width="200"
             header-align="center"
             align="center"
           >
@@ -115,7 +115,7 @@ const formModal = (id) => {
             fixed="right"
             prop="id"
             label=""
-            width="200"
+            width="150"
             header-align="center"
             align="center"
           >
@@ -123,9 +123,9 @@ const formModal = (id) => {
               <router-link
                 @click="formModal(scope.row._id)"
                 to=""
-                class="inline-flex items-center ml-2 text-red hover:bg-slate-200 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-2 text-center"
+                class="inline-flex items-center ml-2 text-red hover:bg-slate-200 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
               >
-                <i class="text-black fa-solid fa-check fa-md"></i>
+                <i class="text-black fa-solid fa-check fa-sm"></i>
               </router-link>
               <router-link
                 to=""
