@@ -23,7 +23,7 @@ export const SaleStore = defineStore("saleStore", {
       plus_name_modal: false,
       plus_type_modal: false,
       pro_names: [],
-      pro_types: []
+      pro_types: [],
     };
   },
   actions: {
@@ -32,29 +32,25 @@ export const SaleStore = defineStore("saleStore", {
     },
     PlusProNameModal() {
       this.plus_name_modal = true;
-
     },
     PlusProTypeModal() {
       this.plus_type_modal = true;
-
     },
     async CreateProType(payload) {
       const type = await SaleLegalService.CreateProType(payload);
-      GetProType()
+      GetProType();
     },
     async CreateProName(payload) {
       const name = await SaleLegalService.CreateProName(payload);
-      GetProName()
+      GetProName();
     },
     async GetProName() {
       const names = await SaleLegalService.GetProName();
-      this.pro_names = names.data
+      this.pro_names = names.data;
     },
     async GetProType() {
       const types = await SaleLegalService.GetProType();
-      this.pro_types = types.data
-
-
+      this.pro_types = types.data;
     },
     async getAll(payload) {
       const loader = loading.show();
@@ -110,7 +106,7 @@ export const SaleStore = defineStore("saleStore", {
         const Refresh = () => {
           window.location.href = "/explore/sale/legal";
         };
-        setTimeout(Refresh, 1500);
+        setTimeout(Refresh, 1000);
       } catch (error) {
         return ToastifyService.ToastError({ msg: error.messages });
       }

@@ -8,14 +8,11 @@ import { SaleStore } from "../../stores/Sale/sale.store";
 const store_seam = SeamStore();
 const store_sale = SaleStore();
 import { storeToRefs } from "pinia";
-const all_length = ref();
+const { all_length } = storeToRefs(store_sale);
 const IsActive = (is_active) => {
   store_seam.GetIsActive(is_active);
 };
-const getAllLength = async () => {
-  const data = await SaleLegalService.getAllLength();
-  all_length.value = data.data ? data.data : {};
-};
+
 const getAll = async () => {
   const loader = loading.show();
   await store_sale.getAll();
@@ -51,7 +48,7 @@ const ActiveTabLink = (num) => {
 };
 onMounted(async () => {
   try {
-    await getAllLength(), getAll();
+    await getAll();
   } catch (err) {
     console.log(err);
   }
@@ -118,10 +115,12 @@ onMounted(async () => {
         <i class="fa-solid fa-vest mr-2 fa-xm"></i> Bichuv
         <div class="flex flex-shrink-0 ml-2">
           <span
-            class="inline-flex items-center justify-center h-5 text-[11px] font-medium text-white bg-[#36d887] px-2 py-2 rounded"
+            class="inline-flex items-center justify-center h-5 text-[11px] font-medium text-white bg-[#36d887] px-3 py-2 rounded"
           >
-            <span class=" "> <i class="fa-solid fa-vest fa-md"></i></span
-          ></span>
+            <span class=" ">0</span>/{{
+              (all_length ? all_length : 0) || 0
+            }}</span
+          >
         </div>
       </router-link>
     </div>

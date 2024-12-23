@@ -10,6 +10,7 @@ export const SeamStore = defineStore("SeamPlan", {
       form_modal: false,
       model: {},
       items: [],
+      all_length: "",
     };
   },
   actions: {
@@ -37,8 +38,7 @@ export const SeamStore = defineStore("SeamPlan", {
           "/explore/department/seam/warehouse/raw_material";
       };
 
-      setTimeout(Refresh, 1500);
-      this.isActive = 4;
+      setTimeout(Refresh, 1000);
     },
     async GetAllForm() {
       const data = await SeamWarehouseService.GetAllForm();
