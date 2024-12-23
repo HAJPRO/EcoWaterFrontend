@@ -190,7 +190,22 @@ const routes = [
         path: "department/seam/warehouse/raw_material",
         name: "seam",
         component: () =>
-          import("../pages/Explore/Seam/warehouse/RawMaterial.vue.vue"),
+          import("../pages/Explore/Seam/warehouse/RawMaterial.vue"),
+        beforeEnter(to, from, next) {
+          if (
+            JSON.parse(Cookies.get("account")).role === 5 ||
+            JSON.parse(Cookies.get("account")).role === 1000
+          ) {
+            next();
+          } else {
+            window.location.href = "/explore";
+          }
+        },
+      },
+      {
+        path: "department/seam/form",
+        name: "SeamForm",
+        component: () => import("../pages/Explore/Seam/form/index.vue"),
         beforeEnter(to, from, next) {
           if (
             JSON.parse(Cookies.get("account")).role === 5 ||

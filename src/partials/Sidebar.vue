@@ -1461,7 +1461,7 @@
                     </li>
                   </router-link>
                   <router-link
-                    to="/explore/products/lab"
+                    to="/explore/department/seam/form"
                     custom
                     v-slot="{ href, navigate, isExactActive }"
                   >
