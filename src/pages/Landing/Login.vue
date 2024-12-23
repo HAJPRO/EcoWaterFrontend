@@ -34,17 +34,17 @@ const rules = ref({
 <template>
   <div class="bg-gray-50 dark:bg-gray-900">
     <div
-      class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0"
+      class="flex flex-col items-center justify-center px-4 py-4 mx-auto md:h-screen lg:py-0"
     >
       <div
         class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700"
       >
-        <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
+        <div class="p-4 space-y-4 md:space-y-4 sm:p-6">
           <img
             class="rounded-[50%]"
             src="../../../public/logo icon.jpg"
-            width="80px"
-            height="80px"
+            width="90px"
+            height="90px"
             alt="logo"
             style="align-items: center; margin: 0 auto 0"
           />
