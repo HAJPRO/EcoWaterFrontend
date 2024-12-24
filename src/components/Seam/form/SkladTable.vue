@@ -7,7 +7,7 @@ import { storeToRefs } from "pinia";
 const { items, is_modal } = storeToRefs(store_form);
 
 const formModal = (id) => {
-  store_form.FormModal();
+  store_form.FormModal(id);
 };
 </script>
 <template>

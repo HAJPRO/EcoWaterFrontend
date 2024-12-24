@@ -1,15 +1,15 @@
 <script setup>
 import { ref } from "vue";
 import { SeamInFormStore } from "../../../stores/Seam/Form/form.store";
-const store = SeamInFormStore();
+const store_form = SeamInFormStore();
 import { storeToRefs } from "pinia";
-const { is_modal, model } = storeToRefs(store);
+const { is_modal, model } = storeToRefs(store_form);
 
 const formRef = ref();
 const Save = async (formRef) => {
   await formRef.validate((valid) => {
     if (valid === true) {
-      store_seam.CreaetToForm(model.value);
+      store_form.CreaetInfoToForm(model.value);
     } else {
       return false;
     }

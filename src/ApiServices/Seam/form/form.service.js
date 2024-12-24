@@ -8,8 +8,11 @@ export const SeamInFormService = {
   },
 
   GetAll(status) {
-    console.log(status);
     let url = "seam/all_form";
     return api.post(url, { status });
+  },
+  CreaetInfoToForm(data) {
+    let url = "seam/form_create";
+    return api.post(url, data);
   },
 };
