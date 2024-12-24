@@ -80,13 +80,17 @@ const rules = ref({
         </div>
         <div class="col-span-12 flex justify-end">
           <div></div>
-          <router-link
-            to=""
+          <el-button
+            size="small"
             @click="Save(formRef)"
-            class="inline-flex text-[12px] items-center ml-2 px-3 py-1 mb-1 mt-2 text-sm font-medium text-center text-white bg-[#36d887] text-bold rounded"
-          >
-            <i class="mr-2 fa-solid fa-check fa-sm"></i>Yuborish</router-link
-          >
+            style="
+              background-color: #36d887;
+              color: white;
+              border: none;
+              margin-bottom: 4px;
+            "
+            ><i class="mr-2 fa-solid fa-check fa-sm"></i>Yuborish
+          </el-button>
         </div>
       </el-form>
     </span>
@@ -95,7 +99,9 @@ const rules = ref({
         class="flex justify-between flex-wrap font-semibold text-[11px] p-1 bg-slate-100 shadow"
       >
         <div>Party num:</div>
-        <div class="bg-red-200 p-1 rounded borderbor">
+        <div
+          class="bg-red-50 p-1 rounded text-[11px] border-[1px] border-red-500"
+        >
           {{ report.report_data.status }}
         </div>
         <div>Buyurtmach:</div>
