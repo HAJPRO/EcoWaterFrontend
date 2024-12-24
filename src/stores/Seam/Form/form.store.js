@@ -14,6 +14,11 @@ export const SeamInFormStore = defineStore("SeamInFormStore", {
         waste_quantity: "",
         fact_gramage: "",
       },
+      report: {
+        is_modal: false,
+        id: "",
+      },
+
       card_id: "",
     };
   },
@@ -24,6 +29,27 @@ export const SeamInFormStore = defineStore("SeamInFormStore", {
     FormModal(id) {
       this.is_modal = true;
       this.card_id = id;
+    },
+    ReportModal(id) {
+      this.report.is_modal = true;
+      this.report.id = id;
+    },
+    async CreateDayReport(items) {
+      const loader = loading.show();
+      const data = await SeamInFormService.CreateDayReport({
+        items,
+        id: this.report.id,
+      });
+      this.report.is_modal = false;
+
+      ToastifyService.ToastSuccess({
+        msg: data.data.msg,
+      });
+      const Refresh = () => {
+        window.location.href = "/explore/department/seam/form";
+      };
+      setTimeout(Refresh, 1000);
+      loader.hide();
     },
     async getAll(payload) {
       const loader = loading.show();
@@ -37,7 +63,7 @@ export const SeamInFormStore = defineStore("SeamInFormStore", {
         data: paload,
         id: this.card_id,
       });
-      this.is_modal = false
+      this.is_modal = false;
 
       ToastifyService.ToastSuccess({
         msg: data.data.msg,

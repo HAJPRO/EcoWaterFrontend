@@ -15,4 +15,8 @@ export const SeamInFormService = {
     let url = "seam/form_create";
     return api.post(url, data);
   },
+  CreateDayReport(data) {
+    let url = "seam/create_day_report";
+    return api.post(url, data);
+  },
 };

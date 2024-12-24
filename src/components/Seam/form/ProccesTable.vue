@@ -4,6 +4,9 @@ import { SeamInFormStore } from "../../../stores/Seam/Form/form.store";
 const store_form = SeamInFormStore();
 import { storeToRefs } from "pinia";
 const { items } = storeToRefs(store_form);
+const Report = (id) => {
+  store_form.ReportModal(id);
+};
 </script>
 <template>
   <div class="">
@@ -159,8 +162,9 @@ const { items } = storeToRefs(store_form);
             header-align="center"
             align="center"
           >
-            <template #default="">
+            <template #default="scope">
               <router-link
+                @click="Report(scope.row._id)"
                 to=""
                 class="inline-flex items-center ml-2 text-red hover:bg-slate-300 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
               >
