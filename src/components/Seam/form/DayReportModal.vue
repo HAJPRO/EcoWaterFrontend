@@ -91,8 +91,17 @@ const rules = ref({
       </el-form>
     </span>
     <div class="shadow-md rounded">
+      <div
+        class="flex justify-between flex-wrap font-semibold text-[11px] p-1 bg-slate-100 shadow"
+      >
+        <div>Party num:</div>
+        <div class="bg-red-200 p-1 rounded border-red-500">
+          {{ report.report_data.status }}
+        </div>
+        <div>Buyurtmach:</div>
+      </div>
       <el-table
-        :data="Model"
+        :data="report.report_data.report_box"
         load
         class="w-full"
         header-align="center"
@@ -130,7 +139,10 @@ const rules = ref({
           prop="date"
           label="Vaqti"
           width="150"
-        />
+          ><template #default="scope">{{
+            String(scope.row.date).substring(0, 10)
+          }}</template></el-table-column
+        >
 
         <el-table-column
           fixed="right"
@@ -142,7 +154,7 @@ const rules = ref({
           <template #default="">
             <router-link
               to=""
-              class="inline-flex items-center mt-4 ml-2 text-red bg-[#eedc36] hover:bg-yellow-400 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
+              class="inline-flex items-center mt-4 ml-2 text-red hover:bg-yellow-400 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
             >
               <i class="text-red fa-solid fa-check fa-xs fa- fa-xs"></i>
             </router-link>
@@ -152,9 +164,16 @@ const rules = ref({
       <div
         class="flex justify-between flex-wrap font-semibold text-[12px] p-1 bg-slate-100 shadow"
       >
-        <div>Buyurtma:</div>
-        <div>Bajarildi:</div>
-        <div>Qoldi:</div>
+        <div>
+          Buyurtma: {{ report ? report.report_data.pastal_quantity : 0 }}
+        </div>
+        <div>Bajarildi: {{ report.done ? report.done : 0 }}</div>
+        <div>
+          Qoldi:
+          {{
+            report.done ? report.report_data.pastal_quantity - report.done : 0
+          }}
+        </div>
       </div>
     </div>
     <el-dialog

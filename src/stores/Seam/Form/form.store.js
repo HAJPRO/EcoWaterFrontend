@@ -2,7 +2,7 @@ import { ToastifyService } from "../../../utils/Toastify";
 import { loading } from "../../../utils/Loader";
 import { SeamInFormService } from "../../../ApiServices/Seam/form/form.service";
 import { defineStore } from "pinia";
-
+import { ref } from "vue";
 export const SeamInFormStore = defineStore("SeamInFormStore", {
   state: () => {
     return {
@@ -17,7 +17,8 @@ export const SeamInFormStore = defineStore("SeamInFormStore", {
       report: {
         is_modal: false,
         id: "",
-        report_box: [],
+        report_data: "",
+        done: "",
       },
 
       card_id: "",
@@ -38,7 +39,15 @@ export const SeamInFormStore = defineStore("SeamInFormStore", {
     },
     async GetOneReport(id) {
       const data = await SeamInFormService.GetOneReport(id);
-      this.report.report_box = data.data;
+      this.report.report_data = data.data[0];
+
+      const initialValue = ref(0);
+      this.report.done = data.data[0].report_box.reduce(
+        (accumulator, currentValue) =>
+          accumulator + Number(currentValue.quantity),
+        initialValue.value
+      );
+      console.log(this.report.done);
     },
 
     async CreateDayReport(items) {
