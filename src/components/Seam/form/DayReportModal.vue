@@ -67,6 +67,67 @@ const rules = ref({
         </div>
       </el-form>
     </span>
+    <div class="shadow-md rounded">
+      <el-table
+        :data="Model"
+        load
+        class="w-full"
+        header-align="center"
+        hight="5"
+        empty-text="Mahsulot tanlanmagan... "
+        border
+        style="width: 100%; font-size: 13px"
+        min-height="170"
+        max-height="170"
+      >
+        <el-table-column
+          header-align="center"
+          align="center"
+          type="index"
+          prop="index"
+          fixed="left"
+          label="№"
+          width="60"
+        />
+
+        <el-table-column
+          header-align="center"
+          prop="quantity"
+          label="Miqdori"
+          width="180"
+        />
+        <el-table-column
+          header-align="center"
+          prop="unit"
+          label="Birligi"
+          width="150"
+        />
+
+        <el-table-column
+          fixed="right"
+          label=""
+          width="127"
+          header-align="center"
+          align="center"
+        >
+          <template #default="">
+            <router-link
+              to=""
+              class="inline-flex items-center mt-4 ml-2 text-red bg-[#eedc36] hover:bg-yellow-400 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
+            >
+              <i class="text-red fa-solid fa-check fa-xs fa- fa-xs"></i>
+            </router-link>
+          </template>
+        </el-table-column>
+      </el-table>
+      <div
+        class="flex justify-between flex-wrap font-semibold text-[12px] p-1 bg-slate-100 shadow"
+      >
+        <div>Buyurtma:</div>
+        <div>Bajarildi:</div>
+        <div>Qoldi:</div>
+      </div>
+    </div>
     <el-dialog
       v-model="innerVisible"
       width="600"
