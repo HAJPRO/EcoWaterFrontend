@@ -17,6 +17,7 @@ export const SeamInFormStore = defineStore("SeamInFormStore", {
       report: {
         is_modal: false,
         id: "",
+        report_box: [],
       },
 
       card_id: "",
@@ -33,7 +34,13 @@ export const SeamInFormStore = defineStore("SeamInFormStore", {
     ReportModal(id) {
       this.report.is_modal = true;
       this.report.id = id;
+      this.GetOneReport(id);
     },
+    async GetOneReport(id) {
+      const data = await SeamInFormService.GetOneReport(id);
+      this.report.report_box = data.data;
+    },
+
     async CreateDayReport(items) {
       const loader = loading.show();
       const data = await SeamInFormService.CreateDayReport({

@@ -7,6 +7,7 @@ const { is_confirm, report } = storeToRefs(store_form);
 const model = ref({
   quantity: "",
   unit: "",
+  date: "",
 });
 const formRef = ref();
 const Save = async (formRef) => {
@@ -28,7 +29,7 @@ const rules = ref({
   <el-dialog
     v-model="report.is_modal"
     title="Kunlik hisobot qo'shish oynasi"
-    width="600"
+    width="700"
   >
     <span>
       <el-form
@@ -37,9 +38,9 @@ const rules = ref({
         label-width="auto"
         size="small"
         label-position="top"
-        class="filter-box md:grid md:grid-cols-12 gap-2 sm:flex sm:flex-wrap rounded shadow-md bg-white p-2 mt-1 mb-1 text-[12px]"
+        class="filter-box md:grid md:grid-cols-12 gap-2 sm:flex sm:flex-wrap rounded shadow mb-1 bg-white p-1 text-[12px]"
       >
-        <div class="mb-1 col-span-6">
+        <div class="mb-1 col-span-4">
           <el-form-item label="Miqdori (kg)" prop="quantity" :rules="rules">
             <el-input
               required
@@ -52,7 +53,7 @@ const rules = ref({
             />
           </el-form-item>
         </div>
-        <div class="mb-1 col-span-6">
+        <div class="mb-1 col-span-4">
           <el-form-item label="Birligi" prop="unit" :rules="rules">
             <el-input
               required
@@ -60,10 +61,32 @@ const rules = ref({
               clearable
               class="w-[100%]"
               size="smal"
-              type="Number"
+              type="String"
               placeholder="..."
             />
           </el-form-item>
+        </div>
+        <div class="mb-1 col-span-4">
+          <el-form-item label="Vaqt" prop="date" :rules="rules">
+            <el-date-picker
+              v-model="model.date"
+              style="width: 100%"
+              clearable
+              type="date"
+              placeholder="..."
+              size="smal"
+            />
+          </el-form-item>
+        </div>
+        <div class="col-span-12 flex justify-end">
+          <div></div>
+          <router-link
+            to=""
+            @click="Save(formRef)"
+            class="inline-flex text-[12px] items-center ml-2 px-3 py-1 mb-1 mt-2 text-sm font-medium text-center text-white bg-[#36d887] text-bold rounded"
+          >
+            <i class="mr-2 fa-solid fa-check fa-sm"></i>Yuborish</router-link
+          >
         </div>
       </el-form>
     </span>
@@ -102,6 +125,12 @@ const rules = ref({
           label="Birligi"
           width="150"
         />
+        <el-table-column
+          header-align="center"
+          prop="date"
+          label="Vaqti"
+          width="150"
+        />
 
         <el-table-column
           fixed="right"
@@ -136,15 +165,7 @@ const rules = ref({
     >
     </el-dialog>
     <template #footer>
-      <div class="dialog-footer">
-        <router-link
-          to=""
-          @click="Save(formRef)"
-          class="inline-flex text-[12px] items-center ml-2 px-3 py-1 mb-1 mt-2 text-sm font-medium text-center text-white bg-[#36d887] text-bold rounded"
-        >
-          <i class="mr-2 fa-solid fa-check fa-sm"></i>Yuborish</router-link
-        >
-      </div>
+      <div class="dialog-footer"></div>
     </template>
   </el-dialog>
 </template>
