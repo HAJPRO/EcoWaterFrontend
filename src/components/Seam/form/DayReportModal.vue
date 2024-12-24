@@ -95,7 +95,7 @@ const rules = ref({
         class="flex justify-between flex-wrap font-semibold text-[11px] p-1 bg-slate-100 shadow"
       >
         <div>Party num:</div>
-        <div class="bg-red-200 p-1 rounded border-red-500">
+        <div class="bg-red-200 p-1 rounded borderbor">
           {{ report.report_data.status }}
         </div>
         <div>Buyurtmach:</div>
