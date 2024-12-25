@@ -86,6 +86,21 @@ const Report = (id) => {
           <el-table-column
             fixed="right"
             align="center"
+            prop="head_pack"
+            label="To'p boshi (kg)"
+            width="120"
+            header-align="center"
+            ><template #default="scope"
+              ><div
+                class="cursor-pointer inline-flex items-center text-red-500 hover:bg-slate-300 font-medium rounded-md text-[12px] w-ful p-[5px] sm:w-auto text-center"
+              >
+                {{ scope.row.head_pack }}
+              </div></template
+            ></el-table-column
+          >
+          <el-table-column
+            fixed="right"
+            align="center"
             prop="pastal_quantity"
             label="Pastal (kg)"
             width="100"

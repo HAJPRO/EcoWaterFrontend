@@ -38,6 +38,23 @@ const rules = ref({
       >
         <div class="mb-1 col-span-4">
           <el-form-item
+            label="To'p boshi miqdori (kg)"
+            prop="head_pack"
+            :rules="rules"
+          >
+            <el-input
+              required
+              v-model="model.head_pack"
+              clearable
+              class="w-[100%]"
+              size="smal"
+              type="Number"
+              placeholder="..."
+            />
+          </el-form-item>
+        </div>
+        <div class="mb-1 col-span-4">
+          <el-form-item
             label="Pastal miqdori (kg)"
             prop="pastal_quantity"
             :rules="rules"

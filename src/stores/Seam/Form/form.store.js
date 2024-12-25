@@ -10,6 +10,7 @@ export const SeamInFormStore = defineStore("SeamInFormStore", {
       items: [],
       is_modal: false,
       model: {
+        head_pack: "",
         pastal_quantity: "",
         waste_quantity: "",
         fact_gramage: "",
