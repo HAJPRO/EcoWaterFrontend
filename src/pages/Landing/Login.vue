@@ -32,12 +32,21 @@ const rules = ref({
 </script>
 
 <template>
-  <div class="bg-gray-50 dark:bg-gray-900">
+  <div class="grid grid-cols-2 gap-1 grid-rows-2 bg-white dark:bg-gray-900">
+    <div class="col-span-1 row-span-2">
+      <img
+        class="w-full h-full items-center text-center"
+        src="../../../public/login1.png"
+        width="400px"
+        height="400px"
+        alt=""
+      />
+    </div>
     <div
-      class="flex flex-col items-center justify-center px-4 py-4 mx-auto md:h-screen lg:py-0"
+      class="flex flex-col col-span-1 row-span-2 bg-white items-center justify-center px-4 py-4 mx-auto md:h-screen lg:py-0"
     >
       <div
-        class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700"
+        class="w-full bg-white rounded-lg shadow-2xl shadow-gray-400 dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700"
       >
         <div class="p-4 space-y-4 md:space-y-4 sm:p-6">
           <img
@@ -68,7 +77,11 @@ const rules = ref({
             label-position="top"
             class="space-y-4 md:space-y-6 text-[13px]"
           >
-            <el-form-item label="Username" prop="username" :rules="rules">
+            <el-form-item
+              label="Foydalanuvchi nomi"
+              prop="username"
+              :rules="rules"
+            >
               <el-input
                 clearable
                 v-model="user.username"
@@ -77,7 +90,7 @@ const rules = ref({
                 required
               />
             </el-form-item>
-            <el-form-item label="Password" prop="password" :rules="rules">
+            <el-form-item label="Paroli" prop="password" :rules="rules">
               <el-input
                 clearable
                 v-model="user.password"
