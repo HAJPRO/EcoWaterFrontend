@@ -1,5 +1,12 @@
 <script setup>
 import { ref } from "vue";
+import { SeamInClassificationStore } from "../../../stores/Seam/Classification/classification.store";
+const store_classification = SeamInClassificationStore();
+import { storeToRefs } from "pinia";
+const { items } = storeToRefs(store_classification);
+const Confirm = (id) => {
+  store_classification.ConfirmModal(id);
+};
 </script>
 <template>
   <div class="">
@@ -28,58 +35,43 @@ import { ref } from "vue";
           <el-table-column
             prop="party_number"
             label="Partya nomeri"
-            width="300"
+            width="200"
             header-align="center"
             align="center"
           />
           <el-table-column
             align="center"
             header-align="center"
-            prop="customer_name"
-            label="Buyurtmachi"
-            width="200"
+            prop="head_pack"
+            label="To'p boshi (kg)"
+            width="180"
+          />
+          <el-table-column
+            align="center"
+            header-align="center"
+            prop="pastal_quantity"
+            label="Pastal miqdori (kg)"
+            width="180"
           />
 
           <el-table-column
             align="center"
             header-align="center"
-            prop="material_name"
-            label="Mato nomi"
-            width="200"
-          />
-          <el-table-column
-            prop="color"
-            label="Rangi"
-            width="200"
-            header-align="center"
-            align="center"
-          />
-          <el-table-column
-            prop="quantity"
-            label="Miqdori"
-            width="200"
-            header-align="center"
-            align="center"
-          />
-
-          <el-table-column
-            align="center"
-            prop="unit"
-            label="Birligi"
+            prop="waste_quantity"
+            label="Atxod miqdori (kg)"
             width="180"
-            header-align="center"
           />
           <el-table-column
-            align="center"
-            prop="sort"
-            label="Sorti"
-            width="180"
+            prop="fact_gramage"
+            label="Fakt gramaj"
+            width="100"
             header-align="center"
+            align="center"
           />
           <el-table-column
             prop="createdAt"
             label="Vaqti"
-            width="190"
+            width="100"
             header-align="center"
             align="center"
             ><template #default="scope">{{
@@ -93,12 +85,12 @@ import { ref } from "vue";
             header-align="center"
             align="center"
           >
-            <template #default="scope">
+            <template #default="">
               <router-link
                 to=""
                 class="cursor-pointer inline-flex items-center text-red bg-[#e4e9e9] hover:bg-[#d7ebeb] font-medium rounded-md text-[12px] w-ful p-[5px] sm:w-auto text-center"
               >
-                {{ scope.row.status }}
+                Tasnifga yuborildi
               </router-link>
             </template>
           </el-table-column>
@@ -106,14 +98,21 @@ import { ref } from "vue";
             fixed="right"
             prop="id"
             label=""
-            width="200"
+            width="100"
             header-align="center"
             align="center"
           >
-            <template #default="">
+            <template #default="scope">
+              <router-link
+                @click="Confirm(scope.row._id)"
+                to=""
+                class="inline-flex items-center ml-2 text-red hover:bg-slate-300 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
+              >
+                <i class="text-black fa-check fa-solid fa-sm"></i>
+              </router-link>
               <router-link
                 to=""
-                class="inline-flex items-center ml-2 text-red hover:bg-red-600 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
+                class="inline-flex items-center ml-2 text-red hover:bg-slate-300 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
               >
                 <i class="text-black fa-trash fa-solid fa-trash fa-sm"></i>
               </router-link>

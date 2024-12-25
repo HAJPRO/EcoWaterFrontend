@@ -1,13 +1,16 @@
 <script setup>
+import { v4 as uuidv4 } from "uuid";
 import { ref } from "vue";
 import { SeamInFormStore } from "../../../stores/Seam/Form/form.store";
 const store_form = SeamInFormStore();
 import { storeToRefs } from "pinia";
 const { is_confirm, report } = storeToRefs(store_form);
 const model = ref({
+  id: uuidv4(),
   quantity: "",
   unit: "",
   date: "",
+  status: "Tasdiqlanmagan",
 });
 const formRef = ref();
 const Save = async (formRef) => {

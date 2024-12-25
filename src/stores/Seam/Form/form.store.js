@@ -1,3 +1,4 @@
+import { v4 as uuidv4 } from "uuid";
 import { ToastifyService } from "../../../utils/Toastify";
 import { loading } from "../../../utils/Loader";
 import { SeamInFormService } from "../../../ApiServices/Seam/form/form.service";
@@ -10,10 +11,12 @@ export const SeamInFormStore = defineStore("SeamInFormStore", {
       items: [],
       is_modal: false,
       model: {
+        id: uuidv4(),
         head_pack: "",
         pastal_quantity: "",
         waste_quantity: "",
         fact_gramage: "",
+        status: false,
       },
       report: {
         is_modal: false,

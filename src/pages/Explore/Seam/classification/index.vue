@@ -1,12 +1,14 @@
 <script setup>
-import { SeamInFormStore } from "../../../../stores/Seam/Form/form.store";
-const store_form = SeamInFormStore();
+import { SeamInClassificationStore } from "../../../../stores/Seam/Classification/classification.store";
+const store_classification = SeamInClassificationStore();
 import { storeToRefs } from "pinia";
-const { isActive } = storeToRefs(store_form);
+const { isActive, is_modal } = storeToRefs(store_classification);
+
 import Title from "../../../../components/Title.vue";
 import HeaderTabLink from "../../../../components/Seam/classification/HeaderTabLink.vue";
 import FormTable from "../../../../components/Seam/classification/FormTable.vue";
-import ProccesTable from "../../../../components/Seam/classification/ProccesTable.vue";
+import ProcessTable from "../../../../components/Seam/classification/ProcessTable.vue";
+import ConfirmModal from "../../../../components/Seam/classification/ConfirmModal.vue";
 </script>
 
 <template>
@@ -18,6 +20,7 @@ import ProccesTable from "../../../../components/Seam/classification/ProccesTabl
     </Title>
     <HeaderTabLink />
     <FormTable v-if="isActive === 2" />
-    <ProccesTable v-if="isActive === 1" />
+    <ProcessTable v-if="isActive === 1" />
+    <ConfirmModal v-if="is_modal === true" />
   </div>
 </template>
