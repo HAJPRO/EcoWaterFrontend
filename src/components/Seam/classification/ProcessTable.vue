@@ -1,11 +1,11 @@
 <script setup>
 import { ref } from "vue";
-import { SeamInFormStore } from "../../../stores/Seam/Form/form.store";
-const store_form = SeamInFormStore();
+import { SeamInClassificationStore } from "../../../stores/Seam/Classification/classification.store";
+const store_classification = SeamInClassificationStore();
 import { storeToRefs } from "pinia";
-const { items } = storeToRefs(store_form);
+const { items } = storeToRefs(store_classification);
 const Report = (id) => {
-  store_form.ReportModal(id);
+  store_classification.ReportModal(id);
 };
 </script>
 <template>

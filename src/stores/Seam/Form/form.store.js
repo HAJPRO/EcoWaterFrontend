@@ -51,7 +51,6 @@ export const SeamInFormStore = defineStore("SeamInFormStore", {
           accumulator + Number(currentValue.quantity),
         initialValue.value
       );
-      console.log(this.report.done);
     },
 
     async CreateDayReport(items) {
@@ -60,15 +59,11 @@ export const SeamInFormStore = defineStore("SeamInFormStore", {
         items,
         id: this.report.id,
       });
-      this.report.is_modal = false;
 
       ToastifyService.ToastSuccess({
         msg: data.data.msg,
       });
-      const Refresh = () => {
-        window.location.href = "/explore/department/seam/form";
-      };
-      setTimeout(Refresh, 1000);
+      this.GetOneReport(this.report.id);
       loader.hide();
     },
     async getAll(payload) {

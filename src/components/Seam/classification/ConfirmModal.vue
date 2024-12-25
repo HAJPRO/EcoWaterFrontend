@@ -3,7 +3,7 @@ import { ref } from "vue";
 import { SeamInClassificationStore } from "../../../stores/Seam/Classification/classification.store";
 const store_classification = SeamInClassificationStore();
 import { storeToRefs } from "pinia";
-const { is_modal, report } = storeToRefs(store_classification);
+const { is_modal, report_form } = storeToRefs(store_classification);
 const model = ref({
   quantity: "",
   unit: "",
@@ -34,26 +34,28 @@ const rules = ref({
       <div
         class="flex justify-between flex-wrap font-semibold text-[11px] p-1 bg-slate-100 shadow"
       >
-        <div>Party num:</div>
+        <div>Party num: {{ report_form.party_number }}</div>
         <div
           class="bg-red-50 p-1 rounded text-[11px] border-[1px] border-red-500"
         >
-          Jarayonda
+          {{ report_form.status }}
         </div>
-        <div>Buyurtmach:</div>
+        <div>Buyurtmach:{{ report_form.customer_name }}</div>
       </div>
       <el-table
-        :data="report"
+        :data="report_form.report_box"
         load
         class="w-full"
         header-align="center"
         empty-text="Mahsulot tanlanmagan... "
         border
+        align="center"
         style="width: 100%; font-size: 13px"
         min-height="250"
         max-height="250"
       >
         <el-table-column
+          align="center"
           header-align="center"
           type="index"
           prop="index"
@@ -102,15 +104,15 @@ const rules = ref({
         >
 
         <el-table-column
+          align="center"
           fixed="right"
           label=""
           width="80"
           header-align="center"
-          align="center"
         >
           <template #default="scope">
             <router-link
-              v-if="scope.row.status === `Tasdiqlanmagan`"
+              v-if="scope.row.status === `Tasnifga yuborildi`"
               @click="Accept(scope.$index)"
               to=""
               class="inline-flex items-center mt-4 ml-2 text-red hover:bg-yellow-400 font-medium rounded-md text-sm w-full sm:w-auto px-3 py-3 text-center"
@@ -124,7 +126,7 @@ const rules = ref({
         class="flex justify-between flex-wrap font-semibold text-[12px] p-1 bg-slate-100 shadow"
       >
         <div>Buyurtma: {{ 0 }}</div>
-        <div>Bajarildi: {{ 0 }}</div>
+        <div>Bajarildi: {{ report_form.done }}</div>
         <div>
           Qoldi:
           {{ 0 }}

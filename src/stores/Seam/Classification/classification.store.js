@@ -17,6 +17,13 @@ export const SeamInClassificationStore = defineStore(
           waste_quantity: "",
           fact_gramage: "",
         },
+        report_form: {
+          done: "",
+          report_box: [],
+          party_number: "",
+          customer_name: "",
+          status: ""
+        },
         report: [],
         card_id: "",
       };
@@ -45,10 +52,13 @@ export const SeamInClassificationStore = defineStore(
 
       async GetOneReport(id) {
         const data = await SeamInClassificationService.GetOneReport(id);
-        this.report = data.data[0].report_box;
+        this.report_form.report_box = data.data[0].report_box;
+        this.report_form.customer_name = data.data[0].warehouse.customer_name;
+        this.report_form.party_number = data.data[0].warehouse.party_number;
+        this.report_form.status = data.data[0].status;
 
         const initialValue = ref(0);
-        this.report.done = data.data[0].report_box.reduce(
+        this.report_form.done = data.data[0].report_box.reduce(
           (accumulator, currentValue) =>
             accumulator + Number(currentValue.quantity),
           initialValue.value

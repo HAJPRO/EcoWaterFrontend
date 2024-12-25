@@ -33,8 +33,36 @@ const Confirm = (id) => {
             width="50"
           />
           <el-table-column
-            prop="party_number"
+            prop="warehouse.party_number"
             label="Partya nomeri"
+            width="200"
+            header-align="center"
+            align="center"
+          />
+          <el-table-column
+            prop="warehouse.customer_name"
+            label="Buyurtmachi"
+            width="200"
+            header-align="center"
+            align="center"
+          />
+          <el-table-column
+            prop="warehouse.material_name"
+            label="Mato"
+            width="200"
+            header-align="center"
+            align="center"
+          />
+          <el-table-column
+            prop="warehouse.color"
+            label="Rangi"
+            width="200"
+            header-align="center"
+            align="center"
+          />
+          <el-table-column
+            prop="warehouse.sort"
+            label="Sort"
             width="200"
             header-align="center"
             align="center"

@@ -10,7 +10,7 @@ const model = ref({
   quantity: "",
   unit: "",
   date: "",
-  status: "Tasdiqlanmagan",
+  status: "Tasnifga yuborildi",
 });
 const formRef = ref();
 const Save = async (formRef) => {
@@ -132,18 +132,21 @@ const rules = ref({
         />
 
         <el-table-column
+          align="center"
           header-align="center"
           prop="quantity"
           label="Miqdori"
           width="180"
         />
         <el-table-column
+          align="center"
           header-align="center"
           prop="unit"
           label="Birligi"
           width="150"
         />
         <el-table-column
+          align="center"
           header-align="center"
           prop="date"
           label="Vaqti"
@@ -152,8 +155,23 @@ const rules = ref({
             String(scope.row.date).substring(0, 10)
           }}</template></el-table-column
         >
-
         <el-table-column
+          align="center"
+          fixed="right"
+          header-align="center"
+          label="Holati"
+          width="150"
+          ><template #default="scope">
+            <router-link
+              to=""
+              class="cursor-pointer inline-flex items-center text-red bg-[#e4e9e9] hover:bg-[#d7ebeb] font-medium rounded-md text-[12px] w-ful p-[5px] sm:w-auto text-center"
+            >
+              {{ scope.row.status }}
+            </router-link></template
+          ></el-table-column
+        >
+
+        <!-- <el-table-column
           fixed="right"
           label=""
           width="127"
@@ -168,7 +186,7 @@ const rules = ref({
               <i class="text-red fa-solid fa-check fa-xs fa- fa-xs"></i>
             </router-link>
           </template>
-        </el-table-column>
+        </el-table-column> -->
       </el-table>
       <div
         class="flex justify-between flex-wrap font-semibold text-[12px] p-1 bg-slate-100 shadow"
