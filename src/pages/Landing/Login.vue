@@ -32,8 +32,8 @@ const rules = ref({
 </script>
 
 <template>
-  <div class="grid grid-cols-2 gap-1 grid-rows-2 bg-white dark:bg-gray-900">
-    <div class="col-span-1 row-span-2">
+  <div class="bg-white dark:bg-gray-900">
+    <!-- <div class="col-span-1 row-span-2">
       <img
         class="w-full h-full items-center text-center"
         src="../../../public/login1.png"
@@ -41,12 +41,12 @@ const rules = ref({
         height="400px"
         alt=""
       />
-    </div>
+    </div> -->
     <div
       class="flex flex-col col-span-1 row-span-2 bg-white items-center justify-center px-4 py-4 mx-auto md:h-screen lg:py-0"
     >
       <div
-        class="w-full bg-white rounded-lg shadow-2xl shadow-gray-400 dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700"
+        class="w-full bg-white rounded-lg shadow-[0_20px_20px_0px_rgba(0,0,0,0.3)] dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700"
       >
         <div class="p-4 space-y-4 md:space-y-4 sm:p-6">
           <img
