@@ -4,8 +4,8 @@ import { SeamInClassificationStore } from "../../../stores/Seam/Classification/c
 const store_classification = SeamInClassificationStore();
 import { storeToRefs } from "pinia";
 const { items } = storeToRefs(store_classification);
-const Report = (id) => {
-  store_classification.ReportModal(id);
+const Confirm = (id) => {
+  store_classification.ConfirmModal(id);
 };
 </script>
 <template>
@@ -40,111 +40,95 @@ const Report = (id) => {
             align="center"
           />
           <el-table-column
-            align="center"
-            header-align="center"
             prop="warehouse.customer_name"
             label="Buyurtmachi"
-            width="180"
-          />
-
-          <el-table-column
-            align="center"
+            width="200"
             header-align="center"
+            align="center"
+          />
+          <el-table-column
             prop="warehouse.material_name"
-            label="Mato nomi"
-            width="180"
+            label="Mato"
+            width="200"
+            header-align="center"
+            align="center"
           />
           <el-table-column
             prop="warehouse.color"
             label="Rangi"
-            width="100"
+            width="200"
             header-align="center"
             align="center"
           />
           <el-table-column
-            prop="warehouse.quantity"
-            label="Miqdori"
-            width="100"
+            prop="warehouse.sort"
+            label="Sort"
+            width="200"
             header-align="center"
             align="center"
           />
+          <el-table-column
+            fixed="right"
+            align="center"
+            header-align="center"
+            prop="form_item.head_pack"
+            label="To'p boshi (kg)"
+            width="130"
+            ><template #default="scope">
+              <div
+                class="cursor-pointer inline-flex items-center text-red-500 hover:bg-slate-300 font-medium rounded-md text-[12px] w-ful p-[5px] sm:w-auto text-center"
+              >
+                {{ scope.row.form_item.head_pack }}
+              </div></template
+            ></el-table-column
+          >
+          <el-table-column
+            fixed="right"
+            align="center"
+            header-align="center"
+            prop="form_item.pastal_quantity"
+            label="Pastal miqdori (kg)"
+            width="140"
+            ><template #default="scope">
+              <div
+                class="cursor-pointer inline-flex items-center text-red-500 hover:bg-slate-300 font-medium rounded-md text-[12px] w-ful p-[5px] sm:w-auto text-center"
+              >
+                {{ scope.row.form_item.pastal_quantity }}
+              </div></template
+            ></el-table-column
+          >
 
           <el-table-column
-            align="center"
-            prop="warehouse.unit"
-            label="Birligi"
-            width="100"
-            header-align="center"
-          />
-          <el-table-column
-            align="center"
-            prop="warehouse.sort"
-            label="Sorti"
-            width="100"
-            header-align="center"
-          />
-          <el-table-column
             fixed="right"
             align="center"
-            prop="head_pack"
-            label="To'p boshi (kg)"
-            width="120"
             header-align="center"
-            ><template #default="scope"
-              ><div
+            prop="form_item.waste_quantity"
+            label="Atxod miqdori (kg)"
+            width="140"
+            ><template #default="scope">
+              <div
                 class="cursor-pointer inline-flex items-center text-red-500 hover:bg-slate-300 font-medium rounded-md text-[12px] w-ful p-[5px] sm:w-auto text-center"
               >
-                {{ scope.row.head_pack }}
+                {{ scope.row.form_item.waste_quantity }}
               </div></template
             ></el-table-column
           >
           <el-table-column
             fixed="right"
-            align="center"
-            prop="pastal_quantity"
-            label="Pastal (kg)"
-            width="100"
-            header-align="center"
-            ><template #default="scope"
-              ><div
-                class="cursor-pointer inline-flex items-center text-red-500 hover:bg-slate-300 font-medium rounded-md text-[12px] w-ful p-[5px] sm:w-auto text-center"
-              >
-                {{ scope.row.pastal_quantity }}
-              </div></template
-            ></el-table-column
-          >
-          <el-table-column
-            fixed="right"
-            align="center"
-            prop="waste_quantity:"
-            label="Atxod (kg)"
-            width="100"
-            header-align="center"
-            ><template #default="scope"
-              ><div
-                class="cursor-pointer inline-flex items-center text-red-500 hover:bg-slate-300 font-medium rounded-md text-[12px] w-ful p-[5px] sm:w-auto text-center"
-              >
-                {{ scope.row.waste_quantity }}
-              </div></template
-            ></el-table-column
-          >
-          <el-table-column
-            fixed="right"
-            align="center"
-            prop="fact_gramage"
+            prop="form_item.fact_gramage"
             label="Fakt gramaj"
             width="100"
             header-align="center"
-            ><template #default="scope"
-              ><div
+            align="center"
+            ><template #default="scope">
+              <div
                 class="cursor-pointer inline-flex items-center text-red-500 hover:bg-slate-300 font-medium rounded-md text-[12px] w-ful p-[5px] sm:w-auto text-center"
               >
-                {{ scope.row.fact_gramage }}
-              </div></template
-            ></el-table-column
+                {{ scope.row.form_item.fact_gramage }}
+              </div>
+            </template></el-table-column
           >
           <el-table-column
-            prop="createdAt"
             label="Vaqti"
             width="100"
             header-align="center"
@@ -179,7 +163,7 @@ const Report = (id) => {
           >
             <template #default="scope">
               <router-link
-                @click="Report(scope.row._id)"
+                @click="Confirm(scope.row._id)"
                 to=""
                 class="inline-flex items-center ml-2 text-red hover:bg-slate-300 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
               >

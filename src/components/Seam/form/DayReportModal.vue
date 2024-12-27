@@ -9,9 +9,14 @@ const model = ref({
   id: uuidv4(),
   quantity: "",
   unit: "",
-  date: "",
+  date: new Date(),
   status: "Tasnifga yuborildi",
 });
+const units = ref([
+  { id: 1, name: "Dona" },
+  { id: 2, name: "Pachka" },
+  { id: 3, name: "Kg" },
+]);
 const formRef = ref();
 const Save = async (formRef) => {
   await formRef.validate((valid) => {
@@ -32,7 +37,7 @@ const rules = ref({
   <el-dialog
     v-model="report.is_modal"
     title="Kunlik hisobot qo'shish oynasi"
-    width="700"
+    width="800"
   >
     <span>
       <el-form
@@ -43,8 +48,8 @@ const rules = ref({
         label-position="top"
         class="filter-box md:grid md:grid-cols-12 gap-2 sm:flex sm:flex-wrap rounded shadow mb-1 bg-white p-1 text-[12px]"
       >
-        <div class="mb-1 col-span-4">
-          <el-form-item label="Miqdori (kg)" prop="quantity" :rules="rules">
+        <div class="mb-1 col-span-6">
+          <el-form-item label="Miqdori" prop="quantity" :rules="rules">
             <el-input
               required
               v-model="model.quantity"
@@ -56,20 +61,26 @@ const rules = ref({
             />
           </el-form-item>
         </div>
-        <div class="mb-1 col-span-4">
+        <div class="mb-1 col-span-6">
           <el-form-item label="Birligi" prop="unit" :rules="rules">
-            <el-input
+            <el-select
               required
+              size="smal"
               v-model="model.unit"
               clearable
-              class="w-[100%]"
-              size="smal"
-              type="String"
               placeholder="..."
-            />
+            >
+              <el-option
+                v-for="item in units"
+                :key="item.id"
+                :label="item.name"
+                :value="item.name"
+              >
+              </el-option>
+            </el-select>
           </el-form-item>
         </div>
-        <div class="mb-1 col-span-4">
+        <!-- <div class="mb-1 col-span-4">
           <el-form-item label="Vaqt" prop="date" :rules="rules">
             <el-date-picker
               v-model="model.date"
@@ -80,7 +91,7 @@ const rules = ref({
               size="smal"
             />
           </el-form-item>
-        </div>
+        </div> -->
         <div class="col-span-12 flex justify-end">
           <div></div>
           <el-button
@@ -117,9 +128,9 @@ const rules = ref({
         hight="5"
         empty-text="Mahsulot tanlanmagan... "
         border
-        style="width: 100%; font-size: 13px"
-        min-height="170"
-        max-height="170"
+        style="font-size: 12px"
+        min-height="200"
+        max-height="200"
       >
         <el-table-column
           header-align="center"
@@ -171,22 +182,22 @@ const rules = ref({
           ></el-table-column
         >
 
-        <!-- <el-table-column
+        <el-table-column
           fixed="right"
           label=""
-          width="127"
+          width="80"
           header-align="center"
           align="center"
         >
           <template #default="">
             <router-link
               to=""
-              class="inline-flex items-center mt-4 ml-2 text-red hover:bg-yellow-400 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
+              class="inline-flex items-center mt-4 ml-2 text-red hover:bg-[#d7ebeb] font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
             >
-              <i class="text-red fa-solid fa-check fa-xs fa- fa-xs"></i>
+              <i class="text-red fa-solid fa-trash fa-sm"></i>
             </router-link>
           </template>
-        </el-table-column> -->
+        </el-table-column>
       </el-table>
       <div
         class="flex justify-between flex-wrap font-semibold text-[12px] p-1 bg-slate-100 shadow"

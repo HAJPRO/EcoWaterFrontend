@@ -15,8 +15,12 @@ export const SeamInClassificationService = {
     let url = "seam/form_create";
     return api.post(url, data);
   },
+  ConfirmAndCreteProcess(id) {
+    let url = "seam/confim_and_create";
+    return api.post(url, id);
+  },
   CreateDayReport(data) {
-    let url = "seam/create_day_report";
+    let url = "seam/create_day_report_classification";
     return api.post(url, data);
   },
   GetOneReport(id) {

@@ -29,16 +29,11 @@ export const SeamStore = defineStore("SeamPlan", {
       const loader = loading.show();
       const data = await SeamWarehouseService.CreaetToForm(payload);
       this.form_modal = false;
-      loader.hide();
       ToastifyService.ToastSuccess({
         msg: data.data.msg,
       });
-      const Refresh = () => {
-        window.location.href =
-          "/explore/department/seam/warehouse/raw_material";
-      };
-
-      setTimeout(Refresh, 1000);
+      this.GetAllForm();
+      loader.hide();
     },
     async GetAllForm() {
       const data = await SeamWarehouseService.GetAllForm();

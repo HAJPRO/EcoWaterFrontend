@@ -64,6 +64,7 @@ export const SeamInFormStore = defineStore("SeamInFormStore", {
         msg: data.data.msg,
       });
       this.GetOneReport(this.report.id);
+      this.getAll(this.isActive);
       loader.hide();
     },
     async getAll(payload) {

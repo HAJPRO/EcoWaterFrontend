@@ -17,12 +17,12 @@ export const SeamInClassificationStore = defineStore(
           waste_quantity: "",
           fact_gramage: "",
         },
-        report_form: {
-          done: "",
-          report_box: [],
-          party_number: "",
-          customer_name: "",
-          status: ""
+        reports: {
+          done_form: "",
+          done_classification: "",
+          form: {},
+          report_box_classification: [],
+          status: "",
         },
         report: [],
         card_id: "",
@@ -31,6 +31,20 @@ export const SeamInClassificationStore = defineStore(
     actions: {
       GetIsActive(payload) {
         this.isActive = payload;
+      },
+      async ConfirmAndCreteProcess(id) {
+        const loader = loading.show();
+        const data = await SeamInClassificationService.ConfirmAndCreteProcess(
+          id
+        );
+        ToastifyService.ToastSuccess({
+          msg: data.data.msg,
+        });
+        const Refresh = () => {
+          window.location.href = "/explore/department/seam/classification";
+        };
+        setTimeout(Refresh, 1000);
+        loader.hide();
       },
       ConfirmModal(id) {
         this.is_modal = true;
@@ -49,19 +63,21 @@ export const SeamInClassificationStore = defineStore(
         loader.hide();
         this.GetOneReport(this.card_id);
       },
-
       async GetOneReport(id) {
         const data = await SeamInClassificationService.GetOneReport(id);
-        this.report_form.report_box = data.data[0].report_box;
-        this.report_form.customer_name = data.data[0].warehouse.customer_name;
-        this.report_form.party_number = data.data[0].warehouse.party_number;
-        this.report_form.status = data.data[0].status;
-
+        this.reports.form = data.data[0].form;
+        this.reports.report_box_classification = data.data[0].report_box;
         const initialValue = ref(0);
-        this.report_form.done = data.data[0].report_box.reduce(
+        this.reports.done_form = data.data[0].form.report_box.reduce(
           (accumulator, currentValue) =>
             accumulator + Number(currentValue.quantity),
           initialValue.value
+        );
+        const initialValueClass = ref(0);
+        this.reports.done_classification = data.data[0].report_box.reduce(
+          (accumulator, currentValue) =>
+            accumulator + Number(currentValue.quantity),
+          initialValueClass.value
         );
       },
 
@@ -69,17 +85,14 @@ export const SeamInClassificationStore = defineStore(
         const loader = loading.show();
         const data = await SeamInClassificationService.CreateDayReport({
           items,
-          id: this.report.id,
+          id: this.card_id,
         });
         this.report.is_modal = false;
 
         ToastifyService.ToastSuccess({
           msg: data.data.msg,
         });
-        const Refresh = () => {
-          window.location.href = "/explore/department/seam/form";
-        };
-        setTimeout(Refresh, 1000);
+        this.GetOneReport(this.card_id);
         loader.hide();
       },
       async getAll(payload) {

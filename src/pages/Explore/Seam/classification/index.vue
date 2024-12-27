@@ -8,7 +8,7 @@ import Title from "../../../../components/Title.vue";
 import HeaderTabLink from "../../../../components/Seam/classification/HeaderTabLink.vue";
 import FormTable from "../../../../components/Seam/classification/FormTable.vue";
 import ProcessTable from "../../../../components/Seam/classification/ProcessTable.vue";
-import ConfirmModal from "../../../../components/Seam/classification/ConfirmModal.vue";
+import ReportDayModal from "../../../../components/Seam/classification/ReportDayModal.vue";
 </script>
 
 <template>
@@ -21,6 +21,6 @@ import ConfirmModal from "../../../../components/Seam/classification/ConfirmModa
     <HeaderTabLink />
     <FormTable v-if="isActive === 2" />
     <ProcessTable v-if="isActive === 1" />
-    <ConfirmModal v-if="is_modal === true" />
+    <ReportDayModal v-if="is_modal === true" />
   </div>
 </template>

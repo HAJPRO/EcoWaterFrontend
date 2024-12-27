@@ -5,7 +5,7 @@ const store_classification = SeamInClassificationStore();
 import { storeToRefs } from "pinia";
 const { items } = storeToRefs(store_classification);
 const Confirm = (id) => {
-  store_classification.ConfirmModal(id);
+  store_classification.ConfirmAndCreteProcess({ id });
 };
 </script>
 <template>
@@ -113,12 +113,12 @@ const Confirm = (id) => {
             header-align="center"
             align="center"
           >
-            <template #default="">
+            <template #default="scope">
               <router-link
                 to=""
                 class="cursor-pointer inline-flex items-center text-red bg-[#e4e9e9] hover:bg-[#d7ebeb] font-medium rounded-md text-[12px] w-ful p-[5px] sm:w-auto text-center"
               >
-                Tasnifga yuborildi
+                {{ scope.row.processing }}
               </router-link>
             </template>
           </el-table-column>
