@@ -10,7 +10,7 @@ const model = ref({
   quantity: "",
   unit: "",
   date: new Date(),
-  status: "Upakofkaga yuborildi",
+  status: "Patokga yuborildi",
 });
 const Accept = (index) => {
   store_classification.Accept(index);
