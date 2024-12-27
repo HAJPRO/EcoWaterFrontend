@@ -8,19 +8,19 @@ export const SeamInFormService = {
   },
 
   GetAll(status) {
-    let url = "seam/all_form";
+    let url = "seam/form/all";
     return api.post(url, { status });
   },
   CreaetInfoToForm(data) {
-    let url = "seam/form_create";
+    let url = "seam/form/create";
     return api.post(url, data);
   },
   CreateDayReport(data) {
-    let url = "seam/create_day_report";
+    let url = "seam/form/create_day_report";
     return api.post(url, data);
   },
   GetOneReport(id) {
-    let url = "seam/get_one_report";
+    let url = "seam/form/get_one_report";
     return api.post(url, { id });
   },
 };

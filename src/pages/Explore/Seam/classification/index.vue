@@ -3,7 +3,6 @@ import { SeamInClassificationStore } from "../../../../stores/Seam/Classificatio
 const store_classification = SeamInClassificationStore();
 import { storeToRefs } from "pinia";
 const { isActive, is_modal } = storeToRefs(store_classification);
-
 import Title from "../../../../components/Title.vue";
 import HeaderTabLink from "../../../../components/Seam/classification/HeaderTabLink.vue";
 import FormTable from "../../../../components/Seam/classification/FormTable.vue";
@@ -19,8 +18,9 @@ import ReportDayModal from "../../../../components/Seam/classification/ReportDay
       </template>
     </Title>
     <HeaderTabLink />
-    <FormTable v-if="isActive === 2" />
     <ProcessTable v-if="isActive === 1" />
+    <FormTable v-if="isActive === 2" />
+
     <ReportDayModal v-if="is_modal === true" />
   </div>
 </template>

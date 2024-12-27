@@ -1,9 +1,5 @@
-<script setup>
+<!-- <script setup>
 import { ref } from "vue";
-import { SeamInPatoksStore } from "../../../stores/Seam/Patoks/patoks.store";
-const store_patoks = SeamInPatoksStore();
-import { storeToRefs } from "pinia";
-const { items } = storeToRefs(store_patoks);
 </script>
 <template>
   <div class="">
@@ -30,7 +26,7 @@ const { items } = storeToRefs(store_patoks);
             width="50"
           />
           <el-table-column
-            prop="warehouse.party_number"
+            prop="party_number"
             label="Partya nomeri"
             width="300"
             header-align="center"
@@ -39,7 +35,7 @@ const { items } = storeToRefs(store_patoks);
           <el-table-column
             align="center"
             header-align="center"
-            prop="warehouse.customer_name"
+            prop="customer_name"
             label="Buyurtmachi"
             width="200"
           />
@@ -47,20 +43,35 @@ const { items } = storeToRefs(store_patoks);
           <el-table-column
             align="center"
             header-align="center"
-            prop="warehouse.material_name"
+            prop="material_name"
             label="Mato nomi"
             width="200"
           />
           <el-table-column
-            prop="warehouse.color"
+            prop="color"
             label="Rangi"
             width="200"
             header-align="center"
             align="center"
           />
           <el-table-column
+            prop="quantity"
+            label="Miqdori"
+            width="200"
+            header-align="center"
             align="center"
-            prop="warehouse.sort"
+          />
+
+          <el-table-column
+            align="center"
+            prop="unit"
+            label="Birligi"
+            width="180"
+            header-align="center"
+          />
+          <el-table-column
+            align="center"
+            prop="sort"
             label="Sorti"
             width="180"
             header-align="center"
@@ -87,7 +98,7 @@ const { items } = storeToRefs(store_patoks);
                 to=""
                 class="cursor-pointer inline-flex items-center text-red bg-[#e4e9e9] hover:bg-[#d7ebeb] font-medium rounded-md text-[12px] w-ful p-[5px] sm:w-auto text-center"
               >
-                {{ scope.row.processing }}
+                {{ scope.row.status }}
               </router-link>
             </template>
           </el-table-column>
@@ -99,17 +110,10 @@ const { items } = storeToRefs(store_patoks);
             header-align="center"
             align="center"
           >
-            <template #default="scope">
-              <router-link
-                @click="Confirm(scope.row._id)"
-                to=""
-                class="inline-flex items-center ml-2 text-red hover:bg-slate-300 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
-              >
-                <i class="text-black fa-check fa-solid fa-sm"></i>
-              </router-link>
+            <template #default="">
               <router-link
                 to=""
-                class="inline-flex items-center ml-2 text-red hover:bg-slate-300 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
+                class="inline-flex items-center ml-2 text-red hover:bg-red-600 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
               >
                 <i class="text-black fa-trash fa-solid fa-trash fa-sm"></i>
               </router-link>
@@ -125,4 +129,4 @@ const { items } = storeToRefs(store_patoks);
   display: grid;
   grid-column: 7;
 }
-</style>
+</style> -->

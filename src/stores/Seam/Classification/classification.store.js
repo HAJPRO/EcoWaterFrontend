@@ -99,6 +99,8 @@ export const SeamInClassificationStore = defineStore(
         const loader = loading.show();
         const data = await SeamInClassificationService.GetAll(payload);
         this.items = data.data.items;
+        console.log(data.data.items);
+
         loader.hide();
       },
       async CreaetInfoToForm(paload) {
