@@ -12,23 +12,23 @@ export const SeamInPatoksService = {
     return api.post(url, { status });
   },
   CreaetInfoToForm(data) {
-    let url = "seam/form_create";
+    let url = "seam/patoks/create";
     return api.post(url, data);
   },
   ConfirmAndCreteProcess(id) {
-    let url = "seam/confim_and_create";
+    let url = "seam/patoks/confim_and_create";
     return api.post(url, id);
   },
   CreateDayReport(data) {
-    let url = "seam/create_day_report_classification";
+    let url = "seam/patoks/create_day_report";
     return api.post(url, data);
   },
   GetOneReport(id) {
-    let url = "seam/classification_get_one_report";
+    let url = "seam/patoks/get_one_report";
     return api.post(url, { id });
   },
   AcceptReportItem(data) {
-    let url = "seam/accept_report_item";
+    let url = "seam/patoks/accept_report_item";
     return api.post(url, data);
   },
 };

@@ -6,6 +6,7 @@
       </template>
     </Title>
   </div>
+
   <Statistic />
   <BarChart />
 </template>
