@@ -1,15 +1,15 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { loading } from "../../../utils/Loader";
-import { SeamInFormStore } from "../../../stores/Seam/Form/form.store";
-const store_form = SeamInFormStore();
+import { SeamInPackingStore } from "../../../stores/Seam/Packing/packing.store";
+const store_packing = SeamInPackingStore();
 import { storeToRefs } from "pinia";
 const IsActive = (is_active) => {
-  store_form.GetIsActive(is_active);
+  store_packing.GetIsActive(is_active);
 };
 
 const getAll = async () => {
-  await store_form.getAll();
+  await store_packing.getAll(isActive.value);
   IsActive(isActive.value);
 };
 const isActive = ref(1);

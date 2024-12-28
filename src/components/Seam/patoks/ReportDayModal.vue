@@ -5,14 +5,14 @@ import { SeamInPatoksStore } from "../../../stores/Seam/Patoks/patoks.store";
 const store_patoks = SeamInPatoksStore();
 import { storeToRefs } from "pinia";
 const { is_modal, reports } = storeToRefs(store_patoks);
-console.log(reports);
 
 const model = ref({
   id: uuidv4(),
   quantity: "",
   unit: "",
   date: new Date(),
-  status: "Upakovkaga yuborildi",
+  patok: "",
+  status: "",
 });
 const Accept = (index) => {
   store_patoks.Accept(index);
@@ -27,10 +27,23 @@ const Save = async (formRef) => {
     }
   });
 };
+const PatokStatus = (patok) => {
+  model.value.status = patok;
+};
 const units = ref([
   { id: 1, name: "Dona" },
   { id: 2, name: "Pachka" },
   { id: 3, name: "Kg" },
+]);
+const patoks = ref([
+  { id: 1, name: "Patok 1" },
+  { id: 2, name: "Patok 2" },
+  { id: 3, name: "Patok 3" },
+  { id: 4, name: "Patok 4" },
+  { id: 5, name: "Patok 5" },
+  { id: 6, name: "Patok 6" },
+  { id: 7, name: "Patok 7" },
+  { id: 8, name: "Patok 8" },
 ]);
 const rules = ref({
   required: true,
@@ -39,7 +52,7 @@ const rules = ref({
 });
 </script>
 <template>
-  <el-dialog v-model="is_modal" title="Kunlik hisobot oynasi " width="800">
+  <el-dialog v-model="is_modal" title="Kunlik hisobot oynasi " width="854">
     <div class="shadow-md rounded">
       <div
         class="flex justify-end flex-wrap font-semibold text-[11px] p-1 bg-slate-100 shadow"
@@ -156,7 +169,7 @@ const rules = ref({
         label-position="top"
         class="filter-box md:grid md:grid-cols-12 gap-2 sm:flex sm:flex-wrap rounded shadow mb-1 bg-white p-1 text-[12px]"
       >
-        <div class="mb-1 col-span-6">
+        <div class="mb-1 col-span-4">
           <el-form-item label="Miqdori" prop="quantity" :rules="rules">
             <el-input
               required
@@ -169,7 +182,7 @@ const rules = ref({
             />
           </el-form-item>
         </div>
-        <div class="mb-1 col-span-6">
+        <div class="mb-1 col-span-4">
           <el-form-item label="Birligi" prop="unit" :rules="rules">
             <el-select
               required
@@ -180,6 +193,26 @@ const rules = ref({
             >
               <el-option
                 v-for="item in units"
+                :key="item.id"
+                :label="item.name"
+                :value="item.name"
+              >
+              </el-option>
+            </el-select>
+          </el-form-item>
+        </div>
+        <div class="mb-1 col-span-4">
+          <el-form-item label="Patoklar" prop="patok" :rules="rules">
+            <el-select
+              @change="PatokStatus(model.patok)"
+              required
+              size="smal"
+              v-model="model.patok"
+              clearable
+              placeholder="..."
+            >
+              <el-option
+                v-for="item in patoks"
                 :key="item.id"
                 :label="item.name"
                 :value="item.name"
@@ -289,11 +322,18 @@ const rules = ref({
           <el-table-column
             fixed="right"
             label=""
-            width="80"
+            width="120"
             header-align="center"
             align="center"
           >
             <template #default="">
+              <router-link
+                @click="Accept(scope.$index)"
+                to=""
+                class="inline-flex items-center mt-4 ml-2 text-red hover:bg-slate-300 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-2 text-center"
+              >
+                <i class="text-red fa-solid fa-check fa-md"></i>
+              </router-link>
               <router-link
                 to=""
                 class="inline-flex items-center mt-4 ml-2 text-red hover:bg-[#d7ebeb] font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"

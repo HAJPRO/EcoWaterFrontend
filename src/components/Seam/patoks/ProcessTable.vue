@@ -4,8 +4,8 @@ import { SeamInPatoksStore } from "../../../stores/Seam/Patoks/patoks.store";
 const store_patoks = SeamInPatoksStore();
 import { storeToRefs } from "pinia";
 const { items } = storeToRefs(store_patoks);
-const Report = (id) => {
-  store_patoks.ConfirmModal(id);
+const Confirm = (id) => {
+  store_patoks.ConfirmAndCreteProcess({ id });
 };
 </script>
 <template>
@@ -105,7 +105,7 @@ const Report = (id) => {
           >
             <template #default="scope">
               <router-link
-                @click="Report(scope.row._id)"
+                @click="Confirm(scope.row._id)"
                 to=""
                 class="inline-flex items-center ml-2 text-red hover:bg-slate-300 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
               >

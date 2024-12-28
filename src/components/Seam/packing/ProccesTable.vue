@@ -1,5 +1,12 @@
 <script setup>
 import { ref } from "vue";
+import { SeamInPatoksStore } from "../../../stores/Seam/Patoks/patoks.store";
+const store_patoks = SeamInPatoksStore();
+import { storeToRefs } from "pinia";
+const { items } = storeToRefs(store_patoks);
+const Report = (id) => {
+  store_patoks.ConfirmModal(id);
+};
 </script>
 <template>
   <div class="">

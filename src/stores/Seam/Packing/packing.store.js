@@ -1,9 +1,9 @@
 import { ToastifyService } from "../../../utils/Toastify";
 import { loading } from "../../../utils/Loader";
-import { SeamInPatoksService } from "../../../ApiServices/Seam/patoks/patoks.service";
+import { SeamInPackingService } from "../../../ApiServices/Seam/packing/packing.service";
 import { defineStore } from "pinia";
 import { ref } from "vue";
-export const SeamInPatoksStore = defineStore("SeamInPatoksStore", {
+export const SeamInPackingStore = defineStore("SeamInPackingStore", {
   state: () => {
     return {
       isActive: "",
@@ -32,18 +32,18 @@ export const SeamInPatoksStore = defineStore("SeamInPatoksStore", {
     },
     async getAll(payload) {
       const loader = loading.show();
-      const data = await SeamInPatoksService.GetAll(payload);
+      const data = await SeamInPackingService.GetAll(payload);
       this.items = data.data.items;
       loader.hide();
     },
     async ConfirmAndCreteProcess(id) {
       const loader = loading.show();
-      const data = await SeamInPatoksService.ConfirmAndCreteProcess(id);
+      const data = await SeamInPackingService.ConfirmAndCreteProcess(id);
       ToastifyService.ToastSuccess({
         msg: data.data.msg,
       });
       const Refresh = () => {
-        window.location.href = "/explore/department/seam/patoks";
+        window.location.href = "/explore/department/seam/packing";
       };
       setTimeout(Refresh, 1000);
       loader.hide();
@@ -55,7 +55,7 @@ export const SeamInPatoksStore = defineStore("SeamInPatoksStore", {
     },
     async Accept(index) {
       const loader = loading.show();
-      const data = await SeamInPatoksService.AcceptReportItem({
+      const data = await SeamInPackingService.AcceptReportItem({
         index,
         card_id: this.card_id,
       });
@@ -66,7 +66,7 @@ export const SeamInPatoksStore = defineStore("SeamInPatoksStore", {
       this.GetOneReport(this.card_id);
     },
     async GetOneReport(id) {
-      const data = await SeamInPatoksService.GetOneReport(id);
+      const data = await SeamInPackingService.GetOneReport(id);
       this.report = data.data[0];
       this.reports.classification = data.data[0].classification;
       this.reports.report_box_patoks = data.data[0].report_box;
@@ -87,7 +87,7 @@ export const SeamInPatoksStore = defineStore("SeamInPatoksStore", {
 
     async CreateDayReport(items) {
       const loader = loading.show();
-      const data = await SeamInPatoksService.CreateDayReport({
+      const data = await SeamInPackingService.CreateDayReport({
         items,
         id: this.card_id,
       });
@@ -102,7 +102,7 @@ export const SeamInPatoksStore = defineStore("SeamInPatoksStore", {
 
     async CreaetInfoToForm(paload) {
       const loader = loading.show();
-      const data = await SeamInPatoksService.CreaetInfoToForm({
+      const data = await SeamInPackingService.CreaetInfoToForm({
         data: paload,
         id: this.card_id,
       });
@@ -112,7 +112,7 @@ export const SeamInPatoksStore = defineStore("SeamInPatoksStore", {
         msg: data.data.msg,
       });
       const Refresh = () => {
-        window.location.href = "/explore/department/seam/form";
+        window.location.href = "/explore/department/seam/packing";
       };
       setTimeout(Refresh, 1000);
       loader.hide();

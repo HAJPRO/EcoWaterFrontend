@@ -1,8 +1,8 @@
 <script setup>
-import { SeamInFormStore } from "../../../../stores/Seam/Form/form.store";
-const store_form = SeamInFormStore();
+import { SeamInPackingStore } from "../../../../stores/Seam/Packing/packing.store";
+const store_packing = SeamInPackingStore();
 import { storeToRefs } from "pinia";
-const { isActive } = storeToRefs(store_form);
+const { isActive } = storeToRefs(store_packing);
 import Title from "../../../../components/Title.vue";
 import HeaderTabLink from "../../../../components/Seam/packing/HeaderTabLink.vue";
 import PatoksTable from "../../../../components/Seam/packing/PatoksTable.vue";
