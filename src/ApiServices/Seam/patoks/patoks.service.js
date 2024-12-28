@@ -16,7 +16,7 @@ export const SeamInPatoksService = {
     return api.post(url, data);
   },
   ConfirmAndCreteProcess(id) {
-    let url = "seam/patoks/confim_and_create";
+    let url = "seam/patoks/confirm_and_create";
     return api.post(url, id);
   },
   CreateDayReport(data) {

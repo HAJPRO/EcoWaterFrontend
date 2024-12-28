@@ -1,5 +1,12 @@
 <script setup>
 import { ref } from "vue";
+import { SeamInPatoksStore } from "../../../stores/Seam/Patoks/patoks.store";
+const store_patoks = SeamInPatoksStore();
+import { storeToRefs } from "pinia";
+const { items } = storeToRefs(store_patoks);
+const Report = (id) => {
+  store_patoks.ConfirmModal(id);
+};
 </script>
 <template>
   <div class="">
@@ -26,7 +33,7 @@ import { ref } from "vue";
             width="50"
           />
           <el-table-column
-            prop="party_number"
+            prop="warehouse.party_number"
             label="Partya nomeri"
             width="300"
             header-align="center"
@@ -35,7 +42,7 @@ import { ref } from "vue";
           <el-table-column
             align="center"
             header-align="center"
-            prop="customer_name"
+            prop="warehouse.customer_name"
             label="Buyurtmachi"
             width="200"
           />
@@ -43,20 +50,13 @@ import { ref } from "vue";
           <el-table-column
             align="center"
             header-align="center"
-            prop="material_name"
+            prop="warehouse.material_name"
             label="Mato nomi"
             width="200"
           />
           <el-table-column
-            prop="color"
+            prop="warehouse.color"
             label="Rangi"
-            width="200"
-            header-align="center"
-            align="center"
-          />
-          <el-table-column
-            prop="quantity"
-            label="Miqdori"
             width="200"
             header-align="center"
             align="center"
@@ -64,14 +64,7 @@ import { ref } from "vue";
 
           <el-table-column
             align="center"
-            prop="unit"
-            label="Birligi"
-            width="180"
-            header-align="center"
-          />
-          <el-table-column
-            align="center"
-            prop="sort"
+            prop="warehouse.sort"
             label="Sorti"
             width="180"
             header-align="center"
@@ -89,7 +82,7 @@ import { ref } from "vue";
           <el-table-column
             fixed="right"
             label="Holati"
-            width="150"
+            width="180"
             header-align="center"
             align="center"
           >
@@ -106,14 +99,21 @@ import { ref } from "vue";
             fixed="right"
             prop="id"
             label=""
-            width="200"
+            width="170"
             header-align="center"
             align="center"
           >
-            <template #default="">
+            <template #default="scope">
+              <router-link
+                @click="Report(scope.row._id)"
+                to=""
+                class="inline-flex items-center ml-2 text-red hover:bg-slate-300 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
+              >
+                <i class="text-black fa-check fa-solid fa-sm"></i>
+              </router-link>
               <router-link
                 to=""
-                class="inline-flex items-center ml-2 text-red hover:bg-red-600 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
+                class="inline-flex items-center ml-2 text-red hover:bg-slate-300 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
               >
                 <i class="text-black fa-trash fa-solid fa-trash fa-sm"></i>
               </router-link>

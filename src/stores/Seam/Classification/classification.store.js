@@ -33,8 +33,6 @@ export const SeamInClassificationStore = defineStore(
         this.isActive = payload;
       },
       async ConfirmAndCreteProcess(id) {
-        console.log(id);
-
         const loader = loading.show();
         const data = await SeamInClassificationService.ConfirmAndCreteProcess(
           id
@@ -101,8 +99,6 @@ export const SeamInClassificationStore = defineStore(
         const loader = loading.show();
         const data = await SeamInClassificationService.GetAll(payload);
         this.items = data.data.items;
-        console.log(data.data.items);
-
         loader.hide();
       },
       async CreaetInfoToForm(paload) {

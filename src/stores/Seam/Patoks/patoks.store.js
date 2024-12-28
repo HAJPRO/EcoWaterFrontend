@@ -16,11 +16,11 @@ export const SeamInPatoksStore = defineStore("SeamInPatoksStore", {
         fact_gramage: "",
       },
       reports: {
-        done_form: "",
+        report: "",
+        report_box_patoks: [],
+        done_patoks: "",
         done_classification: "",
-        form: {},
-        report_box_classification: [],
-        status: "",
+        classification: {},
       },
       report: [],
       card_id: "",
@@ -43,7 +43,7 @@ export const SeamInPatoksStore = defineStore("SeamInPatoksStore", {
         msg: data.data.msg,
       });
       const Refresh = () => {
-        window.location.href = "/explore/department/seam/classification";
+        window.location.href = "/explore/department/seam/patoks";
       };
       setTimeout(Refresh, 1000);
       loader.hide();
@@ -67,16 +67,18 @@ export const SeamInPatoksStore = defineStore("SeamInPatoksStore", {
     },
     async GetOneReport(id) {
       const data = await SeamInPatoksService.GetOneReport(id);
-      this.reports.form = data.data[0].form;
-      this.reports.report_box_classification = data.data[0].report_box;
+      this.report = data.data[0];
+      this.reports.classification = data.data[0].classification;
+      this.reports.report_box_patoks = data.data[0].report_box;
       const initialValue = ref(0);
-      this.reports.done_form = data.data[0].form.report_box.reduce(
-        (accumulator, currentValue) =>
-          accumulator + Number(currentValue.quantity),
-        initialValue.value
-      );
+      this.reports.done_classification =
+        data.data[0].classification.report_box.reduce(
+          (accumulator, currentValue) =>
+            accumulator + Number(currentValue.quantity),
+          initialValue.value
+        );
       const initialValueClass = ref(0);
-      this.reports.done_classification = data.data[0].report_box.reduce(
+      this.reports.done_patoks = data.data[0].report_box.reduce(
         (accumulator, currentValue) =>
           accumulator + Number(currentValue.quantity),
         initialValueClass.value

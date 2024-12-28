@@ -5,6 +5,7 @@ import { SeamInPatoksStore } from "../../../stores/Seam/Patoks/patoks.store";
 const store_patoks = SeamInPatoksStore();
 import { storeToRefs } from "pinia";
 const { is_modal, reports } = storeToRefs(store_patoks);
+console.log(reports);
 
 const model = ref({
   id: uuidv4(),
@@ -50,7 +51,7 @@ const rules = ref({
         </div>
       </div>
       <el-table
-        :data="reports.form.report_box"
+        :data="reports.classification.report_box"
         load
         class="w-full"
         header-align="center"
@@ -99,7 +100,7 @@ const rules = ref({
           header-align="center"
           align="center"
           label="Holati"
-          width="150"
+          width="200"
           ><template #default="scope">
             <router-link
               to=""
@@ -119,7 +120,7 @@ const rules = ref({
         >
           <template #default="scope">
             <router-link
-              v-if="scope.row.status === `Tasnifga yuborildi`"
+              v-if="scope.row.status === `Patokga yuborildi`"
               @click="Accept(scope.$index)"
               to=""
               class="inline-flex items-center mt-4 ml-2 text-red hover:bg-slate-300 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-2 text-center"
@@ -133,7 +134,7 @@ const rules = ref({
         class="flex justify-between flex-wrap font-semibold text-[12px] p-1 bg-slate-100 shadow"
       >
         <div>Buyurtma: {{ 0 }}</div>
-        <div>Bajarildi: {{ reports.done_form }}</div>
+        <div>Bajarildi: {{ reports.done_classification }}</div>
         <div>
           Qoldi:
           {{ 0 }}
@@ -225,7 +226,7 @@ const rules = ref({
           </div>
         </div>
         <el-table
-          :data="reports.report_box_classification"
+          :data="reports.report_box_patoks"
           load
           style="font-size: 12px"
           class="w-full"
@@ -306,7 +307,7 @@ const rules = ref({
           class="flex justify-between flex-wrap font-semibold text-[12px] p-1 bg-slate-100 shadow"
         >
           <div>Buyurtma: {{ 0 }}</div>
-          <div>Bajarildi: {{ reports.done_classification }}</div>
+          <div>Bajarildi: {{ reports.done_patoks }}</div>
           <div>
             Qoldi:
             {{ 0 }}
