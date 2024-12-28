@@ -74,14 +74,8 @@ const Confirm = (id) => {
             prop="form_item.head_pack"
             label="To'p boshi (kg)"
             width="130"
-            ><template #default="scope">
-              <div
-                class="cursor-pointer inline-flex items-center text-red-500 hover:bg-slate-300 font-medium rounded-md text-[12px] w-ful p-[5px] sm:w-auto text-center"
-              >
-                {{ scope.row.form_item.head_pack }}
-              </div></template
-            ></el-table-column
-          >
+          />
+
           <el-table-column
             fixed="right"
             align="center"
@@ -89,14 +83,7 @@ const Confirm = (id) => {
             prop="form_item.pastal_quantity"
             label="Pastal miqdori (kg)"
             width="140"
-            ><template #default="scope">
-              <div
-                class="cursor-pointer inline-flex items-center text-red-500 hover:bg-slate-300 font-medium rounded-md text-[12px] w-ful p-[5px] sm:w-auto text-center"
-              >
-                {{ scope.row.form_item.pastal_quantity }}
-              </div></template
-            ></el-table-column
-          >
+          />
 
           <el-table-column
             fixed="right"
@@ -105,14 +92,7 @@ const Confirm = (id) => {
             prop="form_item.waste_quantity"
             label="Atxod miqdori (kg)"
             width="140"
-            ><template #default="scope">
-              <div
-                class="cursor-pointer inline-flex items-center text-red-500 hover:bg-slate-300 font-medium rounded-md text-[12px] w-ful p-[5px] sm:w-auto text-center"
-              >
-                {{ scope.row.form_item.waste_quantity }}
-              </div></template
-            ></el-table-column
-          >
+          />
           <el-table-column
             fixed="right"
             prop="form_item.fact_gramage"
@@ -120,14 +100,7 @@ const Confirm = (id) => {
             width="100"
             header-align="center"
             align="center"
-            ><template #default="scope">
-              <div
-                class="cursor-pointer inline-flex items-center text-red-500 hover:bg-slate-300 font-medium rounded-md text-[12px] w-ful p-[5px] sm:w-auto text-center"
-              >
-                {{ scope.row.form_item.fact_gramage }}
-              </div>
-            </template></el-table-column
-          >
+          />
           <el-table-column
             label="Vaqti"
             width="100"
