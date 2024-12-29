@@ -1,11 +1,11 @@
 <script setup>
 import { ref } from "vue";
-import { SeamInPatoksStore } from "../../../stores/Seam/Patoks/patoks.store";
-const store_patoks = SeamInPatoksStore();
+import { SeamInPackingStore } from "../../../stores/Seam/Packing/packing.store";
+const store_packing = SeamInPackingStore();
 import { storeToRefs } from "pinia";
-const { items } = storeToRefs(store_patoks);
-const Report = (id) => {
-  store_patoks.ConfirmModal(id);
+const { items } = storeToRefs(store_packing);
+const Confirm = (id) => {
+  store_packing.ConfirmModal({ id });
 };
 </script>
 <template>
@@ -33,7 +33,7 @@ const Report = (id) => {
             width="50"
           />
           <el-table-column
-            prop="party_number"
+            prop="warehouse.party_number"
             label="Partya nomeri"
             width="300"
             header-align="center"
@@ -42,7 +42,7 @@ const Report = (id) => {
           <el-table-column
             align="center"
             header-align="center"
-            prop="customer_name"
+            prop="warehouse.customer_name"
             label="Buyurtmachi"
             width="200"
           />
@@ -50,20 +50,13 @@ const Report = (id) => {
           <el-table-column
             align="center"
             header-align="center"
-            prop="material_name"
+            prop="warehouse.material_name"
             label="Mato nomi"
             width="200"
           />
           <el-table-column
-            prop="color"
+            prop="warehouse.color"
             label="Rangi"
-            width="200"
-            header-align="center"
-            align="center"
-          />
-          <el-table-column
-            prop="quantity"
-            label="Miqdori"
             width="200"
             header-align="center"
             align="center"
@@ -71,14 +64,7 @@ const Report = (id) => {
 
           <el-table-column
             align="center"
-            prop="unit"
-            label="Birligi"
-            width="180"
-            header-align="center"
-          />
-          <el-table-column
-            align="center"
-            prop="sort"
+            prop="warehouse.sort"
             label="Sorti"
             width="180"
             header-align="center"
@@ -117,10 +103,17 @@ const Report = (id) => {
             header-align="center"
             align="center"
           >
-            <template #default="">
+            <template #default="scope">
+              <router-link
+                @click="Confirm(scope.row._id)"
+                to=""
+                class="inline-flex items-center ml-2 text-red hover:bg-slate-300 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
+              >
+                <i class="text-black fa-check fa-solid fa-sm"></i>
+              </router-link>
               <router-link
                 to=""
-                class="inline-flex items-center ml-2 text-red hover:bg-red-600 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
+                class="inline-flex items-center ml-2 text-red hover:bg-slate-300 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
               >
                 <i class="text-black fa-trash fa-solid fa-trash fa-sm"></i>
               </router-link>

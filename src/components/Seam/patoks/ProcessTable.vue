@@ -5,7 +5,7 @@ const store_patoks = SeamInPatoksStore();
 import { storeToRefs } from "pinia";
 const { items } = storeToRefs(store_patoks);
 const Confirm = (id) => {
-  store_patoks.ConfirmAndCreteProcess({ id });
+  store_patoks.ConfirmModal({ id });
 };
 </script>
 <template>

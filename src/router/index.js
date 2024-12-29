@@ -187,8 +187,8 @@ const routes = [
       },
       //Tikuv bolimi
       {
-        path: "department/seam/warehouse/raw_material",
-        name: "seam",
+        path: "department/seam/raw_material_warehouse",
+        name: "RawMaterialWarehouse",
         component: () =>
           import("../pages/Explore/Seam/warehouse/RawMaterial.vue"),
         beforeEnter(to, from, next) {
@@ -266,7 +266,8 @@ const routes = [
       {
         path: "department/seam/clothes_warehouse",
         name: "SeamClothesWarehouse",
-        component: () => import("../pages/Explore/Seam/c-warehouse/index.vue"),
+        component: () =>
+          import("../pages/Explore/Seam/clothes-warehouse/index.vue"),
         beforeEnter(to, from, next) {
           if (
             JSON.parse(Cookies.get("account")).role === 5 ||

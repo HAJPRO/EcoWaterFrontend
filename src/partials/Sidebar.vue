@@ -1438,7 +1438,7 @@
               <div class="lg:hidden lg:sidebar-expanded:block 2xl:block">
                 <ul class="pl-9 mt-1" :class="!parentLink.expanded && 'hidden'">
                   <router-link
-                    to="/explore/department/seam/warehouse/raw_material"
+                    :to="{ name: 'RawMaterialWarehouse' }"
                     custom
                     v-slot="{ href, navigate, isExactActive }"
                   >

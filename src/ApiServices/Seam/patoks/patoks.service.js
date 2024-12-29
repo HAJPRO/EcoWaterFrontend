@@ -31,4 +31,8 @@ export const SeamInPatoksService = {
     let url = "seam/patoks/accept_report_item";
     return api.post(url, data);
   },
+  AcceptFromPatok(data) {
+    let url = "seam/patoks/accept_from_patok";
+    return api.post(url, data);
+  },
 };

@@ -5,17 +5,24 @@ import { SeamInPatoksStore } from "../../../stores/Seam/Patoks/patoks.store";
 const store_patoks = SeamInPatoksStore();
 import { storeToRefs } from "pinia";
 const { is_modal, reports } = storeToRefs(store_patoks);
-
+const isActive = ref(1);
+const ActiveTabLink = (is_active) => {
+  isActive.value = is_active;
+};
 const model = ref({
   id: uuidv4(),
   quantity: "",
   unit: "",
   date: new Date(),
+  delivery_time: "",
   patok: "",
   status: "",
 });
 const Accept = (index) => {
   store_patoks.Accept(index);
+};
+const AcceptPatok = (index) => {
+  store_patoks.AcceptFromPatok(index);
 };
 const formRef = ref();
 const Save = async (formRef) => {
@@ -167,9 +174,9 @@ const rules = ref({
         label-width="auto"
         size="small"
         label-position="top"
-        class="filter-box md:grid md:grid-cols-12 gap-2 sm:flex sm:flex-wrap rounded shadow mb-1 bg-white p-1 text-[12px]"
+        class="filter-box md:grid md:grid-cols-12 gap-1 sm:flex sm:flex-wrap rounded shadow mb-1 bg-white p-1 text-[12px]"
       >
-        <div class="mb-1 col-span-4">
+        <div class="mb-1 col-span-2">
           <el-form-item label="Miqdori" prop="quantity" :rules="rules">
             <el-input
               required
@@ -182,7 +189,7 @@ const rules = ref({
             />
           </el-form-item>
         </div>
-        <div class="mb-1 col-span-4">
+        <div class="mb-1 col-span-2">
           <el-form-item label="Birligi" prop="unit" :rules="rules">
             <el-select
               required
@@ -201,7 +208,7 @@ const rules = ref({
             </el-select>
           </el-form-item>
         </div>
-        <div class="mb-1 col-span-4">
+        <div class="mb-1 col-span-3">
           <el-form-item label="Patoklar" prop="patok" :rules="rules">
             <el-select
               @change="PatokStatus(model.patok)"
@@ -221,10 +228,10 @@ const rules = ref({
             </el-select>
           </el-form-item>
         </div>
-        <!-- <div class="mb-1 col-span-4">
-          <el-form-item label="Vaqt" prop="date" :rules="rules">
+        <div class="mb-1 col-span-3">
+          <el-form-item label="Muddat" prop="delivery_time" :rules="rules">
             <el-date-picker
-              v-model="model.date"
+              v-model="model.delivery_time"
               style="width: 100%"
               clearable
               type="date"
@@ -232,32 +239,180 @@ const rules = ref({
               size="smal"
             />
           </el-form-item>
-        </div> -->
-        <div class="col-span-12 flex justify-end">
-          <div></div>
-          <el-button
-            size="small"
-            @click="Save(formRef)"
-            style="
-              background-color: #36d887;
-              color: white;
-              border: none;
-              margin-bottom: 4px;
-            "
-            ><i class="mr-2 fa-solid fa-check fa-sm"></i>Yuborish
-          </el-button>
+        </div>
+        <div class="mb-1 col-span-2 justify-end">
+          <el-form-item label=".">
+            <el-button
+              size="smal"
+              @click="Save(formRef)"
+              style="
+                background-color: #36d887;
+                color: white;
+                border: none;
+                margin-bottom: 4px;
+                width: 100%;
+              "
+              ><i class="mr-2 fa-solid fa-check fa-sm"></i>Yuborish
+            </el-button>
+          </el-form-item>
         </div>
       </el-form>
-      <div class="shadow-md rounded">
-        <div
-          class="flex justify-end flex-wrap font-semibold text-[11px] p-1 bg-slate-100 shadow"
-        >
-          <div
-            class="bg-red-50 p-1 rounded text-[11px] border-[1px] border-red-500"
+      <div
+        class="flex justify-between flex-wrap font-semibold text-[11px] p-2 bg-white shadow mb-2 mt-2"
+      >
+        <div>
+          <router-link
+            to=""
+            @click="ActiveTabLink(1)"
+            :class="{ activeTab: isActive === 1 }"
+            class="inline-flex text-[12px] items-center mr-2 px-4 py-1 mb-1 font-medium text-center text-red hover:border-b-2 border-solid border-[#36d887] bg-[#e4e9e9] text-bold rounded"
           >
-            Jarayonda
+            <i class="fa-solid fa-info mr-2 fa-xm"></i> Patokda
+            <div class="flex flex-shrink-0 ml-2">
+              <span
+                class="inline-flex items-center justify-center h-5 text-[11px] font-medium text-white bg-[#36d887] px-3 py-1 rounded"
+              >
+                <span class=" ">0</span>/{{
+                  (all_length ? all_length.sale_length : 0) || 0
+                }}</span
+              >
+            </div>
+          </router-link>
+          <router-link
+            to=""
+            @click="ActiveTabLink(2)"
+            :class="{ activeTab: isActive === 2 }"
+            class="inline-flex text-[12px] items-center mr-2 px-4 py-1 mb-1 font-medium text-center text-red hover:border-b-2 border-solid border-[#36d887] bg-[#e4e9e9] text-bold rounded"
+          >
+            <i class="fa-solid fa-info mr-2 fa-xm"></i> Upakovkaga yuborilganlar
+            <div class="flex flex-shrink-0 ml-2">
+              <span
+                class="inline-flex items-center justify-center h-5 text-[11px] font-medium text-white bg-[#36d887] px-3 py-2 rounded"
+              >
+                <span class=" ">0</span>/{{
+                  (all_length ? all_length.sale_length : 0) || 0
+                }}</span
+              >
+            </div>
+          </router-link>
+        </div>
+        <div
+          class="bg-red-50 p-2 items-center text-center rounded text-[11px] border-[1px] border-red-500"
+        >
+          Jarayonda
+        </div>
+      </div>
+      <!-- // Patokda -->
+      <div v-if="isActive === 1" class="shadow-md rounded">
+        <el-table
+          :data="reports.patoks_process"
+          load
+          style="font-size: 12px"
+          class="w-full"
+          header-align="center"
+          empty-text="Mahsulot tanlanmagan... "
+          border
+          align="center"
+          min-height="180"
+          max-height="180"
+        >
+          <el-table-column
+            align="center"
+            header-align="center"
+            type="index"
+            prop="index"
+            fixed="left"
+            label="№"
+            width="60"
+          />
+
+          <el-table-column
+            header-align="center"
+            align="center"
+            prop="quantity"
+            label="Miqdori"
+            width="180"
+          />
+          <el-table-column
+            header-align="center"
+            align="center"
+            prop="unit"
+            label="Birligi"
+            width="100"
+          />
+          <el-table-column
+            header-align="center"
+            align="center"
+            prop="date"
+            label="Vaqti"
+            width="100"
+            ><template #default="scope">{{
+              String(scope.row.date).substring(0, 10)
+            }}</template></el-table-column
+          >
+          <el-table-column
+            header-align="center"
+            align="center"
+            label="Muddati"
+            width="100"
+            ><template #default="scope">{{
+              String(scope.row.delivery_time).substring(0, 10)
+            }}</template></el-table-column
+          >
+          <el-table-column
+            header-align="center"
+            align="center"
+            label="Holati"
+            width="160"
+            ><template #default="scope">
+              <router-link
+                to=""
+                class="cursor-pointer inline-flex items-center text-red bg-[#e4e9e9] hover:bg-[#d7ebeb] font-medium rounded-md text-[12px] w-ful p-[5px] sm:w-auto text-center"
+              >
+                {{ scope.row.status }}
+              </router-link></template
+            ></el-table-column
+          >
+
+          <el-table-column
+            fixed="right"
+            label=""
+            width="120"
+            header-align="center"
+            align="center"
+          >
+            <template #default="scope">
+              <router-link
+                @click="AcceptPatok(scope.$index)"
+                to=""
+                class="inline-flex items-center mt-4 ml-2 text-red hover:bg-slate-300 font-medium rounded-md w-full sm:w-auto px-2 py-2 text-center"
+              >
+                <i class="text-red fa-solid fa-check fa-md"></i>
+              </router-link>
+              <router-link
+                to=""
+                class="inline-flex items-center mt-4 ml-2 text-red hover:bg-[#d7ebeb] font-medium rounded-md w-full sm:w-auto px-2 py-3 text-center"
+              >
+                <i class="text-red fa-solid fa-trash fa-sm"></i>
+              </router-link>
+            </template>
+          </el-table-column>
+        </el-table>
+        <div
+          class="flex justify-between flex-wrap font-semibold text-[12px] p-1 bg-slate-100 shadow"
+        >
+          <div>Buyurtma: {{ 0 }}</div>
+          <div>Bajarildi: {{ reports.done_notConfirm }}</div>
+          <div>
+            Qoldi:
+            {{ 0 }}
           </div>
         </div>
+      </div>
+      <!-- ////////////////////////////////////////// -->
+
+      <!-- // Upakovkaga yuborilgan -->
+      <div v-if="isActive === 2" class="shadow-md rounded">
         <el-table
           :data="reports.report_box_patoks"
           load
@@ -292,7 +447,7 @@ const rules = ref({
             align="center"
             prop="unit"
             label="Birligi"
-            width="150"
+            width="120"
           />
           <el-table-column
             header-align="center"
@@ -304,6 +459,7 @@ const rules = ref({
               String(scope.row.date).substring(0, 10)
             }}</template></el-table-column
           >
+
           <el-table-column
             header-align="center"
             align="center"
@@ -328,15 +484,8 @@ const rules = ref({
           >
             <template #default="">
               <router-link
-                @click="Accept(scope.$index)"
                 to=""
-                class="inline-flex items-center mt-4 ml-2 text-red hover:bg-slate-300 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-2 text-center"
-              >
-                <i class="text-red fa-solid fa-check fa-md"></i>
-              </router-link>
-              <router-link
-                to=""
-                class="inline-flex items-center mt-4 ml-2 text-red hover:bg-[#d7ebeb] font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
+                class="inline-flex items-center mt-4 ml-2 text-red hover:bg-[#d7ebeb] font-medium rounded-md w-full sm:w-auto px-2 py-3 text-center"
               >
                 <i class="text-red fa-solid fa-trash fa-sm"></i>
               </router-link>
@@ -354,6 +503,7 @@ const rules = ref({
           </div>
         </div>
       </div>
+      <!-- ////////////////////////////////////////// -->
     </div>
     <el-dialog
       v-model="innerVisible"
@@ -367,3 +517,8 @@ const rules = ref({
     </template>
   </el-dialog>
 </template>
+<style>
+.activeTab {
+  border-bottom: 2px solid #36d887;
+}
+</style>

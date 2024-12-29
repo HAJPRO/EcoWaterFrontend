@@ -17,10 +17,10 @@ export const SeamInPackingStore = defineStore("SeamInPackingStore", {
       },
       reports: {
         report: {},
-        report_box_patoks: [],
+        report_box_packing: [],
         done_patoks: "",
-        done_classification: "",
-        classification: {},
+        done_packing: "",
+        patoks: {},
       },
       report: [],
       card_id: "",
@@ -68,20 +68,19 @@ export const SeamInPackingStore = defineStore("SeamInPackingStore", {
     async GetOneReport(id) {
       const data = await SeamInPackingService.GetOneReport(id);
       this.report = data.data[0];
-      this.reports.classification = data.data[0].classification;
-      this.reports.report_box_patoks = data.data[0].report_box;
-      const initialValue = ref(0);
-      this.reports.done_classification =
-        data.data[0].classification.report_box.reduce(
-          (accumulator, currentValue) =>
-            accumulator + Number(currentValue.quantity),
-          initialValue.value
-        );
-      const initialValueClass = ref(0);
-      this.reports.done_patoks = data.data[0].report_box.reduce(
+      this.reports.patoks = data.data[0].patoks;
+      this.reports.report_box_packing = data.data[0].report_box;
+      const initialValue1 = ref(0);
+      this.reports.done_packing = data.data[0].report_box.reduce(
         (accumulator, currentValue) =>
           accumulator + Number(currentValue.quantity),
-        initialValueClass.value
+        initialValue1.value
+      );
+      const initialValue2 = ref(0);
+      this.reports.done_patoks = data.data[0].patoks.report_box.reduce(
+        (accumulator, currentValue) =>
+          accumulator + Number(currentValue.quantity),
+        initialValue2.value
       );
     },
 

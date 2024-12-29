@@ -2,11 +2,12 @@
 import { SeamInPackingStore } from "../../../../stores/Seam/Packing/packing.store";
 const store_packing = SeamInPackingStore();
 import { storeToRefs } from "pinia";
-const { isActive } = storeToRefs(store_packing);
+const { isActive, is_modal } = storeToRefs(store_packing);
 import Title from "../../../../components/Title.vue";
 import HeaderTabLink from "../../../../components/Seam/packing/HeaderTabLink.vue";
 import PatoksTable from "../../../../components/Seam/packing/PatoksTable.vue";
 import ProccesTable from "../../../../components/Seam/packing/ProccesTable.vue";
+import ReportDayModal from "../../../../components/Seam/packing/ReportDayModal.vue";
 </script>
 
 <template>
@@ -19,5 +20,6 @@ import ProccesTable from "../../../../components/Seam/packing/ProccesTable.vue";
     <HeaderTabLink />
     <PatoksTable v-if="isActive === 2" />
     <ProccesTable v-if="isActive === 1" />
+    <ReportDayModal v-if="is_modal === true" />
   </div>
 </template>
