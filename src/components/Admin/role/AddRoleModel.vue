@@ -1,14 +1,14 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import { PermissionStore } from "../../../stores/Admin/permission.store";
-const store_permission = PermissionStore();
+import { RoleStore } from "../../../stores/Admin/role.store";
+const store_role = RoleStore();
 import { storeToRefs } from "pinia";
-const { is_modal, model, options } = storeToRefs(store_permission);
+const { is_modal_role, model } = storeToRefs(store_role);
 const formRef = ref();
 const Save = async (formRef) => {
   await formRef.validate((valid) => {
     if (valid === true) {
-      store_permission.CreatePermission(model.value);
+      store_role.CreateRole(model.value);
     } else {
       return false;
     }
@@ -21,7 +21,7 @@ const rules = ref({
 });
 </script>
 <template>
-  <el-dialog v-model="is_modal" title="Add permission modal" width="600">
+  <el-dialog v-model="is_modal_role" title="Add role modal" width="600">
     <span>
       <el-form
         :model="model"
@@ -32,14 +32,10 @@ const rules = ref({
         class="filter-box md:grid md:grid-cols-12 gap-2 sm:flex sm:flex-wrap rounded shadow-md bg-white p-2 mt-1 mb-1 text-[12px]"
       >
         <div class="mb-1 col-span-6">
-          <el-form-item
-            label="Permission name"
-            prop="permission_name"
-            :rules="rules"
-          >
+          <el-form-item label="Role name" prop="role_name" :rules="rules">
             <el-input
               required
-              v-model="model.permission_name"
+              v-model="model.role_name"
               clearable
               class="w-[100%]"
               size="smal"
@@ -49,22 +45,16 @@ const rules = ref({
           </el-form-item>
         </div>
         <div class="mb-1 col-span-6">
-          <el-form-item label="Actions" prop="actions" :rules="rules">
-            <el-select
-              v-model="model.actions"
-              multiple
-              collapse-tags
-              placeholder="..."
+          <el-form-item label="Value" prop="value" :rules="rules">
+            <el-input
+              required
+              v-model="model.value"
+              clearable
+              class="w-[100%]"
               size="smal"
-            >
-              <el-option
-                v-for="item in options"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id"
-              >
-              </el-option>
-            </el-select>
+              type="Number"
+              placeholder="..."
+            />
           </el-form-item>
         </div>
       </el-form>

@@ -1,17 +1,19 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { loading } from "../../../utils/Loader";
-import { UsersStore } from "../../../stores/Admin/users.store";
-const store = UsersStore();
+import { UserStore } from "../../../stores/Admin/user.store";
+const store_user = UserStore();
 import { storeToRefs } from "pinia";
-
+const AddUserModal = () => {
+  store_user.AddUserModal();
+};
 const GetUsers = async () => {
   const loader = loading.show();
-  await store.GetUsers({ status: isActive.value });
+  await store_user.GetUsers({ status: isActive.value });
   loader.hide();
 };
 const is_Active = () => {
-  store.IsActive({ is_active: isActive.value });
+  store_user.IsActive({ is_active: isActive.value });
 };
 const isActive = ref(0);
 const ActiveTabLink = (num) => {
@@ -84,10 +86,11 @@ onMounted(async () => {
       <div class="col-span-2"></div>
       <div class="col-span-1">
         <router-link
-          to="/explore/sale/legal/create"
+          @click="AddUserModal()"
+          to=""
           class="inline-flex items-center px-3 py-1 mb-1 text-[13px] font-medium text-center text-white bg-[#36d887] text-bold rounded"
         >
-          <i class="fa-solid fa-plus mr-2 fa-sm"></i> To Add
+          <i class="fa-solid fa-plus mr-2 fa-sm"></i> User
         </router-link>
       </div>
     </div>

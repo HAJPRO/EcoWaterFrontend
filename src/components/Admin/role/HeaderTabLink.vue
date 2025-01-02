@@ -4,9 +4,14 @@ import Cookies from "js-cookie";
 const dep = ref(JSON.parse(Cookies.get("account")).department);
 import { PermissionStore } from "../../../stores/Admin/permission.store";
 const store_permission = PermissionStore();
+import { RoleStore } from "../../../stores/Admin/role.store";
+const store_role = RoleStore();
 import { storeToRefs } from "pinia";
 const AddPermissionModal = () => {
   store_permission.AddPermissionModal();
+};
+const AddRoleModal = () => {
+  store_role.AddRoleModal();
 };
 
 // const getAll = async () => {
@@ -50,8 +55,6 @@ const ActiveTabLink = (num) => {
 };
 onMounted(async () => {
   try {
-    await getAllLength(), getAll();
-    is_Active();
   } catch (err) {
     console.log(err);
   }
@@ -101,7 +104,8 @@ onMounted(async () => {
       <div class="col-span-2"></div>
       <div class="col-span-1">
         <router-link
-          to="/explore/sale/legal/create"
+          @click="AddRoleModal()"
+          to=""
           class="inline-flex items-center px-3 py-1 mb-1 text-[13px] font-medium text-center text-white bg-yellow-500 text-bold rounded"
         >
           <i class="fa-solid fa-plus mr-2 fa-sm"></i> Role

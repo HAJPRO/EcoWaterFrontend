@@ -2,20 +2,21 @@ import api from "@/helpers/api";
 // import $api from "../../helpers/$api";
 
 export const UserService = {
-    cancelReason(data) {
-        let url = "provide/cancel_reason";
-        return api.post(url, data);
-    },
-    create(data) {
-        let url = "provide/provide_create";
+    CreateUser(data) {
+        let url = "admin/create_user";
         return api.post(url, data);
     },
     GetUsers(status) {
         let url = "admin/users";
         return api.post(url, status);
     },
-    getAllLength() {
-        let url = "provide/provide_all_length";
-        return api.get(url);
+    GetPermissions() {
+        let url = "admin/permissions";
+        return api.post(url);
     },
+    GetRoles() {
+        let url = "admin/roles";
+        return api.post(url);
+    },
+
 };

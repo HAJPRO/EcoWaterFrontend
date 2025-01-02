@@ -1,10 +1,9 @@
 <script setup>
 import { ref } from "vue";
-import { UsersStore } from "../../../stores/Admin/users.store";
-const store = UsersStore();
+import { UserStore } from "../../../stores/Admin/user.store";
+const store = UserStore();
 import { storeToRefs } from "pinia";
 const { items } = storeToRefs(store);
-
 </script>
 <template>
   <div class="shadow-md rounded min-h-[15px]">
