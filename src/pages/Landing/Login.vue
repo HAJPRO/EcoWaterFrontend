@@ -3,6 +3,7 @@ import { ref } from "vue";
 import { AuthStore } from "../../stores/Auth/auth.js";
 const store = AuthStore();
 import { storeToRefs } from "pinia";
+const { is_alert, items } = storeToRefs(store);
 const user = ref({
   username: "",
   password: "",
@@ -69,6 +70,13 @@ const rules = ref({
           >
             Kirish
           </h1>
+          <el-alert
+            v-if="is_alert"
+            type="error"
+            :description="items.errors"
+            show-icon
+          >
+          </el-alert>
           <el-form
             ref="formRef"
             :model="user"

@@ -6,7 +6,8 @@ import { defineStore } from "pinia";
 export const AuthStore = defineStore("Auth", {
     state: () => {
         return {
-            items: ""
+            items: "",
+            is_alert: false
         }
     },
     actions: {
@@ -27,13 +28,18 @@ export const AuthStore = defineStore("Auth", {
         async login(payload) {
             try {
                 const res = await LoginService.Login(payload);
-                if (res.data) {
+                if (res.data.result) {
                     Cookies.set("account", JSON.stringify(res.data.user));
                     Cookies.set("token", res.data.accessToken);
                     setTimeout(() => {
                         window.location.reload();
                     }, 500);
+                } else {
+                    this.is_alert = true
+                    this.items = res.data
                 }
+
+
             } catch (err) {
                 console.log(err.message);
             }

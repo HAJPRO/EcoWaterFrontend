@@ -2,21 +2,16 @@
 import { ref, onMounted } from "vue";
 import Cookies from "js-cookie";
 const dep = ref(JSON.parse(Cookies.get("account")).department);
-import { loading } from "../../../utils/Loader";
-import { SaleLegalService } from "../../../ApiServices/Sale/saleLegal.service";
-import { SaleStore } from "../../../stores/Sale/sale.store";
-const store = SaleStore();
+import { PermissionStore } from "../../../stores/Admin/permission.store";
+const store_permission = PermissionStore();
 import { storeToRefs } from "pinia";
-const all_length = ref();
-const getAllLength = async () => {
-  const data = await SaleLegalService.getAllLength();
-  all_length.value = data.data ? data.data : {};
+const AddPermissionModal = () => {
+  store_permission.AddPermissionModal();
 };
-const getAll = async () => {
-  const loader = loading.show();
-  await store.getAll({ status: isActive.value, department: dep.value });
-  loader.hide();
-};
+
+// const getAll = async () => {
+//   await store.getAll({ status: isActive.value, department: dep.value });
+// };
 const is_Active = () => {
   store.IsActive({ is_active: isActive.value });
 };
@@ -112,7 +107,8 @@ onMounted(async () => {
           <i class="fa-solid fa-plus mr-2 fa-sm"></i> Role
         </router-link>
         <router-link
-          to="/explore/sale/legal/create"
+          @click="AddPermissionModal()"
+          to=""
           class="inline-flex ml-2 items-center px-3 py-1 mb-1 text-[13px] font-medium text-center text-white bg-[#36d887] text-bold rounded"
         >
           <i class="fa-solid fa-plus mr-2 fa-sm"></i> Permission
