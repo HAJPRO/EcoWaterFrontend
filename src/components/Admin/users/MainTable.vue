@@ -74,9 +74,9 @@ const { items } = storeToRefs(store);
         align="center"
       />
       <el-table-column
-        prop="isActive"
+        prop="actions"
         sortable
-        label="isActive"
+        label="Actions"
         width="180"
         header-align="center"
         align="center"
@@ -111,34 +111,17 @@ const { items } = storeToRefs(store);
       >
         <template #default="scope">
           <router-link
-            v-show="scope.row.order_status === 'Tasdiqlanmagan'"
             to=""
             @click="confirm(scope.row._id)"
-            class="inline-flex items-center mt-4 ml-2 text-red bg-[#eedc36] hover:bg-yellow-400 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
+            class="inline-flex items-center mt-4 ml-2 text-red hover:bg-[#d7ebeb] font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
           >
-            <i class="text-red fa-solid fa-check fa-xs fa- fa-xs"></i>
+            <i class="text-red fa-solid fa-check fa-sm"></i>
           </router-link>
           <router-link
             to=""
-            @click="proccessModalById(scope.row._id)"
-            class="inline-flex items-center mt-4 ml-2 text-white bg-[#36d887] hover:bg-[rgb(57,192,124)] font-medium rounded-md text-sm w-full sm:w-auto px-3 py-3 text-center"
+            class="inline-flex items-center mt-4 ml-2 text-red hover:bg-[#d7ebeb] font-medium rounded-md w-full sm:w-auto px-2 py-3 text-center"
           >
-            <i class="text-black fa-sharp fa-solid fa-info fa-xs"></i>
-          </router-link>
-          <router-link
-            v-show="scope.row.order_status === 'Tasdiqlanmagan'"
-            to=""
-            @click="getByIdForUpdate(scope.row._id)"
-            class="inline-flex items-center mt-4 ml-2 text-white bg-[#36d887] hover:bg-[rgb(57,192,124)] font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
-          >
-            <i class="text-black fa-sharp fa-solid fa-edit fa-xs"></i>
-          </router-link>
-          <router-link
-            to=""
-            @click="deleteById(scope.row._id)"
-            class="inline-flex items-center mt-4 ml-2 text-white bg-red-500 hover:bg-red-600 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
-          >
-            <i class="text-black fa-sharp fa-solid fa-trash fa-xs"></i>
+            <i class="text-red fa-solid fa-trash fa-sm"></i>
           </router-link>
         </template>
       </el-table-column>

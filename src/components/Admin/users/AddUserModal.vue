@@ -15,6 +15,12 @@ const Save = async (formRef) => {
     }
   });
 };
+const actions = ref([
+  { id: 1, name: "Create", value: 1 },
+  { id: 2, name: "Read", value: 2 },
+  { id: 3, name: "Update", value: 3 },
+  { id: 4, name: "Delete", value: 4 },
+]);
 const rules = ref({
   required: true,
   message: `Maydon to'ldirilishi zarur !`,
@@ -98,6 +104,25 @@ const rules = ref({
                 :key="item._id"
                 :label="item.permission_name"
                 :value="item.permission_name"
+              >
+              </el-option>
+            </el-select>
+          </el-form-item>
+        </div>
+        <div class="mb-1 col-span-4">
+          <el-form-item label="Actions" prop="actions" :rules="rules">
+            <el-select
+              v-model="model.actions"
+              multiple
+              collapse-tags
+              placeholder="..."
+              size="smal"
+            >
+              <el-option
+                v-for="item in actions"
+                :key="item.id"
+                :label="item.name"
+                :value="item.value"
               >
               </el-option>
             </el-select>

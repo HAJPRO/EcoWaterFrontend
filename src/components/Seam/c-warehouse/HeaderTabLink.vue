@@ -1,15 +1,15 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { loading } from "../../../utils/Loader";
-import { SeamInFormStore } from "../../../stores/Seam/Form/form.store";
-const store_form = SeamInFormStore();
+import { SeamInCWarehouseStore } from "../../../stores/Seam/C-Warehouse/c-warehouse.store";
+const store_c_warehouse = SeamInCWarehouseStore();
 import { storeToRefs } from "pinia";
 const IsActive = (is_active) => {
-  store_form.GetIsActive(is_active);
+  store_c_warehouse.GetIsActive(is_active);
 };
 
 const getAll = async () => {
-  await store_form.getAll();
+  await store_c_warehouse.getAll(isActive.value);
   IsActive(isActive.value);
 };
 const isActive = ref(1);
@@ -20,10 +20,6 @@ const ActiveTabLink = (num) => {
   }
   if (num === 2) {
     isActive.value = 2;
-    return getAll();
-  }
-  if (num === 3) {
-    isActive.value = 3;
     return getAll();
   }
 };

@@ -1,8 +1,8 @@
 <script setup>
-import { SeamInFormStore } from "../../../../stores/Seam/Form/form.store";
-const store_form = SeamInFormStore();
+import { SeamInCWarehouseStore } from "../../../../stores/Seam/C-Warehouse/c-warehouse.store";
+const store_c_warehouse = SeamInCWarehouseStore();
 import { storeToRefs } from "pinia";
-const { isActive } = storeToRefs(store_form);
+const { isActive } = storeToRefs(store_c_warehouse);
 import Title from "../../../../components/Title.vue";
 import HeaderTabLink from "../../../../components/Seam/c-warehouse/HeaderTabLink.vue";
 import PackingTable from "../../../../components/Seam/c-warehouse/PackingTable.vue";

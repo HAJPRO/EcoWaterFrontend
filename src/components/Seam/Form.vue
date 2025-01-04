@@ -1,4 +1,8 @@
 <script setup>
+import Cookies from "js-cookie";
+const role = ref(JSON.parse(Cookies.get("account")).role);
+const permissions = ref(JSON.parse(Cookies.get("account")).permissions);
+
 import { ref, onMounted } from "vue";
 import AddToFormModal from "../../components/Seam/AddToFormModal.vue";
 import { SeamStore } from "../../stores/Seam/seam.store";
@@ -17,7 +21,13 @@ onMounted(async () => {
   <AddToFormModal />
   <div class="">
     <div class="">
-      <div class="flex justify-end bg-white p-2 rounded">
+      <div
+        v-if="
+          role === 1000 ||
+          (role === 5 && permissions.includes('seam raw warehouse'))
+        "
+        class="flex justify-end bg-white p-2 rounded"
+      >
         <div></div>
         <el-button
           @click="AddForm()"

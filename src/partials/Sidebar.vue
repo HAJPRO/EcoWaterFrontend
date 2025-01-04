@@ -1438,6 +1438,12 @@
               <div class="lg:hidden lg:sidebar-expanded:block 2xl:block">
                 <ul class="pl-9 mt-1" :class="!parentLink.expanded && 'hidden'">
                   <router-link
+                    v-if="
+                      (role === 5 &&
+                        permissions.includes('seam raw warehouse')) ||
+                      role === 1000 ||
+                      permissions.includes('seam accountant')
+                    "
                     :to="{ name: 'RawMaterialWarehouse' }"
                     custom
                     v-slot="{ href, navigate, isExactActive }"
@@ -1461,6 +1467,11 @@
                     </li>
                   </router-link>
                   <router-link
+                    v-if="
+                      (role === 5 && permissions.includes('form')) ||
+                      role === 1000 ||
+                      permissions.includes('seam accountant')
+                    "
                     :to="{ name: 'SeamForm' }"
                     custom
                     v-slot="{ href, navigate, isExactActive }"
@@ -1484,6 +1495,11 @@
                     </li>
                   </router-link>
                   <router-link
+                    v-if="
+                      (role === 5 && permissions.includes('classification')) ||
+                      role === 1000 ||
+                      permissions.includes('seam accountant')
+                    "
                     :to="{ name: 'SeamClassification' }"
                     custom
                     v-slot="{ href, navigate, isExactActive }"
@@ -1507,6 +1523,11 @@
                     </li>
                   </router-link>
                   <router-link
+                    v-if="
+                      (role === 5 && permissions.includes('patoks')) ||
+                      role === 1000 ||
+                      permissions.includes('seam accountant')
+                    "
                     :to="{ name: 'SeamPatoks' }"
                     custom
                     v-slot="{ href, navigate, isExactActive }"
@@ -1529,53 +1550,13 @@
                       </a>
                     </li>
                   </router-link>
-                  <!-- <router-link
-                    to="/explore/products/lab"
-                    custom
-                    v-slot="{ href, navigate, isExactActive }"
-                  >
-                    <li class="mb-1 last:mb-0">
-                      <a
-                        class="block transition duration-150 truncate"
-                        :class="
-                          isExactActive
-                            ? 'text-[#36d887]'
-                            : 'text-slate-400 hover:text-slate-200'
-                        "
-                        :href="href"
-                        @click="navigate"
-                      >
-                        <span
-                          class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
-                          >Sifat</span
-                        >
-                      </a>
-                    </li>
-                  </router-link>
+
                   <router-link
-                    to="/explore/products/lab"
-                    custom
-                    v-slot="{ href, navigate, isExactActive }"
-                  >
-                    <li class="mb-1 last:mb-0">
-                      <a
-                        class="block transition duration-150 truncate"
-                        :class="
-                          isExactActive
-                            ? 'text-[#36d887]'
-                            : 'text-slate-400 hover:text-slate-200'
-                        "
-                        :href="href"
-                        @click="navigate"
-                      >
-                        <span
-                          class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
-                          >Dazmol</span
-                        >
-                      </a>
-                    </li>
-                  </router-link> -->
-                  <router-link
+                    v-if="
+                      (role === 5 && permissions.includes('packing')) ||
+                      role === 1000 ||
+                      permissions.includes('seam accountant')
+                    "
                     :to="{ name: 'SeamPacking' }"
                     custom
                     v-slot="{ href, navigate, isExactActive }"
@@ -1593,12 +1574,18 @@
                       >
                         <span
                           class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
-                          >Upakofka</span
+                          >Upakovka</span
                         >
                       </a>
                     </li>
                   </router-link>
                   <router-link
+                    v-if="
+                      (role === 5 &&
+                        permissions.includes('seam clothes warehouse')) ||
+                      role === 1000 ||
+                      permissions.includes('seam accountant')
+                    "
                     :to="{ name: 'SeamClothesWarehouse' }"
                     custom
                     v-slot="{ href, navigate, isExactActive }"
@@ -2150,13 +2137,11 @@
           </ul>
         </div>
       </div>
-
       <!-- Expand / collapse button -->
       <div class="pt-3 hidden lg:inline-flex justify-end mt-auto">
         <div class="px-3 py-2">
           <button @click.prevent="sidebarExpanded = !sidebarExpanded">
             <span class="sr-only">Expand / collapse sidebar</span>
-
             <svg
               class="w-6 h-6 fill-current sidebar-expanded:rotate-180"
               viewBox="0 0 24 24"
@@ -2190,6 +2175,8 @@ export default {
     const trigger = ref(null);
     const sidebar = ref(null);
     const role = ref(JSON.parse(Cookies.get("account")).role);
+    const permissions = ref(JSON.parse(Cookies.get("account")).permissions);
+
     const storedSidebarExpanded = localStorage.getItem("sidebar-expanded");
     const sidebarExpanded = ref(
       storedSidebarExpanded === null ? false : storedSidebarExpanded === "true"
@@ -2236,6 +2223,7 @@ export default {
 
     return {
       role,
+      permissions,
       trigger,
       sidebar,
       sidebarExpanded,

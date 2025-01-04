@@ -3,6 +3,7 @@ import { ref } from "vue";
 import ExploreLayout from "../layouts/ExploreView.vue";
 import LandingLayout from "../layouts/LandingView.vue";
 import Cookies from "js-cookie";
+
 import Dashboard from "../pages/Explore/Dashboard/Dashboard.vue";
 const routes = [
   // LandingLayout
@@ -193,8 +194,14 @@ const routes = [
           import("../pages/Explore/Seam/warehouse/RawMaterial.vue"),
         beforeEnter(to, from, next) {
           if (
-            JSON.parse(Cookies.get("account")).role === 5 ||
-            JSON.parse(Cookies.get("account")).role === 1000
+            (JSON.parse(Cookies.get("account")).role === 5 &&
+              JSON.parse(Cookies.get("account")).permissions.includes(
+                "seam raw warehouse"
+              )) ||
+            JSON.parse(Cookies.get("account")).role === 1000 ||
+            JSON.parse(Cookies.get("account")).permissions.includes(
+              "seam accountant"
+            )
           ) {
             next();
           } else {
@@ -208,8 +215,14 @@ const routes = [
         component: () => import("../pages/Explore/Seam/form/index.vue"),
         beforeEnter(to, from, next) {
           if (
-            JSON.parse(Cookies.get("account")).role === 5 ||
-            JSON.parse(Cookies.get("account")).role === 1000
+            JSON.parse(Cookies.get("account")).role === 1000 ||
+            (JSON.parse(Cookies.get("account")).role === 5 &&
+              JSON.parse(Cookies.get("account")).permissions.includes(
+                "form"
+              )) ||
+            JSON.parse(Cookies.get("account")).permissions.includes(
+              "seam accountant"
+            )
           ) {
             next();
           } else {
@@ -224,8 +237,14 @@ const routes = [
           import("../pages/Explore/Seam/classification/index.vue"),
         beforeEnter(to, from, next) {
           if (
-            JSON.parse(Cookies.get("account")).role === 5 ||
-            JSON.parse(Cookies.get("account")).role === 1000
+            JSON.parse(Cookies.get("account")).role === 1000 ||
+            (JSON.parse(Cookies.get("account")).role === 5 &&
+              JSON.parse(Cookies.get("account")).permissions.includes(
+                "classification"
+              )) ||
+            JSON.parse(Cookies.get("account")).permissions.includes(
+              "seam accountant"
+            )
           ) {
             next();
           } else {
@@ -239,8 +258,14 @@ const routes = [
         component: () => import("../pages/Explore/Seam/patoks/index.vue"),
         beforeEnter(to, from, next) {
           if (
-            JSON.parse(Cookies.get("account")).role === 5 ||
-            JSON.parse(Cookies.get("account")).role === 1000
+            JSON.parse(Cookies.get("account")).role === 1000 ||
+            (JSON.parse(Cookies.get("account")).role === 5 &&
+              JSON.parse(Cookies.get("account")).permissions.includes(
+                "patoks"
+              )) ||
+            JSON.parse(Cookies.get("account")).permissions.includes(
+              "seam accountant"
+            )
           ) {
             next();
           } else {
@@ -254,8 +279,14 @@ const routes = [
         component: () => import("../pages/Explore/Seam/packing/index.vue"),
         beforeEnter(to, from, next) {
           if (
-            JSON.parse(Cookies.get("account")).role === 5 ||
-            JSON.parse(Cookies.get("account")).role === 1000
+            JSON.parse(Cookies.get("account")).role === 1000 ||
+            (JSON.parse(Cookies.get("account")).role === 5 &&
+              JSON.parse(Cookies.get("account")).permissions.includes(
+                "packing"
+              )) ||
+            JSON.parse(Cookies.get("account")).permissions.includes(
+              "seam accountant"
+            )
           ) {
             next();
           } else {
@@ -270,8 +301,14 @@ const routes = [
           import("../pages/Explore/Seam/clothes-warehouse/index.vue"),
         beforeEnter(to, from, next) {
           if (
-            JSON.parse(Cookies.get("account")).role === 5 ||
-            JSON.parse(Cookies.get("account")).role === 1000
+            JSON.parse(Cookies.get("account")).role === 1000 ||
+            (JSON.parse(Cookies.get("account")).role === 5 &&
+              JSON.parse(Cookies.get("account")).permissions.includes(
+                "seam clothes warehouse"
+              )) ||
+            JSON.parse(Cookies.get("account")).permissions.includes(
+              "seam accountant"
+            )
           ) {
             next();
           } else {
