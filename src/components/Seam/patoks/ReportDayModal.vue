@@ -1,4 +1,8 @@
 <script setup>
+import Cookies from "js-cookie";
+const role = ref(JSON.parse(Cookies.get("account")).role);
+const permissions = ref(JSON.parse(Cookies.get("account")).permissions);
+const actions = ref(JSON.parse(Cookies.get("account")).actions);
 import { v4 as uuidv4 } from "uuid";
 import { ref } from "vue";
 import { SeamInPatoksStore } from "../../../stores/Seam/Patoks/patoks.store";
@@ -140,7 +144,12 @@ const rules = ref({
         >
           <template #default="scope">
             <router-link
-              v-if="scope.row.status === `Patokga yuborildi`"
+              v-if="
+                (scope.row.status === `Patokga yuborildi` &&
+                  role === 5 &&
+                  permissions.includes('patoks')) ||
+                role === 1000
+              "
               @click="Accept(scope.$index)"
               to=""
               class="inline-flex items-center mt-4 ml-2 text-red hover:bg-slate-300 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-2 text-center"
@@ -240,7 +249,10 @@ const rules = ref({
             />
           </el-form-item>
         </div>
-        <div class="mb-1 col-span-2 justify-end">
+        <div
+          v-if="(role === 5 && permissions.includes('patoks')) || role === 1000"
+          class="mb-1 col-span-2 justify-end"
+        >
           <el-form-item label=".">
             <el-button
               size="smal"
@@ -383,6 +395,10 @@ const rules = ref({
           >
             <template #default="scope">
               <router-link
+                v-if="
+                  (role === 5 && permissions.includes('patoks')) ||
+                  role === 1000
+                "
                 @click="AcceptPatok(scope.$index)"
                 to=""
                 class="inline-flex items-center mt-4 ml-2 text-red hover:bg-slate-300 font-medium rounded-md w-full sm:w-auto px-2 py-2 text-center"
@@ -390,6 +406,15 @@ const rules = ref({
                 <i class="text-red fa-solid fa-check fa-md"></i>
               </router-link>
               <router-link
+                v-if="
+                  (role === 5 &&
+                    permissions.includes('patoks') &&
+                    actions.includes(4)) ||
+                  role === 1000 ||
+                  (role === 5 &&
+                    permissions.includes('seam accountant') &&
+                    actions.includes(4))
+                "
                 to=""
                 class="inline-flex items-center mt-4 ml-2 text-red hover:bg-[#d7ebeb] font-medium rounded-md w-full sm:w-auto px-2 py-3 text-center"
               >

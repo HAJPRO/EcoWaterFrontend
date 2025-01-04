@@ -4,6 +4,9 @@ import { UserStore } from "../../../stores/Admin/user.store";
 const store = UserStore();
 import { storeToRefs } from "pinia";
 const { items } = storeToRefs(store);
+const update = (id) => {
+  store.UpdateUserModal({ id });
+};
 </script>
 <template>
   <div class="shadow-md rounded min-h-[15px]">
@@ -16,8 +19,8 @@ const { items } = storeToRefs(store);
       empty-text="Mahsulot tanlanmagan... "
       :data="items"
       border
-      min-height="300"
-      max-height="400"
+      min-height="500"
+      max-height="600"
     >
       <el-table-column
         header-align="center"
@@ -30,6 +33,7 @@ const { items } = storeToRefs(store);
       />
 
       <el-table-column
+        align="center"
         header-align="center"
         sortable
         prop="username"
@@ -38,27 +42,22 @@ const { items } = storeToRefs(store);
       />
 
       <el-table-column
+        align="center"
         header-align="center"
         sortable
-        prop="Department"
-        label="department"
+        prop="department"
+        label="Department"
         width="200"
       />
       <el-table-column
         prop="password"
         sortable
         label="Password"
-        width="180"
+        width="300"
         header-align="center"
         align="center"
       />
-      <el-table-column
-        prop="pro_name"
-        label="Nomi"
-        width="180"
-        header-align="center"
-        align="center"
-      />
+
       <el-table-column
         prop="role"
         label="role"
@@ -112,10 +111,10 @@ const { items } = storeToRefs(store);
         <template #default="scope">
           <router-link
             to=""
-            @click="confirm(scope.row._id)"
+            @click="update(scope.row._id)"
             class="inline-flex items-center mt-4 ml-2 text-red hover:bg-[#d7ebeb] font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
           >
-            <i class="text-red fa-solid fa-check fa-sm"></i>
+            <i class="text-red fa-solid fa-pen fa-sm"></i>
           </router-link>
           <router-link
             to=""

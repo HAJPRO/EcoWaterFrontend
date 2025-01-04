@@ -1,4 +1,8 @@
 <script setup>
+import Cookies from "js-cookie";
+const role = ref(JSON.parse(Cookies.get("account")).role);
+const permissions = ref(JSON.parse(Cookies.get("account")).permissions);
+const actions = ref(JSON.parse(Cookies.get("account")).actions);
 import { v4 as uuidv4 } from "uuid";
 import { ref } from "vue";
 import { SeamInClassificationStore } from "../../../stores/Seam/Classification/classification.store";
@@ -118,7 +122,12 @@ const rules = ref({
         >
           <template #default="scope">
             <router-link
-              v-if="scope.row.status === `Tasnifga yuborildi`"
+              v-if="
+                (scope.row.status === `Tasnifga yuborildi` &&
+                  role === 5 &&
+                  permissions.includes('classification')) ||
+                role === 1000
+              "
               @click="Accept(scope.$index)"
               to=""
               class="inline-flex items-center mt-4 ml-2 text-red hover:bg-slate-300 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-2 text-center"
@@ -198,7 +207,13 @@ const rules = ref({
             />
           </el-form-item>
         </div> -->
-        <div class="col-span-12 flex justify-end">
+        <div
+          v-if="
+            (role === 5 && permissions.includes('classification')) ||
+            role === 1000
+          "
+          class="col-span-12 flex justify-end"
+        >
           <div></div>
           <el-button
             size="small"

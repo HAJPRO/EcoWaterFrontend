@@ -1,4 +1,8 @@
 <script setup>
+import Cookies from "js-cookie";
+const role = ref(JSON.parse(Cookies.get("account")).role);
+const permissions = ref(JSON.parse(Cookies.get("account")).permissions);
+const actions = ref(JSON.parse(Cookies.get("account")).actions);
 import { v4 as uuidv4 } from "uuid";
 import { ref } from "vue";
 import { SeamInFormStore } from "../../../stores/Seam/Form/form.store";
@@ -80,19 +84,10 @@ const rules = ref({
             </el-select>
           </el-form-item>
         </div>
-        <!-- <div class="mb-1 col-span-4">
-          <el-form-item label="Vaqt" prop="date" :rules="rules">
-            <el-date-picker
-              v-model="model.date"
-              style="width: 100%"
-              clearable
-              type="date"
-              placeholder="..."
-              size="smal"
-            />
-          </el-form-item>
-        </div> -->
-        <div class="col-span-12 flex justify-end">
+        <div
+          v-if="(role === 5 && permissions.includes('form')) || role === 1000"
+          class="col-span-12 flex justify-end"
+        >
           <div></div>
           <el-button
             size="small"

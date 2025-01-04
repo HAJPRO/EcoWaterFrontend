@@ -1,4 +1,8 @@
 <script setup>
+import Cookies from "js-cookie";
+const role = ref(JSON.parse(Cookies.get("account")).role);
+const permissions = ref(JSON.parse(Cookies.get("account")).permissions);
+const actions = ref(JSON.parse(Cookies.get("account")).actions);
 import { ref } from "vue";
 import { SeamInFormStore } from "../../../stores/Seam/Form/form.store";
 import AddInfoFormModal from "../AddToFormModal.vue";
@@ -121,6 +125,9 @@ const formModal = (id) => {
           >
             <template #default="scope">
               <router-link
+                v-if="
+                  (role === 5 && permissions.includes('form')) || role === 1000
+                "
                 @click="formModal(scope.row._id)"
                 to=""
                 class="inline-flex items-center ml-2 text-red hover:bg-slate-200 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
@@ -128,6 +135,15 @@ const formModal = (id) => {
                 <i class="text-black fa-solid fa-check fa-sm"></i>
               </router-link>
               <router-link
+                v-if="
+                  (role === 5 &&
+                    permissions.includes('seam accountant') &&
+                    actions.includes(4)) ||
+                  (role === 5 &&
+                    permissions.includes('form') &&
+                    actions.includes(4)) ||
+                  role === 1000
+                "
                 to=""
                 class="inline-flex items-center ml-2 text-red hover:bg-slate-200 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
               >

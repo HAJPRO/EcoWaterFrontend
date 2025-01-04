@@ -186,6 +186,15 @@ const Report = (id) => {
                 <i class="text-black fa-check fa-solid fa-sm"></i>
               </router-link>
               <router-link
+                v-if="
+                  (role === 5 &&
+                    permissions.includes('seam accountant') &&
+                    actions.includes(4)) ||
+                  (role === 5 &&
+                    permissions.includes('form') &&
+                    actions.includes(4)) ||
+                  role === 1000
+                "
                 to=""
                 class="inline-flex items-center ml-2 text-red hover:bg-slate-300 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
               >

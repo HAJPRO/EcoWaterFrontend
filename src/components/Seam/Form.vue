@@ -2,6 +2,7 @@
 import Cookies from "js-cookie";
 const role = ref(JSON.parse(Cookies.get("account")).role);
 const permissions = ref(JSON.parse(Cookies.get("account")).permissions);
+const actions = ref(JSON.parse(Cookies.get("account")).actions);
 
 import { ref, onMounted } from "vue";
 import AddToFormModal from "../../components/Seam/AddToFormModal.vue";
@@ -147,6 +148,15 @@ onMounted(async () => {
           >
             <template #default="">
               <router-link
+                v-if="
+                  (role === 5 &&
+                    permissions.includes('seam accountant') &&
+                    actions.includes(4)) ||
+                  (role === 5 &&
+                    permissions.includes('seam raw warehouse') &&
+                    actions.includes(4)) ||
+                  role === 1000
+                "
                 to=""
                 class="inline-flex items-center ml-2 text-red hover:bg-red-600 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
               >
@@ -156,34 +166,6 @@ onMounted(async () => {
           </el-table-column>
         </el-table>
       </div>
-      <!-- <div class="flex justify-between mt-3 mb-3 p-2 shadow-md">
-        <div>
-          <el-button
-            v-show="is_camera === true"
-            @click="ShowCamera"
-            size="small"
-            style="background-color: red; color: white; border: none"
-          >
-            <i class="mr-2 fa-solid fa-xmark fa-sm"></i>Kamerani o'chirish
-          </el-button>
-        </div>
-        <div>
-          <el-button
-            @click="generateQRCode"
-            size="small"
-            style="background-color: #36d887; color: white; border: none"
-          >
-            <i class="mr-2 fa-solid fa-check fa-sm"></i>Saqlash</el-button
-          >
-          <el-button
-            @click="cancel()"
-            size="small"
-            style="background-color: red; color: white; border: none"
-          >
-            <i class="mr-2 fa-solid fa-xmark fa-sm"></i>Bekor qilish
-          </el-button>
-        </div>
-      </div> -->
     </div>
   </div>
 </template>

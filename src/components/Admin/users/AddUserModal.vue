@@ -3,13 +3,22 @@ import { ref, onMounted } from "vue";
 import { UserStore } from "../../../stores/Admin/user.store";
 const store_user = UserStore();
 import { storeToRefs } from "pinia";
-const { is_modal, model, departments, permissions, roles } =
+const { is_modal, is_update, model, departments, permissions, roles } =
   storeToRefs(store_user);
 const formRef = ref();
 const Save = async (formRef) => {
   await formRef.validate((valid) => {
     if (valid === true) {
       store_user.CreateUser(model.value);
+    } else {
+      return false;
+    }
+  });
+};
+const Update = async (formRef) => {
+  await formRef.validate((valid) => {
+    if (valid === true) {
+      store_user.UpdateUser(model.value);
     } else {
       return false;
     }
@@ -51,7 +60,7 @@ const rules = ref({
             />
           </el-form-item>
         </div>
-        <div class="mb-1 col-span-4">
+        <div v-if="is_update === false" class="mb-1 col-span-4">
           <el-form-item label="Password" prop="password" :rules="rules">
             <el-input
               required
@@ -140,11 +149,20 @@ const rules = ref({
     <template #footer>
       <div class="dialog-footer">
         <router-link
+          v-if="is_update === false"
           to=""
           @click="Save(formRef)"
           class="inline-flex text-[12px] items-center ml-2 px-3 py-1 mb-1 mt-2 text-sm font-medium text-center text-white bg-[#36d887] text-bold rounded"
         >
           <i class="mr-2 fa-solid fa-check fa-sm"></i>Yuborish</router-link
+        >
+        <router-link
+          v-if="is_update === true"
+          to=""
+          @click="Update(formRef)"
+          class="inline-flex text-[12px] items-center ml-2 px-3 py-1 mb-1 mt-2 text-sm font-medium text-center text-white bg-[#36d887] text-bold rounded"
+        >
+          <i class="mr-2 fa-solid fa-check fa-sm"></i>Yangilash</router-link
         >
       </div>
     </template>

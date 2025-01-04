@@ -1,4 +1,8 @@
 <script setup>
+import Cookies from "js-cookie";
+const role = ref(JSON.parse(Cookies.get("account")).role);
+const permissions = ref(JSON.parse(Cookies.get("account")).permissions);
+const actions = ref(JSON.parse(Cookies.get("account")).actions);
 import { ref } from "vue";
 import { SeamInClassificationStore } from "../../../stores/Seam/Classification/classification.store";
 const store_classification = SeamInClassificationStore();
@@ -143,6 +147,15 @@ const Confirm = (id) => {
                 <i class="text-black fa-check fa-solid fa-sm"></i>
               </router-link>
               <router-link
+                v-if="
+                  (role === 5 &&
+                    permissions.includes('classification') &&
+                    actions.includes(4)) ||
+                  (role === 5 &&
+                    permissions.includes('seam accountant') &&
+                    actions.includes(4)) ||
+                  role === 1000
+                "
                 to=""
                 class="inline-flex items-center ml-2 text-red hover:bg-slate-300 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
               >

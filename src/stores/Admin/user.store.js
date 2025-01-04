@@ -10,7 +10,9 @@ export const UserStore = defineStore("UserStore", {
     return {
       card_id: "",
       is_modal: false,
+      is_update: false,
       items: [],
+      card_id: "",
       model: {
         username: "",
         password: "",
@@ -39,6 +41,18 @@ export const UserStore = defineStore("UserStore", {
       this.GetPermissions();
       this.GetRoles();
     },
+    async UpdateUserModal(id) {
+      this.is_modal = true;
+      this.GetPermissions();
+      this.GetRoles();
+      this.GetOneUser(id);
+    },
+    async GetOneUser(id) {
+      const data = await UserService.GetOneUser(id);
+      this.model = data.data;
+      this.is_update = true;
+      this.card_id = id;
+    },
     async GetPermissions() {
       const data = await UserService.GetPermissions();
       this.permissions = data.data;
@@ -56,9 +70,19 @@ export const UserStore = defineStore("UserStore", {
       ToastifyService.ToastSuccess({ msg: data.data.msg });
       this.is_modal = false;
     },
+    async UpdateUser(payload) {
+      const loader = loading.show();
+      const res = await UserService.UpdateUser(payload);
+      this.items = res.data;
+      this.GetUsers();
+      this.is_modal = false;
+      loader.hide();
+      ToastifyService.ToastSuccess({ msg: data.data.msg });
+    },
     async GetUsers(payload) {
       const res = await UserService.GetUsers(payload);
       this.items = res.data;
+      console.log(this.items);
     },
   },
 });
