@@ -15,7 +15,6 @@ const { form_modal, model, items } = storeToRefs(store_seam);
 
 const AddForm = async () => {
   await store_seam.AddFormModal();
-  await store_heloers.GetAllMaterialNames();
 };
 onMounted(async () => {
   await store_seam.GetAllForm();

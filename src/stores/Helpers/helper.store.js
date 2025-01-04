@@ -7,45 +7,38 @@ import { ref } from "vue";
 export const HelpersStore = defineStore("HelpersStore", {
   state: () => {
     return {
-      material_names: [],
-      colors: [],
-      is_modal_name: false,
-      model: {
-        id: uuidv4(),
-        head_pack: "",
-        pastal_quantity: "",
-        waste_quantity: "",
-        fact_gramage: "",
-        status: false,
-      },
+      select_type: "",
+      modal_params: {},
+      options: [],
+      is_modal: false,
+
     };
   },
   actions: {
-    PlusMaterialNameModal() {
-      this.is_modal_name = true;
-      this.GetAllMaterialNames();
+    SelectType(payload) {
+      this.select_type = payload.type
+      this.GetOptionsByType({ type: payload.type });
     },
-    PlusColor() {
-      this.is_modal_name = true;
-      this.GetAllColors();
+    PlusModal(payload) {
+      this.modal_params = payload
+      this.is_modal = true;
+
     },
-    async CreateMaterialName(payload) {
+
+    async CreateOption(model) {
       const loader = loading.show();
-      const data = await HelpersService.CreateMaterialName(payload);
+      const data = await HelpersService.CreateOption({ model, type: this.modal_params.state });
       this.is_modal = false;
-      this.GetAllMaterialNames();
+      this.GetOptionsByType({ type: this.select_type });
       ToastifyService.ToastSuccess({
         msg: data.data.msg,
       });
       loader.hide();
     },
-    async GetAllMaterialNames(payload) {
-      const data = await HelpersService.GetAllMaterialNames(payload);
-      this.material_names = data.data;
+    async GetOptionsByType(payload) {
+      const data = await HelpersService.GetOptionsByType(payload);
+      this.options = data.data;
     },
-    async GetAllColors(payload) {
-      // const data = await HelpersService.GetAllMaterialNames(payload);
-      // this.material_names = data.data;
-    },
+
   },
 });

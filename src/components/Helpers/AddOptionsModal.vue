@@ -3,12 +3,12 @@ import { ref, onMounted } from "vue";
 import { HelpersStore } from "../../stores/Helpers/helper.store";
 const store = HelpersStore();
 import { storeToRefs } from "pinia";
-const { is_modal_name } = storeToRefs(store);
-const MaterialRef = ref();
-const CreateName = async (MaterialRef) => {
-  await MaterialRef.validate((valid) => {
+const { is_modal, modal_params } = storeToRefs(store);
+const OptionRef = ref();
+const CreateOption = async (OptionRef) => {
+  await OptionRef.validate((valid) => {
     if (valid === true) {
-      store.CreateMaterialName(model.value);
+      store.CreateOption(model.value);
       model.value = {
         department: "",
         name: "",
@@ -40,14 +40,10 @@ onMounted(() => {});
 </script>
 
 <template>
-  <el-dialog
-    v-model="is_modal_name"
-    title="Material nomi qo'shish "
-    width="500"
-  >
+  <el-dialog v-model="is_modal" :title="modal_params.title" width="500">
     <span>
       <el-form
-        ref="MaterialRef"
+        ref="OptionRef"
         :model="model"
         label-width="auto"
         class="filter-box bg-white md:grid md:grid-cols-10 gap-1 sm:flex sm:flex-wrap rounded shadow-sm p-2 mt-2 mb-2 text-[13px]"
@@ -90,7 +86,7 @@ onMounted(() => {});
         <div></div>
         <el-button
           size="small"
-          @click="CreateName(MaterialRef)"
+          @click="CreateOption(OptionRef)"
           style="
             background-color: #36d887;
             color: white;

@@ -6,7 +6,7 @@ import { HelpersStore } from "../../stores/Helpers/helper.store";
 const store_heloers = HelpersStore();
 import { storeToRefs } from "pinia";
 const { form_modal, model } = storeToRefs(store_seam);
-const { material_names } = storeToRefs(store_heloers);
+const { options } = storeToRefs(store_heloers);
 const unites = ref([
   { id: 1, name: "dona" },
   { id: 2, name: "pachka" },
@@ -36,14 +36,14 @@ const Save = async (formRef) => {
     }
   });
 };
-const PlusMaterialName = () => {
-  store_heloers.PlusMaterialNameModal();
+const Type = (type) => {
+  store_heloers.SelectType(type);
+};
+const Plus = (data) => {
+  store_heloers.PlusModal(data);
 };
 const ChangeMaterialName = (value) => {
   model.material_name = value;
-};
-const PlusColor = () => {
-  store_heloers.PlusMaterialNameModal();
 };
 const ChangeColor = (value) => {
   model.color = value;
@@ -110,7 +110,12 @@ const rules = ref({
               <template #prepend>
                 <div class="w-[8px] items-start text-center">
                   <i
-                    @click="PlusMaterialName()"
+                    @click="
+                      Plus({
+                        title: `Mato nomi qo'shish`,
+                        state: `material_name`,
+                      })
+                    "
                     class="fa-solid fa-plus mr-2 fa-md cursor-pointer"
                   ></i>
                 </div>
@@ -118,12 +123,13 @@ const rules = ref({
               <template #append>
                 <el-select
                   v-model="model.material_name"
+                  @click="Type({ type: `material_name` })"
                   @change="ChangeMaterialName($event)"
                   size="smal"
                   style="width: 40px"
                 >
                   <el-option
-                    v-for="item in material_names"
+                    v-for="item in options"
                     :key="item._id"
                     :label="item.name"
                     :value="item.name"
@@ -147,7 +153,9 @@ const rules = ref({
               <template #prepend>
                 <div class="w-[8px] items-start text-center">
                   <i
-                    @click="PlusColor()"
+                    @click="
+                      Plus({ title: `Rang nomi qo'shish`, state: `color` })
+                    "
                     class="fa-solid fa-plus mr-2 fa-md cursor-pointer"
                   ></i>
                 </div>
@@ -155,12 +163,13 @@ const rules = ref({
               <template #append>
                 <el-select
                   v-model="model.color"
+                  @click="Type({ type: `color` })"
                   @change="ChangeColor($event)"
                   size="smal"
                   style="width: 40px"
                 >
                   <el-option
-                    v-for="item in colors"
+                    v-for="item in options"
                     :key="item._id"
                     :label="item.name"
                     :value="item.name"
@@ -197,7 +206,9 @@ const rules = ref({
               <template #prepend>
                 <div class="w-[8px] items-start text-center">
                   <i
-                    @click="PlusUnit()"
+                    @click="
+                      Plus({ title: `Birlik nomi qo'shish`, state: `unit` })
+                    "
                     class="fa-solid fa-plus mr-2 fa-md cursor-pointer"
                   ></i>
                 </div>
@@ -205,12 +216,13 @@ const rules = ref({
               <template #append>
                 <el-select
                   v-model="model.unit"
+                  @click="Type({ type: `unit` })"
                   @change="ChangeUnit($event)"
                   size="smal"
                   style="width: 40px"
                 >
                   <el-option
-                    v-for="item in unites"
+                    v-for="item in options"
                     :key="item._id"
                     :label="item.name"
                     :value="item.name"
@@ -234,7 +246,9 @@ const rules = ref({
               <template #prepend>
                 <div class="w-[8px] items-start text-center">
                   <i
-                    @click="PlusSort()"
+                    @click="
+                      Plus({ title: `Sort nomi qo'shish`, state: `sort` })
+                    "
                     class="fa-solid fa-plus mr-2 fa-md cursor-pointer"
                   ></i>
                 </div>
@@ -242,12 +256,13 @@ const rules = ref({
               <template #append>
                 <el-select
                   v-model="model.sort"
+                  @click="Type({ type: `sort` })"
                   @change="ChangeSort($event)"
                   size="smal"
                   style="width: 40px"
                 >
                   <el-option
-                    v-for="item in sorts"
+                    v-for="item in options"
                     :key="item._id"
                     :label="item.name"
                     :value="item.name"
