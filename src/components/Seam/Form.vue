@@ -8,11 +8,14 @@ import { ref, onMounted } from "vue";
 import AddToFormModal from "../../components/Seam/AddToFormModal.vue";
 import { SeamStore } from "../../stores/Seam/seam.store";
 const store_seam = SeamStore();
+import { HelpersStore } from "../../stores/Helpers/helper.store";
+const store_heloers = HelpersStore();
 import { storeToRefs } from "pinia";
 const { form_modal, model, items } = storeToRefs(store_seam);
 
 const AddForm = async () => {
   await store_seam.AddFormModal();
+  await store_heloers.GetAllMaterialNames();
 };
 onMounted(async () => {
   await store_seam.GetAllForm();

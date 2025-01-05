@@ -3,6 +3,11 @@ import { ref, onMounted } from "vue";
 import Title from "@/components/Title.vue";
 import HeaderTabLink from "../../../../components/Seam/HeaderTabLink.vue";
 import BillOfLoad from "../../../../components/Seam/BillOfLoad.vue";
+import AddMaterialModal from "../../../../components/Helpers/AddMaterialModal.vue";
+import { HelpersStore } from "../../../../stores/Helpers/helper.store";
+const store = HelpersStore();
+import { storeToRefs } from "pinia";
+const { is_modal_name } = storeToRefs(store);
 </script>
 
 <template>
@@ -14,6 +19,7 @@ import BillOfLoad from "../../../../components/Seam/BillOfLoad.vue";
     </Title>
     <HeaderTabLink />
     <BillOfLoad />
+    <AddMaterialModal v-if="is_modal_name === true" />
   </div>
 </template>
 <style>

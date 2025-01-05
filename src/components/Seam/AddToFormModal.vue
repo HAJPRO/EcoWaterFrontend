@@ -2,8 +2,30 @@
 import { ref, onMounted } from "vue";
 import { SeamStore } from "../../stores/Seam/seam.store";
 const store_seam = SeamStore();
+import { HelpersStore } from "../../stores/Helpers/helper.store";
+const store_heloers = HelpersStore();
 import { storeToRefs } from "pinia";
 const { form_modal, model } = storeToRefs(store_seam);
+const { material_names } = storeToRefs(store_heloers);
+const unites = ref([
+  { id: 1, name: "dona" },
+  { id: 2, name: "pachka" },
+  { id: 3, name: "metr" },
+  { id: 4, name: "kg" },
+  { id: 5, name: "tonna" },
+]);
+const colors = ref([
+  { id: 1, name: "qizil" },
+  { id: 2, name: "yashil" },
+  { id: 3, name: "sariq" },
+  { id: 4, name: "jigar" },
+  { id: 5, name: "qora" },
+]);
+const sorts = ref([
+  { id: 1, name: "sort 1" },
+  { id: 2, name: "sort 2" },
+  { id: 3, name: "sort 3" },
+]);
 const formRef = ref();
 const Save = async (formRef) => {
   await formRef.validate((valid) => {
@@ -14,6 +36,19 @@ const Save = async (formRef) => {
     }
   });
 };
+const PlusMaterialName = () => {
+  store_heloers.PlusMaterialNameModal();
+};
+const ChangeMaterialName = (value) => {
+  model.material_name = value;
+};
+const PlusColor = () => {
+  store_heloers.PlusMaterialNameModal();
+};
+const ChangeColor = (value) => {
+  model.color = value;
+};
+
 const rules = ref({
   required: true,
   message: `Maydon to'ldirilishi zarur !`,
@@ -69,9 +104,33 @@ const rules = ref({
               clearable
               class="w-[100%]"
               size="smal"
-              type="text"
+              type="String"
               placeholder="..."
-            />
+            >
+              <template #prepend>
+                <div class="w-[8px] items-start text-center">
+                  <i
+                    @click="PlusMaterialName()"
+                    class="fa-solid fa-plus mr-2 fa-md cursor-pointer"
+                  ></i>
+                </div>
+              </template>
+              <template #append>
+                <el-select
+                  v-model="model.material_name"
+                  @change="ChangeMaterialName($event)"
+                  size="smal"
+                  style="width: 40px"
+                >
+                  <el-option
+                    v-for="item in material_names"
+                    :key="item._id"
+                    :label="item.name"
+                    :value="item.name"
+                  />
+                </el-select>
+              </template>
+            </el-input>
           </el-form-item>
         </div>
         <div class="mb-1 col-span-4">
@@ -82,9 +141,33 @@ const rules = ref({
               clearable
               class="w-[100%]"
               size="smal"
-              type="text"
+              type="String"
               placeholder="..."
-            />
+            >
+              <template #prepend>
+                <div class="w-[8px] items-start text-center">
+                  <i
+                    @click="PlusColor()"
+                    class="fa-solid fa-plus mr-2 fa-md cursor-pointer"
+                  ></i>
+                </div>
+              </template>
+              <template #append>
+                <el-select
+                  v-model="model.color"
+                  @change="ChangeColor($event)"
+                  size="smal"
+                  style="width: 40px"
+                >
+                  <el-option
+                    v-for="item in colors"
+                    :key="item._id"
+                    :label="item.name"
+                    :value="item.name"
+                  />
+                </el-select>
+              </template>
+            </el-input>
           </el-form-item>
         </div>
         <div class="mb-1 col-span-4">
@@ -108,9 +191,33 @@ const rules = ref({
               clearable
               class="w-[100%]"
               size="smal"
-              type="text"
+              type="String"
               placeholder="..."
-            />
+            >
+              <template #prepend>
+                <div class="w-[8px] items-start text-center">
+                  <i
+                    @click="PlusUnit()"
+                    class="fa-solid fa-plus mr-2 fa-md cursor-pointer"
+                  ></i>
+                </div>
+              </template>
+              <template #append>
+                <el-select
+                  v-model="model.unit"
+                  @change="ChangeUnit($event)"
+                  size="smal"
+                  style="width: 40px"
+                >
+                  <el-option
+                    v-for="item in unites"
+                    :key="item._id"
+                    :label="item.name"
+                    :value="item.name"
+                  />
+                </el-select>
+              </template>
+            </el-input>
           </el-form-item>
         </div>
         <div class="mb-1 col-span-4">
@@ -121,9 +228,33 @@ const rules = ref({
               clearable
               class="w-[100%]"
               size="smal"
-              type="text"
+              type="String"
               placeholder="..."
-            />
+            >
+              <template #prepend>
+                <div class="w-[8px] items-start text-center">
+                  <i
+                    @click="PlusSort()"
+                    class="fa-solid fa-plus mr-2 fa-md cursor-pointer"
+                  ></i>
+                </div>
+              </template>
+              <template #append>
+                <el-select
+                  v-model="model.sort"
+                  @change="ChangeSort($event)"
+                  size="smal"
+                  style="width: 40px"
+                >
+                  <el-option
+                    v-for="item in sorts"
+                    :key="item._id"
+                    :label="item.name"
+                    :value="item.name"
+                  />
+                </el-select>
+              </template>
+            </el-input>
           </el-form-item>
         </div>
       </el-form>
