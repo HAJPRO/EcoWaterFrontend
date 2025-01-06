@@ -20,12 +20,12 @@ export const SeamInCWarehouseService = {
   //     let url = "seam/c_warehouse/create_day_report";
   //     return api.post(url, data);
   //   },
-  //   GetOneReport(id) {
-  //     let url = "seam/c_warehouse/get_one_report";
-  //     return api.post(url, { id });
-  //   },
-  //   AcceptReportItem(data) {
-  //     let url = "seam/c_warehouse/accept_report_item";
-  //     return api.post(url, data);
-  //   },
+  GetOneReport(id) {
+    let url = "seam/c_warehouse/get_one_report";
+    return api.post(url, { id });
+  },
+  AcceptReportItem(data) {
+    let url = "seam/c_warehouse/accept_report_item";
+    return api.post(url, data);
+  },
 };

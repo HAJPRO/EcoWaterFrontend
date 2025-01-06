@@ -9,7 +9,7 @@ const store_c_warehouse = SeamInCWarehouseStore();
 import { storeToRefs } from "pinia";
 const { items } = storeToRefs(store_c_warehouse);
 const Confirm = (id) => {
-  store_c_warehouse.ConfirmAndCreateInProcess(id);
+  store_c_warehouse.ConfirmModal(id);
 };
 </script>
 <template>
