@@ -112,7 +112,8 @@ const Confirm = (id) => {
                 v-if="
                   (role === 5 &&
                     permissions.includes('seam clothes warehouse')) ||
-                  role === 1000
+                  role === 1000 ||
+                  (role === 5 && permissions.includes('seam accountant'))
                 "
                 @click="Confirm(scope.row._id)"
                 to=""
