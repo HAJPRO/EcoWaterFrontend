@@ -20,6 +20,7 @@ export const SeamInClassificationStore = defineStore(
         reports: {
           done_form: "",
           done_classification: "",
+          last_status: "",
           form: {},
           report_box_classification: [],
           status: "",
@@ -65,7 +66,12 @@ export const SeamInClassificationStore = defineStore(
       },
       async GetOneReport(id) {
         const data = await SeamInClassificationService.GetOneReport(id);
+        this.reports.form_report_length = data.data[0].form.report_box.length;
         this.reports.form = data.data[0].form;
+        this.reports.last_status =
+          data.data[0].form.report_box[
+            this.reports.form_report_length - 1
+          ].status;
         this.reports.report_box_classification = data.data[0].report_box;
         const initialValue = ref(0);
         this.reports.done_form = data.data[0].form.report_box.reduce(

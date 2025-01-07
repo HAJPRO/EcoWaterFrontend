@@ -7,25 +7,7 @@ const store_heloers = HelpersStore();
 import { storeToRefs } from "pinia";
 const { form_modal, model } = storeToRefs(store_seam);
 const { options } = storeToRefs(store_heloers);
-const unites = ref([
-  { id: 1, name: "dona" },
-  { id: 2, name: "pachka" },
-  { id: 3, name: "metr" },
-  { id: 4, name: "kg" },
-  { id: 5, name: "tonna" },
-]);
-const colors = ref([
-  { id: 1, name: "qizil" },
-  { id: 2, name: "yashil" },
-  { id: 3, name: "sariq" },
-  { id: 4, name: "jigar" },
-  { id: 5, name: "qora" },
-]);
-const sorts = ref([
-  { id: 1, name: "sort 1" },
-  { id: 2, name: "sort 2" },
-  { id: 3, name: "sort 3" },
-]);
+
 const formRef = ref();
 const Save = async (formRef) => {
   await formRef.validate((valid) => {

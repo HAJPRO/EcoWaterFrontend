@@ -11,11 +11,21 @@ import { storeToRefs } from "pinia";
 const { is_modal, reports } = storeToRefs(store_packing);
 const model = ref({
   id: uuidv4(),
+  model_name: "",
   quantity: "",
   unit: "",
   date: new Date(),
   status: "Skladga yuborildi",
 });
+
+const ChangeModelName = (value) => {
+  model.model_name = value;
+};
+const options = ref([
+  { id: 1, name: "Hujy" },
+  { id: 2, name: "Ko'ylak" },
+  { id: 3, name: "Jinfir" },
+]);
 const Accept = (index) => {
   store_packing.Accept(index);
 };
@@ -41,7 +51,7 @@ const rules = ref({
 });
 </script>
 <template>
-  <el-dialog v-model="is_modal" title="Kunlik hisobot oynasi " width="800">
+  <el-dialog v-model="is_modal" title="Kunlik hisobot oynasi " width="900">
     <div class="shadow-md rounded">
       <div
         class="flex justify-end flex-wrap font-semibold text-[11px] p-1 bg-slate-100 shadow"
@@ -73,20 +83,26 @@ const rules = ref({
           label="№"
           width="60"
         />
-
+        <el-table-column
+          align="center"
+          header-align="center"
+          prop="model_name"
+          label="Madel"
+          width="150"
+        />
         <el-table-column
           header-align="center"
           align="center"
           prop="quantity"
           label="Miqdori"
-          width="180"
+          width="150"
         />
         <el-table-column
           header-align="center"
           align="center"
           prop="unit"
           label="Birligi"
-          width="150"
+          width="120"
         />
         <el-table-column
           header-align="center"
@@ -162,7 +178,50 @@ const rules = ref({
         label-position="top"
         class="filter-box md:grid md:grid-cols-12 gap-2 sm:flex sm:flex-wrap rounded shadow mb-1 bg-white p-1 text-[12px]"
       >
-        <div class="mb-1 col-span-6">
+        <div class="mb-1 col-span-4">
+          <el-form-item label="Madel" prop="model_name" :rules="rules">
+            <el-input
+              required
+              v-model="model.model_name"
+              clearable
+              class="w-[100%]"
+              size="smal"
+              type="String"
+              placeholder="..."
+            >
+              <template #prepend>
+                <div class="w-[8px] items-start text-center">
+                  <i
+                    @click="
+                      Plus({
+                        title: `Madel qo'shish`,
+                        state: `model_name`,
+                      })
+                    "
+                    class="fa-solid fa-plus mr-2 fa-md cursor-pointer"
+                  ></i>
+                </div>
+              </template>
+              <template #append>
+                <el-select
+                  v-model="model.model_name"
+                  @click="Type({ type: `model_name` })"
+                  @change="ChangeModelName($event)"
+                  size="smal"
+                  style="width: 40px"
+                >
+                  <el-option
+                    v-for="item in options"
+                    :key="item._id"
+                    :label="item.name"
+                    :value="item.name"
+                  />
+                </el-select>
+              </template>
+            </el-input>
+          </el-form-item>
+        </div>
+        <div class="mb-1 col-span-3">
           <el-form-item label="Miqdori" prop="quantity" :rules="rules">
             <el-input
               required
@@ -175,7 +234,8 @@ const rules = ref({
             />
           </el-form-item>
         </div>
-        <div class="mb-1 col-span-6">
+
+        <div class="mb-1 col-span-3">
           <el-form-item label="Birligi" prop="unit" :rules="rules">
             <el-select
               required
@@ -194,36 +254,27 @@ const rules = ref({
             </el-select>
           </el-form-item>
         </div>
-        <!-- <div class="mb-1 col-span-4">
-          <el-form-item label="Vaqt" prop="date" :rules="rules">
-            <el-date-picker
-              v-model="model.date"
-              style="width: 100%"
-              clearable
-              type="date"
-              placeholder="..."
-              size="smal"
-            />
-          </el-form-item>
-        </div> -->
+
         <div
           v-if="
             (role === 5 && permissions.includes('packing')) || role === 1000
           "
-          class="col-span-12 flex justify-end"
+          class="col-span-2"
         >
-          <div></div>
-          <el-button
-            size="small"
-            @click="Save(formRef)"
-            style="
-              background-color: #36d887;
-              color: white;
-              border: none;
-              margin-bottom: 4px;
-            "
-            ><i class="mr-2 fa-solid fa-check fa-sm"></i>Yuborish
-          </el-button>
+          <el-form-item label=".">
+            <el-button
+              class="w-screen"
+              size="smal"
+              @click="Save(formRef)"
+              style="
+                background-color: #36d887;
+                color: white;
+                border: none;
+                margin-bottom: 4px;
+              "
+              ><i class="mr-2 fa-solid fa-check fa-sm"></i>Yuborish
+            </el-button>
+          </el-form-item>
         </div>
       </el-form>
       <div class="shadow-md rounded">
@@ -257,20 +308,26 @@ const rules = ref({
             label="№"
             width="60"
           />
-
+          <el-table-column
+            align="center"
+            header-align="center"
+            prop="model_name"
+            label="Madel"
+            width="150"
+          />
           <el-table-column
             header-align="center"
             align="center"
             prop="quantity"
             label="Miqdori"
-            width="180"
+            width="150"
           />
           <el-table-column
             header-align="center"
             align="center"
             prop="unit"
             label="Birligi"
-            width="150"
+            width="120"
           />
           <el-table-column
             header-align="center"

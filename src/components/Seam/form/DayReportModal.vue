@@ -11,11 +11,20 @@ import { storeToRefs } from "pinia";
 const { is_confirm, report } = storeToRefs(store_form);
 const model = ref({
   id: uuidv4(),
+  model_name: "",
   quantity: "",
   unit: "",
   date: new Date(),
   status: "Tasnifga yuborildi",
 });
+const ChangeModelName = (value) => {
+  model.model_name = value;
+};
+const options = ref([
+  { id: 1, name: "Hujy" },
+  { id: 2, name: "Ko'ylak" },
+  { id: 3, name: "Jinfir" },
+]);
 const units = ref([
   { id: 1, name: "Dona" },
   { id: 2, name: "Pachka" },
@@ -41,7 +50,7 @@ const rules = ref({
   <el-dialog
     v-model="report.is_modal"
     title="Kunlik hisobot qo'shish oynasi"
-    width="800"
+    width="900"
   >
     <span>
       <el-form
@@ -52,7 +61,50 @@ const rules = ref({
         label-position="top"
         class="filter-box md:grid md:grid-cols-12 gap-2 sm:flex sm:flex-wrap rounded shadow mb-1 bg-white p-1 text-[12px]"
       >
-        <div class="mb-1 col-span-6">
+        <div class="mb-1 col-span-4">
+          <el-form-item label="Madel" prop="model_name" :rules="rules">
+            <el-input
+              required
+              v-model="model.model_name"
+              clearable
+              class="w-[100%]"
+              size="smal"
+              type="String"
+              placeholder="..."
+            >
+              <template #prepend>
+                <div class="w-[8px] items-start text-center">
+                  <i
+                    @click="
+                      Plus({
+                        title: `Madel qo'shish`,
+                        state: `model_name`,
+                      })
+                    "
+                    class="fa-solid fa-plus mr-2 fa-md cursor-pointer"
+                  ></i>
+                </div>
+              </template>
+              <template #append>
+                <el-select
+                  v-model="model.model_name"
+                  @click="Type({ type: `model_name` })"
+                  @change="ChangeModelName($event)"
+                  size="smal"
+                  style="width: 40px"
+                >
+                  <el-option
+                    v-for="item in options"
+                    :key="item._id"
+                    :label="item.name"
+                    :value="item.name"
+                  />
+                </el-select>
+              </template>
+            </el-input>
+          </el-form-item>
+        </div>
+        <div class="mb-1 col-span-4">
           <el-form-item label="Miqdori" prop="quantity" :rules="rules">
             <el-input
               required
@@ -65,7 +117,7 @@ const rules = ref({
             />
           </el-form-item>
         </div>
-        <div class="mb-1 col-span-6">
+        <div class="mb-1 col-span-4">
           <el-form-item label="Birligi" prop="unit" :rules="rules">
             <el-select
               required
@@ -90,7 +142,7 @@ const rules = ref({
         >
           <div></div>
           <el-button
-            size="small"
+            size="smal"
             @click="Save(formRef)"
             style="
               background-color: #36d887;
@@ -111,7 +163,7 @@ const rules = ref({
         <div
           class="bg-red-50 p-1 rounded text-[11px] border-[1px] border-red-500"
         >
-          {{ report.report_data.status }}
+          Jarayonda
         </div>
         <div>Buyurtmach:</div>
       </div>
@@ -136,20 +188,26 @@ const rules = ref({
           label="№"
           width="60"
         />
-
+        <el-table-column
+          align="center"
+          header-align="center"
+          prop="model_name"
+          label="Madel"
+          width="160"
+        />
         <el-table-column
           align="center"
           header-align="center"
           prop="quantity"
           label="Miqdori"
-          width="180"
+          width="150"
         />
         <el-table-column
           align="center"
           header-align="center"
           prop="unit"
           label="Birligi"
-          width="150"
+          width="120"
         />
         <el-table-column
           align="center"

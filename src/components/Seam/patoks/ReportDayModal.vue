@@ -15,6 +15,7 @@ const ActiveTabLink = (is_active) => {
 };
 const model = ref({
   id: uuidv4(),
+  model_name: "",
   quantity: "",
   unit: "",
   date: new Date(),
@@ -22,6 +23,15 @@ const model = ref({
   patok: "",
   status: "",
 });
+
+const ChangeModelName = (value) => {
+  model.model_name = value;
+};
+const options = ref([
+  { id: 1, name: "Hujy" },
+  { id: 2, name: "Ko'ylak" },
+  { id: 3, name: "Jinfir" },
+]);
 const Accept = (index) => {
   store_patoks.Accept(index);
 };
@@ -63,7 +73,7 @@ const rules = ref({
 });
 </script>
 <template>
-  <el-dialog v-model="is_modal" title="Kunlik hisobot oynasi " width="854">
+  <el-dialog v-model="is_modal" title="Kunlik hisobot oynasi " width="900">
     <div class="shadow-md rounded">
       <div
         class="flex justify-end flex-wrap font-semibold text-[11px] p-1 bg-slate-100 shadow"
@@ -95,13 +105,19 @@ const rules = ref({
           label="№"
           width="60"
         />
-
+        <el-table-column
+          align="center"
+          header-align="center"
+          prop="model_name"
+          label="Madel"
+          width="150"
+        />
         <el-table-column
           header-align="center"
           align="center"
           prop="quantity"
           label="Miqdori"
-          width="180"
+          width="120"
         />
         <el-table-column
           header-align="center"
@@ -185,7 +201,50 @@ const rules = ref({
         label-position="top"
         class="filter-box md:grid md:grid-cols-12 gap-1 sm:flex sm:flex-wrap rounded shadow mb-1 bg-white p-1 text-[12px]"
       >
-        <div class="mb-1 col-span-2">
+        <div class="mb-1 col-span-4">
+          <el-form-item label="Madel" prop="model_name" :rules="rules">
+            <el-input
+              required
+              v-model="model.model_name"
+              clearable
+              class="w-[100%]"
+              size="smal"
+              type="String"
+              placeholder="..."
+            >
+              <template #prepend>
+                <div class="w-[8px] items-start text-center">
+                  <i
+                    @click="
+                      Plus({
+                        title: `Madel qo'shish`,
+                        state: `model_name`,
+                      })
+                    "
+                    class="fa-solid fa-plus mr-2 fa-md cursor-pointer"
+                  ></i>
+                </div>
+              </template>
+              <template #append>
+                <el-select
+                  v-model="model.model_name"
+                  @click="Type({ type: `model_name` })"
+                  @change="ChangeModelName($event)"
+                  size="smal"
+                  style="width: 40px"
+                >
+                  <el-option
+                    v-for="item in options"
+                    :key="item._id"
+                    :label="item.name"
+                    :value="item.name"
+                  />
+                </el-select>
+              </template>
+            </el-input>
+          </el-form-item>
+        </div>
+        <div class="mb-1 col-span-4">
           <el-form-item label="Miqdori" prop="quantity" :rules="rules">
             <el-input
               required
@@ -198,7 +257,7 @@ const rules = ref({
             />
           </el-form-item>
         </div>
-        <div class="mb-1 col-span-2">
+        <div class="mb-1 col-span-4">
           <el-form-item label="Birligi" prop="unit" :rules="rules">
             <el-select
               required
@@ -217,7 +276,7 @@ const rules = ref({
             </el-select>
           </el-form-item>
         </div>
-        <div class="mb-1 col-span-3">
+        <div class="mb-1 col-span-4">
           <el-form-item label="Patoklar" prop="patok" :rules="rules">
             <el-select
               @change="PatokStatus(model.patok)"
@@ -237,7 +296,7 @@ const rules = ref({
             </el-select>
           </el-form-item>
         </div>
-        <div class="mb-1 col-span-3">
+        <div class="mb-1 col-span-6">
           <el-form-item label="Muddat" prop="delivery_time" :rules="rules">
             <el-date-picker
               v-model="model.delivery_time"
@@ -251,10 +310,11 @@ const rules = ref({
         </div>
         <div
           v-if="(role === 5 && permissions.includes('patoks')) || role === 1000"
-          class="mb-1 col-span-2 justify-end"
+          class="mb-1 col-span-2"
         >
           <el-form-item label=".">
             <el-button
+              class="w-screen"
               size="smal"
               @click="Save(formRef)"
               style="
@@ -262,7 +322,6 @@ const rules = ref({
                 color: white;
                 border: none;
                 margin-bottom: 4px;
-                width: 100%;
               "
               ><i class="mr-2 fa-solid fa-check fa-sm"></i>Yuborish
             </el-button>
@@ -337,20 +396,26 @@ const rules = ref({
             label="№"
             width="60"
           />
-
+          <el-table-column
+            align="center"
+            header-align="center"
+            prop="model_name"
+            label="Madel"
+            width="150"
+          />
           <el-table-column
             header-align="center"
             align="center"
             prop="quantity"
             label="Miqdori"
-            width="180"
+            width="120"
           />
           <el-table-column
             header-align="center"
             align="center"
             prop="unit"
             label="Birligi"
-            width="100"
+            width="120"
           />
           <el-table-column
             header-align="center"
@@ -459,13 +524,19 @@ const rules = ref({
             label="№"
             width="60"
           />
-
+          <el-table-column
+            align="center"
+            header-align="center"
+            prop="model_name"
+            label="Madel"
+            width="150"
+          />
           <el-table-column
             header-align="center"
             align="center"
             prop="quantity"
             label="Miqdori"
-            width="180"
+            width="120"
           />
           <el-table-column
             header-align="center"
@@ -479,7 +550,7 @@ const rules = ref({
             align="center"
             prop="date"
             label="Vaqti"
-            width="150"
+            width="120"
             ><template #default="scope">{{
               String(scope.row.date).substring(0, 10)
             }}</template></el-table-column
