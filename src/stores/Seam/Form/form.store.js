@@ -59,13 +59,13 @@ export const SeamInFormStore = defineStore("SeamInFormStore", {
       const loader = loading.show();
       const data = await SeamInFormService.CreateDayReport({
         items,
-        id: this.report.id,
+        id: this.reports.id,
       });
 
       ToastifyService.ToastSuccess({
         msg: data.data.msg,
       });
-      this.GetOneReport(this.report.id);
+      this.GetOneReport(this.reports.id);
       this.getAll(this.isActive);
       loader.hide();
     },

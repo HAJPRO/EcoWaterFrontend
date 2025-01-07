@@ -119,7 +119,7 @@ const rules = ref({
             />
           </el-form-item>
         </div>
-        <div class="mb-1 col-span-4">
+        <div class="mb-1 col-span-2">
           <el-form-item label="Birligi" prop="unit" :rules="rules">
             <el-select
               required
@@ -138,22 +138,24 @@ const rules = ref({
             </el-select>
           </el-form-item>
         </div>
-        <div
-          v-if="(role === 5 && permissions.includes('form')) || role === 1000"
-          class="col-span-12 flex justify-end"
-        >
-          <div></div>
-          <el-button
-            size="smal"
-            @click="Save(formRef)"
-            style="
-              background-color: #36d887;
-              color: white;
-              border: none;
-              margin-bottom: 4px;
-            "
-            ><i class="mr-2 fa-solid fa-check fa-sm"></i>Yuborish
-          </el-button>
+        <div class="mb-1 col-span-2">
+          <el-form-item label=".">
+            <el-button
+              v-if="
+                (role === 5 && permissions.includes('form')) || role === 1000
+              "
+              class="w-screen"
+              size="smal"
+              @click="Save(formRef)"
+              style="
+                background-color: #36d887;
+                color: white;
+                border: none;
+                margin-bottom: 4px;
+              "
+              ><i class="mr-2 fa-solid fa-check fa-sm"></i>Yuborish
+            </el-button>
+          </el-form-item>
         </div>
       </el-form>
     </span>
