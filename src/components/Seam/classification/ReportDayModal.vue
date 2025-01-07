@@ -55,12 +55,18 @@ const rules = ref({
   <el-dialog v-model="is_modal" title="Kunlik hisobot oynasi " width="900">
     <div class="shadow-md rounded">
       <div
-        class="flex justify-end flex-wrap font-semibold text-[11px] p-1 bg-slate-100 shadow"
+        class="flex justify-between flex-wrap font-semibold text-[11px] p-1 bg-slate-100 shadow"
       >
+        <div class="text-[11px] mt-2">
+          Partya num : {{ reports.warehouse.party_number }}
+        </div>
         <div
           class="bg-red-50 p-1 rounded text-[11px] border-[1px] border-red-500"
         >
           Jarayonda
+        </div>
+        <div class="text-[11px] mt-2">
+          Buyurtmachi:{{ reports.warehouse.customer_name }}
         </div>
       </div>
       <el-table
@@ -139,6 +145,7 @@ const rules = ref({
         >
           <template #default="scope">
             <router-link
+              v-show="scope.row.status !== 'Qabul qilindi'"
               v-if="
                 (scope.row.status === `Tasnifga yuborildi` &&
                   role === 5 &&
@@ -236,7 +243,7 @@ const rules = ref({
             />
           </el-form-item>
         </div>
-        <div class="mb-1 col-span-4">
+        <div class="mb-1 col-span-2">
           <el-form-item label="Birligi" prop="unit" :rules="rules">
             <el-select
               required
@@ -255,26 +262,26 @@ const rules = ref({
             </el-select>
           </el-form-item>
         </div>
-        <div
-          v-if="
-            (role === 5 && permissions.includes('classification')) ||
-            role === 1000
-          "
-          class="col-span-12 flex justify-end"
-        >
-          <div></div>
-          <el-button
-            v-if="reports.last_status === 'Qabul qilindi'"
-            size="smal"
-            @click="Save(formRef)"
-            style="
-              background-color: #36d887;
-              color: white;
-              border: none;
-              margin-bottom: 4px;
-            "
-            ><i class="mr-2 fa-solid fa-check fa-sm"></i>Yuborish
-          </el-button>
+        <div class="mb-1 col-span-2">
+          <el-form-item label=".">
+            <el-button
+              v-show="reports.last_status === 'Qabul qilindi'"
+              v-if="
+                (role === 5 && permissions.includes('classification')) ||
+                role === 1000
+              "
+              class="w-screen"
+              size="smal"
+              @click="Save(formRef)"
+              style="
+                background-color: #36d887;
+                color: white;
+                border: none;
+                margin-bottom: 4px;
+              "
+              ><i class="mr-2 fa-solid fa-check fa-sm"></i>Yuborish
+            </el-button>
+          </el-form-item>
         </div>
       </el-form>
       <div class="shadow-md rounded">

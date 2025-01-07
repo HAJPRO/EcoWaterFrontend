@@ -17,6 +17,8 @@ export const SeamInPackingStore = defineStore("SeamInPackingStore", {
       },
       reports: {
         report: {},
+        warehouse: {},
+        last_status: "",
         report_box_packing: [],
         done_patoks: "",
         done_packing: "",
@@ -68,6 +70,10 @@ export const SeamInPackingStore = defineStore("SeamInPackingStore", {
     async GetOneReport(id) {
       const data = await SeamInPackingService.GetOneReport(id);
       this.report = data.data[0];
+      this.reports.warehouse = data.data[0].warehouse;
+      const patoks_report_length = data.data[0].patoks.report_box.length;
+      this.reports.last_status =
+        data.data[0].patoks.report_box[patoks_report_length - 1].status;
       this.reports.patoks = data.data[0].patoks;
       this.reports.report_box_packing = data.data[0].report_box;
       const initialValue1 = ref(0);

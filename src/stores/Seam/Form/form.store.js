@@ -18,10 +18,11 @@ export const SeamInFormStore = defineStore("SeamInFormStore", {
         fact_gramage: "",
         status: false,
       },
-      report: {
+      reports: {
         is_modal: false,
         id: "",
-        report_data: "",
+        warehouse: {},
+        report: "",
         done: "",
       },
 
@@ -37,16 +38,17 @@ export const SeamInFormStore = defineStore("SeamInFormStore", {
       this.card_id = id;
     },
     ReportModal(id) {
-      this.report.is_modal = true;
-      this.report.id = id;
+      this.reports.is_modal = true;
+      this.reports.id = id;
       this.GetOneReport(id);
     },
     async GetOneReport(id) {
       const data = await SeamInFormService.GetOneReport(id);
-      this.report.report_data = data.data[0];
+      this.reports.report = data.data[0];
+      this.reports.warehouse = data.data[0].warehouse;
 
       const initialValue = ref(0);
-      this.report.done = data.data[0].report_box.reduce(
+      this.reports.done = data.data[0].report_box.reduce(
         (accumulator, currentValue) =>
           accumulator + Number(currentValue.quantity),
         initialValue.value

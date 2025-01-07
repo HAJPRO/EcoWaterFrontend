@@ -2,7 +2,7 @@
 import { SeamInFormStore } from "../../../../stores/Seam/Form/form.store";
 const store_form = SeamInFormStore();
 import { storeToRefs } from "pinia";
-const { isActive, is_modal, report } = storeToRefs(store_form);
+const { isActive, is_modal, reports } = storeToRefs(store_form);
 import Title from "../../../../components/Title.vue";
 import HeaderTabLink from "../../../../components/Seam/form/HeadeTabLink.vue";
 import SkladTable from "../../../../components/Seam/form/SkladTable.vue";
@@ -24,6 +24,6 @@ import DayReportModal from "../../../../components/Seam/form/DayReportModal.vue"
     <SkladTable v-if="isActive === 2" />
     <ClassificationTable v-if="isActive === 3" />
     <AddInfoFormModal v-if="is_modal" />
-    <DayReportModal v-if="report.is_modal" />
+    <DayReportModal v-if="reports.is_modal" />
   </div>
 </template>

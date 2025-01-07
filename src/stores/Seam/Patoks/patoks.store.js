@@ -17,7 +17,9 @@ export const SeamInPatoksStore = defineStore("SeamInPatoksStore", {
       },
       reports: {
         report: {},
+        warehouse: {},
         report_box_patoks: [],
+        last_status: "",
         patoks_process: [],
         done_patoks: "",
         done_classification: "",
@@ -81,7 +83,14 @@ export const SeamInPatoksStore = defineStore("SeamInPatoksStore", {
     },
     async GetOneReport(id) {
       const data = await SeamInPatoksService.GetOneReport(id);
+      this.reports.warehouse = data.data[0].warehouse;
       this.report = data.data[0];
+      const classification_report_length =
+        data.data[0].classification.report_box.length;
+      this.reports.last_status =
+        data.data[0].classification.report_box[
+          classification_report_length - 1
+        ].status;
       this.reports.classification = data.data[0].classification;
       this.reports.patoks_process = data.data[0].patoks_process;
       this.reports.report_box_patoks = data.data[0].report_box;

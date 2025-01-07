@@ -12,6 +12,7 @@ export const SeamInCWarehouseStore = defineStore("SeamInCWarehouseStore", {
       reports: {
         report: [],
         status: "",
+        warehouse: {},
         done_packing: 0,
       },
       report: [],
@@ -61,6 +62,8 @@ export const SeamInCWarehouseStore = defineStore("SeamInCWarehouseStore", {
       const data = await SeamInCWarehouseService.GetOneReport(id);
       this.reports.report = data.data[0].report_box;
       this.reports.status = data.data[0].status;
+      this.reports.warehouse = data.data[0].warehouse;
+
       this.reports.report_box_packing = data.data[0].report_box;
       const initialValue1 = ref(0);
       this.reports.done_packing = data.data[0].report_box.reduce(

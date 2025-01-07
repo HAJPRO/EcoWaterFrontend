@@ -76,12 +76,16 @@ const rules = ref({
   <el-dialog v-model="is_modal" title="Kunlik hisobot oynasi " width="900">
     <div class="shadow-md rounded">
       <div
-        class="flex justify-end flex-wrap font-semibold text-[11px] p-1 bg-slate-100 shadow"
+        class="flex justify-between flex-wrap font-semibold text-[11px] p-1 bg-slate-100 shadow"
       >
+        <div class="mt-2">Party num:{{ reports.warehouse.party_number }}</div>
         <div
           class="bg-red-50 p-1 rounded text-[11px] border-[1px] border-red-500"
         >
           Jarayonda
+        </div>
+        <div class="mt-2">
+          Buyurtmachi:{{ reports.warehouse.customer_name }}
         </div>
       </div>
       <el-table
@@ -160,6 +164,7 @@ const rules = ref({
         >
           <template #default="scope">
             <router-link
+              v-show="scope.row.status !== 'Qabul qilindi'"
               v-if="
                 (scope.row.status === `Patokga yuborildi` &&
                   role === 5 &&
@@ -309,6 +314,7 @@ const rules = ref({
           </el-form-item>
         </div>
         <div
+          v-show="reports.last_status === 'Qabul qilindi'"
           v-if="(role === 5 && permissions.includes('patoks')) || role === 1000"
           class="mb-1 col-span-2"
         >

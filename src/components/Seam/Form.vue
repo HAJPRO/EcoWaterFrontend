@@ -34,7 +34,7 @@ onMounted(async () => {
         <div></div>
         <el-button
           @click="AddForm()"
-          size="small"
+          size="smal"
           style="background-color: #36d887; color: white; border: none"
         >
           <i class="mr-2 fa-solid fa-plus fa-sm"></i>Bichuvga

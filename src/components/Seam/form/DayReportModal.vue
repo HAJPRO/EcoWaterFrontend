@@ -8,7 +8,9 @@ import { ref } from "vue";
 import { SeamInFormStore } from "../../../stores/Seam/Form/form.store";
 const store_form = SeamInFormStore();
 import { storeToRefs } from "pinia";
-const { is_confirm, report } = storeToRefs(store_form);
+const { is_confirm, reports } = storeToRefs(store_form);
+console.log(reports);
+
 const model = ref({
   id: uuidv4(),
   model_name: "",
@@ -48,7 +50,7 @@ const rules = ref({
 </script>
 <template>
   <el-dialog
-    v-model="report.is_modal"
+    v-model="reports.is_modal"
     title="Kunlik hisobot qo'shish oynasi"
     width="900"
   >
@@ -159,16 +161,18 @@ const rules = ref({
       <div
         class="flex justify-between flex-wrap font-semibold text-[11px] p-1 bg-slate-100 shadow"
       >
-        <div>Party num:</div>
+        <div class="mt-2">Party num:{{ reports.warehouse.party_number }}</div>
         <div
           class="bg-red-50 p-1 rounded text-[11px] border-[1px] border-red-500"
         >
           Jarayonda
         </div>
-        <div>Buyurtmach:</div>
+        <div class="mt-2">
+          Buyurtmachi:{{ reports.warehouse.customer_name }}
+        </div>
       </div>
       <el-table
-        :data="report.report_data.report_box"
+        :data="reports.report.report_box"
         load
         class="w-full"
         header-align="center"
@@ -255,15 +259,11 @@ const rules = ref({
       <div
         class="flex justify-between flex-wrap font-semibold text-[12px] p-1 bg-slate-100 shadow"
       >
-        <div>
-          Buyurtma: {{ report ? report.report_data.pastal_quantity : 0 }}
-        </div>
-        <div>Bajarildi: {{ report.done ? report.done : 0 }}</div>
+        <div>Buyurtma: {{ 0 }}</div>
+        <div>Bajarildi: {{ reports.done ? reports.done : 0 }}</div>
         <div>
           Qoldi:
-          {{
-            report.done ? report.report_data.pastal_quantity - report.done : 0
-          }}
+          {{ 0 }}
         </div>
       </div>
     </div>

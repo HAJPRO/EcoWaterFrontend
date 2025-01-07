@@ -23,13 +23,13 @@ const Accept = (id) => {
       <div
         class="flex justify-between flex-wrap font-semibold text-[11px] p-1 bg-slate-100 shadow"
       >
-        <div>Party num:</div>
+        <div class="mt-2">Party num: {{ reports.warehouse.party_number }}</div>
         <div
           class="bg-red-50 p-1 rounded text-[11px] border-[1px] border-red-500"
         >
           Jarayonda
         </div>
-        <div>Buyurtmach:</div>
+        <div class="mt-2">Buyurtmach:{{ reports.warehouse.customer_name }}</div>
       </div>
       <el-table
         :data="reports.report"

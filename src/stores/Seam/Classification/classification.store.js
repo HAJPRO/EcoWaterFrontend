@@ -18,6 +18,7 @@ export const SeamInClassificationStore = defineStore(
           fact_gramage: "",
         },
         reports: {
+          warehouse: {},
           done_form: "",
           done_classification: "",
           last_status: "",
@@ -66,6 +67,7 @@ export const SeamInClassificationStore = defineStore(
       },
       async GetOneReport(id) {
         const data = await SeamInClassificationService.GetOneReport(id);
+        this.reports.warehouse = data.data[0].warehouse;
         this.reports.form_report_length = data.data[0].form.report_box.length;
         this.reports.form = data.data[0].form;
         this.reports.last_status =
