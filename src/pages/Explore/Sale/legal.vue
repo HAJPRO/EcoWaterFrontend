@@ -8,7 +8,6 @@ import { ToastifyService } from "../../../utils/Toastify";
 import SaleUpdateCardModal from "../../../components/Sale/SaleUpdateCardModal.vue";
 import HeaderTabLink from "../../../components/Sale/HeaderTabLink.vue";
 import MainTable from "../../../components/Sale/MainTable.vue";
-import AddProInfoModal from "../../../components/Sale/AddProInfoModal.vue";
 import { SaleStore } from "../../../stores/Sale/sale.store.js";
 const store_sale = SaleStore();
 import { storeToRefs } from "pinia";

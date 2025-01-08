@@ -1,29 +1,47 @@
 <script setup>
 import { onMounted, ref } from "vue";
+import { v4 as uuidv4 } from "uuid";
 import Title from "@/components/Title.vue";
-import AddProInfoModal from "../../../components/Sale/AddProInfoModal.vue";
+import AddOptionModal from "../../../components/Helpers/AddOptionsModal.vue";
 import { SaleLegalService } from "@/ApiServices/Sale/saleLegal.service";
 import { ToastifyService } from "../../../utils/Toastify.js";
-import { useRouter } from "vue-router";
-const router = useRouter();
 import { SaleStore } from "../../../stores/Sale/sale.store";
 const store_sale = SaleStore();
+import { HelpersStore } from "../../../stores/Helpers/helper.store.js";
+const store_heloers = HelpersStore();
 import { storeToRefs } from "pinia";
-const { plus_type_modal, plus_name_modal, pro_names, pro_types } =
-  storeToRefs(store_sale);
-
-const units = ref([
-  { id: 1, name: "Kg" },
-  { id: 2, name: "Metr" },
-  { id: 3, name: "Dona" },
-  { id: 4, name: "Pachka" },
-]);
+const {} = storeToRefs(store_sale);
+const { options, is_modal } = storeToRefs(store_heloers);
+const Type = (type) => {
+  store_heloers.SelectType(type);
+};
+const Plus = (data) => {
+  store_heloers.PlusModal(data);
+};
+const ChangeMaterialName = (value) => {
+  model.pro_name = value;
+};
+const ChangeMaterialType = (value) => {
+  model.pro_type = value;
+};
+const ChangeColor = (value) => {
+  model.pro_color = value;
+};
+const ChangeUnit = (value) => {
+  model.unit = value;
+};
 const model = ref({});
-const getModel = async () => {
+const GetModel = async () => {
   const data = await SaleLegalService.getModel();
   model.value = data.data;
 };
 
+const order = ref({
+  products: [],
+  customer_name: "",
+  order_number: "",
+  delivery_time: "",
+});
 const formRef = ref();
 const PlusValidate = async (formRef) => {
   await formRef.validate((valid) => {
@@ -34,37 +52,56 @@ const PlusValidate = async (formRef) => {
     }
   });
 };
-const orders = ref([]);
 const PlusOrder = async () => {
   try {
-    orders.value.push(model.value);
+    order.value.products.push({
+      id: uuidv4(),
+      pro_name: model.value.pro_name,
+      pro_type: model.value.pro_type,
+      pro_color: model.value.pro_color,
+      pro_width: model.value.pro_width,
+      grammaj: model.value.grammaj,
+      unit: model.value.unit,
+      order_quantity: model.value.order_quantity,
+    });
+
+    order.value.customer_name = model.value.customer_name;
+    order.value.order_number = model.value.order_number;
+    order.value.delivery_time = model.value.delivery_time;
   } catch (error) {
     return ToastifyService.ToastError({ msg: error.message });
   }
 };
 const Save = async () => {
   try {
-    const data = await SaleLegalService.create(model.value);
-    model.value = {};
-    const TimeOut = () => {
-      window.location.href = "/explore/sale/legal";
-    };
-    ToastifyService.ToastSuccess({ msg: data.data.msg });
-    setTimeout(TimeOut, 1500);
+    if (
+      order.value.products.length <= 0 &&
+      order.value.customer_name === "" &&
+      order.value.order_number === "" &&
+      order.value.delivery_time === ""
+    ) {
+      return ToastifyService.ToastError({ msg: "Mahsulot qo'shilmagan !" });
+    } else {
+      const data = await SaleLegalService.create(order.value);
+      if (data) {
+        order.value.products = [];
+        GetModel();
+      }
+      ToastifyService.ToastSuccess({ msg: data.data.msg });
+    }
   } catch (error) {
     return ToastifyService.ToastError({ msg: error.message });
   }
 };
-const PlusProType = () => {
-  store_sale.PlusProTypeModal();
-};
-const PlusProName = () => {
-  store_sale.PlusProNameModal();
+const deleteById = (id) => {
+  const filterLoad = order.value.products.filter((item) => {
+    return item.id !== id;
+  });
+  order.value.products = filterLoad;
 };
 onMounted(async () => {
   try {
-    await getModel();
-    await store_sale.GetProName(), await store_sale.GetProType();
+    await GetModel();
   } catch (error) {
     return ToastifyService.ToastError({ msg: error.message });
   }
@@ -77,7 +114,7 @@ const rules = ref({
 </script>
 
 <template>
-  <AddProInfoModal v-if="plus_type_modal || plus_name_modal" />
+  <AddOptionModal v-if="is_modal === true" />
   <div>
     <Title>
       <template v-slot:title>
@@ -99,6 +136,7 @@ const rules = ref({
           :rules="rules"
         >
           <el-input
+            :disabled="order.products.length"
             required
             v-model="model.customer_name"
             clearable
@@ -139,15 +177,28 @@ const rules = ref({
             placeholder="..."
           >
             <template #prepend>
-              <i
-                @click="PlusProName()"
-                class="fa-solid fa-plus mr-2 fa-md cursor-pointer"
-              ></i>
+              <div class="w-[8px] items-start text-center">
+                <i
+                  @click="
+                    Plus({
+                      title: `Material nomi qo'shish`,
+                      state: `material_name`,
+                    })
+                  "
+                  class="fa-solid fa-plus mr-2 fa-md cursor-pointer"
+                ></i>
+              </div>
             </template>
             <template #append>
-              <el-select size="smal" style="width: 100px">
+              <el-select
+                v-model="model.pro_name"
+                @click="Type({ type: `material_name` })"
+                @change="ChangeMaterialName($event)"
+                size="smal"
+                style="width: 40px"
+              >
                 <el-option
-                  v-for="item in pro_names"
+                  v-for="item in options"
                   :key="item._id"
                   :label="item.name"
                   :value="item.name"
@@ -169,15 +220,28 @@ const rules = ref({
             placeholder="..."
           >
             <template #prepend>
-              <i
-                @click="PlusProType()"
-                class="fa-solid fa-plus mr-2 fa-md cursor-pointer"
-              ></i>
+              <div class="w-[8px] items-start text-center">
+                <i
+                  @click="
+                    Plus({
+                      title: `Material tur  qo'shish`,
+                      state: `material_type`,
+                    })
+                  "
+                  class="fa-solid fa-plus mr-2 fa-md cursor-pointer"
+                ></i>
+              </div>
             </template>
             <template #append>
-              <el-select size="smal" style="width: 100px">
+              <el-select
+                v-model="model.pro_type"
+                @click="Type({ type: `material_type` })"
+                @change="ChangeMaterialType($event)"
+                size="smal"
+                style="width: 40px"
+              >
                 <el-option
-                  v-for="item in pro_types"
+                  v-for="item in options"
                   :key="item._id"
                   :label="item.name"
                   :value="item.name"
@@ -197,7 +261,37 @@ const rules = ref({
             size="smal"
             type="String"
             placeholder="..."
-          />
+          >
+            <template #prepend>
+              <div class="w-[8px] items-start text-center">
+                <i
+                  @click="
+                    Plus({
+                      title: `Rang qo'shish`,
+                      state: `color`,
+                    })
+                  "
+                  class="fa-solid fa-plus mr-2 fa-md cursor-pointer"
+                ></i>
+              </div>
+            </template>
+            <template #append>
+              <el-select
+                v-model="model.pro_color"
+                @click="Type({ type: `color` })"
+                @change="ChangeColor($event)"
+                size="smal"
+                style="width: 40px"
+              >
+                <el-option
+                  v-for="item in options"
+                  :key="item._id"
+                  :label="item.name"
+                  :value="item.name"
+                />
+              </el-select>
+            </template>
+          </el-input>
         </el-form-item>
       </div>
       <div class="mb-1 col-span-2">
@@ -244,22 +338,46 @@ const rules = ref({
         </el-form-item>
       </div>
       <div class="mb-1 col-span-2">
-        <el-form-item label="Birligi" prop="unit" :rules="rules">
-          <el-select
+        <el-form-item label="Birlik" prop="unit" :rules="rules">
+          <el-input
             required
-            size="smal"
             v-model="model.unit"
             clearable
+            class="w-[100%]"
+            size="smal"
+            type="String"
             placeholder="..."
           >
-            <el-option
-              v-for="item in units"
-              :key="item.id"
-              :label="item.name"
-              :value="item.name"
-            >
-            </el-option>
-          </el-select>
+            <template #prepend>
+              <div class="w-[8px] items-start text-center">
+                <i
+                  @click="
+                    Plus({
+                      title: `Birlik qo'shish`,
+                      state: `unit`,
+                    })
+                  "
+                  class="fa-solid fa-plus mr-2 fa-md cursor-pointer"
+                ></i>
+              </div>
+            </template>
+            <template #append>
+              <el-select
+                v-model="model.unit"
+                @click="Type({ type: `unit` })"
+                @change="ChangeUnit($event)"
+                size="smal"
+                style="width: 40px"
+              >
+                <el-option
+                  v-for="item in options"
+                  :key="item._id"
+                  :label="item.name"
+                  :value="item.name"
+                />
+              </el-select>
+            </template>
+          </el-input>
         </el-form-item>
       </div>
       <div class="mb-1 col-span-2">
@@ -269,14 +387,14 @@ const rules = ref({
           :rules="rules"
         >
           <el-date-picker
-            :disabled="orders.length"
+            :disabled="order.products.length"
             required
             v-model="model.delivery_time"
-            clearable
             style="width: 100%"
-            size="smal"
+            clearable
             type="date"
             placeholder="..."
+            size="smal"
           />
         </el-form-item>
       </div>
@@ -295,131 +413,113 @@ const rules = ref({
         </el-button>
       </div>
     </el-form>
-
-    <div class="shadow-md rounded min-h-[15px]">
-      <el-table
-        load
-        class="w-full"
-        header-align="center"
-        hight="4"
-        style="width: 100%; font-size: 13px"
-        empty-text="Mahsulot tanlanmagan... "
-        :data="orders"
-        border
-        min-height="300"
-        max-height="400"
+    <div class="mt-3 grid grid-cols-12 gap-2">
+      <div
+        class="col-span-3 h-[300px] shadow-md rounded-md bg-white text-center text-slate-500 font-semibold text-[14px] p-4 cursor-pointer border-t-[1px] border-b-[1px] border-[#36d887]"
       >
-        <el-table-column
+        <div class="mt-14 bg-slate-200 p-2 rounded">
+          Buyurtma nomeri: {{ model.order_number }}
+        </div>
+        <div class="mt-4 bg-slate-200 p-2 rounded">
+          Buyurtmachi: {{ model.customer_name }}
+        </div>
+        <div class="mt-4 bg-slate-200 p-2 rounded">
+          Muddat : {{ String(model.delivery_time).substring(0, 15) }}
+        </div>
+      </div>
+      <div class="col-span-9 shadow-md bg-white rounded min-h-[15px]">
+        <el-table
+          load
+          class="w-full"
           header-align="center"
-          align="center"
-          type="index"
-          prop="index"
-          fixed="left"
-          label="№"
-          width="60"
-        />
-
-        <el-table-column
-          header-align="center"
-          prop="customer_name"
-          label="Buyurtmachi"
-          width="200"
-        />
-
-        <el-table-column
-          header-align="center"
-          prop="order_number"
-          label="Buyurtma nomeri"
-          width="200"
-        />
-        <el-table-column
-          prop="pro_type"
-          label="Turi"
-          width="180"
-          header-align="center"
-          align="center"
-        />
-        <el-table-column
-          prop="pro_name"
-          label="Nomi"
-          width="180"
-          header-align="center"
-          align="center"
-        />
-        <el-table-column
-          prop="pro_color"
-          label="Rangi"
-          width="180"
-          header-align="center"
-          align="center"
-        />
-        <el-table-column
-          prop="order_quantity"
-          label="Miqdori"
-          width="180"
-          header-align="center"
-          align="center"
-        />
-        <el-table-column
-          prop="unit"
-          label="Birligi"
-          width="100"
-          header-align="center"
-          align="center"
-        />
-        <el-table-column
-          prop="delivery_time"
-          label="Muddati"
-          width="190"
-          header-align="center"
-          align="center"
+          hight="4"
+          style="width: 100%; font-size: 12px"
+          empty-text="Mahsulot tanlanmagan... "
+          :data="order.products"
+          border
+          height="240"
         >
-          <template #default="scope">
-            <el-date-picker
-              style="width: 100%"
-              disabled
-              v-model="scope.row.delivery_time"
-              clearable
-              type="date"
-              placeholder=""
-              size="smal"
-            />
-          </template>
-        </el-table-column>
+          <el-table-column
+            header-align="center"
+            align="center"
+            type="index"
+            prop="index"
+            fixed="left"
+            label="№"
+            width="60"
+          />
+          <el-table-column
+            prop="pro_name"
+            label="Nomi"
+            width="300"
+            header-align="center"
+            align="center"
+          />
 
-        <el-table-column
-          fixed="right"
-          prop="id"
-          label=""
-          width="200"
-          header-align="center"
-          align="center"
-        >
-          <template #default="scope">
-            <router-link
-              to=""
-              @click="deleteById(scope.row._id)"
-              class="inline-flex items-center mt-4 ml-2 text-white bg-red-500 hover:bg-red-600 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
-            >
-              <i class="text-black fa-sharp fa-solid fa-trash fa-xs"></i>
-            </router-link>
-          </template>
-        </el-table-column>
-      </el-table>
-      <div class="flex justify-end col-span-10 p-3">
-        <el-button
-          size="smal"
-          @click="PlusValidate(formRef)"
-          style="
-            background-color: #36d887;
-            color: white;
-            border: none;
-            cursor: pointer;
-            padding: 15px;
-          "
-        >
-          <i class="fa-solid fa-check mr-2 fa-md"></i> Saqlash
-        </el-button>
+          <el-table-column
+            prop="pro_type"
+            label="Turi"
+            width="200"
+            header-align="center"
+            align="center"
+          />
+
+          <el-table-column
+            prop="pro_color"
+            label="Rangi"
+            width="200"
+            header-align="center"
+            align="center"
+          />
+          <el-table-column
+            prop="order_quantity"
+            label="Miqdori"
+            width="280"
+            header-align="center"
+            align="center"
+          />
+          <el-table-column
+            prop="unit"
+            label="Birligi"
+            width="100"
+            header-align="center"
+            align="center"
+          />
+
+          <el-table-column
+            fixed="right"
+            prop="id"
+            label=""
+            width="100"
+            header-align="center"
+            align="center"
+          >
+            <template #default="scope">
+              <router-link
+                to=""
+                @click="deleteById(scope.row.id)"
+                class="inline-flex items-center mt-4 ml-2 text-white hover:bg-slate-300 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
+              >
+                <i class="text-black fa-sharp fa-solid fa-trash fa-xs"></i>
+              </router-link>
+            </template>
+          </el-table-column>
+        </el-table>
+        <div class="flex justify-end col-span-10 p-3 bg-white">
+          <el-button
+            size="smal"
+            @click="Save()"
+            style="
+              background-color: #36d887;
+              color: white;
+              border: none;
+              cursor: pointer;
+              padding: 15px;
+            "
+          >
+            <i class="fa-solid fa-check mr-2 fa-md"></i> Saqlash
+          </el-button>
+        </div>
       </div>
     </div>
   </div>

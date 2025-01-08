@@ -55,6 +55,7 @@ export const SaleStore = defineStore("saleStore", {
     async getAll(payload) {
       const loader = loading.show();
       const res = await SaleLegalService.getAll(payload);
+      this.active_tab = payload;
       this.length = res.data.length;
       this.items = res.data.all;
       loader.hide();
@@ -120,10 +121,7 @@ export const SaleStore = defineStore("saleStore", {
         ToastifyService.ToastSuccess({
           msg: confirmData.data.msg,
         });
-        const Refresh = () => {
-          window.location.href = "/explore/sale/legal";
-        };
-        setTimeout(Refresh, 1500);
+        this.getAll();
       } catch (error) {
         return ToastifyService.ToastError({ msg: error.messages });
       }
@@ -137,10 +135,7 @@ export const SaleStore = defineStore("saleStore", {
         ToastifyService.ToastSuccess({
           msg: data.data.msg,
         });
-        const Refresh = () => {
-          window.location.href = "/explore/sale/legal";
-        };
-        setTimeout(Refresh, 1500);
+        this.getAll(this.active_tab);
       } catch (error) {
         return ToastifyService.ToastError({ msg: error.messages });
       }
