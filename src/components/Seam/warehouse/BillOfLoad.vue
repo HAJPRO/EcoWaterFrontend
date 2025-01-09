@@ -1,16 +1,16 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { read, utils, writeFileXLSX } from "xlsx";
-import Scanner from "../../components/Seam/Scanner.vue";
-import Form from "../../components/Seam/Form.vue";
-import { ToastifyService } from "../../utils/Toastify";
-import { loading } from "./../../utils/Loader";
-import { SeamStore } from "../../stores/Seam/seam.store";
-const store = SeamStore();
+import Scanner from "../../../components/Seam/warehouse/Scanner.vue";
+import Form from "../../../components/Seam/warehouse/Form.vue";
+import { ToastifyService } from "../../../utils/Toastify";
+import { loading } from "./../../../utils/Loader";
+import { SeamWarehouseStore } from "../../../stores/Seam/Warehouse/warehouse.store";
+const store = SeamWarehouseStore();
 import { storeToRefs } from "pinia";
 const { isActive } = storeToRefs(store);
 import jspdf from "jspdf";
-import { SeamWarehouseService } from "../../ApiServices/Seam/warehouse/warehouse.service";
+import { SeamWarehouseService } from "../../../ApiServices/Seam/warehouse/warehouse.service";
 const Export_Excel = () => {
   const heading = [["ID", "Name", "Turi", "Rang kod", "Miqdori", "Birligi"]];
   const ws = utils.json_to_sheet(loadArray.value);
@@ -174,7 +174,7 @@ const rules = ref({
     <Scanner v-if="isActive === 3" />
     <div
       v-show="isActive === 2"
-      class="grid grid-cols-7 gap-2 bg-white p-1 h-[500px]"
+      class="grid grid-cols-7 gap-2 bg-white p-1 h-[700px]"
     >
       <div class="col-span-2 shadow overflow-y-auto h-[800]">
         <div
@@ -201,6 +201,7 @@ const rules = ref({
                   v-model="responsibles.invoice_number"
                   autocomplete="off"
                   placeholder="..."
+                  size="smal"
                 >
                 </el-input>
               </el-form-item>
@@ -211,6 +212,7 @@ const rules = ref({
                   :disabled="responsiblesBillingObj.from_where"
                   v-model="responsibles.from_where"
                   placeholder="..."
+                  size="smal"
                 >
                   <el-option
                     autocomplete="on"
@@ -238,6 +240,7 @@ const rules = ref({
                   v-model="responsibles.to_where"
                   clearable
                   placeholder="..."
+                  size="smal"
                 >
                   <el-option
                     v-for="item in sklads"
@@ -264,6 +267,7 @@ const rules = ref({
                   v-model="responsibles.sender"
                   clearable
                   placeholder="..."
+                  size="smal"
                 >
                   <el-option
                     v-for="item in leaders"
@@ -288,6 +292,7 @@ const rules = ref({
                 label="Qabul qiluvchi"
                 prop="receiver"
                 :rules="rules"
+                size="smal"
               >
                 <el-select
                   :disabled="responsiblesBillingObj.receiver"
@@ -321,6 +326,7 @@ const rules = ref({
                   v-model="responsibles.accountant"
                   clearable
                   placeholder="..."
+                  size="smal"
                 >
                   <el-option
                     required
@@ -349,6 +355,7 @@ const rules = ref({
                   v-model="responsibles.director"
                   clearable
                   placeholder="..."
+                  size="smal"
                 >
                   <el-option
                     required
@@ -413,6 +420,7 @@ const rules = ref({
                     :disabled="is_trash === false"
                     v-model="load.name"
                     placeholder="..."
+                    size="smal"
                   >
                     <el-option
                       v-for="item in material_name"
@@ -449,6 +457,7 @@ const rules = ref({
                     v-model="load.type"
                     clearable
                     placeholder="..."
+                    size="smal"
                   >
                     <el-option
                       v-for="item in material_type"
@@ -485,6 +494,7 @@ const rules = ref({
                     v-model="load.color_code"
                     clearable
                     placeholder="..."
+                    size="smal"
                   >
                     <el-option
                       v-for="item in color_code"
@@ -522,6 +532,7 @@ const rules = ref({
                     v-model="load.raw_material_quantity"
                     clearable
                     placeholder="..."
+                    size="smal"
                   >
                   </el-input>
                 </el-form-item>
@@ -543,6 +554,7 @@ const rules = ref({
                     v-model="load.unit"
                     clearable
                     placeholder="..."
+                    size="smal"
                   >
                     <el-option
                       v-for="item in unit"
@@ -598,7 +610,7 @@ const rules = ref({
             <div class="flex items-center">
               <img
                 class="h-64 w-64 mr-2"
-                src="../../../public/haj.jpg"
+                src="../../../../public/haj.jpg"
                 alt="Logo"
               />
               <div class="text-gray-700 font-semibold flex flex-col">

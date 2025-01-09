@@ -83,6 +83,7 @@ const Save = async () => {
       return ToastifyService.ToastError({ msg: "Mahsulot qo'shilmagan !" });
     } else {
       const data = await SaleLegalService.create(order.value);
+
       if (data) {
         order.value.products = [];
         GetModel();

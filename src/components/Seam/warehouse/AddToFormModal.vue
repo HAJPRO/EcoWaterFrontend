@@ -1,18 +1,19 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import { SeamStore } from "../../stores/Seam/seam.store";
-const store_seam = SeamStore();
-import { HelpersStore } from "../../stores/Helpers/helper.store";
+import { SeamWarehouseStore } from "../../../stores/Seam/Warehouse/warehouse.store";
+const store_warehouse = SeamWarehouseStore();
+import { HelpersStore } from "../../../stores/Helpers/helper.store";
 const store_heloers = HelpersStore();
 import { storeToRefs } from "pinia";
-const { form_modal, model } = storeToRefs(store_seam);
+const { modal } = storeToRefs(store_warehouse);
+
 const { options } = storeToRefs(store_heloers);
 
 const formRef = ref();
 const Save = async (formRef) => {
   await formRef.validate((valid) => {
     if (valid === true) {
-      store_seam.CreaetToForm(model.value);
+      store_warehouse.Create(modal.model.value);
     } else {
       return false;
     }
@@ -25,10 +26,10 @@ const Plus = (data) => {
   store_heloers.PlusModal(data);
 };
 const ChangeMaterialName = (value) => {
-  model.material_name = value;
+  modal.model.material_name = value;
 };
 const ChangeColor = (value) => {
-  model.color = value;
+  modal.model.color = value;
 };
 
 const rules = ref({
@@ -38,10 +39,10 @@ const rules = ref({
 });
 </script>
 <template>
-  <el-dialog v-model="form_modal" title="Bichuvga mato chiqarish  " width="800">
+  <el-dialog v-model="modal.is_modal" :title="modal.title" width="800">
     <span>
       <el-form
-        :model="model"
+        :model="modal.model"
         ref="formRef"
         label-width="auto"
         size="small"
@@ -56,7 +57,7 @@ const rules = ref({
           >
             <el-input
               required
-              v-model="model.party_number"
+              v-model="modal.model.party_number"
               clearable
               class="w-[100%]"
               size="smal"
@@ -69,7 +70,20 @@ const rules = ref({
           <el-form-item label="Buyurtmachi" prop="customer_name" :rules="rules">
             <el-input
               required
-              v-model="model.customer_name"
+              v-model="modal.model.customer_name"
+              clearable
+              class="w-[100%]"
+              size="smal"
+              type="text"
+              placeholder="..."
+            />
+          </el-form-item>
+        </div>
+        <div class="mb-1 col-span-4">
+          <el-form-item label="Artikul" prop="artikul" :rules="rules">
+            <el-input
+              required
+              v-model="modal.model.artikul"
               clearable
               class="w-[100%]"
               size="smal"
@@ -82,7 +96,7 @@ const rules = ref({
           <el-form-item label="Mato nomi" prop="material_name" :rules="rules">
             <el-input
               required
-              v-model="model.material_name"
+              v-model="modal.model.material_name"
               clearable
               class="w-[100%]"
               size="smal"
@@ -104,7 +118,7 @@ const rules = ref({
               </template>
               <template #append>
                 <el-select
-                  v-model="model.material_name"
+                  v-model="modal.model.material_name"
                   @click="Type({ type: `material_name` })"
                   @change="ChangeMaterialName($event)"
                   size="smal"
@@ -125,7 +139,7 @@ const rules = ref({
           <el-form-item label="Rangi" prop="color" :rules="rules">
             <el-input
               required
-              v-model="model.color"
+              v-model="modal.model.color"
               clearable
               class="w-[100%]"
               size="smal"
@@ -144,7 +158,7 @@ const rules = ref({
               </template>
               <template #append>
                 <el-select
-                  v-model="model.color"
+                  v-model="modal.model.color"
                   @click="Type({ type: `color` })"
                   @change="ChangeColor($event)"
                   size="smal"
@@ -165,7 +179,7 @@ const rules = ref({
           <el-form-item label="Miqdori" prop="quantity" :rules="rules">
             <el-input
               required
-              v-model="model.quantity"
+              v-model="modal.model.quantity"
               clearable
               class="w-[100%]"
               size="smal"
@@ -178,7 +192,7 @@ const rules = ref({
           <el-form-item label="Birligi" prop="unit" :rules="rules">
             <el-input
               required
-              v-model="model.unit"
+              v-model="modal.model.unit"
               clearable
               class="w-[100%]"
               size="smal"
@@ -197,7 +211,7 @@ const rules = ref({
               </template>
               <template #append>
                 <el-select
-                  v-model="model.unit"
+                  v-model="modal.model.unit"
                   @click="Type({ type: `unit` })"
                   @change="ChangeUnit($event)"
                   size="smal"
@@ -218,7 +232,7 @@ const rules = ref({
           <el-form-item label="Sort" prop="sort" :rules="rules">
             <el-input
               required
-              v-model="model.sort"
+              v-model="modal.model.sort"
               clearable
               class="w-[100%]"
               size="smal"
@@ -237,7 +251,7 @@ const rules = ref({
               </template>
               <template #append>
                 <el-select
-                  v-model="model.sort"
+                  v-model="modal.model.sort"
                   @click="Type({ type: `sort` })"
                   @change="ChangeSort($event)"
                   size="smal"

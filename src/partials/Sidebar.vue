@@ -254,8 +254,18 @@
           </ul>
         </div>
 
-        <!-- Buyurtmalar-->
-        <div v-if="role == 1 || role === 1000">
+        <!-- Bo'limlar group -->
+        <div
+          v-if="
+            role === 2 ||
+            role === 1000 ||
+            role === 2 ||
+            role === 3 ||
+            role === 4 ||
+            role === 5 ||
+            role === 6
+          "
+        >
           <h3 class="text-xs uppercase text-slate-500 font-semibold pl-3">
             <span
               class="hidden lg:block lg:sidebar-expanded:hidden 2xl:hidden text-center w-6"
@@ -263,10 +273,10 @@
               >•••</span
             >
             <span class="lg:hidden lg:sidebar-expanded:block 2xl:block"
-              >Buyurtmalar</span
+              >Bo'limlar</span
             >
           </h3>
-          <ul class="mt-3">
+          <ul v-if="role == 1 || role === 1000" class="mt-3">
             <!-- Sotuv  -->
             <SidebarLinkGroup
               v-slot="parentLink"
@@ -446,30 +456,6 @@
               </div>
             </SidebarLinkGroup>
           </ul>
-        </div>
-
-        <!-- Harakatlar group -->
-        <div
-          v-if="
-            role === 2 ||
-            role === 1000 ||
-            role === 2 ||
-            role === 3 ||
-            role === 4 ||
-            role === 5 ||
-            role === 6
-          "
-        >
-          <h3 class="text-xs uppercase text-slate-500 font-semibold pl-3">
-            <span
-              class="hidden lg:block lg:sidebar-expanded:hidden 2xl:hidden text-center w-6"
-              aria-hidden="true"
-              >•••</span
-            >
-            <span class="lg:hidden lg:sidebar-expanded:block 2xl:block"
-              >Harakatlar</span
-            >
-          </h3>
           <ul v-if="role === 2 || role === 1000" class="mt-3">
             <!-- Bo'yash harakati  -->
             <SidebarLinkGroup
@@ -505,7 +491,7 @@
                     </svg>
                     <span
                       class="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
-                      >Bo'yash harakati
+                      >Bo'yoq
                     </span>
                   </div>
                   <!-- Icon -->
@@ -854,8 +840,8 @@
                   <div class="flex items-center">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
+                      width="28"
+                      height="28"
                       viewBox="0 0 24 24"
                     >
                       <path
@@ -873,7 +859,7 @@
                     </svg>
                     <span
                       class="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
-                      >To'quv harakatlari
+                      >To'quv
                     </span>
                   </div>
                   <!-- Icon -->
@@ -1108,7 +1094,7 @@
 
                     <span
                       class="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
-                      >Yigiruv harakatlari
+                      >Yigiruv
                     </span>
                   </div>
                   <!-- Icon -->
@@ -1420,7 +1406,7 @@
 
                     <span
                       class="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
-                      >Tikuv harakati
+                      >Tikuv
                     </span>
                   </div>
                   <!-- Icon -->
@@ -1612,6 +1598,7 @@
               </div>
             </SidebarLinkGroup>
           </ul>
+
           <ul v-if="role === 6 || role === 1000" class="mt-3">
             <!-- Taminot bo'limi harakati  -->
             <SidebarLinkGroup
@@ -1636,19 +1623,305 @@
                   <div class="flex items-center">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
-                      width="25"
-                      height="25"
-                      viewBox="0 0 896 1024"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
                     >
-                      <path
+                      <rect
+                        width="7.33"
+                        height="7.33"
+                        x="1"
+                        y="1"
                         fill="#24a8e5"
-                        d="M832 238v402q0 87-43 160.5T672.5 917T512 960v64L320 896l192-128v64q80 0 136-56t56-136V238q-29-17-46.5-46T640 128q0-53 37.5-90.5T768 0t90.5 37.5T896 128q0 35-17.5 64T832 238M768 64q-27 0-45.5 18.5T704 128t18.5 45.5t45 18.5t45.5-19t19-45.5t-18.5-45T768 64M384 192q-80 0-136 56t-56 136v402q29 17 46.5 46t17.5 64q0 53-37.5 90.5T128 1024t-90.5-37.5T0 896q0-35 17.5-64T64 786V384q0-87 43-160.5T223.5 107T384 64V0l192 128l-192 128zM128.5 832Q102 832 83 850.5T64 896t18.5 45.5T128 960t45.5-19t18.5-45.5t-18.5-45t-45-18.5"
-                      />
+                      >
+                        <animate
+                          id="svgSpinnersBlocksWave0"
+                          attributeName="x"
+                          begin="0;svgSpinnersBlocksWave1.end+0.2s"
+                          dur="0.6s"
+                          values="1;4;1"
+                        />
+                        <animate
+                          attributeName="y"
+                          begin="0;svgSpinnersBlocksWave1.end+0.2s"
+                          dur="0.6s"
+                          values="1;4;1"
+                        />
+                        <animate
+                          attributeName="width"
+                          begin="0;svgSpinnersBlocksWave1.end+0.2s"
+                          dur="0.6s"
+                          values="7.33;1.33;7.33"
+                        />
+                        <animate
+                          attributeName="height"
+                          begin="0;svgSpinnersBlocksWave1.end+0.2s"
+                          dur="0.6s"
+                          values="7.33;1.33;7.33"
+                        />
+                      </rect>
+                      <rect
+                        width="7.33"
+                        height="7.33"
+                        x="8.33"
+                        y="1"
+                        fill="#08c7f9"
+                      >
+                        <animate
+                          attributeName="x"
+                          begin="svgSpinnersBlocksWave0.begin+0.1s"
+                          dur="0.6s"
+                          values="8.33;11.33;8.33"
+                        />
+                        <animate
+                          attributeName="y"
+                          begin="svgSpinnersBlocksWave0.begin+0.1s"
+                          dur="0.6s"
+                          values="1;4;1"
+                        />
+                        <animate
+                          attributeName="width"
+                          begin="svgSpinnersBlocksWave0.begin+0.1s"
+                          dur="0.6s"
+                          values="7.33;1.33;7.33"
+                        />
+                        <animate
+                          attributeName="height"
+                          begin="svgSpinnersBlocksWave0.begin+0.1s"
+                          dur="0.6s"
+                          values="7.33;1.33;7.33"
+                        />
+                      </rect>
+                      <rect
+                        width="7.33"
+                        height="7.33"
+                        x="1"
+                        y="8.33"
+                        fill="#08c7f9"
+                      >
+                        <animate
+                          attributeName="x"
+                          begin="svgSpinnersBlocksWave0.begin+0.1s"
+                          dur="0.6s"
+                          values="1;4;1"
+                        />
+                        <animate
+                          attributeName="y"
+                          begin="svgSpinnersBlocksWave0.begin+0.1s"
+                          dur="0.6s"
+                          values="8.33;11.33;8.33"
+                        />
+                        <animate
+                          attributeName="width"
+                          begin="svgSpinnersBlocksWave0.begin+0.1s"
+                          dur="0.6s"
+                          values="7.33;1.33;7.33"
+                        />
+                        <animate
+                          attributeName="height"
+                          begin="svgSpinnersBlocksWave0.begin+0.1s"
+                          dur="0.6s"
+                          values="7.33;1.33;7.33"
+                        />
+                      </rect>
+                      <rect
+                        width="7.33"
+                        height="7.33"
+                        x="15.66"
+                        y="1"
+                        fill="#08c7f9"
+                      >
+                        <animate
+                          attributeName="x"
+                          begin="svgSpinnersBlocksWave0.begin+0.2s"
+                          dur="0.6s"
+                          values="15.66;18.66;15.66"
+                        />
+                        <animate
+                          attributeName="y"
+                          begin="svgSpinnersBlocksWave0.begin+0.2s"
+                          dur="0.6s"
+                          values="1;4;1"
+                        />
+                        <animate
+                          attributeName="width"
+                          begin="svgSpinnersBlocksWave0.begin+0.2s"
+                          dur="0.6s"
+                          values="7.33;1.33;7.33"
+                        />
+                        <animate
+                          attributeName="height"
+                          begin="svgSpinnersBlocksWave0.begin+0.2s"
+                          dur="0.6s"
+                          values="7.33;1.33;7.33"
+                        />
+                      </rect>
+                      <rect
+                        width="7.33"
+                        height="7.33"
+                        x="8.33"
+                        y="8.33"
+                        fill="#08c7f9"
+                      >
+                        <animate
+                          attributeName="x"
+                          begin="svgSpinnersBlocksWave0.begin+0.2s"
+                          dur="0.6s"
+                          values="8.33;11.33;8.33"
+                        />
+                        <animate
+                          attributeName="y"
+                          begin="svgSpinnersBlocksWave0.begin+0.2s"
+                          dur="0.6s"
+                          values="8.33;11.33;8.33"
+                        />
+                        <animate
+                          attributeName="width"
+                          begin="svgSpinnersBlocksWave0.begin+0.2s"
+                          dur="0.6s"
+                          values="7.33;1.33;7.33"
+                        />
+                        <animate
+                          attributeName="height"
+                          begin="svgSpinnersBlocksWave0.begin+0.2s"
+                          dur="0.6s"
+                          values="7.33;1.33;7.33"
+                        />
+                      </rect>
+                      <rect
+                        width="7.33"
+                        height="7.33"
+                        x="1"
+                        y="15.66"
+                        fill="#08c7f9"
+                      >
+                        <animate
+                          attributeName="x"
+                          begin="svgSpinnersBlocksWave0.begin+0.2s"
+                          dur="0.6s"
+                          values="1;4;1"
+                        />
+                        <animate
+                          attributeName="y"
+                          begin="svgSpinnersBlocksWave0.begin+0.2s"
+                          dur="0.6s"
+                          values="15.66;18.66;15.66"
+                        />
+                        <animate
+                          attributeName="width"
+                          begin="svgSpinnersBlocksWave0.begin+0.2s"
+                          dur="0.6s"
+                          values="7.33;1.33;7.33"
+                        />
+                        <animate
+                          attributeName="height"
+                          begin="svgSpinnersBlocksWave0.begin+0.2s"
+                          dur="0.6s"
+                          values="7.33;1.33;7.33"
+                        />
+                      </rect>
+                      <rect
+                        width="7.33"
+                        height="7.33"
+                        x="15.66"
+                        y="8.33"
+                        fill="#08c7f9"
+                      >
+                        <animate
+                          attributeName="x"
+                          begin="svgSpinnersBlocksWave0.begin+0.3s"
+                          dur="0.6s"
+                          values="15.66;18.66;15.66"
+                        />
+                        <animate
+                          attributeName="y"
+                          begin="svgSpinnersBlocksWave0.begin+0.3s"
+                          dur="0.6s"
+                          values="8.33;11.33;8.33"
+                        />
+                        <animate
+                          attributeName="width"
+                          begin="svgSpinnersBlocksWave0.begin+0.3s"
+                          dur="0.6s"
+                          values="7.33;1.33;7.33"
+                        />
+                        <animate
+                          attributeName="height"
+                          begin="svgSpinnersBlocksWave0.begin+0.3s"
+                          dur="0.6s"
+                          values="7.33;1.33;7.33"
+                        />
+                      </rect>
+                      <rect
+                        width="7.33"
+                        height="7.33"
+                        x="8.33"
+                        y="15.66"
+                        fill="#08c7f9"
+                      >
+                        <animate
+                          attributeName="x"
+                          begin="svgSpinnersBlocksWave0.begin+0.3s"
+                          dur="0.6s"
+                          values="8.33;11.33;8.33"
+                        />
+                        <animate
+                          attributeName="y"
+                          begin="svgSpinnersBlocksWave0.begin+0.3s"
+                          dur="0.6s"
+                          values="15.66;18.66;15.66"
+                        />
+                        <animate
+                          attributeName="width"
+                          begin="svgSpinnersBlocksWave0.begin+0.3s"
+                          dur="0.6s"
+                          values="7.33;1.33;7.33"
+                        />
+                        <animate
+                          attributeName="height"
+                          begin="svgSpinnersBlocksWave0.begin+0.3s"
+                          dur="0.6s"
+                          values="7.33;1.33;7.33"
+                        />
+                      </rect>
+                      <rect
+                        width="7.33"
+                        height="7.33"
+                        x="15.66"
+                        y="15.66"
+                        fill="#08c7f9"
+                      >
+                        <animate
+                          id="svgSpinnersBlocksWave1"
+                          attributeName="x"
+                          begin="svgSpinnersBlocksWave0.begin+0.4s"
+                          dur="0.6s"
+                          values="15.66;18.66;15.66"
+                        />
+                        <animate
+                          attributeName="y"
+                          begin="svgSpinnersBlocksWave0.begin+0.4s"
+                          dur="0.6s"
+                          values="15.66;18.66;15.66"
+                        />
+                        <animate
+                          attributeName="width"
+                          begin="svgSpinnersBlocksWave0.begin+0.4s"
+                          dur="0.6s"
+                          values="7.33;1.33;7.33"
+                        />
+                        <animate
+                          attributeName="height"
+                          begin="svgSpinnersBlocksWave0.begin+0.4s"
+                          dur="0.6s"
+                          values="7.33;1.33;7.33"
+                        />
+                      </rect>
                     </svg>
 
                     <span
                       class="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
-                      >Taminot harakati
+                      >Taminot
                     </span>
                   </div>
                   <!-- Icon -->
@@ -1684,6 +1957,108 @@
                         <span
                           class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
                           >Reja iqtisod</span
+                        >
+                      </a>
+                    </li>
+                  </router-link>
+                </ul>
+              </div>
+            </SidebarLinkGroup>
+          </ul>
+          <ul v-if="role === 7 || role === 1000" class="mt-3">
+            <!-- Kadrlar  -->
+            <SidebarLinkGroup
+              v-slot="parentLink"
+              :activeCondition="currentRoute.fullPath.includes('ecommerce')"
+            >
+              <a
+                class="block text-slate-200 truncate transition duration-150"
+                :class="
+                  currentRoute.fullPath.includes('ecommerce')
+                    ? 'hover:text-slate-200'
+                    : 'hover:text-white'
+                "
+                href="#0"
+                @click.prevent="
+                  sidebarExpanded
+                    ? parentLink.handleClick()
+                    : (sidebarExpanded = true)
+                "
+              >
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="25"
+                      height="25"
+                      viewBox="0 0 26 26"
+                    >
+                      <path
+                        fill="#24a8e5"
+                        d="M16.563 15.9c-.159-.052-1.164-.505-.536-2.414h-.009c1.637-1.686 2.888-4.399 2.888-7.07c0-4.107-2.731-6.26-5.905-6.26c-3.176 0-5.892 2.152-5.892 6.26c0 2.682 1.244 5.406 2.891 7.088c.642 1.684-.506 2.309-.746 2.396c-3.324 1.203-7.224 3.394-7.224 5.557v.811c0 2.947 5.714 3.617 11.002 3.617c5.296 0 10.938-.67 10.938-3.617v-.811c0-2.228-3.919-4.402-7.407-5.557m-5.516 8.709c0-2.549 1.623-5.99 1.623-5.99l-1.123-.881c0-.842 1.453-1.723 1.453-1.723s1.449.895 1.449 1.723l-1.119.881s1.623 3.428 1.623 6.018c0 .406-3.906.312-3.906-.028"
+                      />
+                    </svg>
+                    <span
+                      class="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                      >Kadrlar
+                    </span>
+                  </div>
+                  <!-- Icon -->
+                  <div class="flex shrink-0 ml-2">
+                    <svg
+                      class="w-3 h-3 shrink-0 ml-1 fill-current text-slate-400"
+                      :class="parentLink.expanded && 'rotate-180'"
+                      viewBox="0 0 12 12"
+                    >
+                      <path d="M5.9 11.4L.5 6l1.4-1.4 4 4 4-4L11.3 6z" />
+                    </svg>
+                  </div>
+                </div>
+              </a>
+              <div class="lg:hidden lg:sidebar-expanded:block 2xl:block">
+                <ul class="pl-9 mt-1" :class="!parentLink.expanded && 'hidden'">
+                  <router-link
+                    to=""
+                    custom
+                    v-slot="{ href, navigate, isExactActive }"
+                  >
+                    <li class="mb-1 last:mb-0">
+                      <a
+                        class="block transition duration-150 truncate"
+                        :class="
+                          isExactActive
+                            ? 'text-[#36d887]'
+                            : 'text-slate-400 hover:text-slate-200'
+                        "
+                        :href="href"
+                        @click="navigate"
+                      >
+                        <span
+                          class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                          >Shikoyatlar</span
+                        >
+                      </a>
+                    </li>
+                  </router-link>
+                  <router-link
+                    to=""
+                    custom
+                    v-slot="{ href, navigate, isExactActive }"
+                  >
+                    <li class="mb-1 last:mb-0">
+                      <a
+                        class="block transition duration-150 truncate"
+                        :class="
+                          isExactActive
+                            ? 'text-[#36d887]'
+                            : 'text-slate-400 hover:text-slate-200'
+                        "
+                        :href="href"
+                        @click="navigate"
+                      >
+                        <span
+                          class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                          >Takliflar</span
                         >
                       </a>
                     </li>
@@ -1888,13 +2263,13 @@
                   <div class="flex items-center">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
-                      width="25"
-                      height="25"
-                      viewBox="0 0 26 26"
+                      width="28"
+                      height="28"
+                      viewBox="0 0 24 24"
                     >
                       <path
                         fill="#24a8e5"
-                        d="M16.563 15.9c-.159-.052-1.164-.505-.536-2.414h-.009c1.637-1.686 2.888-4.399 2.888-7.07c0-4.107-2.731-6.26-5.905-6.26c-3.176 0-5.892 2.152-5.892 6.26c0 2.682 1.244 5.406 2.891 7.088c.642 1.684-.506 2.309-.746 2.396c-3.324 1.203-7.224 3.394-7.224 5.557v.811c0 2.947 5.714 3.617 11.002 3.617c5.296 0 10.938-.67 10.938-3.617v-.811c0-2.228-3.919-4.402-7.407-5.557m-5.516 8.709c0-2.549 1.623-5.99 1.623-5.99l-1.123-.881c0-.842 1.453-1.723 1.453-1.723s1.449.895 1.449 1.723l-1.119.881s1.623 3.428 1.623 6.018c0 .406-3.906.312-3.906-.028"
+                        d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12c5.16-1.26 9-6.45 9-12V5Zm0 3.9a3 3 0 1 1-3 3a3 3 0 0 1 3-3m0 7.9c2 0 6 1.09 6 3.08a7.2 7.2 0 0 1-12 0c0-1.99 4-3.08 6-3.08"
                       />
                     </svg>
                     <span
@@ -2175,6 +2550,7 @@ export default {
     const trigger = ref(null);
     const sidebar = ref(null);
     const role = ref(JSON.parse(Cookies.get("account")).role);
+
     const permissions = ref(JSON.parse(Cookies.get("account")).permissions);
 
     const storedSidebarExpanded = localStorage.getItem("sidebar-expanded");

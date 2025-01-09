@@ -5,19 +5,22 @@ const permissions = ref(JSON.parse(Cookies.get("account")).permissions);
 const actions = ref(JSON.parse(Cookies.get("account")).actions);
 
 import { ref, onMounted } from "vue";
-import AddToFormModal from "../../components/Seam/AddToFormModal.vue";
-import { SeamStore } from "../../stores/Seam/seam.store";
-const store_seam = SeamStore();
-import { HelpersStore } from "../../stores/Helpers/helper.store";
+import AddToFormModal from "../../../components/Seam/warehouse/AddToFormModal.vue";
+import { SeamWarehouseStore } from "../../../stores/Seam/Warehouse/warehouse.store";
+const store_warehouse = SeamWarehouseStore();
+import { HelpersStore } from "../../../stores/Helpers/helper.store";
 const store_heloers = HelpersStore();
 import { storeToRefs } from "pinia";
-const { form_modal, model, items } = storeToRefs(store_seam);
+const { form_modal, model, items } = storeToRefs(store_warehouse);
 
-const AddForm = async () => {
-  await store_seam.AddFormModal();
+const AddForm = async (id) => {
+  await store_warehouse.AddFormModal(id);
+};
+const GetOne = async (id) => {
+  await store_warehouse.GetOne(id);
 };
 onMounted(async () => {
-  await store_seam.GetAllForm();
+  await store_warehouse.GetAll();
 });
 </script>
 <template>
@@ -37,11 +40,9 @@ onMounted(async () => {
           size="smal"
           style="background-color: #36d887; color: white; border: none"
         >
-          <i class="mr-2 fa-solid fa-plus fa-sm"></i>Bichuvga
-          chiqarish</el-button
+          <i class="mr-2 fa-solid fa-plus fa-sm"></i>Masulot qo'shish</el-button
         >
       </div>
-
       <div class="rounded text-[11px]">
         <el-table
           style="font-size: 12px"
@@ -77,7 +78,13 @@ onMounted(async () => {
             label="Buyurtmachi"
             width="200"
           />
-
+          <el-table-column
+            align="center"
+            header-align="center"
+            prop="artikul"
+            label="Artikul"
+            width="200"
+          />
           <el-table-column
             align="center"
             header-align="center"
@@ -148,7 +155,23 @@ onMounted(async () => {
             header-align="center"
             align="center"
           >
-            <template #default="">
+            <template #default="scope">
+              <router-link
+                @click="GetOne(scope.row._id)"
+                v-if="
+                  (role === 5 &&
+                    permissions.includes('seam accountant') &&
+                    actions.includes(4)) ||
+                  (role === 5 &&
+                    permissions.includes('seam raw warehouse') &&
+                    actions.includes(4)) ||
+                  role === 1000
+                "
+                to=""
+                class="inline-flex items-center ml-2 text-red hover:bg-slate-300 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
+              >
+                <i class="text-black fa-trash fa-solid fa-plus fa-sm"></i>
+              </router-link>
               <router-link
                 v-if="
                   (role === 5 &&

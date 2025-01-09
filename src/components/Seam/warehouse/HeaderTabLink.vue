@@ -1,21 +1,17 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import { ToastifyService } from "../../utils/Toastify";
-import { loading } from "../../utils/Loader";
-import { SaleLegalService } from "../../ApiServices/Sale/saleLegal.service";
-import { SeamStore } from "../../stores/Seam/seam.store";
-import { SaleStore } from "../../stores/Sale/sale.store";
-const store_seam = SeamStore();
-const store_sale = SaleStore();
+import { loading } from "../../../utils/Loader";
+import { SeamWarehouseStore } from "../../../stores/Seam/Warehouse/warehouse.store";
+const store_warehouse = SeamWarehouseStore();
 import { storeToRefs } from "pinia";
-const { all_length } = storeToRefs(store_sale);
+const { all_length } = storeToRefs(store_warehouse);
 const IsActive = (is_active) => {
-  store_seam.GetIsActive(is_active);
+  store_warehouse.GetIsActive(is_active);
 };
 
 const getAll = async () => {
   const loader = loading.show();
-  await store_sale.getAll();
+  await store_warehouse.GetAll(isActive.value);
   IsActive(isActive.value);
   loader.hide();
 };

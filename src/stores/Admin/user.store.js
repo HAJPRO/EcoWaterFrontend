@@ -31,6 +31,7 @@ export const UserStore = defineStore("UserStore", {
         { id: 4, name: "Yigiruv" },
         { id: 5, name: "Tikuv" },
         { id: 6, name: "Taminot" },
+        { id: 7, name: "Kadrlar" },
         { id: 1000, name: "Super Admin" },
       ],
     };
