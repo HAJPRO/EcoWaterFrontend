@@ -5,7 +5,6 @@ const permissions = ref(JSON.parse(Cookies.get("account")).permissions);
 const actions = ref(JSON.parse(Cookies.get("account")).actions);
 import { ref } from "vue";
 import { SeamInFormStore } from "../../../stores/Seam/Form/form.store";
-import AddInfoFormModal from "../AddToFormModal.vue";
 const store_form = SeamInFormStore();
 import { storeToRefs } from "pinia";
 const { items, is_modal } = storeToRefs(store_form);
