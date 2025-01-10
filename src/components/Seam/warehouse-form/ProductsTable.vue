@@ -5,44 +5,16 @@ const permissions = ref(JSON.parse(Cookies.get("account")).permissions);
 const actions = ref(JSON.parse(Cookies.get("account")).actions);
 
 import { ref, onMounted } from "vue";
-import AddToFormModal from "../../../components/Seam/warehouse/AddToFormModal.vue";
-import { SeamWarehouseStore } from "../../../stores/Seam/Warehouse/warehouse.store";
-const store_warehouse = SeamWarehouseStore();
-import { HelpersStore } from "../../../stores/Helpers/helper.store";
-const store_heloers = HelpersStore();
+import { SeamFormWarehouseStore } from "../../../stores/Seam/FormWarehouse/warehouse.store";
+const store_form_warehouse = SeamFormWarehouseStore();
+// import { HelpersStore } from "../../../stores/Helpers/helper.store";
+// const store_heloers = HelpersStore();
 import { storeToRefs } from "pinia";
-const { form_modal, model, items } = storeToRefs(store_warehouse);
-
-const AddForm = async (id) => {
-  await store_warehouse.AddFormModal(id);
-};
-const GetOne = async (id) => {
-  await store_warehouse.GetOne(id);
-};
-onMounted(async () => {
-  await store_warehouse.GetAll();
-});
+const {} = storeToRefs(store_form_warehouse);
 </script>
 <template>
-  <AddToFormModal />
   <div class="">
     <div class="">
-      <div
-        v-if="
-          role === 1000 ||
-          (role === 5 && permissions.includes('seam raw warehouse'))
-        "
-        class="flex justify-end bg-white p-2 rounded"
-      >
-        <div></div>
-        <el-button
-          @click="AddForm()"
-          size="smal"
-          style="background-color: #36d887; color: white; border: none"
-        >
-          <i class="mr-2 fa-solid fa-plus fa-sm"></i>Masulot qo'shish</el-button
-        >
-      </div>
       <div class="rounded text-[11px]">
         <el-table
           style="font-size: 12px"

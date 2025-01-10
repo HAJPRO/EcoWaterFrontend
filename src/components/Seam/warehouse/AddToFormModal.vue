@@ -9,11 +9,20 @@ const { modal } = storeToRefs(store_warehouse);
 
 const { options } = storeToRefs(store_heloers);
 
+const whare_options = ref([
+  { id: 1, name: "Bichuv sklad" },
+  { id: 2, name: `Bo'yoq sklad` },
+]);
 const formRef = ref();
 const Save = async (formRef) => {
   await formRef.validate((valid) => {
     if (valid === true) {
-      store_warehouse.Create(modal.model.value);
+      if (modal.value.input) {
+        store_warehouse.Create({
+          model: modal.value.model,
+          input: modal.value.input,
+        });
+      }
     } else {
       return false;
     }
@@ -26,10 +35,10 @@ const Plus = (data) => {
   store_heloers.PlusModal(data);
 };
 const ChangeMaterialName = (value) => {
-  modal.model.material_name = value;
+  modal.value.model.material_name = value;
 };
 const ChangeColor = (value) => {
-  modal.model.color = value;
+  modal.value.model.color = value;
 };
 
 const rules = ref({
@@ -56,6 +65,7 @@ const rules = ref({
             :rules="rules"
           >
             <el-input
+              :disabled="modal.output === true"
               required
               v-model="modal.model.party_number"
               clearable
@@ -69,6 +79,7 @@ const rules = ref({
         <div class="mb-1 col-span-4">
           <el-form-item label="Buyurtmachi" prop="customer_name" :rules="rules">
             <el-input
+              :disabled="modal.output === true"
               required
               v-model="modal.model.customer_name"
               clearable
@@ -82,6 +93,7 @@ const rules = ref({
         <div class="mb-1 col-span-4">
           <el-form-item label="Artikul" prop="artikul" :rules="rules">
             <el-input
+              :disabled="modal.output === true"
               required
               v-model="modal.model.artikul"
               clearable
@@ -95,6 +107,7 @@ const rules = ref({
         <div class="mb-1 col-span-4">
           <el-form-item label="Mato nomi" prop="material_name" :rules="rules">
             <el-input
+              :disabled="modal.output === true"
               required
               v-model="modal.model.material_name"
               clearable
@@ -118,6 +131,7 @@ const rules = ref({
               </template>
               <template #append>
                 <el-select
+                  :disabled="modal.output === true"
                   v-model="modal.model.material_name"
                   @click="Type({ type: `material_name` })"
                   @change="ChangeMaterialName($event)"
@@ -138,6 +152,7 @@ const rules = ref({
         <div class="mb-1 col-span-4">
           <el-form-item label="Rangi" prop="color" :rules="rules">
             <el-input
+              :disabled="modal.output === true"
               required
               v-model="modal.model.color"
               clearable
@@ -158,6 +173,7 @@ const rules = ref({
               </template>
               <template #append>
                 <el-select
+                  :disabled="modal.output === true"
                   v-model="modal.model.color"
                   @click="Type({ type: `color` })"
                   @change="ChangeColor($event)"
@@ -191,6 +207,7 @@ const rules = ref({
         <div class="mb-1 col-span-4">
           <el-form-item label="Birligi" prop="unit" :rules="rules">
             <el-input
+              :disabled="modal.output === true"
               required
               v-model="modal.model.unit"
               clearable
@@ -211,6 +228,7 @@ const rules = ref({
               </template>
               <template #append>
                 <el-select
+                  :disabled="modal.output === true"
                   v-model="modal.model.unit"
                   @click="Type({ type: `unit` })"
                   @change="ChangeUnit($event)"
@@ -231,6 +249,7 @@ const rules = ref({
         <div class="mb-1 col-span-4">
           <el-form-item label="Sort" prop="sort" :rules="rules">
             <el-input
+              :disabled="modal.output === true"
               required
               v-model="modal.model.sort"
               clearable
@@ -251,6 +270,7 @@ const rules = ref({
               </template>
               <template #append>
                 <el-select
+                  :disabled="modal.output === true"
                   v-model="modal.model.sort"
                   @click="Type({ type: `sort` })"
                   @change="ChangeSort($event)"

@@ -1454,6 +1454,34 @@
                   </router-link>
                   <router-link
                     v-if="
+                      (role === 5 && permissions.includes('form warehouse')) ||
+                      role === 1000 ||
+                      permissions.includes('seam accountant')
+                    "
+                    :to="{ name: 'FormWarehouse' }"
+                    custom
+                    v-slot="{ href, navigate, isExactActive }"
+                  >
+                    <li class="mb-1 last:mb-0">
+                      <a
+                        class="block transition duration-150 truncate"
+                        :class="
+                          isExactActive
+                            ? 'text-[#36d887]'
+                            : 'text-slate-400 hover:text-slate-200'
+                        "
+                        :href="href"
+                        @click="navigate"
+                      >
+                        <span
+                          class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                          >Sklad (bichuv)</span
+                        >
+                      </a>
+                    </li>
+                  </router-link>
+                  <router-link
+                    v-if="
                       (role === 5 && permissions.includes('form')) ||
                       role === 1000 ||
                       permissions.includes('seam accountant')

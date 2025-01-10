@@ -210,6 +210,28 @@ const routes = [
         },
       },
       {
+        path: "department/seam/form_warehouse",
+        name: "FormWarehouse",
+        component: () =>
+          import("../pages/Explore/Seam/wrehouse-form/index.vue"),
+        beforeEnter(to, from, next) {
+          if (
+            (JSON.parse(Cookies.get("account")).role === 5 &&
+              JSON.parse(Cookies.get("account")).permissions.includes(
+                "form warehouse"
+              )) ||
+            JSON.parse(Cookies.get("account")).role === 1000 ||
+            JSON.parse(Cookies.get("account")).permissions.includes(
+              "seam accountant"
+            )
+          ) {
+            next();
+          } else {
+            window.location.href = "/explore";
+          }
+        },
+      },
+      {
         path: "department/seam/form",
         name: "SeamForm",
         component: () => import("../pages/Explore/Seam/form/index.vue"),
