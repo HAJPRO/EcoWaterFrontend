@@ -14,6 +14,9 @@ const { items } = storeToRefs(store_form_warehouse);
 const GetOne = (id) => {
   store_form_warehouse.GetOne(id);
 };
+const dropdownOpen = ref(false);
+const trigger = ref(null);
+const dropdown = ref(null);
 </script>
 <template>
   <div class="">
@@ -131,11 +134,83 @@ const GetOne = (id) => {
             fixed="right"
             prop="id"
             label=""
-            width="100"
+            width="200"
             header-align="center"
             align="center"
           >
             <template #default="scope">
+              <div class="relative inline-flex">
+                <button
+                  ref="trigger"
+                  class="inline-flex justify-center items-center group"
+                  aria-haspopup="true"
+                  @click.prevent="dropdownOpen = !dropdownOpen"
+                  :aria-expanded="dropdownOpen"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                  >
+                    <g fill="none" stroke="#000000" stroke-width="2">
+                      <circle
+                        cx="12"
+                        cy="4"
+                        r="1"
+                        transform="rotate(90 12 4)"
+                      />
+                      <circle
+                        cx="12"
+                        cy="12"
+                        r="1"
+                        transform="rotate(90 12 12)"
+                      />
+                      <circle
+                        cx="12"
+                        cy="20"
+                        r="1"
+                        transform="rotate(90 12 20)"
+                      />
+                    </g>
+                  </svg>
+                </button>
+                <transition
+                  enter-active-class="transition ease-out duration-200 transform"
+                  enter-from-class="opacity-0 -translate-y-2"
+                  enter-to-class="opacity-100 translate-y-0"
+                  leave-active-class="transition ease-out duration-200"
+                  leave-from-class="opacity-100"
+                  leave-to-class="opacity-0"
+                >
+                  <div
+                    v-show="dropdownOpen"
+                    class="origin-top-right z-10000 absolute top-full min-w-44 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 py-1.5 rounded shadow-lg overflow-hidden mt-1"
+                    :class="align === 'right' ? 'right-0' : 'left-0'"
+                  >
+                    <ul
+                      ref="dropdown"
+                      @focusin="dropdownOpen = true"
+                      @focusout="dropdownOpen = false"
+                    >
+                      <li>
+                        <router-link
+                          class="font-medium text-sm text-indigo-500 hover:text-indigo-600 dark:hover:text-indigo-400 flex items-center py-1 px-3"
+                          :to="{ name: 'profile_card' }"
+                          >My profile</router-link
+                        >
+                      </li>
+                      <li>
+                        <router-link
+                          class="font-medium text-sm text-indigo-500 hover:text-indigo-600 dark:hover:text-indigo-400 flex items-center py-1 px-3"
+                          :to="{ name: 'profile_card' }"
+                          >My profile</router-link
+                        >
+                      </li>
+                    </ul>
+                  </div>
+                </transition>
+              </div>
               <router-link
                 @click="GetOne(scope.row._id)"
                 v-if="
@@ -163,7 +238,7 @@ const GetOne = (id) => {
                   role === 1000
                 "
                 to=""
-                class="inline-flex items-center ml-2 text-red hover:bg-red-600 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
+                class="inline-flex items-center ml-2 text-red hover:bg-slate-300 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
               >
                 <i class="text-black fa-trash fa-solid fa-trash fa-sm"></i>
               </router-link>
@@ -174,9 +249,4 @@ const GetOne = (id) => {
     </div>
   </div>
 </template>
-<style scoped>
-.col_span {
-  display: grid;
-  grid-column: 7;
-}
-</style>
+<style scoped></style>

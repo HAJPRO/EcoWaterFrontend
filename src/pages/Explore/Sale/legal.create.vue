@@ -8,15 +8,15 @@ import { ToastifyService } from "../../../utils/Toastify.js";
 import { SaleStore } from "../../../stores/Sale/sale.store";
 const store_sale = SaleStore();
 import { HelpersStore } from "../../../stores/Helpers/helper.store.js";
-const store_heloers = HelpersStore();
+const store_helpers = HelpersStore();
 import { storeToRefs } from "pinia";
 const {} = storeToRefs(store_sale);
-const { options, is_modal } = storeToRefs(store_heloers);
+const { options, is_modal } = storeToRefs(store_helpers);
 const Type = (type) => {
-  store_heloers.SelectType(type);
+  store_helpers.SelectType(type);
 };
 const Plus = (data) => {
-  store_heloers.PlusModal(data);
+  store_helpers.PlusModal(data);
 };
 const ChangeMaterialName = (value) => {
   model.pro_name = value;

@@ -1,0 +1,9 @@
+import api from "@/helpers/api";
+// import $api from "../../helpers/$api";
+
+export const HRAppealsService = {
+  GetAll(status) {
+    let url = "hr/appeals/all";
+    return api.post(url, { status });
+  },
+};

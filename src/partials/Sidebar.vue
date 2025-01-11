@@ -263,7 +263,8 @@
             role === 3 ||
             role === 4 ||
             role === 5 ||
-            role === 6
+            role === 6 ||
+            role === 7
           "
         >
           <h3 class="text-xs uppercase text-slate-500 font-semibold pl-3">
@@ -2046,7 +2047,7 @@
               <div class="lg:hidden lg:sidebar-expanded:block 2xl:block">
                 <ul class="pl-9 mt-1" :class="!parentLink.expanded && 'hidden'">
                   <router-link
-                    to=""
+                    :to="{ name: 'HRAppeals' }"
                     custom
                     v-slot="{ href, navigate, isExactActive }"
                   >
@@ -2063,30 +2064,7 @@
                       >
                         <span
                           class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
-                          >Shikoyatlar</span
-                        >
-                      </a>
-                    </li>
-                  </router-link>
-                  <router-link
-                    to=""
-                    custom
-                    v-slot="{ href, navigate, isExactActive }"
-                  >
-                    <li class="mb-1 last:mb-0">
-                      <a
-                        class="block transition duration-150 truncate"
-                        :class="
-                          isExactActive
-                            ? 'text-[#36d887]'
-                            : 'text-slate-400 hover:text-slate-200'
-                        "
-                        :href="href"
-                        @click="navigate"
-                      >
-                        <span
-                          class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
-                          >Takliflar</span
+                          >Murojaatlar</span
                         >
                       </a>
                     </li>
@@ -2098,7 +2076,17 @@
         </div>
 
         <!-- Hisobotlar group-->
-        <div>
+        <div
+          v-if="
+            role === 2 ||
+            role === 1000 ||
+            role === 2 ||
+            role === 3 ||
+            role === 4 ||
+            role === 5 ||
+            role === 6
+          "
+        >
           <h3 class="text-xs uppercase text-slate-500 font-semibold pl-3">
             <span
               class="hidden lg:block lg:sidebar-expanded:hidden 2xl:hidden text-center w-6"
@@ -2374,7 +2362,17 @@
           </ul>
         </div>
         <!-- More group -->
-        <div>
+        <div
+          v-if="
+            role === 2 ||
+            role === 1000 ||
+            role === 2 ||
+            role === 3 ||
+            role === 4 ||
+            role === 5 ||
+            role === 6
+          "
+        >
           <h3 class="text-xs uppercase text-slate-500 font-semibold pl-3">
             <span
               class="hidden lg:block lg:sidebar-expanded:hidden 2xl:hidden text-center w-6"

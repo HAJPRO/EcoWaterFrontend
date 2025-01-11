@@ -338,6 +338,22 @@ const routes = [
           }
         },
       },
+      //Kadrlar bolimi
+      {
+        path: "department/hr/appeals",
+        name: "HRAppeals",
+        component: () => import("../pages/Explore/HR/Appeals/index.vue"),
+        beforeEnter(to, from, next) {
+          if (
+            JSON.parse(Cookies.get("account")).role === 7 ||
+            JSON.parse(Cookies.get("account")).role === 1000
+          ) {
+            next();
+          } else {
+            window.location.href = "/explore";
+          }
+        },
+      },
       //Taminot bolimi
       {
         path: "department/provide/working/plan",

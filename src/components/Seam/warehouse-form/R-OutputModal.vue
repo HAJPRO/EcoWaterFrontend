@@ -3,11 +3,15 @@ import { ref, onMounted } from "vue";
 import { SeamFormWarehouseStore } from "../../../stores/Seam/FormWarehouse/warehouse.store";
 const store_form_warehouse = SeamFormWarehouseStore();
 import { HelpersStore } from "../../../stores/Helpers/helper.store";
-const store_heloers = HelpersStore();
+const store_helpers = HelpersStore();
 import { storeToRefs } from "pinia";
 const { modal } = storeToRefs(store_form_warehouse);
 
-const { options } = storeToRefs(store_heloers);
+const { options } = storeToRefs(store_helpers);
+const isActive = ref(1);
+const ActiveTabLink = (id) => {
+  isActive.value = id;
+};
 const output = ref({
   to_where: "",
   quantity: "",
@@ -16,8 +20,8 @@ const output = ref({
   id: modal.value.card_id,
 });
 const whare_options = ref([
-  { id: 1, name: "Bichuv skladga" },
-  { id: 2, name: `Bo'yoq skladga` },
+  { id: 1, name: "Bichuvga" },
+  { id: 2, name: `Xom mato skladga` },
 ]);
 const type_options = ref([
   { id: 1, name: "Mahsulot chiqarish", value: -1 },
@@ -34,10 +38,13 @@ const Save = async (formRef) => {
   });
 };
 const Type = (type) => {
+  store_helpers.SelectType(type);
+};
+const Plan = (type) => {
   output.value.type = value;
 };
 const Plus = (data) => {
-  store_heloers.PlusModal(data);
+  store_helpers.PlusModal(data);
 };
 const ChangeTowhere = (value) => {
   output.value.to_where = value;
@@ -53,7 +60,12 @@ const rules = ref({
 });
 </script>
 <template>
-  <el-dialog v-model="modal.is_modal" :title="modal.title" width="900">
+  <el-dialog v-model="modal.is_modal" width="900">
+    <div
+      class="bg-slate-100 font-semibold p-1 text-[14px] mt-1 align-center text-center shadow rounded border-t-[1px] border-[#36d887]"
+    >
+      Mahsulot chiqarish
+    </div>
     <span>
       <el-form
         :model="output"
@@ -106,7 +118,7 @@ const rules = ref({
             </el-input>
           </el-form-item>
         </div>
-        <div class="mb-1 col-span-3">
+        <div class="mb-1 col-span-2">
           <el-form-item label="Miqdori" prop="quantity" :rules="rules">
             <el-input
               required
@@ -119,7 +131,7 @@ const rules = ref({
             />
           </el-form-item>
         </div>
-        <div class="mb-1 col-span-3">
+        <div class="mb-1 col-span-2">
           <el-form-item label="Birligi" prop="unit" :rules="rules">
             <el-input
               required
@@ -150,10 +162,10 @@ const rules = ref({
           </el-form-item>
         </div>
         <div class="mb-1 col-span-3">
-          <el-form-item label="Turi" prop="type" :rules="rules">
+          <el-form-item label="Reja" prop="plan" :rules="rules">
             <el-input
               required
-              v-model="output.type"
+              v-model="output.plan"
               clearable
               class="w-[100%]"
               size="smal"
@@ -162,9 +174,9 @@ const rules = ref({
             >
               <template #append>
                 <el-select
-                  v-model="output.type"
-                  @click="Type({ type: `unit` })"
-                  @change="ChangeType($event)"
+                  v-model="output.plan"
+                  @click="Plane({ type: `unit` })"
+                  @change="ChangePlan($event)"
                   size="smal"
                   style="width: 40px"
                 >
@@ -172,17 +184,64 @@ const rules = ref({
                     v-for="item in type_options"
                     :key="item.id"
                     :label="item.name"
-                    :value="item.value"
+                    :value="item.name"
                   />
                 </el-select>
               </template>
             </el-input>
           </el-form-item>
         </div>
+        <div class="mb-1 col-span-2">
+          <el-form-item label=".">
+            <router-link
+              to=""
+              @click="Save(formRef)"
+              class="inline-flex text-[12px] w-screen items-center text-center px-3 py-1 mb-1 text-sm font-medium text-white bg-[#36d887] text-bold rounded"
+            >
+              <i class="mr-2 fa-solid fa-check fa-sm"></i>Yuborish</router-link
+            >
+          </el-form-item>
+        </div>
       </el-form>
       <div
         class="flex justify-between flex-wrap font-semibold text-[11px] p-1 bg-slate-100 shadow"
       >
+        <div>
+          <router-link
+            to=""
+            @click="ActiveTabLink(1)"
+            :class="{ activeTab: isActive === 1 }"
+            class="inline-flex text-[12px] items-center mr-2 px-4 py-1 mb-1 font-medium text-center text-red hover:border-b-2 border-solid border-[#36d887] bg-[#e4e9e9] text-bold rounded"
+          >
+            <i class="fa-solid fa-info mr-2 fa-xm"></i> Chiqarilganlar
+            <div class="flex flex-shrink-0 ml-2">
+              <span
+                class="inline-flex items-center justify-center h-5 text-[11px] font-medium text-white bg-[#36d887] px-3 py-1 rounded"
+              >
+                <span class=" ">0</span>/{{
+                  (all_length ? all_length.sale_length : 0) || 0
+                }}</span
+              >
+            </div>
+          </router-link>
+          <router-link
+            to=""
+            @click="ActiveTabLink(2)"
+            :class="{ activeTab: isActive === 2 }"
+            class="inline-flex text-[12px] items-center mr-2 px-4 py-1 mb-1 font-medium text-center text-red hover:border-b-2 border-solid border-[#36d887] bg-[#e4e9e9] text-bold rounded"
+          >
+            <i class="fa-solid fa-info mr-2 fa-xm"></i> Kiritilganlar
+            <div class="flex flex-shrink-0 ml-2">
+              <span
+                class="inline-flex items-center justify-center h-5 text-[11px] font-medium text-white bg-[#36d887] px-3 py-2 rounded"
+              >
+                <span class=" ">0</span>/{{
+                  (all_length ? all_length.sale_length : 0) || 0
+                }}</span
+              >
+            </div>
+          </router-link>
+        </div>
         <div class="mt-1">
           Party num:{{ modal.model.warehouse.party_number }}
         </div>
@@ -284,16 +343,11 @@ const rules = ref({
       append-to-body
     >
     </el-dialog>
-    <template #footer>
-      <div class="dialog-footer">
-        <router-link
-          to=""
-          @click="Save(formRef)"
-          class="inline-flex text-[12px] items-center ml-2 px-3 py-1 mb-1 mt-2 text-sm font-medium text-center text-white bg-[#36d887] text-bold rounded"
-        >
-          <i class="mr-2 fa-solid fa-check fa-sm"></i>Yuborish</router-link
-        >
-      </div>
-    </template>
+    <template #footer> </template>
   </el-dialog>
 </template>
+<style>
+.activeTab {
+  border-bottom: 2px solid #36d887;
+}
+</style>
