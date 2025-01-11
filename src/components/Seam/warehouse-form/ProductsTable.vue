@@ -10,7 +10,10 @@ const store_form_warehouse = SeamFormWarehouseStore();
 // import { HelpersStore } from "../../../stores/Helpers/helper.store";
 // const store_heloers = HelpersStore();
 import { storeToRefs } from "pinia";
-const {} = storeToRefs(store_form_warehouse);
+const { items } = storeToRefs(store_form_warehouse);
+const GetOne = (id) => {
+  store_form_warehouse.GetOne(id);
+};
 </script>
 <template>
   <div class="">
@@ -39,7 +42,7 @@ const {} = storeToRefs(store_form_warehouse);
           <el-table-column
             prop="party_number"
             label="Partya nomeri"
-            width="300"
+            width="150"
             header-align="center"
             align="center"
           />
@@ -55,7 +58,7 @@ const {} = storeToRefs(store_form_warehouse);
             header-align="center"
             prop="artikul"
             label="Artikul"
-            width="200"
+            width="100"
           />
           <el-table-column
             align="center"
@@ -67,7 +70,7 @@ const {} = storeToRefs(store_form_warehouse);
           <el-table-column
             prop="color"
             label="Rangi"
-            width="200"
+            width="150"
             header-align="center"
             align="center"
           />
@@ -75,7 +78,7 @@ const {} = storeToRefs(store_form_warehouse);
             fixed="right"
             prop="quantity"
             label="Miqdori"
-            width="200"
+            width="150"
             header-align="center"
             align="center"
             ><template #default="scope"
@@ -89,20 +92,19 @@ const {} = storeToRefs(store_form_warehouse);
             align="center"
             prop="unit"
             label="Birligi"
-            width="180"
+            width="100"
             header-align="center"
           />
           <el-table-column
             align="center"
             prop="sort"
             label="Sorti"
-            width="180"
+            width="100"
             header-align="center"
           />
           <el-table-column
-            prop="createdAt"
             label="Vaqti"
-            width="190"
+            width="150"
             header-align="center"
             align="center"
             ><template #default="scope">{{
@@ -112,7 +114,7 @@ const {} = storeToRefs(store_form_warehouse);
           <el-table-column
             fixed="right"
             label="Holati"
-            width="150"
+            width="200"
             header-align="center"
             align="center"
           >
@@ -148,7 +150,7 @@ const {} = storeToRefs(store_form_warehouse);
                 to=""
                 class="inline-flex items-center ml-2 text-red hover:bg-slate-300 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
               >
-                <i class="text-black fa-trash fa-solid fa-plus fa-sm"></i>
+                <i class="text-black fa-solid fa-plus fa-sm"></i>
               </router-link>
               <router-link
                 v-if="

@@ -38,6 +38,7 @@ export const SeamWarehouseStore = defineStore("SeamWarehouseStore", {
       this.modal.model = data.data;
       this.modal.title = "Skladdan mato chiqarish";
       this.modal.output = true;
+
       const initialOutput = ref(0);
       this.modal.output_total = data.data.output.reduce(
         (accumulator, currentValue) =>

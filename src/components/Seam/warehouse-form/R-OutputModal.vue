@@ -1,16 +1,17 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import { SeamWarehouseStore } from "../../../stores/Seam/Warehouse/warehouse.store";
-const store_warehouse = SeamWarehouseStore();
+import { SeamFormWarehouseStore } from "../../../stores/Seam/FormWarehouse/warehouse.store";
+const store_form_warehouse = SeamFormWarehouseStore();
 import { HelpersStore } from "../../../stores/Helpers/helper.store";
 const store_heloers = HelpersStore();
 import { storeToRefs } from "pinia";
-const { modal } = storeToRefs(store_warehouse);
+const { modal } = storeToRefs(store_form_warehouse);
 
 const { options } = storeToRefs(store_heloers);
 const output = ref({
   to_where: "",
   quantity: "",
+  type: "",
   unit: modal.value.model.warehouse.unit,
   id: modal.value.card_id,
 });
@@ -18,18 +19,22 @@ const whare_options = ref([
   { id: 1, name: "Bichuv skladga" },
   { id: 2, name: `Bo'yoq skladga` },
 ]);
+const type_options = ref([
+  { id: 1, name: "Mahsulot chiqarish", value: -1 },
+  { id: 2, name: `Mahsulot kiritish`, value: 1 },
+]);
 const formRef = ref();
 const Save = async (formRef) => {
   await formRef.validate((valid) => {
     if (valid === true) {
-      store_warehouse.Create({ model: output.value, output: true });
+      store_form_warehouse.Create({ model: output.value, output: true });
     } else {
       return false;
     }
   });
 };
 const Type = (type) => {
-  store_heloers.SelectType(type);
+  output.value.type = value;
 };
 const Plus = (data) => {
   store_heloers.PlusModal(data);
@@ -48,7 +53,7 @@ const rules = ref({
 });
 </script>
 <template>
-  <el-dialog v-model="modal.output" :title="modal.title" width="900">
+  <el-dialog v-model="modal.is_modal" :title="modal.title" width="900">
     <span>
       <el-form
         :model="output"
@@ -58,7 +63,7 @@ const rules = ref({
         label-position="top"
         class="filter-box md:grid md:grid-cols-12 gap-2 sm:flex sm:flex-wrap rounded shadow-md bg-white p-2 mt-1 mb-1 text-[12px]"
       >
-        <div class="mb-1 col-span-4">
+        <div class="mb-1 col-span-3">
           <el-form-item label="Qayerga" prop="to_where" :rules="rules">
             <el-input
               required
@@ -101,7 +106,7 @@ const rules = ref({
             </el-input>
           </el-form-item>
         </div>
-        <div class="mb-1 col-span-4">
+        <div class="mb-1 col-span-3">
           <el-form-item label="Miqdori" prop="quantity" :rules="rules">
             <el-input
               required
@@ -114,7 +119,7 @@ const rules = ref({
             />
           </el-form-item>
         </div>
-        <div class="mb-1 col-span-4">
+        <div class="mb-1 col-span-3">
           <el-form-item label="Birligi" prop="unit" :rules="rules">
             <el-input
               required
@@ -144,6 +149,36 @@ const rules = ref({
             </el-input>
           </el-form-item>
         </div>
+        <div class="mb-1 col-span-3">
+          <el-form-item label="Turi" prop="type" :rules="rules">
+            <el-input
+              required
+              v-model="output.type"
+              clearable
+              class="w-[100%]"
+              size="smal"
+              type="String"
+              placeholder="..."
+            >
+              <template #append>
+                <el-select
+                  v-model="output.type"
+                  @click="Type({ type: `unit` })"
+                  @change="ChangeType($event)"
+                  size="smal"
+                  style="width: 40px"
+                >
+                  <el-option
+                    v-for="item in type_options"
+                    :key="item.id"
+                    :label="item.name"
+                    :value="item.value"
+                  />
+                </el-select>
+              </template>
+            </el-input>
+          </el-form-item>
+        </div>
       </el-form>
       <div
         class="flex justify-between flex-wrap font-semibold text-[11px] p-1 bg-slate-100 shadow"
@@ -157,7 +192,7 @@ const rules = ref({
         </div>
       </div>
       <el-table
-        :data="modal.model.output"
+        :data="modal.model.input"
         load
         class="w-full"
         header-align="center"
@@ -179,7 +214,7 @@ const rules = ref({
         <el-table-column
           align="center"
           header-align="center"
-          prop="to_where"
+          prop="from_where"
           label="Qabul qiluvchi"
           width="150"
         />
@@ -234,7 +269,7 @@ const rules = ref({
       <div
         class="flex justify-between flex-wrap font-semibold text-[12px] p-1 bg-slate-100 shadow"
       >
-        <div>Chiqarilgan : {{ modal.output_total }}</div>
+        <div>Chiqarilgan : {{ modal.input_total }}</div>
 
         <div>
           Skladda qoldi:

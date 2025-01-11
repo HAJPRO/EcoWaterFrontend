@@ -7,6 +7,9 @@ const actions = ref(JSON.parse(Cookies.get("account")).actions);
 import { ref, onMounted } from "vue";
 import { SeamFormWarehouseStore } from "../../../stores/Seam/FormWarehouse/warehouse.store";
 const store_form_warehouse = SeamFormWarehouseStore();
+const Accept = (id) => {
+  store_form_warehouse.AcceptAndCreate(id);
+};
 // import { HelpersStore } from "../../../stores/Helpers/helper.store";
 // const store_heloers = HelpersStore();
 import { storeToRefs } from "pinia";
@@ -35,40 +38,40 @@ const { items } = storeToRefs(store_form_warehouse);
             prop="index"
             fixed="left"
             label="№"
-            width="50"
+            width="80"
           />
           <el-table-column
-            prop="party_number"
+            prop="warehouse.party_number"
             label="Partya nomeri"
-            width="300"
+            width="150"
             header-align="center"
             align="center"
           />
           <el-table-column
             align="center"
             header-align="center"
-            prop="customer_name"
+            prop="warehouse.customer_name"
             label="Buyurtmachi"
-            width="200"
+            width="250"
           />
           <el-table-column
             align="center"
             header-align="center"
-            prop="artikul"
+            prop="warehouse.artikul"
             label="Artikul"
-            width="200"
+            width="100"
           />
           <el-table-column
             align="center"
             header-align="center"
-            prop="material_name"
+            prop="warehouse.material_name"
             label="Mato nomi"
-            width="200"
+            width="150"
           />
           <el-table-column
-            prop="color"
+            prop="warehouse.color"
             label="Rangi"
-            width="200"
+            width="100"
             header-align="center"
             align="center"
           />
@@ -76,7 +79,7 @@ const { items } = storeToRefs(store_form_warehouse);
             fixed="right"
             prop="quantity"
             label="Miqdori"
-            width="200"
+            width="150"
             header-align="center"
             align="center"
             ><template #default="scope"
@@ -90,30 +93,30 @@ const { items } = storeToRefs(store_form_warehouse);
             align="center"
             prop="unit"
             label="Birligi"
-            width="180"
+            width="100"
             header-align="center"
           />
           <el-table-column
             align="center"
-            prop="sort"
+            prop="warehouse.sort"
             label="Sorti"
-            width="180"
+            width="100"
             header-align="center"
           />
           <el-table-column
-            prop="createdAt"
+            prop="transactionDateOutput"
             label="Vaqti"
-            width="190"
+            width="150"
             header-align="center"
             align="center"
             ><template #default="scope">{{
-              String(scope.row.createdAt).substring(0, 10)
+              String(scope.row.transactionDateOutput).substring(0, 10)
             }}</template></el-table-column
           >
           <el-table-column
             fixed="right"
             label="Holati"
-            width="150"
+            width="250"
             header-align="center"
             align="center"
           >
@@ -136,7 +139,7 @@ const { items } = storeToRefs(store_form_warehouse);
           >
             <template #default="scope">
               <router-link
-                @click="GetOne(scope.row._id)"
+                @click="Accept(scope.row._id)"
                 v-if="
                   (role === 5 &&
                     permissions.includes('seam accountant') &&
@@ -149,9 +152,9 @@ const { items } = storeToRefs(store_form_warehouse);
                 to=""
                 class="inline-flex items-center ml-2 text-red hover:bg-slate-300 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
               >
-                <i class="text-black fa-trash fa-solid fa-plus fa-sm"></i>
+                <i class="text-black fa-check fa-solid fa-sm"></i>
               </router-link>
-              <router-link
+              <!-- <router-link
                 v-if="
                   (role === 5 &&
                     permissions.includes('seam accountant') &&
@@ -162,10 +165,10 @@ const { items } = storeToRefs(store_form_warehouse);
                   role === 1000
                 "
                 to=""
-                class="inline-flex items-center ml-2 text-red hover:bg-red-600 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
+                class="inline-flex items-center ml-2 text-red hover:bg-slate-300 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
               >
-                <i class="text-black fa-trash fa-solid fa-trash fa-sm"></i>
-              </router-link>
+                <i class="text-black fa-solid fa-trash fa-sm"></i>
+              </router-link> -->
             </template>
           </el-table-column>
         </el-table>

@@ -7,6 +7,7 @@ import Title from "@/components/Title.vue";
 import HeaderTabLink from "../../../../components/Seam/warehouse-form/HeaderTabLink.vue";
 import ProductsTable from "../../../../components/Seam/warehouse-form/ProductsTable.vue";
 import RawSkladTable from "../../../../components/Seam/warehouse-form/RawSkladTable.vue";
+import OutputModal from "../../../../components/Seam/warehouse-form/R-OutputModal.vue";
 
 import { HelpersStore } from "../../../../stores/Helpers/helper.store";
 const store = HelpersStore();
@@ -24,6 +25,7 @@ const { is_modal } = storeToRefs(store);
     <HeaderTabLink />
     <ProductsTable v-if="isActive === 1" />
     <RawSkladTable v-if="isActive === 2" />
+    <OutputModal v-if="modal.is_modal === true" />
   </div>
 </template>
 <style>
