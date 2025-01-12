@@ -4,6 +4,9 @@ import { HRAppealsStore } from "../../../stores/HR/Appeals/appeals.store";
 const store_appeals = HRAppealsStore();
 import { storeToRefs } from "pinia";
 const { items } = storeToRefs(store_appeals);
+const ReplyMessageModal = (id) => {
+  store_appeals.ReplyMessageModal(id);
+};
 </script>
 <template>
   <div class="">
@@ -71,19 +74,19 @@ const { items } = storeToRefs(store_appeals);
             header-align="center"
             align="center"
           >
-            <template #default="">
+            <template #default="scope">
               <router-link
-                @click="Report(scope.row._id)"
+                @click="ReplyMessageModal(scope.row._id)"
                 to=""
                 class="inline-flex items-center ml-2 text-red hover:bg-slate-300 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
               >
-                <i class="text-black fa-check fa-solid fa-sm"></i>
+                <i class="text-black fa-message fa-solid fa-md"></i>
               </router-link>
               <router-link
                 to=""
                 class="inline-flex items-center ml-2 text-red hover:bg-slate-300 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
               >
-                <i class="text-black fa-trash fa-solid fa-trash fa-sm"></i>
+                <i class="text-black fa-trash fa-solid fa-trash fa-md"></i>
               </router-link>
             </template>
           </el-table-column>

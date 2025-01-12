@@ -9,6 +9,10 @@ export const HRAppealsStore = defineStore("HRAppealsStore", {
       isActive: "",
       items: [],
       all_length: "",
+      chat: {
+        id: "",
+        is_modal: false,
+      },
     };
   },
   actions: {
@@ -19,6 +23,17 @@ export const HRAppealsStore = defineStore("HRAppealsStore", {
     async GetAll(payload) {
       const data = await HRAppealsService.GetAll(payload);
       this.items = data.data.items;
+    },
+    async ReplyMessageModal(id) {
+      this.chat.id = id;
+      this.chat.is_modal = true;
+    },
+    async ReplyMessageCreate(model) {
+      const data = await HRAppealsService.ReplyMessageCreate({
+        model,
+        id: this.chat.id,
+      });
+      this.chat.is_modal = false;
     },
   },
 });

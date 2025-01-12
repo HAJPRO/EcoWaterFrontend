@@ -6,4 +6,9 @@ export const HRAppealsService = {
     let url = "hr/appeals/all";
     return api.post(url, { status });
   },
+  ReplyMessageCreate(data) {
+    console.log(data);
+    let url = "hr/appeals/reply_message";
+    return api.post(url, data);
+  },
 };
