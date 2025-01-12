@@ -30,7 +30,7 @@ const { items } = storeToRefs(store_appeals);
             width="80"
           />
           <el-table-column
-            prop="description"
+            prop="message"
             label="Muroajaat matni"
             width="870"
             header-align="center"
