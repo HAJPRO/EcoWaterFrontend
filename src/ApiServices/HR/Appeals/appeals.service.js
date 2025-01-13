@@ -11,4 +11,8 @@ export const HRAppealsService = {
     let url = "hr/appeals/reply_message";
     return api.post(url, data);
   },
+  Delete(id) {
+    let url = "hr/appeals/delete";
+    return api.post(url, { id });
+  },
 };

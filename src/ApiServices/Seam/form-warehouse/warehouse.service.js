@@ -14,4 +14,8 @@ export const SeamFormWarehouseService = {
     let url = "seam/form_warehouse/get_one";
     return api.post(url, { id });
   },
+  CreateOutput(data) {
+    let url = "seam/form_warehouse/create_output";
+    return api.post(url, data);
+  },
 };

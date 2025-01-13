@@ -31,6 +31,8 @@ const dropdown = ref(null);
           max-height="400"
           empty-text="Mahsulot qo'shilmagan... "
           :data="items"
+          size="small"
+          fit="true"
           border
         >
           <el-table-column
@@ -86,18 +88,18 @@ const dropdown = ref(null);
             align="center"
             ><template #default="scope"
               ><div class="text-red-500">
-                {{ scope.row.quantity }}
+                {{ scope.row.quantity }} {{ scope.row.unit }}
               </div></template
             ></el-table-column
           >
 
-          <el-table-column
+          <!-- <el-table-column
             align="center"
             prop="unit"
             label="Birligi"
             width="100"
             header-align="center"
-          />
+          /> -->
           <el-table-column
             align="center"
             prop="sort"
@@ -139,78 +141,6 @@ const dropdown = ref(null);
             align="center"
           >
             <template #default="scope">
-              <div class="relative inline-flex">
-                <button
-                  ref="trigger"
-                  class="inline-flex justify-center items-center group"
-                  aria-haspopup="true"
-                  @click.prevent="dropdownOpen = !dropdownOpen"
-                  :aria-expanded="dropdownOpen"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                  >
-                    <g fill="none" stroke="#000000" stroke-width="2">
-                      <circle
-                        cx="12"
-                        cy="4"
-                        r="1"
-                        transform="rotate(90 12 4)"
-                      />
-                      <circle
-                        cx="12"
-                        cy="12"
-                        r="1"
-                        transform="rotate(90 12 12)"
-                      />
-                      <circle
-                        cx="12"
-                        cy="20"
-                        r="1"
-                        transform="rotate(90 12 20)"
-                      />
-                    </g>
-                  </svg>
-                </button>
-                <transition
-                  enter-active-class="transition ease-out duration-200 transform"
-                  enter-from-class="opacity-0 -translate-y-2"
-                  enter-to-class="opacity-100 translate-y-0"
-                  leave-active-class="transition ease-out duration-200"
-                  leave-from-class="opacity-100"
-                  leave-to-class="opacity-0"
-                >
-                  <div
-                    v-show="dropdownOpen"
-                    class="origin-top-right z-10000 absolute top-full min-w-44 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 py-1.5 rounded shadow-lg overflow-hidden mt-1"
-                    :class="align === 'right' ? 'right-0' : 'left-0'"
-                  >
-                    <ul
-                      ref="dropdown"
-                      @focusin="dropdownOpen = true"
-                      @focusout="dropdownOpen = false"
-                    >
-                      <li>
-                        <router-link
-                          class="font-medium text-sm text-indigo-500 hover:text-indigo-600 dark:hover:text-indigo-400 flex items-center py-1 px-3"
-                          :to="{ name: 'profile_card' }"
-                          >My profile</router-link
-                        >
-                      </li>
-                      <li>
-                        <router-link
-                          class="font-medium text-sm text-indigo-500 hover:text-indigo-600 dark:hover:text-indigo-400 flex items-center py-1 px-3"
-                          :to="{ name: 'profile_card' }"
-                          >My profile</router-link
-                        >
-                      </li>
-                    </ul>
-                  </div>
-                </transition>
-              </div>
               <router-link
                 @click="GetOne(scope.row._id)"
                 v-if="

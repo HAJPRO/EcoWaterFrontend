@@ -53,7 +53,6 @@ export const SeamWarehouseStore = defineStore("SeamWarehouseStore", {
     async Create(payload) {
       const loader = loading.show();
       const data = await SeamWarehouseService.Create(payload);
-      this.form_modal = false;
       if (data.data.status === 200) {
         ToastifyService.ToastSuccess({
           msg: data.data.msg,

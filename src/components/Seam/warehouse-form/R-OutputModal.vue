@@ -15,7 +15,6 @@ const ActiveTabLink = (id) => {
 const output = ref({
   to_where: "",
   quantity: "",
-  type: "",
   unit: modal.value.model.warehouse.unit,
   id: modal.value.card_id,
 });
@@ -23,15 +22,12 @@ const whare_options = ref([
   { id: 1, name: "Bichuvga" },
   { id: 2, name: `Xom mato skladga` },
 ]);
-const type_options = ref([
-  { id: 1, name: "Mahsulot chiqarish", value: -1 },
-  { id: 2, name: `Mahsulot kiritish`, value: 1 },
-]);
+
 const formRef = ref();
 const Save = async (formRef) => {
   await formRef.validate((valid) => {
     if (valid === true) {
-      store_form_warehouse.Create({ model: output.value, output: true });
+      store_form_warehouse.CreateOutput({ model: output.value, output: true });
     } else {
       return false;
     }
@@ -61,6 +57,14 @@ const rules = ref({
 </script>
 <template>
   <el-dialog v-model="modal.is_modal" width="900">
+    <div class="flex justify-between text-[13px]">
+      <div class="mt-1">Party num:{{ modal.model.warehouse.party_number }}</div>
+      <div class="mt-1">Artikul:{{ modal.model.warehouse.artikul }}</div>
+      <div class="mt-1">
+        Buyurtmachi:{{ modal.model.warehouse.customer_name }}
+      </div>
+    </div>
+
     <div
       class="bg-slate-100 font-semibold p-1 text-[14px] mt-1 align-center text-center shadow rounded border-t-[1px] border-[#36d887]"
     >
@@ -75,9 +79,10 @@ const rules = ref({
         label-position="top"
         class="filter-box md:grid md:grid-cols-12 gap-2 sm:flex sm:flex-wrap rounded shadow-md bg-white p-2 mt-1 mb-1 text-[12px]"
       >
-        <div class="mb-1 col-span-3">
+        <div class="mb-1 col-span-4">
           <el-form-item label="Qayerga" prop="to_where" :rules="rules">
             <el-input
+              disabled
               required
               v-model="output.to_where"
               clearable
@@ -86,19 +91,6 @@ const rules = ref({
               type="String"
               placeholder="..."
             >
-              <template #prepend>
-                <div class="w-[8px] items-start text-center">
-                  <i
-                    @click="
-                      Plus({
-                        title: `Mato nomi qo'shish`,
-                        state: `material_name`,
-                      })
-                    "
-                    class="fa-solid fa-plus mr-2 fa-md cursor-pointer"
-                  ></i>
-                </div>
-              </template>
               <template #append>
                 <el-select
                   v-model="output.to_where"
@@ -118,7 +110,7 @@ const rules = ref({
             </el-input>
           </el-form-item>
         </div>
-        <div class="mb-1 col-span-2">
+        <div class="mb-1 col-span-3">
           <el-form-item label="Miqdori" prop="quantity" :rules="rules">
             <el-input
               required
@@ -131,7 +123,7 @@ const rules = ref({
             />
           </el-form-item>
         </div>
-        <div class="mb-1 col-span-2">
+        <div class="mb-1 col-span-3">
           <el-form-item label="Birligi" prop="unit" :rules="rules">
             <el-input
               required
@@ -161,44 +153,15 @@ const rules = ref({
             </el-input>
           </el-form-item>
         </div>
-        <div class="mb-1 col-span-3">
-          <el-form-item label="Reja" prop="plan" :rules="rules">
-            <el-input
-              required
-              v-model="output.plan"
-              clearable
-              class="w-[100%]"
-              size="smal"
-              type="String"
-              placeholder="..."
-            >
-              <template #append>
-                <el-select
-                  v-model="output.plan"
-                  @click="Plane({ type: `unit` })"
-                  @change="ChangePlan($event)"
-                  size="smal"
-                  style="width: 40px"
-                >
-                  <el-option
-                    v-for="item in type_options"
-                    :key="item.id"
-                    :label="item.name"
-                    :value="item.name"
-                  />
-                </el-select>
-              </template>
-            </el-input>
-          </el-form-item>
-        </div>
         <div class="mb-1 col-span-2">
           <el-form-item label=".">
-            <router-link
-              to=""
+            <el-button
+              size="smal"
+              style="border: none"
               @click="Save(formRef)"
-              class="inline-flex text-[12px] w-screen items-center text-center px-3 py-1 mb-1 text-sm font-medium text-white bg-[#36d887] text-bold rounded"
+              class="inline-flex text-[12px] w-screen items-center text-center px-3 py-1 mb-1 text-sm font-medium text-white bg-[#36d887] hover:bg-[#43e293] hover:text-white text-bold rounded"
             >
-              <i class="mr-2 fa-solid fa-check fa-sm"></i>Yuborish</router-link
+              <i class="mr-2 fa-solid fa-check fa-sm"></i>Yuborish</el-button
             >
           </el-form-item>
         </div>
@@ -213,7 +176,7 @@ const rules = ref({
             :class="{ activeTab: isActive === 1 }"
             class="inline-flex text-[12px] items-center mr-2 px-4 py-1 mb-1 font-medium text-center text-red hover:border-b-2 border-solid border-[#36d887] bg-[#e4e9e9] text-bold rounded"
           >
-            <i class="fa-solid fa-info mr-2 fa-xm"></i> Chiqarilganlar
+            <i class="fa-solid fa-info mr-2 fa-xm"></i> Kiritilganlar
             <div class="flex flex-shrink-0 ml-2">
               <span
                 class="inline-flex items-center justify-center h-5 text-[11px] font-medium text-white bg-[#36d887] px-3 py-1 rounded"
@@ -230,10 +193,10 @@ const rules = ref({
             :class="{ activeTab: isActive === 2 }"
             class="inline-flex text-[12px] items-center mr-2 px-4 py-1 mb-1 font-medium text-center text-red hover:border-b-2 border-solid border-[#36d887] bg-[#e4e9e9] text-bold rounded"
           >
-            <i class="fa-solid fa-info mr-2 fa-xm"></i> Kiritilganlar
+            <i class="fa-solid fa-info mr-2 fa-xm"></i> Chiqarilganlar
             <div class="flex flex-shrink-0 ml-2">
               <span
-                class="inline-flex items-center justify-center h-5 text-[11px] font-medium text-white bg-[#36d887] px-3 py-2 rounded"
+                class="inline-flex items-center justify-center h-5 text-[11px] font-medium text-white bg-[#36d887] px-3 py-1 rounded"
               >
                 <span class=" ">0</span>/{{
                   (all_length ? all_length.sale_length : 0) || 0
@@ -242,97 +205,195 @@ const rules = ref({
             </div>
           </router-link>
         </div>
-        <div class="mt-1">
-          Party num:{{ modal.model.warehouse.party_number }}
-        </div>
-        <div class="mt-1">Artikul:{{ modal.model.warehouse.artikul }}</div>
-        <div class="mt-1">
-          Buyurtmachi:{{ modal.model.warehouse.customer_name }}
+      </div>
+      <!-- // INPUT TABLE -->
+      <div v-if="isActive === 1">
+        <el-table
+          :data="modal.model.input"
+          load
+          size="small"
+          class="w-full"
+          header-align="center"
+          empty-text="Mahsulot tanlanmagan... "
+          border
+          style="font-size: 12px"
+          min-height="300"
+          max-height="300"
+        >
+          <el-table-column
+            align="center"
+            header-align="center"
+            type="index"
+            prop="index"
+            fixed="left"
+            label="№"
+            width="60"
+          />
+          <el-table-column
+            align="center"
+            header-align="center"
+            prop="from_where"
+            label="Yuboruvchi"
+            width="150"
+          />
+          <el-table-column
+            align="center"
+            header-align="center"
+            prop="quantity"
+            label="Miqdori"
+            width="120"
+          />
+          <el-table-column
+            align="center"
+            header-align="center"
+            prop="unit"
+            label="Birligi"
+            width="100"
+          />
+          <el-table-column
+            align="center"
+            header-align="center"
+            label="Vaqti"
+            width="150"
+            ><template #default="scope">{{
+              String(scope.row.transactionDateOutput).substring(0, 10)
+            }}</template></el-table-column
+          >
+          <el-table-column
+            align="center"
+            header-align="center"
+            label="Holati"
+            width="200"
+            ><template #default="scope">
+              <router-link
+                to=""
+                class="cursor-pointer inline-flex items-center text-red bg-[#e4e9e9] hover:bg-[#d7ebeb] font-medium rounded-md text-[12px] w-ful p-[5px] sm:w-auto text-center"
+              >
+                {{ scope.row.status }}
+              </router-link>
+            </template></el-table-column
+          >
+          <el-table-column
+            fixed="right"
+            align="center"
+            header-align="center"
+            width="100"
+            ><template #default="">
+              <router-link
+                to=""
+                class="inline-flex items-center mt-4 ml-2 text-red hover:bg-[#d7ebeb] font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
+              >
+                <i
+                  class="text-red fa-solid fa-pen fa-sm"
+                ></i> </router-link></template
+          ></el-table-column>
+        </el-table>
+        <div
+          class="flex justify-between flex-wrap font-semibold text-[12px] p-1 bg-slate-100 shadow"
+        >
+          <div>Kiritilgan : {{ modal.input_total }}</div>
+
+          <div>
+            Skladda bor:
+            {{ modal.model.warehouse.quantity }}
+          </div>
         </div>
       </div>
-      <el-table
-        :data="modal.model.input"
-        load
-        class="w-full"
-        header-align="center"
-        empty-text="Mahsulot tanlanmagan... "
-        border
-        style="font-size: 12px"
-        min-height="300"
-        max-height="300"
-      >
-        <el-table-column
-          align="center"
+      <!-- /// -->
+      <!-- //  OUTPUT TABLE -->
+      <div v-if="isActive === 2">
+        <el-table
+          :data="modal.model.output"
+          load
+          size="small"
+          class="w-full"
           header-align="center"
-          type="index"
-          prop="index"
-          fixed="left"
-          label="№"
-          width="60"
-        />
-        <el-table-column
-          align="center"
-          header-align="center"
-          prop="from_where"
-          label="Qabul qiluvchi"
-          width="150"
-        />
-        <el-table-column
-          align="center"
-          header-align="center"
-          prop="quantity"
-          label="Miqdori"
-          width="120"
-        />
-        <el-table-column
-          align="center"
-          header-align="center"
-          prop="unit"
-          label="Birligi"
-          width="100"
-        />
-        <el-table-column
-          align="center"
-          header-align="center"
-          label="Vaqti"
-          width="150"
-          ><template #default="scope">{{
-            String(scope.row.transactionDateOutput).substring(0, 10)
-          }}</template></el-table-column
+          empty-text="Mahsulot tanlanmagan... "
+          border
+          style="font-size: 12px"
+          min-height="300"
+          max-height="300"
         >
-        <el-table-column
-          align="center"
-          header-align="center"
-          label="Holati"
-          width="200"
-          ><template #default="scope">
-            <router-link
-              to=""
-              class="cursor-pointer inline-flex items-center text-red bg-[#e4e9e9] hover:bg-[#d7ebeb] font-medium rounded-md text-[12px] w-ful p-[5px] sm:w-auto text-center"
-            >
-              {{ scope.row.status }}
-            </router-link>
-          </template></el-table-column
+          <el-table-column
+            align="center"
+            header-align="center"
+            type="index"
+            prop="index"
+            fixed="left"
+            label="№"
+            width="60"
+          />
+          <el-table-column
+            align="center"
+            header-align="center"
+            prop="to_where"
+            label="Qabul qiluvchi"
+            width="150"
+            ><template #default="scope">{{
+              scope.row.to_where.substring(0, 6)
+            }}</template></el-table-column
+          >
+          <el-table-column
+            align="center"
+            header-align="center"
+            prop="quantity"
+            label="Miqdori"
+            width="120"
+          />
+          <el-table-column
+            align="center"
+            header-align="center"
+            prop="unit"
+            label="Birligi"
+            width="100"
+          />
+          <el-table-column
+            align="center"
+            header-align="center"
+            label="Vaqti"
+            width="150"
+            ><template #default="scope">{{
+              String(scope.row.transactionDateOutput).substring(0, 10)
+            }}</template></el-table-column
+          >
+          <el-table-column
+            align="center"
+            header-align="center"
+            label="Holati"
+            width="200"
+            ><template #default="scope">
+              <router-link
+                to=""
+                class="cursor-pointer inline-flex items-center text-red bg-[#e4e9e9] hover:bg-[#d7ebeb] font-medium rounded-md text-[12px] w-ful p-[5px] sm:w-auto text-center"
+              >
+                {{ scope.row.status }}
+              </router-link>
+            </template></el-table-column
+          >
+          <el-table-column
+            fixed="right"
+            align="center"
+            header-align="center"
+            width="100"
+            ><template #default="">
+              <router-link
+                to=""
+                class="inline-flex items-center mt-4 ml-2 text-red hover:bg-[#d7ebeb] font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
+              >
+                <i
+                  class="text-red fa-solid fa-pen fa-sm"
+                ></i> </router-link></template
+          ></el-table-column>
+        </el-table>
+        <div
+          class="flex justify-between flex-wrap font-semibold text-[12px] p-1 bg-slate-100 shadow"
         >
-        <el-table-column align="center" header-align="center" width="100"
-          ><template #default="">
-            <router-link
-              to=""
-              class="inline-flex items-center mt-4 ml-2 text-red hover:bg-[#d7ebeb] font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
-            >
-              <i
-                class="text-red fa-solid fa-pen fa-sm"
-              ></i> </router-link></template
-        ></el-table-column>
-      </el-table>
-      <div
-        class="flex justify-between flex-wrap font-semibold text-[12px] p-1 bg-slate-100 shadow"
-      >
-        <div>Chiqarilgan : {{ modal.input_total }}</div>
+          <div>Chiqarilgan : {{ modal.output_total }}</div>
 
-        <div>
-          Skladda qoldi:
-          {{ modal.model.warehouse.quantity }}
+          <div>
+            Skladda bor:
+            {{ modal.model.warehouse.quantity }}
+          </div>
         </div>
       </div>
     </span>

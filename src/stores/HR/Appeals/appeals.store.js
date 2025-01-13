@@ -35,5 +35,14 @@ export const HRAppealsStore = defineStore("HRAppealsStore", {
       });
       this.chat.is_modal = false;
     },
+    async Delete(id) {
+      const loader = loading.show();
+      const data = await HRAppealsService.Delete(id);
+      ToastifyService.ToastSuccess({
+        msg: data.data.msg,
+      });
+      this.GetAll(this.isActive);
+      loader.hide();
+    },
   },
 });

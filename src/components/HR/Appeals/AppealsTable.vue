@@ -7,6 +7,9 @@ const { items } = storeToRefs(store_appeals);
 const ReplyMessageModal = (id) => {
   store_appeals.ReplyMessageModal(id);
 };
+const Delete = (id) => {
+  store_appeals.Delete(id);
+};
 </script>
 <template>
   <div class="">
@@ -15,6 +18,7 @@ const ReplyMessageModal = (id) => {
         <el-table
           style="font-size: 12px"
           load
+          size="small"
           class="w-full"
           header-align="right"
           header-hight="1"
@@ -83,6 +87,7 @@ const ReplyMessageModal = (id) => {
                 <i class="text-black fa-message fa-solid fa-md"></i>
               </router-link>
               <router-link
+                @click="Delete(scope.row._id)"
                 to=""
                 class="inline-flex items-center ml-2 text-red hover:bg-slate-300 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
               >

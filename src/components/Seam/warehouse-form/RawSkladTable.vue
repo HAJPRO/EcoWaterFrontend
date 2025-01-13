@@ -21,6 +21,7 @@ const { items } = storeToRefs(store_form_warehouse);
     <div class="">
       <div class="rounded text-[11px]">
         <el-table
+          :data="items"
           style="font-size: 12px"
           load
           class="w-full"
@@ -28,7 +29,7 @@ const { items } = storeToRefs(store_form_warehouse);
           header-hight="1"
           max-height="400"
           empty-text="Mahsulot qo'shilmagan... "
-          :data="items"
+          size="small"
           border
         >
           <el-table-column
@@ -84,18 +85,18 @@ const { items } = storeToRefs(store_form_warehouse);
             align="center"
             ><template #default="scope"
               ><div class="text-red-500">
-                {{ scope.row.quantity }}
+                {{ scope.row.quantity }} {{ scope.row.unit }}
               </div></template
             ></el-table-column
           >
 
-          <el-table-column
+          <!-- <el-table-column
             align="center"
             prop="unit"
             label="Birligi"
             width="100"
             header-align="center"
-          />
+          /> -->
           <el-table-column
             align="center"
             prop="warehouse.sort"

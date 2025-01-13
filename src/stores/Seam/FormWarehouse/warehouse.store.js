@@ -10,6 +10,7 @@ export const SeamFormWarehouseStore = defineStore("SeamFormWarehouseStore", {
       modal: {
         model: {},
         input_total: "",
+        output_total: "",
         is_modal: false,
         title: "",
       },
@@ -39,13 +40,12 @@ export const SeamFormWarehouseStore = defineStore("SeamFormWarehouseStore", {
           msg: data.data.msg,
         });
       }
-
+      this.GetAll(this.isActive);
       loader.hide();
     },
     async GetOne(id) {
       const data = await SeamFormWarehouseService.GetOne(id);
       this.modal.model = data.data;
-      console.log(data.data);
 
       this.modal.is_modal = true;
       this.modal.title = "Mahsulot chiqarish va kiritish ";
@@ -57,6 +57,29 @@ export const SeamFormWarehouseStore = defineStore("SeamFormWarehouseStore", {
           accumulator + Number(currentValue.quantity),
         initialInput.value
       );
+      const initialOutput = ref(0);
+      this.modal.output_total = data.data.output.reduce(
+        (accumulator, currentValue) =>
+          accumulator + Number(currentValue.quantity),
+        initialOutput.value
+      );
+    },
+    async CreateOutput(payload) {
+      const loader = loading.show();
+      const data = await SeamFormWarehouseService.CreateOutput(payload);
+      if (data.data.status === 200) {
+        ToastifyService.ToastSuccess({
+          msg: data.data.msg,
+        });
+      }
+      if (data.data.status === 404) {
+        ToastifyService.ToastError({
+          msg: data.data.msg,
+        });
+      }
+      this.GetAll(this.isActive);
+      this.GetOne(this.modal.card_id);
+      loader.hide();
     },
   },
 });

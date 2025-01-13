@@ -46,6 +46,7 @@ onMounted(async () => {
         <el-table
           style="font-size: 12px"
           load
+          size="small"
           class="w-full"
           header-align="right"
           header-hight="1"

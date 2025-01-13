@@ -12,7 +12,7 @@ const getAll = async () => {
   await store_appeals.GetAll(isActive.value);
   IsActive(isActive.value);
 };
-const isActive = ref(1);
+const isActive = ref(2);
 const ActiveTabLink = (num) => {
   if (num === 1) {
     isActive.value = 1;

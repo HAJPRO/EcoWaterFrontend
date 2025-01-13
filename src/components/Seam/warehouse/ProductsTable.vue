@@ -32,13 +32,18 @@ onMounted(async () => {
           role === 1000 ||
           (role === 5 && permissions.includes('seam raw warehouse'))
         "
-        class="flex justify-end bg-white p-2 rounded"
+        class="flex justify-end bg-white p-1 rounded"
       >
         <div></div>
         <el-button
           @click="AddForm()"
-          size="smal"
-          style="background-color: #36d887; color: white; border: none"
+          size="small"
+          style="
+            background-color: #36d887;
+            color: white;
+            border: none;
+            padding: 14px;
+          "
         >
           <i class="mr-2 fa-solid fa-plus fa-sm"></i>Masulot qo'shish</el-button
         >
@@ -47,6 +52,7 @@ onMounted(async () => {
         <el-table
           style="font-size: 12px"
           load
+          size="small"
           class="w-full"
           header-align="right"
           header-hight="1"
@@ -108,18 +114,18 @@ onMounted(async () => {
             align="center"
             ><template #default="scope"
               ><div class="text-red-500">
-                {{ scope.row.quantity }}
+                {{ scope.row.quantity }} {{ scope.row.unit }}
               </div></template
             ></el-table-column
           >
-
+          <!-- 
           <el-table-column
             align="center"
             prop="unit"
             label="Birligi"
             width="180"
             header-align="center"
-          />
+          /> -->
           <el-table-column
             align="center"
             prop="sort"
