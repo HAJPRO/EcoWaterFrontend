@@ -73,24 +73,18 @@ export const SeamInFormStore = defineStore("SeamInFormStore", {
       const loader = loading.show();
       const data = await SeamInFormService.GetAll(payload);
       this.items = data.data.items;
+      console.log(data.data.items);
+
       loader.hide();
     },
-    async CreaetInfoToForm(paload) {
-      const loader = loading.show();
-      const data = await SeamInFormService.CreaetInfoToForm({
-        data: paload,
-        id: this.card_id,
-      });
-      this.is_modal = false;
-
+    async AcceptAndCreate(id) {
+      // const loader = loading.show();
+      const data = await SeamInFormService.AcceptAndCreate(id);
       ToastifyService.ToastSuccess({
         msg: data.data.msg,
       });
-      const Refresh = () => {
-        window.location.href = "/explore/department/seam/form";
-      };
-      setTimeout(Refresh, 1000);
-      loader.hide();
+      this.GetAll(this.isActive);
+      // loader.hide();
     },
   },
 });

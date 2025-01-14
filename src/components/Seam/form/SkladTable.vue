@@ -9,8 +9,8 @@ const store_form = SeamInFormStore();
 import { storeToRefs } from "pinia";
 const { items, is_modal } = storeToRefs(store_form);
 
-const formModal = (id) => {
-  store_form.FormModal(id);
+const Accept = (id) => {
+  store_form.AcceptAndCreate(id);
 };
 </script>
 <template>
@@ -19,6 +19,7 @@ const formModal = (id) => {
       <div class="rounded text-[11px]">
         <el-table
           style="font-size: 12px"
+          size="small"
           load
           class="w-full"
           header-align="right"
@@ -38,7 +39,7 @@ const formModal = (id) => {
             width="50"
           />
           <el-table-column
-            prop="party_number"
+            prop="warehouse.party_number"
             label="Partya nomeri"
             width="200"
             header-align="center"
@@ -47,55 +48,67 @@ const formModal = (id) => {
           <el-table-column
             align="center"
             header-align="center"
-            prop="customer_name"
+            prop="warehouse.customer_name"
             label="Buyurtmachi"
+            width="150"
+          />
+          <el-table-column
+            align="center"
+            header-align="center"
+            prop="warehouse.artikul"
+            label="Artikul"
             width="200"
           />
 
           <el-table-column
             align="center"
             header-align="center"
-            prop="material_name"
+            prop="warehouse.material_name"
             label="Mato nomi"
             width="150"
           />
           <el-table-column
-            prop="color"
+            prop="warehouse.color"
             label="Rangi"
             width="150"
             header-align="center"
             align="center"
           />
           <el-table-column
+            fixed="right"
             prop="quantity"
             label="Miqdori"
             width="150"
             header-align="center"
             align="center"
-          />
+            ><template #default="scope">
+              <div class="font-semibold text-red-500">
+                {{ scope.row.quantity }} {{ scope.row.unit }}
+              </div>
+            </template></el-table-column
+          >
 
-          <el-table-column
+          <!-- <el-table-column
             align="center"
             prop="unit"
             label="Birligi"
             width="100"
             header-align="center"
-          />
+          /> -->
           <el-table-column
             align="center"
-            prop="sort"
+            prop="warehouse.sort"
             label="Sorti"
             width="100"
             header-align="center"
           />
           <el-table-column
-            prop="createdAt"
-            label="Vaqti"
-            width="200"
+            label="Yuborilgan vaqt"
+            width="170"
             header-align="center"
             align="center"
             ><template #default="scope">{{
-              String(scope.row.createdAt).substring(0, 10)
+              String(scope.row.transactionDateOutput).substring(0, 10)
             }}</template></el-table-column
           >
           <el-table-column
@@ -127,7 +140,7 @@ const formModal = (id) => {
                 v-if="
                   (role === 5 && permissions.includes('form')) || role === 1000
                 "
-                @click="formModal(scope.row._id)"
+                @click="Accept(scope.row._id)"
                 to=""
                 class="inline-flex items-center ml-2 text-red hover:bg-slate-200 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
               >

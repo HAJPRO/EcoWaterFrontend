@@ -11,9 +11,9 @@ export const SeamInFormService = {
     let url = "seam/form/all";
     return api.post(url, { status });
   },
-  CreaetInfoToForm(data) {
-    let url = "seam/form/create";
-    return api.post(url, data);
+  AcceptAndCreate(id) {
+    let url = "seam/form/accept_and_create";
+    return api.post(url, { id });
   },
   CreateDayReport(data) {
     let url = "seam/form/create_day_report";
