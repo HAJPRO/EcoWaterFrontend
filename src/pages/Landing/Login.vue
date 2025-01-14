@@ -117,7 +117,7 @@ const rules = ref({
                   border: none;
                   cursor: pointer;
                 "
-                >Kirish
+                >Tizimga kirish
               </el-button>
             </el-form-item>
           </el-form>

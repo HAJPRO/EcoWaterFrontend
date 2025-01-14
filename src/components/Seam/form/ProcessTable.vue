@@ -14,6 +14,7 @@ const Report = (id) => {
       <div class="rounded text-[11px]">
         <el-table
           style="font-size: 12px"
+          size="small"
           load
           class="w-full"
           header-align="right"
@@ -33,120 +34,66 @@ const Report = (id) => {
             width="50"
           />
           <el-table-column
-            prop="warehouse.party_number"
+            prop="party_number"
             label="Partya nomeri"
-            width="200"
+            width="150"
             header-align="center"
             align="center"
           />
           <el-table-column
             align="center"
             header-align="center"
-            prop="warehouse.customer_name"
+            prop="customer_name"
             label="Buyurtmachi"
-            width="180"
+            width="200"
           />
 
           <el-table-column
             align="center"
             header-align="center"
-            prop="warehouse.material_name"
-            label="Mato nomi"
-            width="180"
+            prop="artikul"
+            label="Artikul"
+            width="200"
           />
           <el-table-column
-            prop="warehouse.color"
+            align="center"
+            header-align="center"
+            prop="material_name"
+            label="Mato nomi"
+            width="200"
+          />
+          <el-table-column
+            prop="color"
             label="Rangi"
             width="100"
             header-align="center"
             align="center"
           />
           <el-table-column
-            prop="warehouse.quantity"
+            prop="sort"
+            label="Sort"
+            width="100"
+            header-align="center"
+            align="center"
+          />
+          <el-table-column
+            fixed="right"
+            prop="quantity"
             label="Miqdori"
-            width="100"
+            width="200"
             header-align="center"
             align="center"
-          />
+            ><template #default="scope">
+              <div class="text-red-500">
+                {{ scope.row.quantity }} {{ scope.row.unit }}
+              </div>
+            </template></el-table-column
+          >
 
-          <el-table-column
-            align="center"
-            prop="warehouse.unit"
-            label="Birligi"
-            width="100"
-            header-align="center"
-          />
-          <el-table-column
-            align="center"
-            prop="warehouse.sort"
-            label="Sorti"
-            width="100"
-            header-align="center"
-          />
-          <el-table-column
-            fixed="right"
-            align="center"
-            prop="head_pack"
-            label="To'p boshi (kg)"
-            width="120"
-            header-align="center"
-            ><template #default="scope"
-              ><div
-                class="cursor-pointer inline-flex items-center text-red-500 hover:bg-slate-300 font-medium rounded-md text-[12px] w-ful p-[5px] sm:w-auto text-center"
-              >
-                {{ scope.row.head_pack }}
-              </div></template
-            ></el-table-column
-          >
-          <el-table-column
-            fixed="right"
-            align="center"
-            prop="pastal_quantity"
-            label="Pastal (kg)"
-            width="100"
-            header-align="center"
-            ><template #default="scope"
-              ><div
-                class="cursor-pointer inline-flex items-center text-red-500 hover:bg-slate-300 font-medium rounded-md text-[12px] w-ful p-[5px] sm:w-auto text-center"
-              >
-                {{ scope.row.pastal_quantity }}
-              </div></template
-            ></el-table-column
-          >
-          <el-table-column
-            fixed="right"
-            align="center"
-            prop="waste_quantity:"
-            label="Atxod (kg)"
-            width="100"
-            header-align="center"
-            ><template #default="scope"
-              ><div
-                class="cursor-pointer inline-flex items-center text-red-500 hover:bg-slate-300 font-medium rounded-md text-[12px] w-ful p-[5px] sm:w-auto text-center"
-              >
-                {{ scope.row.waste_quantity }}
-              </div></template
-            ></el-table-column
-          >
-          <el-table-column
-            fixed="right"
-            align="center"
-            prop="fact_gramage"
-            label="Fakt gramaj"
-            width="100"
-            header-align="center"
-            ><template #default="scope"
-              ><div
-                class="cursor-pointer inline-flex items-center text-red-500 hover:bg-slate-300 font-medium rounded-md text-[12px] w-ful p-[5px] sm:w-auto text-center"
-              >
-                {{ scope.row.fact_gramage }}
-              </div></template
-            ></el-table-column
-          >
           <el-table-column
             prop="createdAt"
             label="Vaqti"
-            width="100"
+            width="200"
             header-align="center"
             align="center"
             ><template #default="scope">{{

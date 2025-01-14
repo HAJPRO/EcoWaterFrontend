@@ -51,19 +51,118 @@ const rules = ref({
 <template>
   <el-dialog
     v-model="reports.is_modal"
-    title="Kunlik hisobot qo'shish oynasi"
+    title="Kesim hisobotini qo'shish oynasi"
     width="900"
   >
     <span>
+      <div
+        class="bg-slate-100 font-semibold p-1 text-[14px] mt-1 align-center text-center shadow rounded border-t-[1px] border-[#36d887]"
+      >
+        Pastal ma'lumotini qo'shish
+      </div>
       <el-form
         :model="model"
         ref="formRef"
         label-width="auto"
         size="small"
         label-position="top"
-        class="filter-box md:grid md:grid-cols-12 gap-2 sm:flex sm:flex-wrap rounded shadow mb-1 bg-white p-1 text-[12px]"
+        class="filter-box md:grid md:grid-cols-12 gap-2 sm:flex sm:flex-wrap rounded shadow mb-1 bg-white p-1 text-[10px]"
       >
-        <div class="mb-1 col-span-4">
+        <div class="mb-1 col-span-3">
+          <el-form-item
+            label="Pastal og'irligi (kg)"
+            prop="pastal_quantity"
+            :rules="rules"
+          >
+            <el-input
+              required
+              v-model="model.pastal_quantity"
+              clearable
+              class="w-[100%]"
+              size="smal"
+              type="Number"
+              placeholder="..."
+            />
+          </el-form-item>
+        </div>
+        <div class="mb-1 col-span-2">
+          <el-form-item label="To'p boshi (kg)" prop="head_pack" :rules="rules">
+            <el-input
+              required
+              v-model="model.head_pack"
+              clearable
+              class="w-[100%]"
+              size="smal"
+              type="Number"
+              placeholder="..."
+            />
+          </el-form-item>
+        </div>
+        <div class="mb-1 col-span-3">
+          <el-form-item
+            label="Qiyqim (kg)"
+            prop="waste_quantity"
+            :rules="rules"
+          >
+            <el-input
+              required
+              v-model="model.waste_quantity"
+              clearable
+              class="w-[100%]"
+              size="smal"
+              type="Number"
+              placeholder="..."
+            />
+          </el-form-item>
+        </div>
+        <div class="mb-1 col-span-2">
+          <el-form-item label="Fakt gramaji" prop="fact_gramage" :rules="rules">
+            <el-input
+              disabled
+              required
+              v-model="model.fact_gramage"
+              clearable
+              class="w-[100%]"
+              size="smal"
+              type="Number"
+              placeholder="..."
+            />
+          </el-form-item>
+        </div>
+        <div class="mb-1 col-span-2">
+          <el-form-item label=".">
+            <el-button
+              v-if="
+                (role === 5 && permissions.includes('form')) || role === 1000
+              "
+              class="w-screen"
+              size="smal"
+              @click="Save(formRef)"
+              style="
+                background-color: #36d887;
+                color: white;
+                border: none;
+                margin-bottom: 4px;
+              "
+              ><i class="mr-2 fa-solid fa-check fa-sm"></i>Yuborish
+            </el-button>
+          </el-form-item>
+        </div>
+      </el-form>
+      <div
+        class="bg-slate-100 font-semibold p-1 text-[14px] align-center text-center shadow rounded border-t-[1px] border-[#36d887] mt-2 mb-2"
+      >
+        Kesm ma'lumotini qo'shish
+      </div>
+      <el-form
+        :model="model"
+        ref="formRef"
+        label-width="auto"
+        size="small"
+        label-position="top"
+        class="filter-box md:grid md:grid-cols-12 gap-2 sm:flex sm:flex-wrap rounded shadow mb-1 bg-white p-1 text-[10px]"
+      >
+        <div class="mb-1 col-span-3">
           <el-form-item label="Madel" prop="model_name" :rules="rules">
             <el-input
               required
@@ -106,7 +205,50 @@ const rules = ref({
             </el-input>
           </el-form-item>
         </div>
-        <div class="mb-1 col-span-4">
+        <div class="mb-1 col-span-3">
+          <el-form-item label="Razmer" prop="size" :rules="rules">
+            <el-input
+              required
+              v-model="model.model_name"
+              clearable
+              class="w-[100%]"
+              size="smal"
+              type="String"
+              placeholder="..."
+            >
+              <template #prepend>
+                <div class="w-[8px] items-start text-center">
+                  <i
+                    @click="
+                      Plus({
+                        title: `Madel qo'shish`,
+                        state: `model_name`,
+                      })
+                    "
+                    class="fa-solid fa-plus mr-2 fa-md cursor-pointer"
+                  ></i>
+                </div>
+              </template>
+              <template #append>
+                <el-select
+                  v-model="model.model_name"
+                  @click="Type({ type: `model_name` })"
+                  @change="ChangeModelName($event)"
+                  size="smal"
+                  style="width: 40px"
+                >
+                  <el-option
+                    v-for="item in options"
+                    :key="item._id"
+                    :label="item.name"
+                    :value="item.name"
+                  />
+                </el-select>
+              </template>
+            </el-input>
+          </el-form-item>
+        </div>
+        <div class="mb-1 col-span-2">
           <el-form-item label="Miqdori" prop="quantity" :rules="rules">
             <el-input
               required
@@ -153,7 +295,7 @@ const rules = ref({
                 border: none;
                 margin-bottom: 4px;
               "
-              ><i class="mr-2 fa-solid fa-check fa-sm"></i>Yuborish
+              ><i class="mr-2 fa-solid fa-plus fa-sm"></i>Qo'shish
             </el-button>
           </el-form-item>
         </div>
