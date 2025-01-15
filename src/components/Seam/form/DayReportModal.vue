@@ -9,16 +9,20 @@ import { SeamInFormStore } from "../../../stores/Seam/Form/form.store";
 const store_form = SeamInFormStore();
 import { storeToRefs } from "pinia";
 const { is_confirm, reports } = storeToRefs(store_form);
-console.log(reports);
 
 const model = ref({
   id: uuidv4(),
+  pastal_quantity: "",
+  head_pack: "",
+  waste_quantity: "",
+  fact_gramage: "",
   model_name: "",
   quantity: "",
+  size: "",
   unit: "",
-  date: new Date(),
   status: "Tasnifga yuborildi",
 });
+
 const ChangeModelName = (value) => {
   model.model_name = value;
 };
@@ -137,7 +141,7 @@ const rules = ref({
               "
               class="w-screen"
               size="smal"
-              @click="Save(formRef)"
+              @click="AddPastalInfo(pastalRef)"
               style="
                 background-color: #36d887;
                 color: white;
@@ -209,7 +213,7 @@ const rules = ref({
           <el-form-item label="Razmer" prop="size" :rules="rules">
             <el-input
               required
-              v-model="model.model_name"
+              v-model="model.size"
               clearable
               class="w-[100%]"
               size="smal"
@@ -231,7 +235,7 @@ const rules = ref({
               </template>
               <template #append>
                 <el-select
-                  v-model="model.model_name"
+                  v-model="model.size"
                   @click="Type({ type: `model_name` })"
                   @change="ChangeModelName($event)"
                   size="smal"
@@ -288,7 +292,7 @@ const rules = ref({
               "
               class="w-screen"
               size="smal"
-              @click="Save(formRef)"
+              @click="AddFormInfo(formRef)"
               style="
                 background-color: #36d887;
                 color: white;
