@@ -38,7 +38,6 @@ const AddReportData = async (formRef) => {
       model.value.quantity > 0
     ) {
       const product = ref({
-        id: uuidv4(),
         model_name: model.value.model_name,
         quantity: model.value.quantity,
         size: model.value.size,
@@ -74,8 +73,11 @@ const Save = async () => {
     if (report_box.value.products.length <= 0) {
       return ToastifyService.ToastError({ msg: "Mahsulot qo'shilmagan !" });
     } else {
+      await store_form.CreateDayReport(report_box.value);
     }
-  } catch (error) {}
+  } catch (error) {
+    return ToastifyService.ToastError({ msg: "Mahsulot qo'shilmagan !" });
+  }
 };
 const ChangeModelName = (value) => {
   model.model_name = value;
@@ -129,11 +131,6 @@ const rules = ref({
 
 <template>
   <div>
-    <Title>
-      <template v-slot:title>
-        <h3>Kesim hisobotini shakilantirish</h3>
-      </template>
-    </Title>
     <el-dialog v-model="reports.is_modal" width="1200">
       <div class="bg-white p-1 text-[10px] rounded shadow">
         <div
@@ -347,134 +344,6 @@ const rules = ref({
       </div>
 
       <div class="mt-3 grid grid-cols-12 gap-2">
-        <div
-          class="col-span-3 h-[220px] shadow-md rounded-md bg-white text-center text-slate-500 font-semibold text-[14px] p-4 cursor-pointer border-t-[1px] border-b-[1px] border-[#36d887]"
-        >
-          <div class="mt-5 bg-slate-200 p-2 rounded">
-            Pastal og'irligi:
-            {{ model.pastal_quantity ? model.pastal_quantity : 0 }} kg
-          </div>
-          <div class="mt-4 bg-slate-200 p-2 rounded">
-            To'pboshi: {{ model.head_pack ? model.head_pack : 0 }} kg
-          </div>
-          <div class="mt-4 bg-slate-200 p-2 rounded">
-            Qiyqim og'irligi :
-            {{ model.waste_quantity ? model.waste_quantity : 0 }} kg
-          </div>
-        </div>
-        <div class="col-span-9 shadow-md bg-white rounded min-h-[15px]">
-          <el-table
-            :data="report_box.products"
-            load
-            class="w-full"
-            header-align="center"
-            style="width: 100%; font-size: 12px"
-            empty-text="Mahsulot tanlanmagan... "
-            border
-            height="150"
-            size="small"
-          >
-            <el-table-column
-              header-align="center"
-              align="center"
-              type="index"
-              prop="index"
-              fixed="left"
-              label="№"
-              width="60"
-            />
-            <el-table-column
-              prop="model_name"
-              label="Model nomi"
-              width="200"
-              header-align="center"
-              align="center"
-            />
-
-            <el-table-column
-              prop="size"
-              label="Razmer"
-              width="100"
-              header-align="center"
-              align="center"
-            />
-
-            <el-table-column
-              prop="quantity"
-              label="Miqdori"
-              width="150"
-              header-align="center"
-              align="center"
-            />
-            <el-table-column
-              prop="unit"
-              label="Birligi"
-              width="100"
-              header-align="center"
-              align="center"
-            />
-            <el-table-column
-              prop="date"
-              label="Vaqt"
-              width="150"
-              header-align="center"
-              align="center"
-              ><template #default="scope"
-                ><div>
-                  {{ String(scope.row.date).substring(0, 10) }}
-                </div></template
-              ></el-table-column
-            >
-
-            <el-table-column
-              fixed="right"
-              prop="id"
-              label=""
-              width="120"
-              header-align="center"
-              align="center"
-            >
-              <template #default="scope">
-                <router-link
-                  to=""
-                  @click="deleteById(scope.row.id)"
-                  class="inline-flex items-center mt-4 ml-2 text-white hover:bg-slate-300 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
-                >
-                  <i class="text-black fa-sharp fa-solid fa-pen fa-xs"></i>
-                </router-link>
-                <router-link
-                  to=""
-                  @click="deleteById(scope.row.id)"
-                  class="inline-flex items-center mt-4 ml-2 text-white hover:bg-slate-300 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
-                >
-                  <i class="text-black fa-sharp fa-solid fa-trash fa-xs"></i>
-                </router-link>
-              </template>
-            </el-table-column>
-          </el-table>
-          <div
-            v-if="report_box.products.length > 0"
-            class="flex justify-between flex-wrap font-semibold rounded text-[12px] p-1 bg-slate-100 shadow"
-          >
-            <div>Jami: {{ model.total ? model.total : 0 }}</div>
-            <div>Factgramaj: {{ model.fact_gramage.toFixed(3) }}</div>
-          </div>
-          <div class="flex justify-end col-span-10 p-1 bg-white">
-            <el-button
-              size="smal"
-              @click="Save()"
-              style="
-                background-color: #36d887;
-                color: white;
-                border: none;
-                cursor: pointer;
-                padding: 15px;
-              "
-            >
-              <i class="fa-solid fa-check mr-2 fa-md"></i> Saqlash
-            </el-button>
-          </div>
-        </div>
         <div
           class="col-span-3 h-[220px] shadow-md rounded-md bg-white text-center text-slate-500 font-semibold text-[14px] p-4 cursor-pointer border-t-[1px] border-b-[1px] border-[#36d887]"
         >
