@@ -21,7 +21,7 @@ export const SeamInFormStore = defineStore("SeamInFormStore", {
       reports: {
         is_modal: false,
         id: "",
-        warehouse: {},
+        form: {},
         report: "",
         done: "",
       },
@@ -44,15 +44,16 @@ export const SeamInFormStore = defineStore("SeamInFormStore", {
     },
     async GetOneReport(id) {
       const data = await SeamInFormService.GetOneReport(id);
-      this.reports.report = data.data[0];
-      this.reports.warehouse = data.data[0].warehouse;
+      this.reports.form = data.data[0];
+      // this.reports.report = data.data[0];
+      // this.reports.warehouse = data.data[0].warehouse;
 
-      const initialValue = ref(0);
-      this.reports.done = data.data[0].report_box.reduce(
-        (accumulator, currentValue) =>
-          accumulator + Number(currentValue.quantity),
-        initialValue.value
-      );
+      // const initialValue = ref(0);
+      // this.reports.done = data.data[0].report_box.reduce(
+      //   (accumulator, currentValue) =>
+      //     accumulator + Number(currentValue.quantity),
+      //   initialValue.value
+      // );
     },
 
     async CreateDayReport(items) {
@@ -73,18 +74,17 @@ export const SeamInFormStore = defineStore("SeamInFormStore", {
       const loader = loading.show();
       const data = await SeamInFormService.GetAll(payload);
       this.items = data.data.items;
-      console.log(data.data.items);
 
       loader.hide();
     },
     async AcceptAndCreate(id) {
-      // const loader = loading.show();
+      const loader = loading.show();
       const data = await SeamInFormService.AcceptAndCreate(id);
       ToastifyService.ToastSuccess({
         msg: data.data.msg,
       });
       this.GetAll(this.isActive);
-      // loader.hide();
+      loader.hide();
     },
   },
 });

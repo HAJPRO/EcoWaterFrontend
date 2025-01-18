@@ -253,6 +253,27 @@ const routes = [
         },
       },
       {
+        path: "department/seam/form/report_create",
+        name: "ReportCreate",
+        component: () => import("../pages/Explore/Seam/form/report-create.vue"),
+        beforeEnter(to, from, next) {
+          if (
+            JSON.parse(Cookies.get("account")).role === 1000 ||
+            (JSON.parse(Cookies.get("account")).role === 5 &&
+              JSON.parse(Cookies.get("account")).permissions.includes(
+                "form"
+              )) ||
+            JSON.parse(Cookies.get("account")).permissions.includes(
+              "seam accountant"
+            )
+          ) {
+            next();
+          } else {
+            window.location.href = "/explore";
+          }
+        },
+      },
+      {
         path: "department/seam/classification",
         name: "SeamClassification",
         component: () =>

@@ -19,7 +19,6 @@ const api = axios.create({
   headers: {
     Authorization: `Bearer ${Cookies.get("token")}`,
   },
-
   bodyParameters,
 });
 

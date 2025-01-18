@@ -20,7 +20,7 @@ export const SeamInFormService = {
     return api.post(url, data);
   },
   GetOneReport(id) {
-    let url = "seam/form/get_one_report";
+    let url = `seam/form/get_one_report`;
     return api.post(url, { id });
   },
 };

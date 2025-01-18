@@ -23,7 +23,7 @@ jobs:
           npm install
           npm run build
 
-      - name: "Deploy to remote server"
+      - name: "Deploy to locklserver"
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST_LS }}

@@ -1509,6 +1509,7 @@
                       </a>
                     </li>
                   </router-link>
+
                   <router-link
                     v-if="
                       (role === 5 && permissions.includes('classification')) ||
