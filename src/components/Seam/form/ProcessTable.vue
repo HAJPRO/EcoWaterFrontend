@@ -130,7 +130,7 @@ const Report = (id) => {
                 to=""
                 class="inline-flex items-center ml-2 text-red hover:bg-slate-300 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
               >
-                <i class="text-black fa-check fa-solid fa-sm"></i>
+                <i class="text-black fa-plus fa-solid fa-sm"></i>
               </router-link>
               <router-link
                 v-if="
