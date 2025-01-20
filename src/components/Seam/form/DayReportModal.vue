@@ -72,6 +72,19 @@ const FaktgramajCalculator = () => {
   report_box.value.waste_quantity = model.value.waste_quantity;
   report_box.value.fact_gramage = model.value.fact_gramage;
 };
+const matchPastal = ref(false);
+const MatchPastal = (data) => {
+  if (reports.value.report.info) {
+    const match = reports.value.report.info.quantity - data;
+    if (match >= 0) {
+      matchPastal.value = false;
+    } else {
+      matchPastal.value = true;
+    }
+  } else {
+    return;
+  }
+};
 const Save = async () => {
   try {
     if (report_box.value.products.length <= 0) {
@@ -144,11 +157,12 @@ const rules = ref({
           <h3>Kesim hisobotini shakilantirish</h3>
         </div>
         <div
+          v-if="reports.report.info"
           class="flex justify-between flex-wrap font-semibold rounded text-[12px] p-1 mt-2 bg-slate-100 shadow"
         >
-          <div>Partya nomeri: {{}}</div>
-          <div>Buyurtmachi: {{}}</div>
-          <div>Artikul: {{}}</div>
+          <div>Partya nomeri: {{ reports.report.info.party_number }}</div>
+          <div>Buyurtmachi: {{ reports.report.info.customer_name }}</div>
+          <div>Artikul: {{ reports.report.info.artikul }}</div>
         </div>
         <div class="box flex col-span-12 gap-2">
           <div class="left col-span-6 mt-2">
@@ -167,6 +181,7 @@ const rules = ref({
                   :rules="rules"
                 >
                   <el-input
+                    @input="MatchPastal(model.pastal_quantity)"
                     :disabled="report_box.products.length > 0"
                     required
                     v-model="model.pastal_quantity"
@@ -176,6 +191,10 @@ const rules = ref({
                     type="Number"
                     placeholder="..."
                   />
+                  <div v-if="matchPastal === true" class="text-red-500">
+                    Mahsulot yetarli emas! {{ reports.report.info.quantity
+                    }}{{ reports.report.info.unit }} dan oshdi
+                  </div>
                 </el-form-item>
               </div>
               <div class="mb-1 col-span-2">

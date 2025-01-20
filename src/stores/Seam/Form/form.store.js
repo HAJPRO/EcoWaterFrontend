@@ -46,7 +46,9 @@ export const SeamInFormStore = defineStore("SeamInFormStore", {
     },
     async GetOneReport(id) {
       const data = await SeamInFormService.GetOneReport(id);
+
       this.reports.report = data.data;
+
       this.GetOneReportPastal();
     },
     async GetOneReportPastal(data) {
