@@ -3,35 +3,19 @@ import Cookies from "js-cookie";
 const author = ref(JSON.parse(Cookies.get("account")).id);
 const department = ref(JSON.parse(Cookies.get("account")).department);
 const role = ref(JSON.parse(Cookies.get("account")).role);
-
 import { ref, onMounted } from "vue";
-import { SaleLegalService } from "../../ApiServices/Sale/saleLegal.service";
 import { SaleStore } from "../../stores/Sale/sale.store";
 const store = SaleStore();
 import { storeToRefs } from "pinia";
 const { length } = storeToRefs(store);
-const sale_length = ref();
-const paint_length = ref();
-const weaving_length = ref();
-const spinning_length = ref();
-const provide_length = ref();
-const getAllLength = async () => {
-  const all_length = await SaleLegalService.getAllLength();
-  sale_length.value = all_length.data.sale_length;
-  paint_length.value = all_length.data.paint_length;
-  weaving_length.value = all_length.data.weaving_length;
-  spinning_length.value = all_length.data.spinning_length;
-  provide_length.value = all_length.data.provide_length;
+const SaleCreateCardModal = async () => {
+  await store.SaleCreateCardModal();
 };
 const getAll = async () => {
-  const data = await store.getAll({ status: isActive.value });
+  await store.getAll({ status: isActive.value });
 };
 const isActive = ref(1);
 const ActiveTabLink = (num) => {
-  if (num === 0) {
-    isActive.value = 0;
-    return getAllLength(), getAll();
-  }
   if (num === 1) {
     isActive.value = 1;
     return getAll();
@@ -40,22 +24,10 @@ const ActiveTabLink = (num) => {
     isActive.value = 2;
     return getAll();
   }
-  if (num === 3) {
-    isActive.value = 3;
-    return getAll();
-  }
-  if (num === 4) {
-    isActive.value = 4;
-    return getAll();
-  }
-  if (num === 5) {
-    isActive.value = 5;
-    return getAll();
-  }
 };
 onMounted(async () => {
   try {
-    await getAll(), getAllLength();
+    await getAll();
   } catch (err) {
     console.log(err);
   }
@@ -77,9 +49,7 @@ onMounted(async () => {
           <span
             class="inline-flex items-center justify-center h-5 text-[11px] font-medium text-white bg-[#36d887] px-3 py-2 rounded"
           >
-            <span class=" ">0</span>/{{
-              (sale_length ? sale_length : 0) || 0
-            }}</span
+            <span class=" ">0</span>/{{ 0 || 0 }}</span
           >
         </div>
       </router-link>
@@ -94,9 +64,7 @@ onMounted(async () => {
           <span
             class="inline-flex items-center justify-center h-5 text-[11px] font-medium text-white bg-[#36d887] px-3 py-2 rounded"
           >
-            <span class=" ">0</span>/{{
-              (paint_length ? paint_length : 0) || 0
-            }}</span
+            <span class=" ">0</span>/{{ 0 || 0 }}</span
           >
         </div>
       </router-link>
@@ -105,7 +73,8 @@ onMounted(async () => {
       <div class="col-span-2"></div>
       <div class="col-span-1">
         <router-link
-          :to="{ name: 'legal_create' }"
+          @click="SaleCreateCardModal()"
+          to=""
           class="inline-flex items-center px-3 py-1 mb-1 text-[13px] font-medium text-center text-white bg-[#36d887] text-bold rounded"
         >
           <i class="fa-solid fa-plus mr-2 fa-sm"></i> Karta qo'shish

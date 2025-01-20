@@ -15,7 +15,7 @@ let config = {
 };
 const api = axios.create({
   baseURL: "https://dev.company-erp.uz/api/v1/",
-  // baseURL: "http://localhost:3000/api/v1/"
+  // baseURL: "http://localhost:3000/api/v1/",
   headers: {
     Authorization: `Bearer ${Cookies.get("token")}`,
   },

@@ -20,28 +20,17 @@ const deleteById = async (id) => {
 const proccessModalById = async (id) => {
   await store_sale.AllOrderProccessById(id);
 };
-// const isStatusModal = ref(false);
-// const statusModalById = (id) => {
-//   const is_modal = !isStatusModal.value;
-//   store_sale.StatusModalById({ is_modal, id });
-// };
 </script>
 <template>
   <div class="shadow-md rounded min-h-[15px]">
     <el-table
+      size="small"
       load
       class="w-full"
       header-align="center"
       hight="4"
-      style="width: 100%"
+      style="width: 100%; font-size: 12px"
       empty-text="Mahsulot tanlanmagan... "
-      :default-sort="[
-        { prop: 'customer_name', order: 'customer_name' },
-        { prop: 'order_number', order: 'order_number' },
-        { prop: 'pro_type', order: 'pro_type' },
-        { prop: 'order_status', order: 'order_status' },
-        { prop: 'delivery_time', order: 'delivery_time' },
-      ]"
       :data="items"
       border
       min-height="300"
@@ -58,23 +47,22 @@ const proccessModalById = async (id) => {
       />
 
       <el-table-column
+        align="center"
         header-align="center"
-        sortable
         prop="customer_name"
         label="Buyurtmachi"
         width="200"
       />
 
       <el-table-column
+        align="center"
         header-align="center"
-        sortable
         prop="order_number"
         label="Buyurtma nomeri"
         width="200"
       />
       <el-table-column
         prop="pro_type"
-        sortable
         label="Turi"
         width="180"
         header-align="center"
@@ -110,7 +98,6 @@ const proccessModalById = async (id) => {
       />
       <el-table-column
         prop="delivery_time"
-        sortable
         label="Muddati"
         width="190"
         header-align="center"
@@ -132,7 +119,6 @@ const proccessModalById = async (id) => {
       <el-table-column
         fixed="right"
         prop="order_status"
-        sortable
         label="Holati"
         width="150"
         header-align="center"

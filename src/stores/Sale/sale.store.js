@@ -1,4 +1,4 @@
-import { SaleLegalService } from "../../ApiServices/Sale/saleLegal.service";
+import { SaleService } from "../../ApiServices/Sale/sale.service";
 import { ToastifyService } from "../../utils/Toastify";
 import { loading } from "./../../utils/Loader";
 import { defineStore } from "pinia";
@@ -6,10 +6,12 @@ import { defineStore } from "pinia";
 export const SaleStore = defineStore("saleStore", {
   state: () => {
     return {
+      model: {},
       length: "",
       items: [],
       card_id: "",
       is_modal: false,
+      is_create_modal: false,
       model: "",
       proccess_modal: false,
       proccess_data: {
@@ -27,8 +29,17 @@ export const SaleStore = defineStore("saleStore", {
     };
   },
   actions: {
+
     IsActive(payload) {
       this.is_active = payload.is_active;
+    },
+    async SaleCreateCardModal() {
+      this.is_create_modal = true
+      this.GetCardModel()
+    },
+    async GetCardModel() {
+      const data = await SaleService.GetCardModel();
+      this.model = data.data;
     },
     PlusProNameModal() {
       this.plus_name_modal = true;
@@ -37,31 +48,31 @@ export const SaleStore = defineStore("saleStore", {
       this.plus_type_modal = true;
     },
     async CreateProType(payload) {
-      const type = await SaleLegalService.CreateProType(payload);
+      const type = await SaleService.CreateProType(payload);
       GetProType();
     },
     async CreateProName(payload) {
-      const name = await SaleLegalService.CreateProName(payload);
+      const name = await SaleService.CreateProName(payload);
       GetProName();
     },
     async GetProName() {
-      const names = await SaleLegalService.GetProName();
+      const names = await SaleService.GetProName();
       this.pro_names = names.data;
     },
     async GetProType() {
-      const types = await SaleLegalService.GetProType();
+      const types = await SaleService.GetProType();
       this.pro_types = types.data;
     },
     async getAll(payload) {
       const loader = loading.show();
-      const res = await SaleLegalService.getAll(payload);
+      const res = await SaleService.getAll(payload);
       this.active_tab = payload;
       this.length = res.data.length;
       this.items = res.data.all;
       loader.hide();
     },
     async AllOrderProccessById(payload) {
-      const data = await SaleLegalService.AllOrderProccessById(payload);
+      const data = await SaleService.AllOrderProccessById(payload);
 
       this.proccess_modal = true;
       this.proccess_data.order = data.data.order;
@@ -81,24 +92,14 @@ export const SaleStore = defineStore("saleStore", {
     async openModalById(payload) {
       this.card_id = payload.id;
       this.is_modal = payload.is_modal;
-      const data = await SaleLegalService.getOne(payload.id);
+      const data = await SaleService.getOne(payload.id);
       this.model = data.data;
     },
-    // async ProccessModalById(payload) {
-    //   this.proccess_modal.id = payload.id;
-    //   this.proccess_modal.isModal = payload.is_modal;
-    //   const data = await SaleLegalService.getOne(payload.id);
-    //   this.model = data.data;
-    // },
-    // async StatusModalById(payload) {
-    //   this.status_modal.id = payload.id;
-    //   this.status_modal.isModal = payload.is_modal;
 
-    // },
     async Update(payload) {
       try {
         const loader = loading.show();
-        const updateData = await SaleLegalService.Edit(this.card_id, payload);
+        const updateData = await SaleService.Edit(this.card_id, payload);
         loader.hide();
         ToastifyService.ToastSuccess({
           msg: updateData.data.msg,
@@ -115,7 +116,7 @@ export const SaleStore = defineStore("saleStore", {
     async Confirm(id) {
       try {
         const loader = loading.show();
-        const confirmData = await SaleLegalService.confirm(id);
+        const confirmData = await SaleService.confirm(id);
         loader.hide();
         ToastifyService.ToastSuccess({
           msg: confirmData.data.msg,
@@ -129,7 +130,7 @@ export const SaleStore = defineStore("saleStore", {
     async DeleteById(id) {
       try {
         const loader = loading.show();
-        const data = await SaleLegalService.Delete(id);
+        const data = await SaleService.Delete(id);
         loader.hide();
         ToastifyService.ToastSuccess({
           msg: data.data.msg,

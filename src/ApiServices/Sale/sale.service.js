@@ -1,7 +1,7 @@
 import api from "@/helpers/api";
 // import $api from "../../helpers/$api";
 
-export const SaleLegalService = {
+export const SaleService = {
   CreateProName(data) {
     let url = "sale/add_pro_name";
     return api.post(url, data);
@@ -18,12 +18,12 @@ export const SaleLegalService = {
     let url = "sale/pro_name";
     return api.post(url);
   },
-  getModel() {
-    let url = "sale/legal_model";
+  GetCardModel() {
+    let url = "sale/get_card_model";
     return api.get(url);
   },
   create(data) {
-    let url = "sale/legal_create";
+    let url = "sale/create";
     return api.post(url, data);
   },
   export_excel(id) {
@@ -43,7 +43,7 @@ export const SaleLegalService = {
     return api.post(url);
   },
   getAll(status) {
-    let url = "sale/legal_all";
+    let url = "sale/all";
     return api.post(url, status);
   },
   getAllWeaving() {

@@ -3,14 +3,14 @@ import { onMounted, ref } from "vue";
 import { v4 as uuidv4 } from "uuid";
 import Title from "@/components/Title.vue";
 import AddOptionModal from "../../../components/Helpers/AddOptionsModal.vue";
-import { SaleLegalService } from "@/ApiServices/Sale/saleLegal.service";
+import { SaleService } from "../../../ApiServices/Sale/sale.service";
 import { ToastifyService } from "../../../utils/Toastify.js";
 import { SaleStore } from "../../../stores/Sale/sale.store";
-const store_sale = SaleStore();
 import { HelpersStore } from "../../../stores/Helpers/helper.store.js";
+const store_sale = SaleStore();
 const store_helpers = HelpersStore();
 import { storeToRefs } from "pinia";
-const {} = storeToRefs(store_sale);
+const { model } = storeToRefs(store_sale);
 const { options, is_modal } = storeToRefs(store_helpers);
 const Type = (type) => {
   store_helpers.SelectType(type);
@@ -29,11 +29,6 @@ const ChangeColor = (value) => {
 };
 const ChangeUnit = (value) => {
   model.unit = value;
-};
-const model = ref({});
-const GetModel = async () => {
-  const data = await SaleLegalService.getModel();
-  model.value = data.data;
 };
 
 const order = ref({
@@ -82,11 +77,10 @@ const Save = async () => {
     ) {
       return ToastifyService.ToastError({ msg: "Mahsulot qo'shilmagan !" });
     } else {
-      const data = await SaleLegalService.create(order.value);
+      const data = await SaleService.create(order.value);
 
       if (data) {
         order.value.products = [];
-        GetModel();
       }
       ToastifyService.ToastSuccess({ msg: data.data.msg });
     }
@@ -102,7 +96,6 @@ const deleteById = (id) => {
 };
 onMounted(async () => {
   try {
-    await GetModel();
   } catch (error) {
     return ToastifyService.ToastError({ msg: error.message });
   }

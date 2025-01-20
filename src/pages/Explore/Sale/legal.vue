@@ -2,23 +2,20 @@
 import { ref, onMounted } from "vue";
 import Title from "@/components/Title.vue";
 import ProccessModal from "../../../components/Sale/ProccessModal.component.vue";
-// import StatusInfoModal from "../../../components/Sale/StatusModal.component.vue";
-import { SaleLegalService } from "@/ApiServices/Sale/saleLegal.service";
+import { SaleService } from "../../../ApiServices/Sale/sale.service";
 import { ToastifyService } from "../../../utils/Toastify";
-import SaleUpdateCardModal from "../../../components/Sale/SaleUpdateCardModal.vue";
+import SaleCreateCardModal from "../../../components/Sale/SaleCreateCardModal.vue";
 import HeaderTabLink from "../../../components/Sale/HeaderTabLink.vue";
 import MainTable from "../../../components/Sale/MainTable.vue";
-import { SaleStore } from "../../../stores/Sale/sale.store.js";
+import { SaleStore } from "../../../stores/Sale/sale.store";
 const store_sale = SaleStore();
 import { storeToRefs } from "pinia";
+const { is_create_modal } = storeToRefs(store_sale);
 const is_status_info_modal = ref(false);
-const StatusModal = (id) => {
-  is_status_info_modal.value = !is_status_info_modal.value;
-};
 
 const Export_Excel = async (id) => {
   try {
-    const data = await SaleLegalService.export_excel({ id });
+    const data = await SaleService.export_excel({ id });
   } catch (error) {
     return ToastifyService.ToastError({ msg: error.messages });
   }
@@ -44,8 +41,8 @@ onMounted(async () => {
     <!-- // Proccess Modal -->
     <ProccessModal />
     <!-- ////// -->
-    <!-- // EDIT Modal -->
-    <SaleUpdateCardModal />
+    <!-- // create Modal -->
+    <SaleCreateCardModal v-if="is_create_modal === true" />
     <!-- // -->
   </div>
 </template>

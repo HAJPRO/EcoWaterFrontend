@@ -246,10 +246,11 @@ const active = ref(2);
                         <div class="shadow-md rounded min-h-[15px]">
                           <el-table
                             load
+                            size="small"
                             class="w-full"
                             header-align="center"
                             hight="5"
-                            style="width: 100%"
+                            style="width: 100%; font-size: 13px"
                             empty-text="Mahsulot topilmadi... "
                             :data="proccess_data.weaving"
                             border
