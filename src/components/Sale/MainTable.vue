@@ -53,6 +53,13 @@ const proccessModalById = async (id) => {
         label="Buyurtmachi"
         width="200"
       />
+      <el-table-column
+        align="center"
+        header-align="center"
+        prop="artikul"
+        label="Artikul"
+        width="200"
+      />
 
       <el-table-column
         align="center"
@@ -62,44 +69,22 @@ const proccessModalById = async (id) => {
         width="200"
       />
       <el-table-column
-        prop="pro_type"
-        label="Turi"
-        width="180"
-        header-align="center"
-        align="center"
-      />
-      <el-table-column
-        prop="pro_name"
-        label="Nomi"
-        width="180"
-        header-align="center"
-        align="center"
-      />
-      <el-table-column
-        prop="pro_color"
-        label="Rangi"
-        width="180"
-        header-align="center"
-        align="center"
-      />
-      <el-table-column
         prop="order_quantity"
         label="Miqdori"
-        width="180"
+        width="200"
         header-align="center"
         align="center"
-      />
-      <el-table-column
-        prop="unit"
-        label="Birligi"
-        width="100"
-        header-align="center"
-        align="center"
-      />
+        ><template #default="scope"
+          ><div class="text-red-500">
+            {{ scope.row.order_quantity }}
+          </div></template
+        ></el-table-column
+      >
+
       <el-table-column
         prop="delivery_time"
         label="Muddati"
-        width="190"
+        width="250"
         header-align="center"
         align="center"
       >
@@ -120,7 +105,7 @@ const proccessModalById = async (id) => {
         fixed="right"
         prop="order_status"
         label="Holati"
-        width="150"
+        width="200"
         header-align="center"
         align="center"
       >
@@ -128,10 +113,10 @@ const proccessModalById = async (id) => {
           <router-link
             to=""
             @click="statusModalById(scope.row._id)"
-            :class="{ status_bg: scope.row.order_status === 'Tasdiqlanmagan' }"
+            :class="{ status_bg: scope.row.status === 'Tasdiqlanmagan' }"
             class="cursor-pointer inline-flex items-center text-red bg-[#e4e9e9] hover:bg-[#d7ebeb] font-medium rounded-md text-[12px] w-ful p-[5px] sm:w-auto text-center"
           >
-            {{ scope.row.order_status }}
+            {{ scope.row.status }}
           </router-link>
         </template>
       </el-table-column>
@@ -145,32 +130,32 @@ const proccessModalById = async (id) => {
       >
         <template #default="scope">
           <router-link
-            v-show="scope.row.order_status === 'Tasdiqlanmagan'"
+            v-show="scope.row.status === 'Tasdiqlanmagan'"
             to=""
             @click="confirm(scope.row._id)"
-            class="inline-flex items-center mt-4 ml-2 text-red bg-[#eedc36] hover:bg-yellow-400 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
+            class="inline-flex items-center mt-4 ml-2 text-red hover:bg-slate-300 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
           >
             <i class="text-red fa-solid fa-check fa-xs fa- fa-xs"></i>
           </router-link>
           <router-link
             to=""
             @click="proccessModalById(scope.row._id)"
-            class="inline-flex items-center mt-4 ml-2 text-white bg-[#36d887] hover:bg-[rgb(57,192,124)] font-medium rounded-md text-sm w-full sm:w-auto px-3 py-3 text-center"
+            class="inline-flex items-center mt-4 ml-2 text-white hover:bg-slate-300 font-medium rounded-md text-sm w-full sm:w-auto px-3 py-3 text-center"
           >
             <i class="text-black fa-sharp fa-solid fa-info fa-xs"></i>
           </router-link>
           <router-link
-            v-show="scope.row.order_status === 'Tasdiqlanmagan'"
+            v-show="scope.row.status === 'Tasdiqlanmagan'"
             to=""
             @click="getByIdForUpdate(scope.row._id)"
-            class="inline-flex items-center mt-4 ml-2 text-white bg-[#36d887] hover:bg-[rgb(57,192,124)] font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
+            class="inline-flex items-center mt-4 ml-2 text-white hover:bg-slate-300 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
           >
             <i class="text-black fa-sharp fa-solid fa-edit fa-xs"></i>
           </router-link>
           <router-link
             to=""
             @click="deleteById(scope.row._id)"
-            class="inline-flex items-center mt-4 ml-2 text-white bg-red-500 hover:bg-red-600 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
+            class="inline-flex items-center mt-4 ml-2 text-white hover:bg-slate-300 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
           >
             <i class="text-black fa-sharp fa-solid fa-trash fa-xs"></i>
           </router-link>

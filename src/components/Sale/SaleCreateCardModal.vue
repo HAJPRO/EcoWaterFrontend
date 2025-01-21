@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from "uuid";
 import AddOptionModal from "../../components/Helpers/AddOptionsModal.vue";
 import { SaleService } from "../../ApiServices/Sale/sale.service";
 import { ToastifyService } from "../../utils/Toastify";
+import { loading } from "./../../utils/Loader";
 import { SaleStore } from "../../stores/Sale/sale.store";
 import { HelpersStore } from "../../stores/Helpers/helper.store.js";
 const store_sale = SaleStore();
@@ -34,6 +35,7 @@ const order = ref({
   products: [],
   customer_name: "",
   order_number: "",
+  artikul: "",
   delivery_time: "",
 });
 const formRef = ref();
@@ -61,6 +63,7 @@ const PlusOrder = async () => {
 
     order.value.customer_name = model.value.customer_name;
     order.value.order_number = model.value.order_number;
+    order.value.artikul = model.value.artikul;
     order.value.delivery_time = model.value.delivery_time;
   } catch (error) {
     return ToastifyService.ToastError({ msg: error.message });
@@ -76,12 +79,15 @@ const Save = async () => {
     ) {
       return ToastifyService.ToastError({ msg: "Mahsulot qo'shilmagan !" });
     } else {
+      const loader = loading.show();
       const data = await SaleService.create(order.value);
-
+      store_sale.getAll({ status: 1 });
       if (data) {
         order.value.products = [];
+        model.value = {};
       }
       ToastifyService.ToastSuccess({ msg: data.data.msg });
+      loader.hide();
     }
   } catch (error) {
     return ToastifyService.ToastError({ msg: error.message });
@@ -118,7 +124,7 @@ const rules = ref({
         ref="formRef"
         :model="model"
         label-width="auto"
-        class="filter-box bg-white md:grid md:grid-cols-10 gap-1 sm:flex sm:flex-wrap rounded shadow-sm p-2 mt-2 mb-2 text-[13px]"
+        class="filter-box bg-white md:grid md:grid-cols-12 gap-1 sm:flex sm:flex-wrap rounded shadow-sm p-2 mt-2 mb-2 text-[13px]"
         size="small"
         label-position="top"
       >
@@ -132,6 +138,20 @@ const rules = ref({
               :disabled="order.products.length"
               required
               v-model="model.customer_name"
+              clearable
+              class="w-[100%]"
+              size="smal"
+              type="String"
+              placeholder="..."
+            />
+          </el-form-item>
+        </div>
+        <div class="mb-1 col-span-2">
+          <el-form-item label="Artikul" prop="artikul" :rules="rules">
+            <el-input
+              :disabled="order.products.length"
+              required
+              v-model="model.artikul"
               clearable
               class="w-[100%]"
               size="smal"
@@ -396,24 +416,27 @@ const rules = ref({
             />
           </el-form-item>
         </div>
-        <div class="flex justify-end col-span-10">
-          <el-button
-            @click="PlusValidate(formRef)"
-            style="
-              background-color: #36d887;
-              color: white;
-              border: none;
-              cursor: pointer;
-              padding: 15px;
-            "
-          >
-            <i class="fa-solid fa-plus mr-2 fa-md"></i> Qo'shish
-          </el-button>
+        <div class="mb-1 col-span-2">
+          <el-form-item label=".">
+            <el-button
+              @click="PlusValidate(formRef)"
+              style="
+                background-color: #36d887;
+                color: white;
+                border: none;
+                cursor: pointer;
+                width: 100%;
+                padding: 15px;
+              "
+            >
+              <i class="fa-solid fa-plus mr-2 fa-md"></i> Qo'shish
+            </el-button>
+          </el-form-item>
         </div>
       </el-form>
       <div class="mt-3 grid grid-cols-12 gap-2">
         <div
-          class="col-span-3 h-[200px] shadow-md rounded-md bg-white text-center text-slate-500 font-semibold text-[14px] p-4 cursor-pointer border-t-[1px] border-b-[1px] border-[#36d887]"
+          class="col-span-3 h-[250px] shadow-md rounded-md bg-white text-center text-slate-500 font-semibold text-[14px] p-4 cursor-pointer border-t-[1px] border-b-[1px] border-[#36d887]"
         >
           <div class="mt-2 bg-slate-200 p-2 rounded">
             Buyurtma nomeri: {{ model.order_number }}
@@ -422,7 +445,10 @@ const rules = ref({
             Buyurtmachi: {{ model.customer_name }}
           </div>
           <div class="mt-4 bg-slate-200 p-2 rounded">
-            Muddat : {{ String(model.delivery_time).substring(0, 15) }}
+            Artikul: {{ model.artikul }}
+          </div>
+          <div class="mt-4 bg-slate-200 p-2 rounded">
+            Muddati: {{ String(model.delivery_time).substring(0, 15) }}
           </div>
         </div>
         <div class="col-span-9 shadow-md bg-white rounded min-h-[15px]">
@@ -435,7 +461,7 @@ const rules = ref({
             empty-text="Mahsulot tanlanmagan... "
             :data="order.products"
             border
-            height="150"
+            height="200"
           >
             <el-table-column
               header-align="center"
@@ -470,12 +496,32 @@ const rules = ref({
               align="center"
             />
             <el-table-column
+              prop="width"
+              label="Eni"
+              width="150"
+              header-align="center"
+              align="center"
+            />
+            <el-table-column
+              prop="grammage"
+              label="Grammage"
+              width="150"
+              header-align="center"
+              align="center"
+            />
+            <el-table-column
+              fixed="right"
               prop="quantity"
               label="Miqdori"
               width="150"
               header-align="center"
               align="center"
-            />
+              ><template #default="scope"
+                ><div class="text-red-500">
+                  {{ scope.row.quantity }} {{ scope.row.unit }}
+                </div></template
+              ></el-table-column
+            >
             <el-table-column
               prop="unit"
               label="Birligi"
@@ -508,6 +554,7 @@ const rules = ref({
               size="smal"
               @click="Save()"
               style="
+                width: 190px;
                 background-color: #36d887;
                 color: white;
                 border: none;
