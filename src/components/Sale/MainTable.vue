@@ -10,9 +10,11 @@ const getByIdForUpdate = async (id) => {
   const is_modal = !isModal.value;
   store_sale.openModalById({ is_modal, id });
 };
-
-const confirm = async (id) => {
-  await store_sale.Confirm(id);
+const HeaderClass = (data) => {
+  console.log(data);
+};
+const DetailModal = async (id) => {
+  await store_sale.DetailModal(id);
 };
 const deleteById = async (id) => {
   await store_sale.DeleteById(id);
@@ -24,15 +26,17 @@ const proccessModalById = async (id) => {
 <template>
   <div class="shadow-md rounded min-h-[15px]">
     <el-table
+      :header-cell-style="{ background: '#e8eded' }"
       size="small"
-      load
+      show-header="true"
       class="w-full"
       header-align="center"
       hight="4"
       style="width: 100%; font-size: 12px"
       empty-text="Mahsulot tanlanmagan... "
       :data="items"
-      border
+      border="true"
+      fit="true"
       min-height="300"
       max-height="400"
     >
@@ -82,22 +86,13 @@ const proccessModalById = async (id) => {
       >
 
       <el-table-column
-        prop="delivery_time"
         label="Muddati"
-        width="250"
+        width="300"
         header-align="center"
         align="center"
       >
         <template #default="scope">
-          <el-date-picker
-            style="width: 100%"
-            disabled
-            v-model="scope.row.delivery_time"
-            clearable
-            type="date"
-            placeholder=""
-            size="smal"
-          />
+          {{ String(scope.row.delivery_time).substring(0, 10) }}
         </template>
       </el-table-column>
 
@@ -105,7 +100,7 @@ const proccessModalById = async (id) => {
         fixed="right"
         prop="order_status"
         label="Holati"
-        width="200"
+        width="250"
         header-align="center"
         align="center"
       >
@@ -124,23 +119,22 @@ const proccessModalById = async (id) => {
         fixed="right"
         prop="id"
         label=""
-        width="200"
+        width="250"
         header-align="center"
         align="center"
       >
         <template #default="scope">
           <router-link
-            v-show="scope.row.status === 'Tasdiqlanmagan'"
             to=""
-            @click="confirm(scope.row._id)"
-            class="inline-flex items-center mt-4 ml-2 text-red hover:bg-slate-300 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
+            @click="DetailModal(scope.row._id)"
+            class="inline-flex items-center mt-1 ml-2 text-red hover:bg-slate-300 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
           >
-            <i class="text-red fa-solid fa-check fa-xs fa- fa-xs"></i>
+            <i class="text-black fa-solid fa-check fa-xs fa- fa-xs"></i>
           </router-link>
           <router-link
             to=""
             @click="proccessModalById(scope.row._id)"
-            class="inline-flex items-center mt-4 ml-2 text-white hover:bg-slate-300 font-medium rounded-md text-sm w-full sm:w-auto px-3 py-3 text-center"
+            class="inline-flex items-center mt-1 ml-2 text-white hover:bg-slate-300 font-medium rounded-md text-sm w-full sm:w-auto px-3 py-3 text-center"
           >
             <i class="text-black fa-sharp fa-solid fa-info fa-xs"></i>
           </router-link>
@@ -148,14 +142,14 @@ const proccessModalById = async (id) => {
             v-show="scope.row.status === 'Tasdiqlanmagan'"
             to=""
             @click="getByIdForUpdate(scope.row._id)"
-            class="inline-flex items-center mt-4 ml-2 text-white hover:bg-slate-300 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
+            class="inline-flex items-center mt-1 ml-2 text-white hover:bg-slate-300 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
           >
             <i class="text-black fa-sharp fa-solid fa-edit fa-xs"></i>
           </router-link>
           <router-link
             to=""
             @click="deleteById(scope.row._id)"
-            class="inline-flex items-center mt-4 ml-2 text-white hover:bg-slate-300 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
+            class="inline-flex items-center mt-1 ml-2 text-white hover:bg-slate-300 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
           >
             <i class="text-black fa-sharp fa-solid fa-trash fa-xs"></i>
           </router-link>

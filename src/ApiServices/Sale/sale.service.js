@@ -26,12 +26,16 @@ export const SaleService = {
     let url = "sale/create";
     return api.post(url, data);
   },
+  GetOne(data) {
+    let url = "sale/get_one";
+    return api.post(url, data);
+  },
   export_excel(id) {
     let url = "sale/legal_export_excel";
     return api.post(url, id);
   },
   confirm(id) {
-    let url = "sale/legal_confirm";
+    let url = "sale/confirm";
     return api.post(url, { id });
   },
   AllOrderProccessById(id) {
@@ -54,11 +58,7 @@ export const SaleService = {
     let url = `sale/legal_edit/${id}`;
     return api.put(url, data);
   },
-  getOne(id) {
-    console.log(id);
-    let url = `sale/legal_get_one/${id}`;
-    return api.get(url);
-  },
+
   Delete(id) {
     let url = `sale/legal_delete/${id}`;
     return api.delete(url);

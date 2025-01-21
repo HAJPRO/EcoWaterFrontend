@@ -438,21 +438,22 @@ const rules = ref({
         <div
           class="col-span-3 h-[250px] shadow-md rounded-md bg-white text-center text-slate-500 font-semibold text-[14px] p-4 cursor-pointer border-t-[1px] border-b-[1px] border-[#36d887]"
         >
-          <div class="mt-2 bg-slate-200 p-2 rounded">
+          <div class="mt-2 bg-[#e8eded] p-2 rounded">
             Buyurtma nomeri: {{ model.order_number }}
           </div>
-          <div class="mt-4 bg-slate-200 p-2 rounded">
+          <div class="mt-4 bg-[#e8eded] p-2 rounded">
             Buyurtmachi: {{ model.customer_name }}
           </div>
-          <div class="mt-4 bg-slate-200 p-2 rounded">
+          <div class="mt-4 bg-[#e8eded] p-2 rounded">
             Artikul: {{ model.artikul }}
           </div>
-          <div class="mt-4 bg-slate-200 p-2 rounded">
+          <div class="mt-4 bg-[#e8eded] p-2 rounded">
             Muddati: {{ String(model.delivery_time).substring(0, 15) }}
           </div>
         </div>
         <div class="col-span-9 shadow-md bg-white rounded min-h-[15px]">
           <el-table
+            :header-cell-style="{ background: '#e8eded' }"
             load
             style="font-size: 12px"
             size="small"

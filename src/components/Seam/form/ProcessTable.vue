@@ -13,6 +13,7 @@ const Report = (id) => {
     <div class="">
       <div class="rounded text-[11px]">
         <el-table
+          :header-cell-style="{ background: '#e8eded' }"
           style="font-size: 12px"
           size="small"
           load

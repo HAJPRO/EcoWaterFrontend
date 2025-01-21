@@ -7,11 +7,13 @@ export const SaleStore = defineStore("saleStore", {
   state: () => {
     return {
       model: {},
+      detail: {},
       length: "",
       items: [],
       card_id: "",
       is_modal: false,
       is_create_modal: false,
+      is_detail_modal: false,
       model: "",
       proccess_modal: false,
       proccess_data: {
@@ -29,13 +31,18 @@ export const SaleStore = defineStore("saleStore", {
     };
   },
   actions: {
-
     IsActive(payload) {
       this.is_active = payload.is_active;
     },
+    async DetailModal(payload) {
+      const data = await SaleService.GetOne({ id: payload });
+      this.is_detail_modal = true;
+      this.detail = data.data;
+      this.card_id = payload;
+    },
     async SaleCreateCardModal() {
-      this.is_create_modal = true
-      this.GetCardModel()
+      this.is_create_modal = true;
+      this.GetCardModel();
     },
     async GetCardModel() {
       const data = await SaleService.GetCardModel();
@@ -113,15 +120,15 @@ export const SaleStore = defineStore("saleStore", {
       }
     },
 
-    async Confirm(id) {
+    async Confirm() {
       try {
         const loader = loading.show();
-        const confirmData = await SaleService.confirm(id);
-        loader.hide();
+        const confirmData = await SaleService.confirm(this.card_id);
+        this.getAll({ status: 1 });
         ToastifyService.ToastSuccess({
           msg: confirmData.data.msg,
         });
-        this.getAll();
+        loader.hide();
       } catch (error) {
         return ToastifyService.ToastError({ msg: error.messages });
       }

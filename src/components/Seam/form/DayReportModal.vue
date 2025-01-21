@@ -655,6 +655,7 @@ const rules = ref({
           </div>
           <div class="col-span-9 shadow-md bg-white rounded min-h-[15px]">
             <el-table
+              :header-cell-style="{ background: '#e8eded' }"
               :data="reports.product.products"
               load
               show-summary
