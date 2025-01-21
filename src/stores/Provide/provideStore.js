@@ -1,4 +1,4 @@
-import { SaleLegalService } from "../../ApiServices/Sale/saleLegal.service";
+import { SaleLegalService } from "../../ApiServices/Sale/sale.service";
 import { ProvideService } from "../../ApiServices/Provide/provide.service";
 import { ToastifyService } from "../../utils/Toastify";
 import { loading } from "./../../utils/Loader";
