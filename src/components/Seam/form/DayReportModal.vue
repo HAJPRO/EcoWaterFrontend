@@ -6,25 +6,13 @@ import { SeamInFormStore } from "../../../stores/Seam/Form/form.store.js";
 const store_form = SeamInFormStore();
 import { storeToRefs } from "pinia";
 import { ToastifyService } from "../../../utils/Toastify.js";
-const { reports } = storeToRefs(store_form);
+const { reports, model } = storeToRefs(store_form);
 const isActive = ref(1);
 const ActiveTabLink = (data) => {
   store_form.GetOneReportPastal(data);
   isActive.value = data.index;
 };
-const model = ref({
-  id: uuidv4(),
-  pastal_quantity: "",
-  head_pack: "",
-  waste_quantity: "",
-  fact_gramage: "",
-  model_name: "",
-  quantity: "",
-  size: "",
-  unit: "",
-  total: "",
-  status: "Tasnifga yuborildi",
-});
+
 const report_box = ref({
   pastal_quantity: "",
   head_pack: "",
@@ -35,15 +23,22 @@ const report_box = ref({
 const formRef = ref();
 const AddReportData = async (formRef) => {
   await formRef.validate((valid) => {
+    if (matchPastal.value === true) {
+      return ToastifyService.ToastError({
+        msg: "Mahsulot yetarli emas !",
+      });
+    }
     if (
       valid === true &&
       model.value.pastal_quantity > 0 &&
       model.value.head_pack > 0 &&
       model.value.waste_quantity > 0 &&
-      model.value.quantity > 0
+      model.value.quantity > 0 &&
+      matchPastal.value === false
     ) {
       store_form.GetOneReportPastal();
       const product = ref({
+        id: uuidv4(),
         model_name: model.value.model_name,
         quantity: model.value.quantity,
         size: model.value.size,
@@ -59,14 +54,15 @@ const AddReportData = async (formRef) => {
     }
   });
 };
+const total = ref("");
 const FaktgramajCalculator = () => {
   const initialValue = ref(0);
-  model.value.total = report_box.value.products.reduce(
+  total.value = report_box.value.products.reduce(
     (accumulator, currentValue) => accumulator + Number(currentValue.quantity),
     initialValue.value
   );
   model.value.fact_gramage =
-    Number(model.value.pastal_quantity) / Number(model.value.total);
+    Number(model.value.pastal_quantity) / Number(total.value);
   report_box.value.pastal_quantity = model.value.pastal_quantity;
   report_box.value.head_pack = model.value.head_pack;
   report_box.value.waste_quantity = model.value.waste_quantity;
@@ -91,10 +87,51 @@ const Save = async () => {
       return ToastifyService.ToastError({ msg: "Mahsulot qo'shilmagan !" });
     } else {
       await store_form.CreateDayReport(report_box.value);
+      report_box.value = {
+        pastal_quantity: "",
+        head_pack: "",
+        waste_quantity: "",
+        fact_gramage: "",
+        products: [],
+      };
+      model.value = {};
     }
   } catch (error) {
     return ToastifyService.ToastError({ msg: "Mahsulot qo'shilmagan !" });
   }
+};
+const Update = async (formRef) => {
+  await formRef.validate((valid) => {
+    if (matchPastal.value === true) {
+      return ToastifyService.ToastError({
+        msg: "Mahsulot yetarli emas !",
+      });
+    }
+    if (
+      valid === true &&
+      model.value.pastal_quantity > 0 &&
+      model.value.head_pack > 0 &&
+      model.value.waste_quantity > 0 &&
+      model.value.quantity > 0 &&
+      matchPastal.value === false
+    ) {
+      store_form.UpdateReport(model.value);
+    } else {
+      return ToastifyService.ToastError({
+        msg: "Mahsulot qo'shilmagan yoki qiymat manfiy kiritildi!",
+      });
+    }
+  });
+};
+const is_update = ref(false);
+const GetOneForUpdate = (id) => {
+  is_update.value = true;
+  store_form.GetOneForUpdate(id);
+};
+const CancelUpdate = () => {
+  is_update.value = false;
+  model.value = {};
+  reports.value.update = false;
 };
 const ChangeModelName = (value) => {
   model.model_name = value;
@@ -182,7 +219,9 @@ const rules = ref({
                 >
                   <el-input
                     @input="MatchPastal(model.pastal_quantity)"
-                    :disabled="report_box.products.length > 0"
+                    :disabled="
+                      report_box.products.length > 0 || reports.update === true
+                    "
                     required
                     v-model="model.pastal_quantity"
                     clearable
@@ -352,7 +391,7 @@ const rules = ref({
                   </el-select>
                 </el-form-item>
               </div>
-              <div class="mb-1 col-span-2">
+              <div v-if="is_update === false" class="mb-1 col-span-2">
                 <el-form-item label=".">
                   <el-button
                     size="smal"
@@ -365,6 +404,40 @@ const rules = ref({
                       width: 100%;
                     "
                     ><i class="mr-2 fa-solid fa-plus fa-sm"></i>Qo'shish
+                  </el-button>
+                </el-form-item>
+              </div>
+              <div
+                v-if="is_update === true"
+                class="mb-1 col-span-2 flex justify-between"
+              >
+                <el-form-item label=".">
+                  <el-button
+                    size="smal"
+                    @click="Update(formRef)"
+                    style="
+                      background-color: #36d887;
+                      color: white;
+                      border: none;
+                      margin-bottom: 4px;
+                      width: 150px;
+                    "
+                    ><i class="mr-2 fa-solid fa-check fa-sm"></i>Yangilash
+                  </el-button>
+                </el-form-item>
+                <el-form-item label=".">
+                  <el-button
+                    class="bg-red-500"
+                    size="smal"
+                    @click="CancelUpdate()"
+                    style="
+                      background-color: red;
+                      color: white;
+                      border: none;
+                      margin-bottom: 4px;
+                      width: 100%;
+                    "
+                    ><i class="fa-solid fa-xmark fa-sm"></i>
                   </el-button>
                 </el-form-item>
               </div>
@@ -474,15 +547,6 @@ const rules = ref({
                         class="inline-flex items-center mt-4 ml-2 text-white hover:bg-slate-300 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
                       >
                         <i
-                          class="text-black fa-sharp fa-solid fa-pen fa-xs"
-                        ></i>
-                      </router-link>
-                      <router-link
-                        to=""
-                        @click="deleteById(scope.row.id)"
-                        class="inline-flex items-center mt-4 ml-2 text-white hover:bg-slate-300 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
-                      >
-                        <i
                           class="text-black fa-sharp fa-solid fa-trash fa-xs"
                         ></i>
                       </router-link>
@@ -493,7 +557,7 @@ const rules = ref({
                   class="flex justify-between flex-wrap font-semibold rounded text-[12px] p-1 bg-slate-100 shadow"
                 >
                   <div>
-                    Jami: {{ report_box.products.length > 0 ? model.total : 0 }}
+                    Jami: {{ report_box.products.length > 0 ? total : 0 }}
                   </div>
                   <div>
                     Factgramaj:
@@ -537,7 +601,7 @@ const rules = ref({
         >
           <div
             v-if="reports.report.form"
-            class="col-span-9 grid-flow-col flex-wrap"
+            class="col-span-12 grid-flow-col flex-wrap"
           >
             <router-link
               v-for="(item, index) in reports.report.form"
@@ -545,7 +609,7 @@ const rules = ref({
               to=""
               @click="ActiveTabLink({ index: index + 1, id: item._id })"
               :class="{ activeTab: isActive === index + 1 }"
-              class="inline-flex text-[13px] items-center mr-2 px-4 py-1 mb-1 text-sm font-medium text-center text-red hover:border-b-2 border-solid border-[#36d887] bg-[#e4e9e9] text-bold rounded"
+              class="inline-flex text-[13px] mr-1 items-center px-4 py-1 mb-1 text-sm font-medium text-center text-red hover:border-b-2 border-solid border-[#36d887] bg-[#e4e9e9] text-bold rounded"
             >
               <i class="fa-solid fa-info mr-2 fa-xm"></i> Pastal {{ index + 1 }}
             </router-link>
@@ -581,6 +645,12 @@ const rules = ref({
                   : 0
               }}
               kg
+
+              <!-- <div v-if="reports.product.form[0]" class="flex justify-end">
+                <i
+                  class="text-black fa-sharp fa-solid fa-pen fa-xs mr-2 mt-[-10px] hover:bg-slate-300"
+                ></i>
+              </div> -->
             </div>
           </div>
           <div class="col-span-9 shadow-md bg-white rounded min-h-[15px]">
@@ -644,7 +714,7 @@ const rules = ref({
                 align="center"
                 ><template #default="scope"
                   ><div>
-                    {{ String(scope.row.date).substring(0, 15) }}
+                    {{ String(scope.row.date).substring(0, 10) }}
                   </div></template
                 ></el-table-column
               >
@@ -660,7 +730,7 @@ const rules = ref({
                 <template #default="scope">
                   <router-link
                     to=""
-                    @click="deleteById(scope.row.id)"
+                    @click="GetOneForUpdate(scope.row._id)"
                     class="inline-flex items-center mt-4 ml-2 text-white hover:bg-slate-300 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
                   >
                     <i class="text-black fa-sharp fa-solid fa-pen fa-xs"></i>

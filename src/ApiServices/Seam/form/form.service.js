@@ -27,4 +27,12 @@ export const SeamInFormService = {
     let url = `seam/form/get_one_report_products`;
     return api.post(url, data);
   },
+  GetOneForUpdate(id) {
+    let url = `seam/form/get_for_update`;
+    return api.post(url, { id });
+  },
+  Update(data) {
+    let url = `seam/form/update`;
+    return api.post(url, data);
+  },
 };
