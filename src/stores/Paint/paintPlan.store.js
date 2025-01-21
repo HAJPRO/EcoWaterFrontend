@@ -1,4 +1,4 @@
-import { SaleLegalService } from "../../ApiServices/Sale/sale.service";
+import { SaleService } from "../../ApiServices/Sale/sale.service";
 import { PaintService } from "../../ApiServices/Paint/paint.service";
 import { ToastifyService } from "../../utils/Toastify";
 import { loading } from "./../../utils/Loader";
@@ -48,7 +48,7 @@ export const PaintPlanStore = defineStore("paintPlanStore", {
     async openModalById(payload) {
       this.card_id = payload.id;
       this.is_modal = payload.is_modal;
-      const data = await SaleLegalService.getOne(payload.id);
+      const data = await SaleService.getOne(payload.id);
       this.item = Array(data.data);
     },
     async PaintConfirmedOrders(payload) {
@@ -104,13 +104,13 @@ export const PaintPlanStore = defineStore("paintPlanStore", {
     async StatusModalById(payload) {
       this.status_modal.id = payload.id;
       this.status_modal.isModal = payload.is_modal;
-      // const data = await SaleLegalService.getOne(payload.id)
+      // const data = await SaleService.getOne(payload.id)
       // this.model = data.data
     },
     async Update(payload) {
       try {
         const loader = loading.show();
-        const updateData = await SaleLegalService.Edit(this.card_id, payload);
+        const updateData = await SaleService.Edit(this.card_id, payload);
         loader.hide();
         ToastifyService.ToastSuccess({
           msg: updateData.data.msg,
@@ -127,7 +127,7 @@ export const PaintPlanStore = defineStore("paintPlanStore", {
     async Confirm(id) {
       try {
         const loader = loading.show();
-        const confirmData = await SaleLegalService.confirm(id);
+        const confirmData = await SaleService.confirm(id);
         loader.hide();
         ToastifyService.ToastSuccess({
           msg: confirmData.data.msg,
@@ -185,7 +185,7 @@ export const PaintPlanStore = defineStore("paintPlanStore", {
     async DeleteById(id) {
       try {
         const loader = loading.show();
-        const data = await SaleLegalService.Delete(id);
+        const data = await SaleService.Delete(id);
         loader.hide();
         ToastifyService.ToastSuccess({
           msg: data.data.msg,

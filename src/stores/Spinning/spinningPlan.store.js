@@ -1,4 +1,4 @@
-import { SaleLegalService } from "../../ApiServices/Sale/sale.service";
+import { SaleService } from "../../ApiServices/Sale/sale.service";
 import { SpinningService } from "../../ApiServices/Spinning/spinning.service";
 import { ToastifyService } from "../../utils/Toastify";
 import { loading } from "../../utils/Loader";
@@ -29,7 +29,7 @@ export const SpinningPlanStore = defineStore("SpinningPlan", {
     },
     async GetModel() {
       try {
-        const data = await SaleLegalService.getModel();
+        const data = await SaleService.getModel();
         this.model = data.data;
       } catch (err) {
         console.log(err);

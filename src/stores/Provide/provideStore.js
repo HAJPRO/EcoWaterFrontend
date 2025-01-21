@@ -1,4 +1,4 @@
-import { SaleLegalService } from "../../ApiServices/Sale/sale.service";
+import { SaleService } from "../../ApiServices/Sale/sale.service";
 import { ProvideService } from "../../ApiServices/Provide/provide.service";
 import { ToastifyService } from "../../utils/Toastify";
 import { loading } from "./../../utils/Loader";
@@ -21,7 +21,7 @@ export const ProvidePlanStore = defineStore("ProvidePlanStore", {
   actions: {
     async GetModel() {
       try {
-        const data = await SaleLegalService.getModel();
+        const data = await SaleService.getModel();
         this.model = data.data;
       } catch (err) {
         console.log(err);
@@ -138,13 +138,13 @@ export const ProvidePlanStore = defineStore("ProvidePlanStore", {
     // async StatusModalById(payload) {
     //     this.status_modal.id = payload.id;
     //     this.status_modal.isModal = payload.is_modal;
-    //     // const data = await SaleLegalService.getOne(payload.id)
+    //     // const data = await SaleService.getOne(payload.id)
     //     // this.model = data.data
     // },
     // async Update(payload) {
     //     try {
     //         const loader = loading.show();
-    //         const updateData = await SaleLegalService.Edit(this.card_id, payload);
+    //         const updateData = await SaleService.Edit(this.card_id, payload);
     //         loader.hide();
     //         ToastifyService.ToastSuccess({
     //             msg: updateData.data.msg,
@@ -161,7 +161,7 @@ export const ProvidePlanStore = defineStore("ProvidePlanStore", {
     // async Confirm(id) {
     //     try {
     //         const loader = loading.show();
-    //         const confirmData = await SaleLegalService.confirm(id);
+    //         const confirmData = await SaleService.confirm(id);
     //         loader.hide();
     //         ToastifyService.ToastSuccess({
     //             msg: confirmData.data.msg,
@@ -178,7 +178,7 @@ export const ProvidePlanStore = defineStore("ProvidePlanStore", {
     // async DeleteById(id) {
     //     try {
     //         const loader = loading.show();
-    //         const data = await SaleLegalService.Delete(id);
+    //         const data = await SaleService.Delete(id);
     //         loader.hide();
     //         ToastifyService.ToastSuccess({
     //             msg: data.data.msg,
