@@ -43,7 +43,10 @@ onMounted(async () => {
         </div>
         <div class="col-span-9 shadow-md bg-white rounded min-h-[15px]">
           <el-table
-            :header-cell-style="{ background: '#e8eded' }"
+            :header-cell-style="{
+              background: '#e8eded',
+              border: '0.2px solid #e1e1e3',
+            }"
             load
             style="font-size: 12px"
             size="small"
@@ -51,7 +54,7 @@ onMounted(async () => {
             header-align="center"
             empty-text="Mahsulot tanlanmagan... "
             :data="detail.products"
-            border
+            border="true"
             height="150"
           >
             <el-table-column

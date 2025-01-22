@@ -57,6 +57,7 @@ export const PaintPlanStore = defineStore("paintPlanStore", {
       this.is_provide = true;
     },
     async AcceptAndCreate(payload) {
+      console.log(payload);
       const loader = loading.show();
       const data = await PaintService.AcceptAndCreate({
         id: this.card_id,

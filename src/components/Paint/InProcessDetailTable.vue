@@ -58,53 +58,68 @@ const openReportModalById = async (id) => {
         width="200"
         align="center"
       />
+      <el-table-column
+        header-align="center"
+        label="Sotuv"
+        width="200"
+        align="center"
+      >
+        <el-table-column
+          prop="order_quantity"
+          label="Miqdori"
+          width="180"
+          header-align="center"
+          align="center"
+          ><template #default="scope"
+            ><div class="text-red-500">
+              {{ scope.row.order_quantity }}
+            </div></template
+          ></el-table-column
+        >
+        <el-table-column
+          prop="delivery_time"
+          label="Muddati"
+          width="190"
+          header-align="center"
+          align="center"
+        >
+          <template #default="scope">
+            {{ String(scope.row.delivery_time_sale).substring(0, 10) }}
+          </template>
+        </el-table-column>
+      </el-table-column>
 
       <el-table-column
-        prop="order_quantity"
-        label="Miqdori (sotuv)"
-        width="180"
         header-align="center"
-        align="center"
-        ><template #default="scope"
-          ><div class="text-red-500">
-            {{ scope.row.order_quantity }}
-          </div></template
-        ></el-table-column
-      >
-      <el-table-column
-        prop="delivery_time"
-        label="Muddati (sotuv)"
-        width="190"
-        header-align="center"
+        label="Yigiruv"
+        width="200"
         align="center"
       >
-        <template #default="scope">
-          {{ String(scope.row.delivery_time_sale).substring(0, 10) }}
-        </template>
+        <el-table-column
+          v-show="weaving_cloth_quantity"
+          label="Miqdori"
+          width="180"
+          header-align="center"
+          align="center"
+        >
+          <template #default="scope"
+            ><div class="text-red-500">
+              {{ scope.row.weaving_qauntity }}
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="Muddati"
+          width="190"
+          header-align="center"
+          align="center"
+        >
+          <template #default="scope">
+            {{ String(scope.row.delivery_time_weaving).substring(0, 10) }}
+          </template>
+        </el-table-column>
       </el-table-column>
-      <el-table-column
-        v-show="weaving_cloth_quantity"
-        label="Miqdori (to'quv)"
-        width="180"
-        header-align="center"
-        align="center"
-      >
-        <template #default="scope"
-          ><div class="text-red-500">
-            {{ scope.row.weaving_qauntity }}
-          </div>
-        </template>
-      </el-table-column>
-      <el-table-column
-        label="Muddati (to'quv)"
-        width="190"
-        header-align="center"
-        align="center"
-      >
-        <template #default="scope">
-          {{ String(scope.row.delivery_time_weaving).substring(0, 10) }}
-        </template>
-      </el-table-column>
+
       <el-table-column
         fixed="right"
         prop="status"

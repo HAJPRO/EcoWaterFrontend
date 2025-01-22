@@ -64,6 +64,7 @@ const OpenModalById = async (id) => {
         header-align="center"
         align="center"
       />
+
       <el-table-column
         fixed="right"
         prop="delivery_product_box.color_quantity"
