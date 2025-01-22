@@ -11,16 +11,17 @@ const openReportModalById = async (id) => {
 <template>
   <div class="shadow-md rounded min-h-[15px]">
     <el-table
+      :header-cell-style="{
+        background: '#e8eded',
+        border: '0.2px solid #e1e1e3',
+      }"
+      size="small"
+      show-header="true"
       load
       class="w-full"
       header-align="center"
       hight="5"
       empty-text="Mahsulot tanlanmagan... "
-      :default-sort="[
-        { prop: 'name', order: 'descending' },
-        { prop: 'count', order: 'descending' },
-        { prop: 'tranfer', order: 'descending' },
-      ]"
       :data="items"
       border
       style="width: 100%"

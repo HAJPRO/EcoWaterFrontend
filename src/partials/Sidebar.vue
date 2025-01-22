@@ -590,7 +590,7 @@
                             custom
                             v-slot="{ href, navigate, isExactActive }"
                           >
-                            <li class="mb-1 ml-2 ml-2 last:mb-0">
+                            <li class="mb-1 ml-2 last:mb-0">
                               <a
                                 class="block transition duration-150 truncate"
                                 :class="
@@ -2528,7 +2528,7 @@
                     <!-- Badge -->
                     <div class="flex flex-shrink-0 ml-2">
                       <span
-                        class="inline-flex items-center justify-center h-5 text-xs font-medium text-white bg-[#24a8e5] px-2 rounded"
+                        class="inline-flex items-center justify-center h-5 text-xs font-medium text-white bg-[#36d887] px-2 rounded"
                         >4</span
                       >
                     </div>

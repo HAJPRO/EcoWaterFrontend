@@ -16,6 +16,10 @@ const Delete = (id) => {
     <div class="">
       <div class="rounded text-[11px]">
         <el-table
+          :header-cell-style="{
+            background: '#e8eded',
+            border: '0.2px solid #e1e1e3',
+          }"
           style="font-size: 12px"
           load
           size="small"

@@ -26,7 +26,10 @@ const proccessModalById = async (id) => {
 <template>
   <div class="shadow-md rounded min-h-[15px]">
     <el-table
-      :header-cell-style="{ background: '#e8eded' }"
+      :header-cell-style="{
+        background: '#e8eded',
+        border: '0.2px solid #e1e1e3',
+      }"
       size="small"
       show-header="true"
       class="w-full"

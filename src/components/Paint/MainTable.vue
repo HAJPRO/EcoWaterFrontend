@@ -11,6 +11,12 @@ const OpenModalById = async (id) => {
 <template>
   <div class="shadow-md rounded min-h-[15px]">
     <el-table
+      :header-cell-style="{
+        background: '#e8eded',
+        border: '0.2px solid #e1e1e3',
+      }"
+      size="small"
+      show-header="true"
       load
       class="w-full"
       header-align="center"
@@ -86,7 +92,7 @@ const OpenModalById = async (id) => {
         header-align="center"
         align="center"
       />
-       
+
       <!-- <el-table-column
         prop="order_quantity"
         label="Tayyor mahsulot"

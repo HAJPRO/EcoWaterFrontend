@@ -11,6 +11,12 @@ const OpenModalById = async (id) => {
 <template>
   <div class="shadow-md rounded min-h-[15px]">
     <el-table
+      :header-cell-style="{
+        background: '#e8eded',
+        border: '0.2px solid #e1e1e3',
+      }"
+      size="small"
+      show-header="true"
       load
       class="w-full"
       header-align="center"
@@ -90,10 +96,10 @@ const OpenModalById = async (id) => {
         header-align="center"
         align="center"
       >
-        <template #default="scope">
+        <template #default="">
           <router-link
             to=""
-            class="inline-flex items-center ml-2 text-red bg-red-500 hover:bg-red-600 font-medium rounded-md text-sm w-full sm:w-auto px-3 py-3 text-center"
+            class="inline-flex items-center ml-2 text-red hover:bg-slate-300 font-medium rounded-md text-sm w-full sm:w-auto px-3 py-3 text-center"
           >
             <i class="text-black fa-trash fa-solid fa-trash fa-xs"></i>
           </router-link>

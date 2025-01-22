@@ -49,6 +49,7 @@ onMounted(async () => {
         <i class="fa-solid fa-info mr-2 fa-xm"></i> Jarayonda
         <div class="flex flex-shrink-0 ml-2">
           <span
+            :class="{ activeTabIcon: isActive === 1 }"
             class="inline-flex items-center justify-center h-5 text-[11px] font-medium text-white bg-[#36d887] px-3 py-2 rounded"
           >
             <span class=" ">0</span>/{{
@@ -66,6 +67,7 @@ onMounted(async () => {
         <i class="fa-solid fa-warehouse mr-2 fa-xm"></i> Sklad
         <div class="flex flex-shrink-0 ml-2">
           <span
+            :class="{ activeTabIcon: isActive === 2 }"
             class="inline-flex items-center justify-center h-5 text-[11px] font-medium text-white bg-[#36d887] px-3 py-2 rounded"
           >
             <span class=" ">0</span>/{{
@@ -83,6 +85,7 @@ onMounted(async () => {
         <i class="fa-solid fa-street-view mr-2 fa-xm"></i> Tasnif
         <div class="flex flex-shrink-0 ml-2">
           <span
+            :class="{ activeTabIcon: isActive === 3 }"
             class="inline-flex items-center justify-center h-5 text-[11px] font-medium text-white bg-[#36d887] px-3 py-2 rounded"
           >
             <span class=" ">0</span>/{{
@@ -94,8 +97,17 @@ onMounted(async () => {
     </div>
   </div>
 </template>
-<style>
+<style scoped>
 .activeTab {
-  border-bottom: 2px solid #36d887;
+  transition-duration: 0.6s;
+  background: #36d887;
+  color: whitesmoke;
+  box-sizing: border-box;
+  font-size: 14px;
+  font-weight: bold;
+}
+.activeTabIcon {
+  background: whitesmoke;
+  color: black;
 }
 </style>
