@@ -7,6 +7,15 @@ import { defineStore } from "pinia";
 export const PaintPlanStore = defineStore("paintPlanStore", {
   state: () => {
     return {
+      confirm_model: {
+        pus: "",
+        fike: "",
+        color: "",
+        color_quantity: "",
+        delivery_time_provide: "",
+        weaving_qauntity: "",
+        delivery_time_weaving: "",
+      },
       card_id: "",
       is_modal: false,
       items: [],
@@ -22,6 +31,8 @@ export const PaintPlanStore = defineStore("paintPlanStore", {
       sale_order_id: "",
       DonePaint: "",
       paint_status: "",
+      is_detail_modal: false,
+      detail: {},
     };
   },
   actions: {
@@ -36,6 +47,28 @@ export const PaintPlanStore = defineStore("paintPlanStore", {
         console.log(err);
       }
     },
+    async DetailModal(payload) {
+      const data = await PaintService.GetOneFromSale({ id: payload });
+      this.is_detail_modal = true;
+      this.detail = data.data.data;
+      this.card_id = payload;
+    },
+    async ProvideModal() {
+      this.is_provide = true;
+    },
+    async AcceptAndCreate(payload) {
+      const loader = loading.show();
+      const data = await PaintService.AcceptAndCreate({
+        id: this.card_id,
+        items: this.detail,
+        provide: payload,
+      });
+      this.GetAll({ is_active: this.is_active });
+      this.is_detail_modal = false;
+      ToastifyService.ToastSuccess({ msg: data.data.msg });
+      loader.hide();
+    },
+
     async GetAll(status) {
       try {
         const data = await PaintService.getAll(status);

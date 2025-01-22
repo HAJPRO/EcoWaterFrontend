@@ -3,7 +3,7 @@ import { ref, onMounted } from "vue";
 import Title from "@/components/Title.vue";
 import HeaderTabLink from "../../../../components/Paint/HeaderTabLink.vue";
 import MainTable from "../../../../components/Paint/MainTable.vue";
-import ModalConfirm from "../../../../components/Paint/ModalConfirm.vue";
+import DetailModal from "../../../../components/Paint/DetailModal.vue";
 import ModalForProvide from "../../../../components/Paint/ModalForProvide.vue";
 import InProcessDetailTable from "../../../../components/Paint/InProcessDetailTable.vue";
 import ProvideTable from "../../../../components/Paint/ProvideTable.vue";
@@ -36,6 +36,6 @@ onMounted(async () => {
   <InProcessDetailTable v-if="is_active === 1 || is_active === 3" />
   <ProvideTable v-if="is_active === 5" />
   <ModalDayReport v-if="is_report_modal === true" />
-  <ModalConfirm />
+  <DetailModal />
   <ModalForProvide />
 </template>

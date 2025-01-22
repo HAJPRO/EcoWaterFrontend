@@ -122,21 +122,7 @@ const routes = [
           }
         },
       },
-      {
-        path: "sale/legal/create",
-        name: "legal_create",
-        component: () => import("../pages/Explore/Sale/legal.create.vue"),
-        beforeEnter(to, from, next) {
-          if (
-            JSON.parse(Cookies.get("account")).role === 1 ||
-            JSON.parse(Cookies.get("account")).role === 1000
-          ) {
-            next();
-          } else {
-            window.location.href = "/explore";
-          }
-        },
-      },
+
       //Bo'yoqlash bolimi
       {
         path: "department/paint/working/plan",

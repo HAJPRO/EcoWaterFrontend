@@ -22,14 +22,9 @@ const OpenModalById = async (id) => {
       header-align="center"
       hight="5"
       empty-text="Mahsulot tanlanmagan... "
-      :default-sort="[
-        { prop: 'name', order: 'descending' },
-        { prop: 'count', order: 'descending' },
-        { prop: 'tranfer', order: 'descending' },
-      ]"
       :data="items"
       border
-      style="width: 100%"
+      style="width: 100%; font-size: 12px"
       min-height="300"
       max-height="350"
     >
@@ -44,14 +39,12 @@ const OpenModalById = async (id) => {
       />
       <el-table-column
         header-align="center"
-        sortable
         prop="delivery_product_box.pus"
         label="Pus"
         width="200"
       />
       <el-table-column
         header-align="center"
-        sortable
         prop="delivery_product_box.fike"
         label="Fike"
         width="200"

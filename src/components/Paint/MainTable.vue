@@ -4,12 +4,12 @@ import { PaintPlanStore } from "../../stores/Paint/paintPlan.store";
 const store_paint = PaintPlanStore();
 import { storeToRefs } from "pinia";
 const { items, is_active } = storeToRefs(store_paint);
-const OpenModalById = async (id) => {
-  await store_paint.openModalById({ id, is_modal: true });
+const DetailModal = async (id) => {
+  store_paint.DetailModal(id);
 };
 </script>
 <template>
-  <div class="shadow-md rounded min-h-[15px]">
+  <div class="shadow-md rounded">
     <el-table
       :header-cell-style="{
         background: '#e8eded',
@@ -18,18 +18,11 @@ const OpenModalById = async (id) => {
       size="small"
       show-header="true"
       load
-      class="w-full"
+      border="true"
       header-align="center"
-      hight="5"
       empty-text="Mahsulot tanlanmagan... "
-      :default-sort="[
-        { prop: 'name', order: 'descending' },
-        { prop: 'count', order: 'descending' },
-        { prop: 'tranfer', order: 'descending' },
-      ]"
       :data="items"
-      border
-      style="width: 100%"
+      style="width: 100%; font-size: 12px"
       min-height="300"
       max-height="350"
     >
@@ -43,84 +36,63 @@ const OpenModalById = async (id) => {
         width="60"
       />
       <el-table-column
+        align="center"
         header-align="center"
-        sortable
         prop="customer_name"
         label="Buyurtmachi nomi"
-        width="200"
+        width="250"
       />
       <el-table-column
+        align="center"
         header-align="center"
-        sortable
         prop="order_number"
-        label="Buyurtma miqdori"
+        label="Buyurtma nomeri"
+        width="250"
+      />
+      <el-table-column
+        prop="artikul"
+        label="Artikul"
         width="200"
-      />
-      <el-table-column
-        prop="pro_type"
-        label="Mahsulot turi"
-        width="180"
-        header-align="center"
-        align="center"
-      />
-      <el-table-column
-        prop="pro_name"
-        label="Mahsulot nomi"
-        width="180"
-        header-align="center"
-        align="center"
-      />
-      <el-table-column
-        prop="pro_color"
-        label="Mahsulot rangi"
-        width="180"
-        header-align="center"
-        align="center"
-      />
-      <el-table-column
-        prop="order_quantity"
-        label="Buyurtma miqdori"
-        width="180"
-        header-align="center"
-        align="center"
-      />
-      <el-table-column
-        prop="delivery_time"
-        sortable
-        label="Muddati"
-        width="190"
         header-align="center"
         align="center"
       />
 
-      <!-- <el-table-column
-        prop="order_quantity"
-        label="Tayyor mahsulot"
-        width="180"
-        header-align="center"
-        align="center"
-      />
       <el-table-column
         prop="order_quantity"
-        label="Tayyorlanishi kerak"
-        width="180"
+        label="Buyurtma miqdori"
+        width="250"
         header-align="center"
         align="center"
-      /> -->
+        ><template #default="scope">
+          <div class="text-red-500">{{ scope.row.order_quantity }}</div>
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="delivery_time"
+        label="Muddati"
+        width="250"
+        header-align="center"
+        align="center"
+        ><template #default="scope"
+          ><div>
+            {{ String(scope.row.delivery_time).substring(0, 10) }}
+          </div></template
+        ></el-table-column
+      >
+
       <el-table-column
         fixed="right"
-        prop="order_status"
         label="Holati"
-        width="150"
+        width="200"
         header-align="center"
         align="center"
       >
         <template #default="scope">
           <router-link
             to=""
-            class="inline-flex items-center text-red bg-[#e4e9e9] hover:bg-[#d7ebeb] font-medium rounded-md text-[12px] w-ful p-[5px] sm:w-auto text-center"
+            class="inline-flex items-center text-red bg-[#e4e9e9] hover:bg-[#e1e1e3] font-medium rounded-md text-[12px] w-ful p-[5px] sm:w-auto text-center"
           >
-            {{ scope.row.order_status }}
+            {{ scope.row.status }}
           </router-link>
         </template>
       </el-table-column>
@@ -128,23 +100,23 @@ const OpenModalById = async (id) => {
         fixed="right"
         prop="id"
         label=""
-        width="150"
+        width="200"
         header-align="center"
         align="center"
       >
         <template #default="scope">
           <router-link
-            v-show="scope.row.order_status === `Bo'yoqqa yuborildi`"
+            v-show="scope.row.status === `Bo'yoqqa yuborildi`"
             to=""
-            @click="OpenModalById(scope.row._id)"
-            class="inline-flex items-center ml-2 text-red bg-yellow-300 hover:bg-yellow-400 font-medium rounded-md text-sm w-full sm:w-auto px-3 py-3 text-center"
+            @click="DetailModal(scope.row._id)"
+            class="inline-flex items-center ml-2 text-red hover:bg-[#e1e1e3] font-medium rounded-md text-sm w-full sm:w-auto px-3 py-3 text-center"
           >
             <i class="text-black fa-sharp fa-solid fa-check fa-xs"></i>
           </router-link>
           <router-link
             v-show="scope.row.order_status === `To'quvga yuborildi`"
             to=""
-            class="inline-flex items-center ml-2 text-red bg-red-500 hover:bg-red-600 font-medium rounded-md text-sm w-full sm:w-auto px-3 py-3 text-center"
+            class="inline-flex items-center ml-2 text-red hover:bg-[#e1e1e3] font-medium rounded-md text-sm w-full sm:w-auto px-3 py-3 text-center"
           >
             <i class="text-black fa-trash fa-solid fa-trash fa-xs"></i>
           </router-link>

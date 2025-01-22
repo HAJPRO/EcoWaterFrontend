@@ -14,8 +14,16 @@ export const PaintService = {
     let url = "paint/paint_create";
     return api.post(url, data);
   },
+  AcceptAndCreate(data) {
+    let url = "paint/accept_and_create";
+    return api.post(url, data);
+  },
   cancelReason(data) {
     let url = "paint/cancel_reason";
+    return api.post(url, data);
+  },
+  GetOneFromSale(data) {
+    let url = "paint/get_one_from_sale";
     return api.post(url, data);
   },
   getOneFromInProcess(id) {

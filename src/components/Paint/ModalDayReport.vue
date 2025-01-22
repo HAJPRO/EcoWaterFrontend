@@ -79,14 +79,17 @@ const validate = async (formRef) => {
       </div>
       <div class="shadow-md rounded min-h-[15px]">
         <el-table
+          :header-cell-style="{
+            background: '#e8eded',
+            border: '0.2px solid #e1e1e3',
+          }"
           load
           class="w-full"
           header-align="center"
-          hight="5"
           empty-text="Mahsulot tanlanmagan... "
           :data="order_report.report"
           border
-          style="width: 100%; font-size: 13px"
+          style="width: 100%; font-size: 12px"
           min-height="150"
           max-height="150"
         >
