@@ -9,7 +9,7 @@ const OpenModalById = async (id) => {
 };
 </script>
 <template>
-  <div class="shadow-md rounded min-h-[15px]">
+  <div class="shadow rounded">
     <el-table
       :header-cell-style="{
         background: '#e8eded',
@@ -20,10 +20,9 @@ const OpenModalById = async (id) => {
       load
       class="w-full"
       header-align="center"
-      hight="5"
       empty-text="Mahsulot tanlanmagan... "
       :data="items"
-      border
+      border="true"
       style="width: 100%; font-size: 12px"
       min-height="300"
       max-height="350"
@@ -39,28 +38,44 @@ const OpenModalById = async (id) => {
       />
       <el-table-column
         header-align="center"
+        prop="department"
+        label="Bo'lim"
+        width="250"
+        align="center"
+      />
+      <el-table-column
+        header-align="center"
         prop="delivery_product_box.pus"
         label="Pus"
         width="200"
+        align="center"
       />
       <el-table-column
         header-align="center"
         prop="delivery_product_box.fike"
         label="Fike"
         width="200"
+        align="center"
       />
       <el-table-column
-        prop="delivery_product_box.color_code"
+        prop="delivery_product_box.color"
         label="Rang kod"
         width="180"
         header-align="center"
         align="center"
       />
-
       <el-table-column
-        prop="delivery_product_box.duration_time"
-        label="Yetkazish vaqti"
+        fixed="right"
+        prop="delivery_product_box.color_quantity"
+        label="Miqdori(kg)"
         width="180"
+        header-align="center"
+        align="center"
+      />
+      <el-table-column
+        prop="delivery_product_box.delivery_time_provide"
+        label="Muddati"
+        width="250"
         header-align="center"
         align="center"
       />
@@ -68,7 +83,7 @@ const OpenModalById = async (id) => {
         fixed="right"
         prop="status"
         label="Holati"
-        width="150"
+        width="200"
         header-align="center"
         align="center"
       >
