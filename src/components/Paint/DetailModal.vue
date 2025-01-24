@@ -5,12 +5,15 @@ import { loading } from "./../../utils/Loader";
 import { PaintPlanStore } from "../../stores/Paint/paintPlan.store";
 const store_paint = PaintPlanStore();
 import { storeToRefs } from "pinia";
-const { detail, is_detail_modal } = storeToRefs(store_paint);
+const { detail, is_detail_modal, is_report } = storeToRefs(store_paint);
 // const AcceptAndCreate = () => {
 //   store_paint.AcceptAndCreate();
 // };
 const ProvideModal = () => {
   store_paint.ProvideModal();
+};
+const ReportModal = () => {
+  store_paint.ReportModal();
 };
 onMounted(async () => {
   try {
@@ -143,11 +146,23 @@ onMounted(async () => {
               </template>
             </el-table-column>
           </el-table>
-          <div
-            v-show="detail.card.status === `Bo'yoqqa yuborildi`"
-            class="flex justify-end col-span-10 p-1 bg-white"
-          >
+          <div class="flex justify-end col-span-10 p-1 bg-white">
             <el-button
+              v-show="is_report === true"
+              size="smal"
+              @click="ReportModal()"
+              style="
+                background-color: #36d887;
+                color: white;
+                border: none;
+                cursor: pointer;
+                padding: 15px;
+              "
+            >
+              <i class="fa-solid fa-plus mr-2 fa-md"></i> Hisobot
+            </el-button>
+            <el-button
+              v-show="detail.card.status === `Bo'yoqqa yuborildi`"
               size="smal"
               @click="ProvideModal()"
               style="
@@ -161,6 +176,7 @@ onMounted(async () => {
               <i class="fa-solid fa-check mr-2 fa-md"></i> Qabul qilish
             </el-button>
             <el-button
+              v-show="detail.card.status === `Bo'yoqqa yuborildi`"
               size="smal"
               @click="Cancel()"
               style="

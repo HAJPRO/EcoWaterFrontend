@@ -12,6 +12,9 @@ export const PaintPlanStore = defineStore("paintPlanStore", {
         fike: "",
         color: "",
         color_quantity: "",
+        material_name: "",
+        material_type: "",
+
         delivery_time_provide: "",
         weaving_qauntity: "",
         delivery_time_weaving: "",
@@ -32,7 +35,12 @@ export const PaintPlanStore = defineStore("paintPlanStore", {
       DonePaint: "",
       paint_status: "",
       is_detail_modal: false,
+      is_report: false,
       detail: {},
+      is_report: false,
+      report: {
+        card: {},
+      },
     };
   },
   actions: {
@@ -48,16 +56,27 @@ export const PaintPlanStore = defineStore("paintPlanStore", {
       }
     },
     async DetailModal(payload) {
-      const data = await PaintService.GetOneFromSale({ id: payload });
-      this.is_detail_modal = true;
-      this.detail = data.data.data;
-      this.card_id = payload;
+      if (payload.report) {
+        const data = await PaintService.GetOneFromSale(payload);
+        this.is_report = true;
+        this.is_detail_modal = true;
+        this.detail = data.data.data;
+
+        this.card_id = payload;
+      } else {
+        const data = await PaintService.GetOneFromSale({ id: payload });
+        this.is_detail_modal = true;
+        this.detail = data.data.data;
+        this.card_id = payload;
+      }
     },
     async ProvideModal() {
       this.is_provide = true;
     },
+    async ReportModal() {
+      this.is_report_modal = true;
+    },
     async AcceptAndCreate(payload) {
-      console.log(payload);
       const loader = loading.show();
       const data = await PaintService.AcceptAndCreate({
         id: this.card_id,
@@ -69,7 +88,12 @@ export const PaintPlanStore = defineStore("paintPlanStore", {
       ToastifyService.ToastSuccess({ msg: data.data.msg });
       loader.hide();
     },
+    async GetOneOrderReport(payload) {
+      const data = await PaintService.GetOneOrderReport(payload);
+      this.report.card = data.data[0];
 
+      this.is_report_modal = true;
+    },
     async GetAll(status) {
       try {
         const data = await PaintService.getAll(status);

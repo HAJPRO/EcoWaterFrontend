@@ -10,19 +10,17 @@ const { items, is_active } = storeToRefs(store_weaving);
 <template>
   <div class="shadow-md rounded min-h-[15px]">
     <el-table
+      :header-cell-style="{
+        background: '#e8eded',
+        border: '0.2px solid #e1e1e3',
+      }"
       load
+      style="width: 100%; font-size: 12px"
       class="w-full"
       header-align="center"
-      hight="5"
       empty-text="Mahsulot tanlanmagan... "
-      :default-sort="[
-        { prop: 'name', order: 'descending' },
-        { prop: 'count', order: 'descending' },
-        { prop: 'tranfer', order: 'descending' },
-      ]"
       :data="items"
-      border
-      style="width: 100%"
+      border="true"
       min-height="300"
       max-height="350"
     >
@@ -37,14 +35,12 @@ const { items, is_active } = storeToRefs(store_weaving);
       />
       <el-table-column
         header-align="center"
-        sortable
         prop="in_process_detail.customer_name"
         label="Buyurtmachi nomi"
         width="200"
       />
       <el-table-column
         header-align="center"
-        sortable
         prop="in_process_detail.order_number"
         label="Buyurtma miqdori"
         width="200"

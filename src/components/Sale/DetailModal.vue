@@ -5,7 +5,7 @@ import { loading } from "./../../utils/Loader";
 import { SaleStore } from "../../stores/Sale/sale.store";
 const store_sale = SaleStore();
 import { storeToRefs } from "pinia";
-const { detail, is_detail_modal } = storeToRefs(store_sale);
+const { detail, is_detail_modal, is_report } = storeToRefs(store_sale);
 const confirm = () => {
   store_sale.Confirm();
 };
@@ -137,11 +137,9 @@ onMounted(async () => {
               </template>
             </el-table-column>
           </el-table>
-          <div
-            v-show="detail.card.status === `Tasdiqlanmagan`"
-            class="flex justify-end col-span-10 p-1 bg-white"
-          >
+          <div class="flex justify-end col-span-10 p-1 bg-white">
             <el-button
+              v-if="detail.card.status === `Tasdiqlanmagan`"
               size="smal"
               @click="confirm()"
               style="
@@ -155,6 +153,7 @@ onMounted(async () => {
               <i class="fa-solid fa-check mr-2 fa-md"></i> Tasdiqlash
             </el-button>
             <el-button
+              v-if="detail.card.status === `Tasdiqlanmagan`"
               size="smal"
               @click="Cancel()"
               style="

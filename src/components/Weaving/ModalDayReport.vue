@@ -3,19 +3,8 @@ import { ref, onMounted } from "vue";
 import { WeavingPlanStore } from "../../stores/Weaving/weaving_plan.store";
 const store = WeavingPlanStore();
 import { storeToRefs } from "pinia";
-const { is_report_modal, order_report, report_weaving, DoneWeaving } =
-  storeToRefs(store);
-const addDayReportInProcess = async () => {
-  await store.addDayReportInProcess(model.value);
-};
-const DoneSpinning = ref();
-if (order_report.value) {
-  const initialValueSpinning = ref(0);
-  DoneSpinning.value = order_report.value.report.reduce(
-    (accumulator, currentValue) => accumulator + Number(currentValue.quantity),
-    initialValueSpinning.value
-  );
-}
+const { is_report_modal } = storeToRefs(store);
+
 const model = ref({
   quantity: "",
   unit: "",
@@ -35,51 +24,42 @@ const rules = ref([
   },
 ]);
 
-const formRef = ref();
-const validate = async (formRef) => {
-  await formRef.validate((valid) => {
-    if (valid === true) {
-      addDayReportInProcess();
-      model.value = {
-        quantity: "",
-        unit: "",
-        date: "",
-      };
-    } else {
-      return false;
-    }
-  });
-};
+// const formRef = ref();
+// const validate = async (formRef) => {
+//   await formRef.validate((valid) => {
+//     if (valid === true) {
+//       addDayReportInProcess();
+//       model.value = {
+//         quantity: "",
+//         unit: "",
+//         date: "",
+//       };
+//     } else {
+//       return false;
+//     }
+//   });
+// };
 </script>
 <template>
-  <el-dialog
-    v-model="is_report_modal"
-    :title="`Kunlik ishlab chiqarilgan mahsulot hisbot oynasi: №${order_report.order_number}`"
-    width="800"
-  >
-    <span>
+  <el-dialog v-model="is_report_modal" width="800">
+    ygsassasg
+    <!-- <span>
       <div
         class="flex justify-between flex-wrap font-semibold text-[12px] p-1 bg-slate-100 shadow rounded border-t-[1px] border-[#36d887]"
       >
-        <div>Buyurtmachi: {{ order_report.customer_name }}</div>
+        <div>Buyurtmachi: {{ 0 }}</div>
 
         <div
           class="bg-red-50 p-1 rounded text-[11px] border-[1px] border-red-500"
         >
-          {{
-            Number(order_report.quantity) - DoneSpinning === 0
-              ? "Yigiruv yakunladi"
-              : "Yigiruvda jarayonda"
-          }}
+          {{ 0 }}
         </div>
       </div>
       <div class="shadow-md rounded min-h-[15px]">
         <el-table
-          :data="order_report ? order_report.report : []"
           load
           class="w-full"
           header-align="center"
-          hight="5"
           empty-text="Mahsulot tanlanmagan... "
           border
           style="width: 100%; font-size: 13px"
@@ -136,12 +116,12 @@ const validate = async (formRef) => {
         >
           <div>
             Buyurtma:
-            {{ order_report.quantity }}
+            {{ 0 }}
           </div>
-          <div>Bajarildi: {{ DoneSpinning ? DoneSpinning : 0 }}</div>
+          <div>Bajarildi: {{ 0 }}</div>
           <div>
             Qoldi:
-            {{ DoneSpinning ? order_report.quantity - DoneSpinning : 0 }}
+            {{ 0 }}
           </div>
         </div>
       </div>
@@ -152,10 +132,6 @@ const validate = async (formRef) => {
           To'quv hisobot qo'shish
         </div>
         <el-form
-          :disabled="
-            DoneSpinning === 0 ||
-            parseInt(report_weaving.order_quantity - DoneWeaving) === 0
-          "
           ref="formRef"
           :model="model"
           label-width="auto"
@@ -203,7 +179,6 @@ const validate = async (formRef) => {
         </el-form>
         <div class="shadow-md rounded min-h-[15px]">
           <el-table
-            :data="report_weaving.report"
             load
             class="w-full"
             header-align="center"
@@ -264,14 +239,12 @@ const validate = async (formRef) => {
           >
             <div>
               Buyurtma:
-              {{ report_weaving.order_quantity }}
+              {{ 0 }}
             </div>
-            <div>Bajarildi: {{ DoneWeaving ? DoneWeaving : 0 }}</div>
+            <div>Bajarildi: {{ 0 }}</div>
             <div>
               Qoldi:
-              {{
-                DoneWeaving ? report_weaving.order_quantity - DoneWeaving : 0
-              }}
+              {{ 0 }}
             </div>
           </div>
         </div>
@@ -284,18 +257,16 @@ const validate = async (formRef) => {
       append-to-body
     >
       <span>Cancel And Of Reason</span>
-    </el-dialog>
+    </el-dialog> -->
     <template #footer>
       <div class="dialog-footer">
         <el-button
-          v-if="parseInt(report_weaving.order_quantity - DoneWeaving) > 0"
           size="small"
           @click="validate(formRef)"
           style="background-color: #36d887; color: white; border: none"
           ><i class="mr-2 fa-solid fa-check fa-sm"></i>Yuborish
         </el-button>
         <el-button
-          v-if="parseInt(report_weaving.order_quantity - DoneWeaving) === 0"
           size="small"
           style="background-color: #36d887; color: white; border: none"
           ><i class="mr-2 fa-solid fa-check fa-sm"></i>Yakunlash

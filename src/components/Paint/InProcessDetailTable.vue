@@ -4,8 +4,8 @@ import { PaintPlanStore } from "../../stores/Paint/paintPlan.store";
 const store_paint = PaintPlanStore();
 import { storeToRefs } from "pinia";
 const { items } = storeToRefs(store_paint);
-const openReportModalById = async (id) => {
-  await store_paint.OpenReportModalById({ id });
+const GetOneOrderReport = (id) => {
+  store_paint.DetailModal({ id, report: true });
 };
 </script>
 <template>
@@ -146,12 +146,19 @@ const openReportModalById = async (id) => {
         align="center"
       >
         <template #default="scope">
-          <router-link
+          <!-- <router-link
             to=""
             @click="openReportModalById(scope.row._id)"
             class="inline-flex items-center ml-2 text-red hover:bg-[#e1e1e3] font-medium rounded-md text-sm w-full sm:w-auto px-3 py-3 text-center"
           >
             <i class="text-black fa-check fa-solid fa-file-lines fa-xs"></i>
+          </router-link> -->
+          <router-link
+            to=""
+            @click="GetOneOrderReport(scope.row._id)"
+            class="inline-flex items-center ml-2 text-red hover:bg-[#e1e1e3] font-medium rounded-md text-sm w-full sm:w-auto px-3 py-3 text-center"
+          >
+            <i class="text-black fa-plus fa-solid fa-file-lines fa-xs"></i>
           </router-link>
           <router-link
             to=""

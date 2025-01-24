@@ -114,12 +114,13 @@ const rules = ref({
 
 <template>
   <AddOptionModal v-if="is_modal === true" />
-  <el-dialog
-    v-model="is_create_modal"
-    title="Sotuv karta shakillantirish"
-    width="1200"
-  >
+  <el-dialog v-model="is_create_modal" width="1200">
     <span>
+      <div
+        class="bg-slate-100 font-semibold text-[15px] p-1 mt-1 align-center text-center shadow rounded border-t-[1px] border-[#36d887]"
+      >
+        Sotuv karta shakillantirish
+      </div>
       <el-form
         ref="formRef"
         :model="model"
@@ -179,11 +180,7 @@ const rules = ref({
           </el-form-item>
         </div>
         <div class="mb-1 col-span-2">
-          <el-form-item
-            label="Mahsulot nomi"
-            prop="product_name"
-            :rules="rules"
-          >
+          <el-form-item label="Mato nomi" prop="product_name" :rules="rules">
             <el-input
               required
               v-model="model.product_name"
@@ -226,11 +223,7 @@ const rules = ref({
           </el-form-item>
         </div>
         <div class="mb-1 col-span-2">
-          <el-form-item
-            label="Mahsulot turi"
-            prop="product_type"
-            :rules="rules"
-          >
+          <el-form-item label="Mato turi" prop="product_type" :rules="rules">
             <el-input
               required
               v-model="model.product_type"
@@ -273,7 +266,7 @@ const rules = ref({
           </el-form-item>
         </div>
         <div class="mb-1 col-span-2">
-          <el-form-item label="Mahsulot rangi" prop="color" :rules="rules">
+          <el-form-item label="Mato rangi" prop="color" :rules="rules">
             <el-input
               required
               v-model="model.color"
@@ -453,7 +446,10 @@ const rules = ref({
         </div>
         <div class="col-span-9 shadow-md bg-white rounded min-h-[15px]">
           <el-table
-            :header-cell-style="{ background: '#e8eded' }"
+            :header-cell-style="{
+              background: '#e8eded',
+              border: '0.2px solid #e1e1e3',
+            }"
             load
             style="font-size: 12px"
             size="small"

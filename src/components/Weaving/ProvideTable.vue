@@ -14,16 +14,14 @@ const { items, is_active } = storeToRefs(store_weaving);
       load
       class="w-full"
       header-align="center"
-      hight="5"
       empty-text="Mahsulot tanlanmagan... "
-      :default-sort="[
-        { prop: 'name', order: 'descending' },
-        { prop: 'count', order: 'descending' },
-        { prop: 'tranfer', order: 'descending' },
-      ]"
+      :header-cell-style="{
+        background: '#e8eded',
+        border: '0.2px solid #e1e1e3',
+      }"
+      style="width: 100%; font-size: 12px"
       :data="items"
-      border
-      style="width: 100%"
+      border="true"
       min-height="300"
       max-height="350"
     >
@@ -38,7 +36,6 @@ const { items, is_active } = storeToRefs(store_weaving);
       />
       <el-table-column
         header-align="center"
-        sortable
         prop="delivery_product_box.likra"
         label="Likra (kg)"
         width="200"
@@ -66,13 +63,6 @@ const { items, is_active } = storeToRefs(store_weaving);
         align="center"
       />
 
-      <!-- <el-table-column
-        prop="delivery_product_box.duration_time"
-        label="Yetkazish vaqti"
-        width="180"
-        header-align="center"
-        align="center"
-      /> -->
       <el-table-column
         fixed="right"
         prop="status"
@@ -98,10 +88,10 @@ const { items, is_active } = storeToRefs(store_weaving);
         header-align="center"
         align="center"
       >
-        <template #default="scope">
+        <template #default="">
           <router-link
             to=""
-            class="inline-flex items-center ml-2 text-red bg-red-500 hover:bg-red-600 font-medium rounded-md text-sm w-full sm:w-auto px-3 py-3 text-center"
+            class="inline-flex items-center ml-2 text-red hover:bg-[ #e1e1e3] font-medium rounded-md text-sm w-full sm:w-auto px-3 py-3 text-center"
           >
             <i class="text-black fa-trash fa-solid fa-trash fa-xs"></i>
           </router-link>
