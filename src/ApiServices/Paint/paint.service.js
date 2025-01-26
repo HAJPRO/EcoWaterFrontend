@@ -14,6 +14,14 @@ export const PaintService = {
     let url = "paint/paint_create";
     return api.post(url, data);
   },
+  CreateDayReport(data) {
+    let url = "paint/create_day_report";
+    return api.post(url, data);
+  },
+  GetDayReport(data) {
+    let url = "paint/get_day_report";
+    return api.post(url, data);
+  },
   AcceptAndCreate(data) {
     let url = "paint/accept_and_create";
     return api.post(url, data);

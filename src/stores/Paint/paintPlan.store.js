@@ -14,11 +14,11 @@ export const PaintPlanStore = defineStore("paintPlanStore", {
         color_quantity: "",
         material_name: "",
         material_type: "",
-
         delivery_time_provide: "",
         weaving_qauntity: "",
         delivery_time_weaving: "",
       },
+      report_paint: [],
       card_id: "",
       is_modal: false,
       items: [],
@@ -26,7 +26,7 @@ export const PaintPlanStore = defineStore("paintPlanStore", {
       item: [],
       confirmed_orders: [],
       order_report: [],
-      report_paint: [],
+
       is_report_modal: false,
       model: "",
       is_provide: false,
@@ -75,6 +75,28 @@ export const PaintPlanStore = defineStore("paintPlanStore", {
     },
     async ReportModal() {
       this.is_report_modal = true;
+      this.GetDayReport(this.detail.card.order_number);
+    },
+    async CreateDayReport(data) {
+      console.log(data);
+
+      const loader = loading.show();
+      const report = await PaintService.CreateDayReport(data);
+      this.GetDayReport(data.order_number);
+      ToastifyService.ToastSuccess({ msg: report.data.msg });
+      loader.hide();
+    },
+    async GetDayReport(payload) {
+      const data = await PaintService.GetDayReport({ order_number: payload });
+      this.report_paint = data.data.res;
+
+      if (this.report_paint.length > 0) {
+        const initialValuePaint = 0;
+        this.DonePaint = this.report_paint.reduce(
+          (a, b) => a + Number(b.quantity),
+          initialValuePaint
+        );
+      }
     },
     async AcceptAndCreate(payload) {
       const loader = loading.show();

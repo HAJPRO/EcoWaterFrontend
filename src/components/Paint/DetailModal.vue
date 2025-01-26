@@ -146,7 +146,7 @@ onMounted(async () => {
               </template>
             </el-table-column>
           </el-table>
-          <div class="flex justify-end col-span-10 p-1 bg-white">
+          <div class="flex justify-end col-span-10 p-1 mt-1 bg-white">
             <el-button
               v-if="is_report"
               size="smal"
