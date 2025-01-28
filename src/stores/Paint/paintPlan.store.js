@@ -121,6 +121,7 @@ export const PaintPlanStore = defineStore("paintPlanStore", {
         const data = await PaintService.getAll(status);
         this.items = data.data.items;
         this.all_length = data.data.all_length;
+        console.log(data.data.items);
       } catch (err) {
         console.log(err);
       }

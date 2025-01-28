@@ -91,20 +91,26 @@ const CreateDayReport = async (formRef) => {
           />
           <el-table-column
             header-align="center"
-            prop="quantity"
-            label="Miqdori"
+            prop="type"
+            label="Mato turi"
             width="180"
           />
           <el-table-column
             header-align="center"
+            prop="quantity"
+            label="Miqdori"
+            width="180"
+          />
+          <!-- <el-table-column
+            header-align="center"
             prop="unit"
             label="Birligi"
             width="150"
-          />
+          /> -->
           <el-table-column
             header-align="center"
             prop="date"
-            label="Sana"
+            label="Vaqti"
             width="250"
           />
           <el-table-column

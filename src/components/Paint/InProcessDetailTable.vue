@@ -96,7 +96,6 @@ const GetOneOrderReport = (id) => {
         align="center"
       >
         <el-table-column
-          v-show="weaving_cloth_quantity"
           label="Miqdori"
           width="180"
           header-align="center"
@@ -104,7 +103,7 @@ const GetOneOrderReport = (id) => {
         >
           <template #default="scope"
             ><div class="text-red-500">
-              {{ scope.row.weaving_qauntity }}
+              {{ scope.row.weaving_quantity }}
             </div>
           </template>
         </el-table-column>
