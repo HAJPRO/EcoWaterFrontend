@@ -11,23 +11,24 @@ export const HelpersStore = defineStore("HelpersStore", {
       modal_params: {},
       options: [],
       is_modal: false,
-
     };
   },
   actions: {
     SelectType(payload) {
-      this.select_type = payload.type
+      this.select_type = payload.type;
       this.GetOptionsByType({ type: payload.type });
     },
     PlusModal(payload) {
-      this.modal_params = payload
+      this.modal_params = payload;
       this.is_modal = true;
-
     },
 
     async CreateOption(model) {
       const loader = loading.show();
-      const data = await HelpersService.CreateOption({ model, type: this.modal_params.state });
+      const data = await HelpersService.CreateOption({
+        model,
+        type: this.modal_params.state,
+      });
       this.is_modal = false;
       this.GetOptionsByType({ type: this.select_type });
       ToastifyService.ToastSuccess({
@@ -36,9 +37,10 @@ export const HelpersStore = defineStore("HelpersStore", {
       loader.hide();
     },
     async GetOptionsByType(payload) {
+      const loader = loading.show();
       const data = await HelpersService.GetOptionsByType(payload);
       this.options = data.data;
+      loader.hide();
     },
-
   },
 });

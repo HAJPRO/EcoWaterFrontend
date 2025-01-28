@@ -1,14 +1,19 @@
 <script setup>
-import { ref, onMounted } from "vue";
-import { WeavingPlanStore } from "../../stores/Weaving/weaving_plan.store";
-const store = WeavingPlanStore();
+import { ref } from "vue";
+import { v4 as uuidv4 } from "uuid";
+import { PaintPlanStore } from "../../stores/Paint/paintPlan.store";
+const store_paint = PaintPlanStore();
 import { storeToRefs } from "pinia";
-const { is_report_modal } = storeToRefs(store);
+const { is_report_modal, report, report_paint, detail, DonePaint } =
+  storeToRefs(store_paint);
 
 const model = ref({
+  input_plan_id: detail.value.card._id,
+  order_number: detail.value.card.order_number,
+  material_name: "",
+  material_type: "",
   quantity: "",
   unit: "",
-  date: "",
 });
 const units = ref([
   { id: 1, name: "Kg" },
@@ -24,47 +29,50 @@ const rules = ref([
   },
 ]);
 
-// const formRef = ref();
-// const validate = async (formRef) => {
-//   await formRef.validate((valid) => {
-//     if (valid === true) {
-//       addDayReportInProcess();
-//       model.value = {
-//         quantity: "",
-//         unit: "",
-//         date: "",
-//       };
-//     } else {
-//       return false;
-//     }
-//   });
-// };
+const formRef = ref();
+const CreateDayReport = async (formRef) => {
+  await formRef.validate((valid) => {
+    if (valid === true && model.value.quantity > 0) {
+      store_paint.CreateDayReport(model.value);
+      model.value = {
+        quantity: "",
+        unit: "",
+        material_name: "",
+        material_type: "",
+      };
+    } else {
+      return false;
+    }
+  });
+};
 </script>
 <template>
-  <el-dialog v-model="is_report_modal" width="800">
-    ygsassasg
-    <!-- <span>
-      <div
-        class="flex justify-between flex-wrap font-semibold text-[12px] p-1 bg-slate-100 shadow rounded border-t-[1px] border-[#36d887]"
-      >
-        <div>Buyurtmachi: {{ 0 }}</div>
-
-        <div
-          class="bg-red-50 p-1 rounded text-[11px] border-[1px] border-red-500"
-        >
-          {{ 0 }}
-        </div>
+  <el-dialog v-model="is_report_modal" width="1000">
+    <span>
+      <div class="flex justify-between text-[12px] font-semibold">
+        <div>Buyurtmachi: {{ detail.card.customer_name }}</div>
+        <div>Artikul: {{ detail.card.artikul }}</div>
+        <div>Buyurtma nomeri: {{ detail.card.order_number }}</div>
       </div>
-      <div class="shadow-md rounded min-h-[15px]">
+      <div
+        class="bg-slate-100 font-semibold p-1 mb-1 text-[15px] align-center text-center shadow rounded border-t-[1px] border-[#36d887]"
+      >
+        To'quv hisoboti
+      </div>
+      <div class="shadow-md rounded">
         <el-table
+          :header-cell-style="{
+            background: '#e8eded',
+            border: '0.2px solid #e1e1e3',
+          }"
           load
           class="w-full"
           header-align="center"
           empty-text="Mahsulot tanlanmagan... "
-          border
-          style="width: 100%; font-size: 13px"
-          min-height="170"
-          max-height="170"
+          border="true"
+          style="width: 100%; font-size: 12px"
+          min-height="150"
+          max-height="150"
         >
           <el-table-column
             header-align="center"
@@ -75,7 +83,12 @@ const rules = ref([
             label="№"
             width="60"
           />
-
+          <el-table-column
+            header-align="center"
+            prop="name"
+            label="Mato nomi"
+            width="180"
+          />
           <el-table-column
             header-align="center"
             prop="quantity"
@@ -111,49 +124,100 @@ const rules = ref([
             </template>
           </el-table-column>
         </el-table>
-        <div
-          class="flex justify-between flex-wrap font-semibold text-[12px] p-1 bg-slate-100 shadow"
-        >
-          <div>
-            Buyurtma:
-            {{ 0 }}
-          </div>
-          <div>Bajarildi: {{ 0 }}</div>
-          <div>
-            Qoldi:
-            {{ 0 }}
-          </div>
+      </div>
+      <div
+        class="flex justify-between flex-wrap font-semibold text-[12px] mb-2 p-1 bg-slate-100 shadow border-b-[1px] border-[#36d887]"
+      >
+        <div>
+          Buyurtma:
+          {{ detail.card ? detail.card.weaving_qauntity : 0 }} kg
+        </div>
+        <div>Bajarildi: {{ 0 }} kg</div>
+        <div>
+          Qoldi:
+          {{ 0 }} kg
         </div>
       </div>
-      <div class="text-[14px] bg-white rounded shadow hover:shadow-md mt-2">
+      <div class="text-[15px] bg-white rounded shadow hover:shadow-md mt-2">
         <div
           class="bg-slate-100 font-semibold p-1 mt-1 align-center text-center shadow rounded border-t-[1px] border-[#36d887]"
         >
-          To'quv hisobot qo'shish
+          {{
+            detail.card.order_quantity - DonePaint <= 0
+              ? `Bo'yoq hisoboti`
+              : ` Bo'yoq hisobot qo'shish`
+          }}
         </div>
         <el-form
+          v-if="detail.card.order_quantity - DonePaint > 0"
           ref="formRef"
           :model="model"
           label-width="auto"
           class="filter-box md:grid md:grid-cols-12 gap-1 sm:flex sm:flex-wrap rounded p-2 mt-1 mb-1 text-[12px]"
-          size="small"
           label-position="top"
           status-icon
+          size="smal"
         >
-          <div class="col-span-4">
-            <el-form-item label="Miqdori" prop="quantity" :rules="rules">
+          <div class="col-span-3">
+            <el-form-item label="Mato nomi" prop="material_name" :rules="rules">
+              <el-select
+                required
+                v-model="model.material_name"
+                style="width: 100%"
+                placeholder="..."
+              >
+                <el-option
+                  v-for="item in detail.products"
+                  :key="item._id"
+                  :label="item.product_name"
+                  :value="item.product_name"
+                />
+              </el-select>
+            </el-form-item>
+          </div>
+          <div class="col-span-2">
+            <el-form-item label="Turi" prop="material_type" :rules="rules">
+              <el-select
+                required
+                v-model="model.material_type"
+                style="width: 100%"
+                placeholder="..."
+              >
+                <el-option
+                  v-for="item in detail.products"
+                  :key="item._id"
+                  :label="item.product_type"
+                  :value="item.product_type"
+                />
+              </el-select>
+            </el-form-item>
+          </div>
+          <div class="col-span-3">
+            <el-form-item
+              label="Miqdori (kg)"
+              prop="quantity"
+              :rules="[
+                { required: true, message: `Maydon to'ldirilishi zarur !` },
+                { type: 'number', message: `Qiymat musbat bo'lishi zarur` },
+              ]"
+            >
               <el-input
-                v-model="model.quantity"
-                type="Number"
+                v-model.number="model.quantity"
+                clearable
+                class="w-[100%]"
+                type="String"
+                placeholder="..."
+              />
+            </el-form-item>
+          </div>
+          <div class="col-span-2">
+            <el-form-item label="Birligi" prop="unit" :rules="rules">
+              <el-select
+                required
+                v-model="model.unit"
                 clearable
                 placeholder="..."
               >
-              </el-input>
-            </el-form-item>
-          </div>
-          <div class="col-span-4">
-            <el-form-item label="Birligi" prop="unit" :rules="rules">
-              <el-select v-model="model.unit" clearable placeholder="...">
                 <el-option
                   v-for="item in units"
                   :key="item.id"
@@ -164,30 +228,39 @@ const rules = ref([
               </el-select>
             </el-form-item>
           </div>
-          <div class="col-span-4">
-            <el-form-item label="Vaqt" prop="date" :rules="rules">
-              <el-date-picker
-                v-model="model.date"
-                style="width: 100%"
-                clearable
-                type="date"
-                placeholder="..."
-                :size="size"
-              />
+          <div class="mb-1 col-span-2">
+            <el-form-item label=".">
+              <el-button
+                @click="CreateDayReport(formRef)"
+                style="
+                  background-color: #36d887;
+                  color: white;
+                  border: none;
+                  cursor: pointer;
+                  width: 100%;
+                  padding: 15px;
+                "
+              >
+                <i class="fa-solid fa-plus mr-2 fa-md"></i> Qo'shish
+              </el-button>
             </el-form-item>
           </div>
         </el-form>
-        <div class="shadow-md rounded min-h-[15px]">
+        <div class="shadow-md rounded">
           <el-table
+            :data="report_paint"
+            :header-cell-style="{
+              background: '#e8eded',
+              border: '0.2px solid #e1e1e3',
+            }"
             load
             class="w-full"
             header-align="center"
-            hight="5"
             empty-text="Mahsulot tanlanmagan... "
             border
-            style="width: 100%; font-size: 13px"
-            min-height="170"
-            max-height="170"
+            style="width: 100%; font-size: 12px"
+            min-height="200"
+            max-height="200"
           >
             <el-table-column
               header-align="center"
@@ -198,53 +271,87 @@ const rules = ref([
               label="№"
               width="60"
             />
-
             <el-table-column
               header-align="center"
-              prop="quantity"
-              label="Miqdori"
+              prop="material_name"
+              label="Mato nomi"
               width="180"
+              align="center"
             />
             <el-table-column
               header-align="center"
-              prop="unit"
-              label="Birligi"
+              prop="material_type"
+              label="Mato turi"
               width="150"
-            />
-            <el-table-column
-              header-align="center"
-              prop="date"
-              label="Sana"
-              width="250"
+              align="center"
             />
             <el-table-column
               fixed="right"
+              header-align="center"
+              prop="quantity"
+              label="Miqdori"
+              width="150"
+              align="center"
+              ><template #default="scope"
+                ><div class="text-red-500 font-semibold">
+                  {{ scope.row.quantity }} {{ scope.row.unit }}
+                </div></template
+              ></el-table-column
+            >
+
+            <el-table-column
+              header-align="center"
+              label="Vaqt"
+              width="150"
+              align="center"
+              ><template #default="scope">{{
+                String(scope.row.createdAt).substring(0, 10)
+              }}</template></el-table-column
+            >
+            <el-table-column
+              fixed="right"
+              label="Holati"
+              width="180"
+              header-align="center"
+              align="center"
+            >
+              <template #default="scope">
+                <router-link
+                  to=""
+                  class="inline-flex items-center text-red bg-[#e4e9e9] hover:bg-[#e1e1e3] font-medium rounded-md text-[12px] w-ful p-[5px] sm:w-auto text-center"
+                >
+                  {{ scope.row.status }}
+                </router-link>
+              </template>
+            </el-table-column>
+            <el-table-column
+              fixed="right"
               label=""
-              width="127"
+              width="100"
               header-align="center"
               align="center"
             >
               <template #default="">
                 <router-link
                   to=""
-                  class="inline-flex items-center mt-4 ml-2 text-red bg-[#eedc36] hover:bg-yellow-400 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
+                  class="inline-flex items-center mt-4 ml-2 text-red hover:bg-[#e8eded] font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
                 >
-                  <i class="text-red fa-solid fa-check fa-xs fa- fa-xs"></i>
+                  <i class="text-red fa-solid fa-pen fa-xs fa- fa-xs"></i>
                 </router-link>
               </template>
             </el-table-column>
           </el-table>
           <div
-            class="flex justify-between flex-wrap font-semibold text-[12px] p-1 bg-slate-100 shadow"
+            class="flex justify-between flex-wrap font-semibold text-[12px] p-1 bg-slate-100 shadow border-b-[1px] border-[#36d887]"
           >
             <div>
               Buyurtma:
-              {{ 0 }}
+              {{ detail.card ? detail.card.order_quantity : 0 }} kg
             </div>
-            <div>Bajarildi: {{ 0 }}</div>
+            <div>Bajarildi: {{ DonePaint ? DonePaint : 0 }} kg</div>
             <div>
               Qoldi:
-              {{ 0 }}
+              {{ DonePaint ? detail.card.order_quantity - DonePaint : 0 }} kg
             </div>
           </div>
         </div>
@@ -257,19 +364,30 @@ const rules = ref([
       append-to-body
     >
       <span>Cancel And Of Reason</span>
-    </el-dialog> -->
+    </el-dialog>
     <template #footer>
-      <div class="dialog-footer">
+      <div>
         <el-button
-          size="small"
-          @click="validate(formRef)"
-          style="background-color: #36d887; color: white; border: none"
-          ><i class="mr-2 fa-solid fa-check fa-sm"></i>Yuborish
-        </el-button>
-        <el-button
-          size="small"
-          style="background-color: #36d887; color: white; border: none"
-          ><i class="mr-2 fa-solid fa-check fa-sm"></i>Yakunlash
+          v-if="detail.card.order_quantity - DonePaint <= 0"
+          @click="CreateDayReport(formRef)"
+          style="
+            background: linear-gradient(
+              90deg,
+              rgba(14, 14, 14, 1) 0%,
+              rgba(54, 216, 135, 1) 35%,
+              rgba(14, 14, 14, 1) 100%
+            );
+            color: white;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            padding: 15px;
+            font-size: 13px;
+            border: 1px solid #36d887;
+            font-weight: bold;
+          "
+        >
+          Bo'yoq partyani yakunladi
         </el-button>
       </div>
     </template>

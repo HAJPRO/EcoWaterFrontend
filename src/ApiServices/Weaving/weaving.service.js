@@ -7,10 +7,6 @@ export const WeavingService = {
     return api.get(url);
   },
 
-  cancelReason(data) {
-    let url = "weaving/cancel_reason";
-    return api.post(url, data);
-  },
   create(data) {
     let url = "weaving/weaving_create";
     return api.post(url, data);
@@ -19,20 +15,16 @@ export const WeavingService = {
     let url = "weaving/weaving_all";
     return api.post(url, status);
   },
-  getOne(id) {
-    let url = `weaving/weaving_get_one/${id}`;
-    return api.get(url);
+  GetOneFromPaint(data) {
+    let url = `weaving/get_one_from_paint`;
+    return api.post(url, data);
   },
   getOneFromInProcess(id) {
     let url = "weaving/weaving_get_inprocess";
     return api.post(url, id);
   },
-  addDayReportInProcess(data) {
-    let url = "weaving/weaving_add_day_report";
+  AcceptAndCreate(data) {
+    let url = "weaving/accept_and_create";
     return api.post(url, data);
-  },
-  getDayReportFromWeaving(id) {
-    let url = "weaving/weaving_get_report";
-    return api.post(url, { id });
   },
 };

@@ -40,8 +40,13 @@ onMounted(() => {});
 </script>
 
 <template>
-  <el-dialog v-model="is_modal" :title="modal_params.title" width="500">
+  <el-dialog v-model="is_modal" width="500">
     <span>
+      <div
+        class="font-semibold rounded text-[14px] p-1 mb-2 text-center bg-slate-100 shadow border-t-[1px] border-[#36d887]"
+      >
+        <h3>{{ modal_params.title }}</h3>
+      </div>
       <el-form
         ref="OptionRef"
         :model="model"
@@ -85,7 +90,7 @@ onMounted(() => {});
       <div class="flex justify-end mb-1 col-span-5">
         <div></div>
         <el-button
-          size="small"
+          size="smal"
           @click="CreateOption(OptionRef)"
           style="
             background-color: #36d887;

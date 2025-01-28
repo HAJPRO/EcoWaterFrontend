@@ -1,4 +1,5 @@
 <script setup>
+import { ref, onMounted } from "vue";
 import { WeavingPlanStore } from "../../stores/Weaving/weaving_plan.store";
 const store_weaving = WeavingPlanStore();
 import { storeToRefs } from "pinia";
@@ -6,21 +7,25 @@ const openModalById = async (id) => {
   await store_weaving.openModalById({ id });
 };
 const { items, is_active } = storeToRefs(store_weaving);
+const DetailModal = async (id) => {
+  store_weaving.DetailModal({ id });
+};
 </script>
 <template>
-  <div class="shadow-md rounded min-h-[15px]">
+  <div class="shadow-md rounded">
     <el-table
       :header-cell-style="{
         background: '#e8eded',
         border: '0.2px solid #e1e1e3',
       }"
+      size="small"
+      show-header="true"
       load
-      style="width: 100%; font-size: 12px"
-      class="w-full"
+      border="true"
       header-align="center"
       empty-text="Mahsulot tanlanmagan... "
       :data="items"
-      border="true"
+      style="width: 100%; font-size: 12px"
       min-height="300"
       max-height="350"
     >
@@ -34,75 +39,63 @@ const { items, is_active } = storeToRefs(store_weaving);
         width="60"
       />
       <el-table-column
+        align="center"
         header-align="center"
-        prop="in_process_detail.customer_name"
+        prop="customer_name"
         label="Buyurtmachi nomi"
+        width="250"
+      />
+      <el-table-column
+        align="center"
+        header-align="center"
+        prop="order_number"
+        label="Buyurtma nomeri"
+        width="250"
+      />
+      <el-table-column
+        prop="artikul"
+        label="Artikul"
         width="200"
-      />
-      <el-table-column
         header-align="center"
-        prop="in_process_detail.order_number"
+        align="center"
+      />
+
+      <el-table-column
+        prop="order_quantity"
         label="Buyurtma miqdori"
-        width="200"
-      />
-      <el-table-column
-        prop="in_process_detail.pro_type"
-        label="Mahsulot turi"
-        width="180"
+        width="250"
         header-align="center"
         align="center"
-      />
-      <el-table-column
-        prop="in_process_detail.pro_name"
-        label="Mahsulot nomi"
-        width="180"
-        header-align="center"
-        align="center"
-      />
-      <el-table-column
-        prop="in_process_detail.pro_color"
-        label="Mahsulot rangi"
-        width="180"
-        header-align="center"
-        align="center"
-      />
-      <el-table-column
-        prop="in_process_detail.order_quantity"
-        label="Buyurtma miqdori"
-        width="180"
-        header-align="center"
-        align="center"
-      >
-        <template #default="scope">{{
-          scope.row.weaving_cloth_quantity
-        }}</template>
+        ><template #default="scope">
+          <div class="text-red-500">{{ scope.row.order_quantity }}</div>
+        </template>
       </el-table-column>
       <el-table-column
-        prop="in_process_detail.delivery_time"
+        prop="delivery_time"
         label="Muddati"
-        width="180"
+        width="250"
         header-align="center"
         align="center"
+        ><template #default="scope"
+          ><div>
+            {{ String(scope.row.delivery_time_weaving).substring(0, 10) }}
+          </div></template
+        ></el-table-column
       >
-        <template #default="scope">{{
-          scope.row.weaving_delivery_time
-        }}</template>
-      </el-table-column>
 
       <el-table-column
         fixed="right"
-        prop="in_process_detail.order_status"
         label="Holati"
-        width="150"
+        width="200"
         header-align="center"
         align="center"
       >
-        <template #default="scope">
+        <template #default="">
           <router-link
             to=""
-            class="inline-flex items-center text-red bg-[#e4e9e9] hover:bg-[#d7ebeb] focus:ring-blue-300 font-medium rounded-md text-[12px] w-ful p-[5px] sm:w-auto text-center"
+            class="inline-flex items-center text-red bg-[#e4e9e9] hover:bg-[#e1e1e3] font-medium rounded-md text-[12px] w-ful p-[5px] sm:w-auto text-center"
           >
-            {{ scope.row.status_weaving }}
+            To'quvga yuborildi
           </router-link>
         </template>
       </el-table-column>
@@ -110,25 +103,26 @@ const { items, is_active } = storeToRefs(store_weaving);
         fixed="right"
         prop="id"
         label=""
-        width="150"
+        width="200"
         header-align="center"
         align="center"
       >
         <template #default="scope">
           <router-link
+            v-show="scope.row.status === `Jarayonda`"
             to=""
-            @click="openModalById(scope.row._id)"
-            class="inline-flex items-center mt-4 ml-2 text-red bg-[#eedc36] hover:bg-yellow-400 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
+            @click="DetailModal(scope.row._id)"
+            class="inline-flex items-center ml-2 text-red hover:bg-[#e1e1e3] font-medium rounded-md text-sm w-full sm:w-auto px-3 py-3 text-center"
           >
-            <i class="text-red fa-solid fa-check fa-xs fa- fa-xs"></i>
+            <i class="text-black fa-sharp fa-solid fa-check fa-xs"></i>
           </router-link>
-          <!-- <router-link
-            to="/explore/sale/legal/create"
-            @click="DeleteFromTable(scope.row._id)"
-            class="inline-flex items-center mt-4 ml-2 text-red bg-[#36d887] hover:bg-[#39c07c] font-medium rounded-md text-sm w-full sm:w-auto px-3 py-3 text-center"
+          <router-link
+            v-show="scope.row.order_status === `To'quvga yuborildi`"
+            to=""
+            class="inline-flex items-center ml-2 text-red hover:bg-[#e1e1e3] font-medium rounded-md text-sm w-full sm:w-auto px-3 py-3 text-center"
           >
-            <i class="text-black fa-sharp fa-solid fa-info fa-xs"></i>
-          </router-link> -->
+            <i class="text-black fa-trash fa-solid fa-trash fa-xs"></i>
+          </router-link>
         </template>
       </el-table-column>
     </el-table>
