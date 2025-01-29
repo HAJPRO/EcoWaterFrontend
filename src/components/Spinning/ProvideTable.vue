@@ -12,16 +12,15 @@ console.log(items);
 <template>
   <div class="shadow-md rounded min-h-[15px]">
     <el-table
+      :header-cell-style="{
+        background: '#e8eded',
+        border: '0.2px solid #e1e1e3',
+      }"
+      size="small"
       load
       class="w-full"
       header-align="center"
-      hight="5"
       empty-text="Mahsulot tanlanmagan... "
-      :default-sort="[
-        { prop: 'name', order: 'descending' },
-        { prop: 'count', order: 'descending' },
-        { prop: 'tranfer', order: 'descending' },
-      ]"
       :data="items"
       border
       style="width: 100%"
@@ -39,14 +38,12 @@ console.log(items);
       />
       <el-table-column
         header-align="center"
-        sortable
         prop="delivery_product_box.begunok"
         label="Begunok (kg)"
         width="200"
       />
       <el-table-column
         header-align="center"
-        sortable
         prop="delivery_product_box.latun"
         label="Latun (kg)"
         width="200"
@@ -54,7 +51,7 @@ console.log(items);
 
       <el-table-column
         prop="delivery_product_box.duration_time"
-        label="Yetkazish vaqti"
+        label="Muddati"
         width="300"
         header-align="center"
         align="center"
@@ -84,10 +81,10 @@ console.log(items);
         header-align="center"
         align="center"
       >
-        <template #default="scope">
+        <template #default="">
           <router-link
             to=""
-            class="inline-flex items-center ml-2 text-red bg-red-500 hover:bg-red-600 font-medium rounded-md text-sm w-full sm:w-auto px-3 py-3 text-center"
+            class="inline-flex items-center ml-2 text-red hover:bg-red-600 font-medium rounded-md text-sm w-full sm:w-auto px-3 py-3 text-center"
           >
             <i class="text-black fa-trash fa-solid fa-trash fa-xs"></i>
           </router-link>

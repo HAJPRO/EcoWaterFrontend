@@ -10,6 +10,12 @@ const OpenModalById = async (id) => {
 <template>
   <div v-if="is_active === 2" class="shadow-md rounded min-h-[15px]">
     <el-table
+      :header-cell-style="{
+        background: '#e8eded',
+        border: '0.2px solid #e1e1e3',
+      }"
+      show-header="true"
+      size="small"
       load
       class="w-full"
       header-align="center"
@@ -17,7 +23,7 @@ const OpenModalById = async (id) => {
       empty-text="Mahsulot tanlanmagan... "
       :data="data"
       border
-      style="width: 100%"
+      style="width: 100%; font-size: 12px"
       min-height="300"
       max-height="350"
     >

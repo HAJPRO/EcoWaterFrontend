@@ -2,18 +2,18 @@
 import { onMounted, ref } from "vue";
 import { ToastifyService } from "../../utils/Toastify";
 import { loading } from "./../../utils/Loader";
-import { PaintPlanStore } from "../../stores/Paint/paintPlan.store";
-const store_paint = PaintPlanStore();
+import { WeavingPlanStore } from "../../stores/Weaving/weaving_plan.store";
+const weaving_store = WeavingPlanStore();
 import { storeToRefs } from "pinia";
-const { detail, is_detail_modal, is_report } = storeToRefs(store_paint);
+const { detail, is_detail_modal, is_report } = storeToRefs(weaving_store);
 // const AcceptAndCreate = () => {
 //   store_paint.AcceptAndCreate();
 // };
 const ProvideModal = () => {
-  store_paint.ProvideModal();
+  weaving_store.ProvideModal();
 };
 const ReportModal = () => {
-  store_paint.ReportModal();
+  weaving_store.ReportModal();
 };
 onMounted(async () => {
   try {
@@ -24,131 +24,28 @@ onMounted(async () => {
 </script>
 
 <template>
-  <el-dialog v-model="is_detail_modal" width="1200">
+  <el-dialog v-model="is_detail_modal" width="1000">
     <span>
       <div class="mt-3 grid grid-cols-12 gap-2">
         <div
-          v-if="is_report === true"
-          class="col-span-12 shadow-md bg-white rounded min-h-[15px]"
+          v-if="detail.card.order_number"
+          class="col-span-3 h-[200px] shadow-md rounded-md bg-white text-center text-slate-500 font-semibold text-[13px] p-4 cursor-pointer border-t-[1px] border-b-[1px] border-[#36d887]"
         >
-          <div
-            class="bg-slate-100 font-semibold p-1 mb-1 text-[15px] align-center text-center shadow rounded border-t-[1px] border-[#36d887]"
-          >
-            To'quv talabnoma jadvali
+          <div class="bg-[#e8eded] p-2 rounded">
+            Buyurtma nomeri: {{ detail.card.order_number }}
           </div>
-          <div
-            v-if="detail.card.order_number"
-            class="flex justify-between text-[11px] font-semibold"
-          >
-            <div class="">Buyurtma nomeri: {{ detail.card.order_number }}</div>
-            <div class="">Buyurtmachi: {{ detail.card.customer_name }}</div>
-            <div class="">Artikul: {{ detail.card.artikul }}</div>
-            <div class="">
-              Muddati:
-              {{ String(detail.card.delivery_time_weaving).substring(0, 10) }}
-            </div>
+          <div class="mt-2 bg-[#e8eded] p-2 rounded">
+            Buyurtmachi: {{ detail.card.customer_name }}
           </div>
-          <el-table
-            :header-cell-style="{
-              background: '#e8eded',
-              border: '0.2px solid #e1e1e3',
-            }"
-            load
-            style="font-size: 12px"
-            size="small"
-            class="w-full"
-            header-align="center"
-            empty-text="Mahsulot tanlanmagan... "
-            :data="detail.card.weaving_products"
-            border="true"
-            height="150"
-          >
-            <el-table-column
-              header-align="center"
-              align="center"
-              type="index"
-              prop="index"
-              fixed="left"
-              label="№"
-              width="60"
-            />
-            <el-table-column
-              prop="material_name"
-              label="Mato nomi"
-              width="300"
-              header-align="center"
-              align="center"
-            />
-            <el-table-column
-              prop="material_type"
-              label="Mato turi"
-              width="250"
-              header-align="center"
-              align="center"
-            />
-            <el-table-column
-              fixed="right"
-              label="Miqdori"
-              width="250"
-              header-align="center"
-              align="center"
-              ><template #default="scope"
-                ><div class="text-red-500">
-                  {{ String(scope.row.weaving_quantity).substring(0, 10) }}
-                </div></template
-              ></el-table-column
-            >
-
-            <el-table-column
-              label="Muddati"
-              width="200"
-              header-align="center"
-              align="center"
-              ><template #default="scope"
-                ><div class="">
-                  {{ String(scope.row.delivery_time_weaving).substring(0, 10) }}
-                </div></template
-              ></el-table-column
-            >
-
-            <el-table-column
-              fixed="right"
-              prop="id"
-              label=""
-              width="120"
-              header-align="center"
-              align="center"
-            >
-              <template #default="scope">
-                <router-link
-                  to=""
-                  @click="deleteById(scope.row.id)"
-                  class="inline-flex items-center mt-4 ml-2 text-white hover:bg-slate-300 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
-                >
-                  <i class="text-black fa-sharp fa-solid fa-trash fa-xs"></i>
-                </router-link>
-              </template>
-            </el-table-column>
-          </el-table>
+          <div class="mt-2 bg-[#e8eded] p-2 rounded">
+            Artikul: {{ detail.card.artikul }}
+          </div>
+          <div class="mt-2 bg-[#e8eded] p-2 rounded">
+            Muddati:
+            {{ String(detail.card.delivery_time_weaving).substring(0, 10) }}
+          </div>
         </div>
-        <div class="col-span-12 shadow-md bg-white rounded min-h-[15px]">
-          <div
-            class="bg-slate-100 font-semibold p-1 mb-1 text-[15px] align-center text-center shadow rounded border-t-[1px] border-[#36d887]"
-          >
-            Bo'yoq talabnoma jadvali
-          </div>
-          <div
-            v-if="detail.card.order_number"
-            class="flex justify-between text-[11px] font-semibold"
-          >
-            <div class="">Buyurtma nomeri: {{ detail.card.order_number }}</div>
-            <div class="">Buyurtmachi: {{ detail.card.customer_name }}</div>
-            <div class="">Artikul: {{ detail.card.artikul }}</div>
-            <div class="">
-              Muddati:
-              {{ String(detail.card.delivery_time_sale).substring(0, 10) }}
-            </div>
-          </div>
+        <div class="col-span-9 shadow-md bg-white rounded min-h-[15px]">
           <el-table
             :header-cell-style="{
               background: '#e8eded',
@@ -252,7 +149,7 @@ onMounted(async () => {
           </el-table>
           <div class="flex justify-end col-span-10 p-1 mt-1 bg-white">
             <el-button
-              v-if="is_report === true"
+              v-if="is_report"
               size="smal"
               @click="ReportModal()"
               style="
@@ -266,7 +163,7 @@ onMounted(async () => {
               <i class="fa-solid fa-plus mr-2 fa-md"></i> Hisobot
             </el-button>
             <el-button
-              v-if="is_report === false"
+              v-show="detail.card.status === `Jarayonda`"
               size="smal"
               @click="ProvideModal()"
               style="
@@ -280,7 +177,7 @@ onMounted(async () => {
               <i class="fa-solid fa-check mr-2 fa-md"></i> Qabul qilish
             </el-button>
             <el-button
-              v-if="is_report === false"
+              v-show="detail.card.status === `Jarayonda`"
               size="smal"
               @click="Cancel()"
               style="

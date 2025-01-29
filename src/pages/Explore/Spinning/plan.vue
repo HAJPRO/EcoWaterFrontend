@@ -2,7 +2,6 @@
 import Title from "@/components/Title.vue";
 import HeaderTabLink from "../../../components/Spinning/HeaderTabLink.vue";
 import MainTable from "../../../components/Spinning/MainTable.vue";
-import ModalConfirm from "../../../components/Spinning/ModalConfirm.vue";
 import ModalForProvide from "../../../components/Spinning/ModalForProvide.vue";
 import InProcessDetailTable from "../../../components/Spinning/InProcessDetailTable.vue";
 import ProvideTable from "../../../components/Spinning/ProvideTable.vue";
@@ -20,11 +19,10 @@ const { is_active, is_report_modal } = storeToRefs(store_spinning);
       </template>
     </Title>
     <HeaderTabLink />
-    <MainTable v-if="is_active === 4" />
+    <MainTable v-if="is_active === 2" />
     <InProcessDetailTable v-if="is_active === 1" />
-    <ProvideTable v-if="is_active === 5" />
+    <ProvideTable v-if="is_active === 3" />
     <ModalDayReport v-if="is_report_modal === true" />
-    <ModalConfirm />
     <ModalForProvide />
   </div>
 </template>

@@ -15,7 +15,7 @@ export const PaintPlanStore = defineStore("paintPlanStore", {
         material_name: "",
         material_type: "",
         delivery_time_provide: "",
-        weaving_qauntity: "",
+        weaving_quantity: "",
         delivery_time_weaving: "",
       },
       report_paint: [],
@@ -66,6 +66,7 @@ export const PaintPlanStore = defineStore("paintPlanStore", {
       } else {
         const data = await PaintService.GetOneFromSale({ id: payload });
         this.is_detail_modal = true;
+        this.is_report = false;
         this.detail = data.data.data;
         this.card_id = payload;
       }
@@ -78,8 +79,6 @@ export const PaintPlanStore = defineStore("paintPlanStore", {
       this.GetDayReport(this.detail.card.order_number);
     },
     async CreateDayReport(data) {
-      console.log(data);
-
       const loader = loading.show();
       const report = await PaintService.CreateDayReport(data);
       this.GetDayReport(data.order_number);
@@ -121,7 +120,6 @@ export const PaintPlanStore = defineStore("paintPlanStore", {
         const data = await PaintService.getAll(status);
         this.items = data.data.items;
         this.all_length = data.data.all_length;
-        console.log(data.data.items);
       } catch (err) {
         console.log(err);
       }

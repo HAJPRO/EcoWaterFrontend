@@ -62,12 +62,12 @@ const total_yarn = ref();
 const spinning = ref([]);
 const AddSpinning = async (RefSpinning) => {
   await RefSpinning.validate((valid) => {
-    if (valid === true && confirm_model.value.yarn_qauntity > 0) {
+    if (valid === true && confirm_model.value.yarn_quantity > 0) {
       spinning.value.push({
         id: uuidv4(),
         yarn_name: confirm_model.value.yarn_name,
         yarn_type: confirm_model.value.yarn_type,
-        yarn_quantity: confirm_model.value.yarn_qauntity,
+        yarn_quantity: confirm_model.value.yarn_quantity,
         delivery_time_spinning: confirm_model.value.delivery_time_spinning,
       });
     } else {
@@ -221,14 +221,14 @@ const rules = ref({
         <div class="col-span-3">
           <el-form-item
             label="Miqdori (kg)"
-            prop="yarn_qauntity"
+            prop="yarn_quantity"
             :rules="[
               { required: true, message: `Maydon to'ldirilishi zarur !` },
               { type: 'number', message: `Qiymat musbat bo'lishi zarur` },
             ]"
           >
             <el-input
-              v-model.number="confirm_model.yarn_qauntity"
+              v-model.number="confirm_model.yarn_quantity"
               clearable
               class="w-[100%]"
               size="smal"
@@ -312,7 +312,7 @@ const rules = ref({
             />
 
             <el-table-column
-              prop="yarn_qauntity"
+              prop="yarn_quantity"
               label="Miqdori"
               width="150"
               header-align="center"

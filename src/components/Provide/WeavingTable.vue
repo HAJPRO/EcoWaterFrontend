@@ -10,15 +10,18 @@ const OpenModalById = async (id) => {
 <template>
   <div v-if="is_active === 3" class="shadow-md rounded min-h-[15px]">
     <el-table
+      :header-cell-style="{
+        background: '#e8eded',
+        border: '0.2px solid #e1e1e3',
+      }"
+      size="small"
       load
       class="w-full"
       header-align="center"
-      hight="5"
       empty-text="Mahsulot tanlanmagan... "
-      :default-sort="[{ prop: 'duration_time', order: 'descending' }]"
       :data="data"
       border
-      style="width: 100%"
+      style="width: 100%; font-size: 12px"
       min-height="300"
       max-height="350"
     >
@@ -55,7 +58,6 @@ const OpenModalById = async (id) => {
 
       <el-table-column
         prop="delivery_product_box.duration_time"
-        sortable
         label="Yetkazish vaqti"
         width="250"
         header-align="center"

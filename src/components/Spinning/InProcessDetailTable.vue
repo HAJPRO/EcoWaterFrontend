@@ -1,29 +1,29 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import { SpinningPlanStore } from "../../stores/Spinning/spinningPlan.store";
-const store_spinning = SpinningPlanStore();
+import { WeavingPlanStore } from "../../stores/Weaving/weaving_plan.store";
+const store_weaving = WeavingPlanStore();
 import { storeToRefs } from "pinia";
-const { items } = storeToRefs(store_spinning);
-const openReportModalById = async (id) => {
-  await store_spinning.OpenReportModalById({ id });
+const { items } = storeToRefs(store_weaving);
+const GetOneOrderReport = (id) => {
+  store_paint.DetailModal({ id, report: true });
 };
 </script>
 <template>
   <div class="shadow-md rounded min-h-[15px]">
     <el-table
+      :header-cell-style="{
+        background: '#e8eded',
+        border: '0.2px solid #e1e1e3',
+      }"
+      size="small"
+      show-header="true"
       load
+      border="true"
       class="w-full"
       header-align="center"
-      hight="5"
       empty-text="Mahsulot tanlanmagan... "
-      :default-sort="[
-        { prop: 'name', order: 'descending' },
-        { prop: 'count', order: 'descending' },
-        { prop: 'tranfer', order: 'descending' },
-      ]"
       :data="items"
-      border
-      style="width: 100%"
+      style="width: 100%; font-size: 12px"
       min-height="300"
       max-height="350"
     >
@@ -38,59 +38,62 @@ const openReportModalById = async (id) => {
       />
       <el-table-column
         header-align="center"
-        sortable
-        prop="sale_order.customer_name"
+        prop="customer_name"
         label="Buyurtmachi nomi"
-        width="200"
-      />
-      <el-table-column
-        header-align="center"
-        sortable
-        prop="sale_order.order_number"
-        label="Buyurtma miqdori"
-        width="200"
-      />
-      <el-table-column
-        prop="sale_order.pro_type"
-        label="Mahsulot turi"
-        width="180"
-        header-align="center"
+        width="250"
         align="center"
       />
       <el-table-column
-        prop="sale_order.pro_name"
-        label="Mahsulot nomi"
-        width="180"
         header-align="center"
+        prop="order_number"
+        label="Buyurtma nomeri"
+        width="250"
         align="center"
       />
       <el-table-column
-        prop="sale_order.pro_color"
-        label="Mahsulot rangi"
-        width="180"
         header-align="center"
-        align="center"
-      />
-      <el-table-column
-        prop="more.spinning_yarn_wrap_quantity"
-        label="Buyurtma miqdori"
-        width="180"
-        header-align="center"
+        prop="artikul"
+        label="Artikul"
+        width="250"
         align="center"
       />
 
       <el-table-column
-        prop="more.spinning_delivery_time"
-        label="Muddati"
-        width="190"
         header-align="center"
+        label="To'quv"
+        width="400"
         align="center"
-      />
+      >
+        <el-table-column
+          v-show="spinning_quantity"
+          label="Miqdori"
+          width="250"
+          header-align="center"
+          align="center"
+        >
+          <template #default="scope"
+            ><div class="text-red-500">
+              {{ scope.row.spinning_quantity }}
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="Muddati"
+          width="250"
+          header-align="center"
+          align="center"
+        >
+          <template #default="scope">
+            {{ String(scope.row.delivery_time_spinning).substring(0, 10) }}
+          </template>
+        </el-table-column>
+      </el-table-column>
 
       <el-table-column
         fixed="right"
+        prop="status"
         label="Holati"
-        width="150"
+        width="200"
         header-align="center"
         align="center"
       >
@@ -99,7 +102,7 @@ const openReportModalById = async (id) => {
             to=""
             class="inline-flex items-center text-red bg-[#e4e9e9] hover:bg-[#d7ebeb] font-medium rounded-md text-[12px] w-ful p-[5px] sm:w-auto text-center"
           >
-            {{ scope.row.status_inprocess }}
+            {{ scope.row.status }}
           </router-link>
         </template>
       </el-table-column>
@@ -112,16 +115,23 @@ const openReportModalById = async (id) => {
         align="center"
       >
         <template #default="scope">
-          <router-link
+          <!-- <router-link
             to=""
             @click="openReportModalById(scope.row._id)"
-            class="inline-flex items-center ml-2 text-red bg-[#36d887] hover:bg-[#3dcc84] font-medium rounded-md text-sm w-full sm:w-auto px-3 py-3 text-center"
+            class="inline-flex items-center ml-2 text-red hover:bg-[#e1e1e3] font-medium rounded-md text-sm w-full sm:w-auto px-3 py-3 text-center"
           >
-            <i class="text-black fa-sharp fa-solid fa-file-lines fa-xs"></i>
+            <i class="text-black fa-check fa-solid fa-file-lines fa-xs"></i>
+          </router-link> -->
+          <router-link
+            to=""
+            @click="GetOneOrderReport(scope.row._id)"
+            class="inline-flex items-center ml-2 text-red hover:bg-[#e1e1e3] font-medium rounded-md text-sm w-full sm:w-auto px-3 py-3 text-center"
+          >
+            <i class="text-black fa-plus fa-solid fa-file-lines fa-xs"></i>
           </router-link>
           <router-link
             to=""
-            class="inline-flex items-center ml-2 text-red bg-red-500 hover:bg-red-600 font-medium rounded-md text-sm w-full sm:w-auto px-3 py-3 text-center"
+            class="inline-flex items-center ml-2 text-red hover:bg-[#e1e1e3] font-medium rounded-md text-sm w-full sm:w-auto px-3 py-3 text-center"
           >
             <i class="text-black fa-trash fa-solid fa-trash fa-xs"></i>
           </router-link>

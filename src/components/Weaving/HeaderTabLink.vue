@@ -30,16 +30,6 @@ const ActiveTabLink = (num) => {
     is_Active();
     getAll();
   }
-  if (num === 4) {
-    isActive.value = 4;
-    is_Active();
-    getAll();
-  }
-  if (num === 5) {
-    isActive.value = 5;
-    is_Active();
-    getAll();
-  }
 };
 
 onMounted(async () => {
@@ -95,14 +85,14 @@ onMounted(async () => {
 
       <router-link
         to=""
-        @click="ActiveTabLink(5)"
-        :class="{ activeTab: isActive === 5 }"
+        @click="ActiveTabLink(3)"
+        :class="{ activeTab: isActive === 3 }"
         class="inline-flex text-[13px] items-center px-4 py-1 mb-1 font-medium text-center text-red hover:border-b-2 border-solid border-[#36d887] bg-[#e4e9e9] text-bold rounded"
       >
         <i class="fa-solid fa-info mr-2 fa-xm"></i> Taminot
         <div class="flex flex-shrink-0 ml-2">
           <span
-            :class="{ activeTabIcon: isActive === 5 }"
+            :class="{ activeTabIcon: isActive === 3 }"
             class="inline-flex items-center justify-center h-5 text-[11px] font-medium text-white bg-[#36d887] px-3 py-2 rounded"
           >
             <span class=" ">0</span>/{{

@@ -20,13 +20,13 @@ const ActiveTabLink = (num) => {
     is_Active();
     getAll();
   }
-  if (num === 4) {
-    isActive.value = 4;
+  if (num === 2) {
+    isActive.value = 2;
     is_Active();
     getAll();
   }
-  if (num === 5) {
-    isActive.value = 5;
+  if (num === 3) {
+    isActive.value = 3;
     is_Active();
     getAll();
   }
@@ -53,6 +53,7 @@ onMounted(async () => {
         <i class="fa-solid fa-info mr-2 fa-xm"></i> Jarayonda
         <div class="flex flex-shrink-0 ml-2">
           <span
+            :class="{ activeTabIcon: isActive === 1 }"
             class="inline-flex items-center justify-center h-5 text-[11px] font-medium text-white bg-[#36d887] px-3 py-2 rounded"
           >
             <span class=" ">0</span>/{{
@@ -63,13 +64,14 @@ onMounted(async () => {
       </router-link>
       <router-link
         to=""
-        @click="ActiveTabLink(4)"
-        :class="{ activeTab: isActive === 4 }"
+        @click="ActiveTabLink(2)"
+        :class="{ activeTab: isActive === 2 }"
         class="inline-flex text-[13px] items-center mr-1 px-4 py-1 mb-1 font-medium text-center text-red hover:border-b-2 border-solid border-[#36d887] bg-[#e4e9e9] text-bold rounded"
       >
         <i class="fa-solid fa-info mr-2 fa-xm"></i> To'quv
         <div class="flex flex-shrink-0 ml-2">
           <span
+            :class="{ activeTabIcon: isActive === 2 }"
             class="inline-flex items-center justify-center h-5 text-[11px] font-medium text-white bg-[#36d887] px-3 py-2 rounded"
             ><span class=" ">0</span>/{{
               (all_length ? all_length.weaving_length : 0) || 0
@@ -79,13 +81,14 @@ onMounted(async () => {
       </router-link>
       <router-link
         to=""
-        @click="ActiveTabLink(5)"
-        :class="{ activeTab: isActive === 5 }"
+        @click="ActiveTabLink(3)"
+        :class="{ activeTab: isActive === 3 }"
         class="inline-flex text-[13px] items-center px-4 py-1 mb-1 font-medium text-center text-red hover:border-b-2 border-solid border-[#36d887] bg-[#e4e9e9] text-bold rounded"
       >
         <i class="fa-solid fa-info mr-2 fa-xm"></i> Taminot
         <div class="flex flex-shrink-0 ml-2">
           <span
+            :class="{ activeTabIcon: isActive === 3 }"
             class="inline-flex items-center justify-center h-5 text-[11px] font-medium text-white bg-[#36d887] px-3 py-2 rounded"
           >
             <span class=" ">0</span>/{{
@@ -99,6 +102,15 @@ onMounted(async () => {
 </template>
 <style>
 .activeTab {
-  border-bottom: 2px solid #36d887;
+  transition-duration: 0.6s;
+  background: #36d887;
+  color: whitesmoke;
+  box-sizing: border-box;
+  font-size: 14px;
+  font-weight: bold;
+}
+.activeTabIcon {
+  background: whitesmoke;
+  color: black;
 }
 </style>

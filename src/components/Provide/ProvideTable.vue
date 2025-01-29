@@ -10,14 +10,19 @@ const { data, is_active } = storeToRefs(store_provide);
 <template>
   <div class="shadow-md rounded min-h-[15px]">
     <el-table
+      :header-cell-style="{
+        background: '#e8eded',
+        border: '0.2px solid #e1e1e3',
+      }"
+      size="small"
       load
       class="w-full"
       header-align="center"
       hight="5"
       empty-text="Mahsulot tanlanmagan... "
       :data="data"
+      style="width: 100%; font-size: 12px"
       border
-      style="width: 100%"
       min-height="300"
       max-height="350"
     >

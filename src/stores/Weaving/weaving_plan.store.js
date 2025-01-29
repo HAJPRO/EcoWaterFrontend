@@ -14,7 +14,7 @@ export const WeavingPlanStore = defineStore("WeavingPlan", {
       confirm_model: {
         yarn_name: "",
         yarn_type: "",
-        yarn_qauntity: "",
+        yarn_quantity: "",
         delivery_time_spinning: "",
         likra_type: "",
         likra_quantity: "",
@@ -28,7 +28,7 @@ export const WeavingPlanStore = defineStore("WeavingPlan", {
       is_modal: false,
       items: [],
       model: "",
-
+      is_report: false,
       is_active: "",
       order_id: "",
       paint_process_id: "",
@@ -62,9 +62,17 @@ export const WeavingPlanStore = defineStore("WeavingPlan", {
       }
     },
     async DetailModal(payload) {
-      const data = await WeavingService.GetOneFromPaint(payload);
-      this.is_detail_modal = true;
-      this.detail = data.data;
+      if (payload.report) {
+        const data = await WeavingService.GetOneFromPaint(payload);
+        this.is_report = true;
+        this.is_detail_modal = true;
+        this.detail = data.data;
+      } else {
+        const data = await WeavingService.GetOneFromPaint(payload);
+        this.is_report = false;
+        this.is_detail_modal = true;
+        this.detail = data.data;
+      }
     },
     async ProvideModal() {
       this.is_provide = true;

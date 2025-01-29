@@ -61,13 +61,13 @@ const DetailModal = async (id) => {
       />
 
       <el-table-column
-        prop="order_quantity"
+        prop="weaving_quantity"
         label="Buyurtma miqdori"
         width="250"
         header-align="center"
         align="center"
         ><template #default="scope">
-          <div class="text-red-500">{{ scope.row.order_quantity }}</div>
+          <div class="text-red-500">{{ scope.row.weaving_quantity }}</div>
         </template>
       </el-table-column>
       <el-table-column

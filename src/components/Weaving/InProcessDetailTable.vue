@@ -5,7 +5,7 @@ const store_weaving = WeavingPlanStore();
 import { storeToRefs } from "pinia";
 const { items } = storeToRefs(store_weaving);
 const GetOneOrderReport = (id) => {
-  store_paint.DetailModal({ id, report: true });
+  store_weaving.DetailModal({ id, report: true });
 };
 </script>
 <template>

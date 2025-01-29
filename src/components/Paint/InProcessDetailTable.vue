@@ -65,14 +65,13 @@ const GetOneOrderReport = (id) => {
         align="center"
       >
         <el-table-column
-          prop="order_quantity"
           label="Miqdori"
           width="180"
           header-align="center"
           align="center"
           ><template #default="scope"
             ><div class="text-red-500">
-              {{ scope.row.order_quantity }}
+              {{ scope.row.sale_quantity }}
             </div></template
           ></el-table-column
         >

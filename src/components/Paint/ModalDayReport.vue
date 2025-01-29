@@ -136,7 +136,7 @@ const CreateDayReport = async (formRef) => {
       >
         <div>
           Buyurtma:
-          {{ detail.card ? detail.card.weaving_qauntity : 0 }} kg
+          {{ detail.card ? detail.card.weaving_quantity : 0 }} kg
         </div>
         <div>Bajarildi: {{ 0 }} kg</div>
         <div>
@@ -155,7 +155,6 @@ const CreateDayReport = async (formRef) => {
           }}
         </div>
         <el-form
-          v-if="detail.card.order_quantity - DonePaint > 0"
           ref="formRef"
           :model="model"
           label-width="auto"
@@ -352,12 +351,12 @@ const CreateDayReport = async (formRef) => {
           >
             <div>
               Buyurtma:
-              {{ detail.card ? detail.card.order_quantity : 0 }} kg
+              {{ detail.card ? detail.card.sale_quantity : 0 }} kg
             </div>
             <div>Bajarildi: {{ DonePaint ? DonePaint : 0 }} kg</div>
             <div>
               Qoldi:
-              {{ DonePaint ? detail.card.order_quantity - DonePaint : 0 }} kg
+              {{ DonePaint ? detail.card.sale_quantity - DonePaint : 0 }} kg
             </div>
           </div>
         </div>

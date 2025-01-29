@@ -38,12 +38,14 @@ const RefWeaving = ref();
 const weaving = ref([]);
 const AddWeaving = async (RefWeaving) => {
   await RefWeaving.validate((valid) => {
+    console.log(confirm_model.value.weaving_quantity);
+
     if (valid === true) {
       weaving.value.push({
         id: uuidv4(),
         material_name: confirm_model.value.material_name,
         material_type: confirm_model.value.material_type,
-        weaving_qauntity: confirm_model.value.weaving_qauntity,
+        weaving_quantity: confirm_model.value.weaving_quantity,
         delivery_time_weaving: confirm_model.value.delivery_time_weaving,
       });
     } else {
@@ -56,7 +58,7 @@ const SaveToProvideAndAccept = async () => {
   const initialValue = ref(0);
   total.value = weaving.value.reduce(
     (accumulator, currentValue) =>
-      accumulator + Number(currentValue.weaving_qauntity),
+      accumulator + Number(currentValue.weaving_quantity),
     initialValue.value
   );
   if (colors.value.length > 0 && weaving.value.length > 0) {
@@ -64,11 +66,12 @@ const SaveToProvideAndAccept = async () => {
       pus: confirm_model.value.pus,
       fike: confirm_model.value.fike,
       delivery_time_provide: confirm_model.value.delivery_time_provide,
-      weaving_qauntity: total.value,
+      weaving_quantity: total.value,
       delivery_time_weaving: confirm_model.value.delivery_time_weaving,
       colors: colors.value,
       weaving: weaving.value,
     });
+
     is_provide.value = false;
     confirm_model.value = {};
   } else {
@@ -150,11 +153,11 @@ const rules = ref({
         <div class="col-span-3">
           <el-form-item
             label="Miqdori (kg)"
-            prop="weaving_qauntity"
+            prop="weaving_quantity"
             :rules="rules"
           >
             <el-input
-              v-model="confirm_model.weaving_qauntity"
+              v-model="confirm_model.weaving_quantity"
               clearable
               class="w-[100%]"
               size="smal"
@@ -238,7 +241,7 @@ const rules = ref({
             />
 
             <el-table-column
-              prop="weaving_qauntity"
+              prop="weaving_quantity"
               label="Miqdori"
               width="150"
               header-align="center"
