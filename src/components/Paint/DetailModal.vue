@@ -37,15 +37,15 @@ onMounted(async () => {
             To'quv talabnoma jadvali
           </div>
           <div
-            v-if="detail.card.order_number"
+            v-if="detail.order_number"
             class="flex justify-between text-[11px] font-semibold"
           >
-            <div class="">Buyurtma nomeri: {{ detail.card.order_number }}</div>
-            <div class="">Buyurtmachi: {{ detail.card.customer_name }}</div>
-            <div class="">Artikul: {{ detail.card.artikul }}</div>
+            <div class="">Buyurtma nomeri: {{ detail.order_number }}</div>
+            <div class="">Buyurtmachi: {{ detail.customer_name }}</div>
+            <div class="">Artikul: {{ detail.artikul }}</div>
             <div class="">
               Muddati:
-              {{ String(detail.card.delivery_time_weaving).substring(0, 10) }}
+              {{ String(detail.delivery_time).substring(0, 10) }}
             </div>
           </div>
           <el-table
@@ -59,7 +59,7 @@ onMounted(async () => {
             class="w-full"
             header-align="center"
             empty-text="Mahsulot tanlanmagan... "
-            :data="detail.card.weaving_products"
+            :data="detail.sale_products"
             border="true"
             height="150"
           >
@@ -94,7 +94,7 @@ onMounted(async () => {
               align="center"
               ><template #default="scope"
                 ><div class="text-red-500">
-                  {{ String(scope.row.weaving_quantity).substring(0, 10) }}
+                  {{ String(scope.row.sale_quantity).substring(0, 10) }}
                 </div></template
               ></el-table-column
             >
@@ -138,15 +138,15 @@ onMounted(async () => {
             Bo'yoq talabnoma jadvali
           </div>
           <div
-            v-if="detail.card.order_number"
+            v-if="detail.order_number"
             class="flex justify-between text-[11px] font-semibold"
           >
-            <div class="">Buyurtma nomeri: {{ detail.card.order_number }}</div>
-            <div class="">Buyurtmachi: {{ detail.card.customer_name }}</div>
-            <div class="">Artikul: {{ detail.card.artikul }}</div>
+            <div class="">Buyurtma nomeri: {{ detail.order_number }}</div>
+            <div class="">Buyurtmachi: {{ detail.customer_name }}</div>
+            <div class="">Artikul: {{ detail.artikul }}</div>
             <div class="">
               Muddati:
-              {{ String(detail.card.delivery_time_sale).substring(0, 10) }}
+              {{ String(detail.delivery_time).substring(0, 10) }}
             </div>
           </div>
           <el-table
@@ -160,7 +160,7 @@ onMounted(async () => {
             class="w-full"
             header-align="center"
             empty-text="Mahsulot tanlanmagan... "
-            :data="detail.products"
+            :data="detail.sale_products"
             border="true"
             height="150"
           >
@@ -174,17 +174,17 @@ onMounted(async () => {
               width="60"
             />
             <el-table-column
-              prop="product_name"
+              prop="material_name"
               label="Nomi"
-              width="150"
+              width="200"
               header-align="center"
               align="center"
             />
 
             <el-table-column
-              prop="product_type"
+              prop="material_type"
               label="Turi"
-              width="150"
+              width="200"
               header-align="center"
               align="center"
             />
@@ -212,24 +212,16 @@ onMounted(async () => {
             />
             <el-table-column
               fixed="right"
-              prop="quantity"
               label="Miqdori"
               width="150"
               header-align="center"
               align="center"
               ><template #default="scope"
                 ><div class="text-red-500">
-                  {{ scope.row.quantity }} {{ scope.row.unit }}
+                  {{ scope.row.order_quantity }} {{ scope.row.unit }}
                 </div></template
               ></el-table-column
             >
-            <el-table-column
-              prop="unit"
-              label="Birligi"
-              width="100"
-              header-align="center"
-              align="center"
-            />
 
             <el-table-column
               fixed="right"

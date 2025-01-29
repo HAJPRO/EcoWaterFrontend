@@ -38,14 +38,19 @@ const RefWeaving = ref();
 const weaving = ref([]);
 const AddWeaving = async (RefWeaving) => {
   await RefWeaving.validate((valid) => {
-    console.log(confirm_model.value.weaving_quantity);
-
-    if (valid === true) {
+    if (
+      valid === true &&
+      confirm_model.value.order_quantity > 0 &&
+      confirm_model.value.width > 0 &&
+      confirm_model.value.grammage > 0
+    ) {
       weaving.value.push({
         id: uuidv4(),
         material_name: confirm_model.value.material_name,
         material_type: confirm_model.value.material_type,
-        weaving_quantity: confirm_model.value.weaving_quantity,
+        order_quantity: confirm_model.value.order_quantity,
+        width: confirm_model.value.width,
+        grammage: confirm_model.value.grammage,
         delivery_time_weaving: confirm_model.value.delivery_time_weaving,
       });
     } else {
@@ -58,7 +63,7 @@ const SaveToProvideAndAccept = async () => {
   const initialValue = ref(0);
   total.value = weaving.value.reduce(
     (accumulator, currentValue) =>
-      accumulator + Number(currentValue.weaving_quantity),
+      accumulator + Number(currentValue.order_quantity),
     initialValue.value
   );
   if (colors.value.length > 0 && weaving.value.length > 0) {
@@ -116,7 +121,7 @@ const rules = ref({
         size="small"
         label-position="top"
       >
-        <div class="col-span-3">
+        <div class="col-span-4">
           <el-form-item label="Mato nomi" prop="material_name" :rules="rules">
             <el-select
               v-model="confirm_model.material_name"
@@ -125,16 +130,16 @@ const rules = ref({
               placeholder="..."
             >
               <el-option
-                v-for="item in detail.products"
+                v-for="item in detail.sale_products"
                 :key="item._id"
-                :label="item.product_name"
-                :value="item.product_name"
+                :label="item.material_name"
+                :value="item.material_name"
               />
             </el-select>
           </el-form-item>
         </div>
-        <div class="col-span-3">
-          <el-form-item label="Turi" prop="material_type" :rules="rules">
+        <div class="col-span-4">
+          <el-form-item label="Mato turi" prop="material_type" :rules="rules">
             <el-select
               v-model="confirm_model.material_type"
               size="smal"
@@ -142,22 +147,18 @@ const rules = ref({
               placeholder="..."
             >
               <el-option
-                v-for="item in detail.products"
+                v-for="item in detail.sale_products"
                 :key="item._id"
-                :label="item.product_type"
-                :value="item.product_type"
+                :label="item.material_type"
+                :value="item.material_type"
               />
             </el-select>
           </el-form-item>
         </div>
-        <div class="col-span-3">
-          <el-form-item
-            label="Miqdori (kg)"
-            prop="weaving_quantity"
-            :rules="rules"
-          >
+        <div class="col-span-4">
+          <el-form-item label="Eni" prop="width" :rules="rules">
             <el-input
-              v-model="confirm_model.weaving_quantity"
+              v-model="confirm_model.width"
               clearable
               class="w-[100%]"
               size="smal"
@@ -166,7 +167,35 @@ const rules = ref({
             />
           </el-form-item>
         </div>
-        <div class="col-span-3">
+        <div class="col-span-4">
+          <el-form-item label="Grammage" prop="grammage" :rules="rules">
+            <el-input
+              v-model="confirm_model.grammage"
+              clearable
+              class="w-[100%]"
+              size="smal"
+              type="Number"
+              placeholder="..."
+            />
+          </el-form-item>
+        </div>
+        <div class="col-span-4">
+          <el-form-item
+            label="Miqdori (kg)"
+            prop="order_quantity"
+            :rules="rules"
+          >
+            <el-input
+              v-model="confirm_model.order_quantity"
+              clearable
+              class="w-[100%]"
+              size="smal"
+              type="Number"
+              placeholder="..."
+            />
+          </el-form-item>
+        </div>
+        <div class="col-span-4">
           <el-form-item
             label="Muddati"
             prop="delivery_time_weaving"
@@ -234,14 +263,28 @@ const rules = ref({
             />
             <el-table-column
               prop="material_type"
-              label="Turi"
+              label="Mato turi"
               width="150"
               header-align="center"
               align="center"
             />
-
             <el-table-column
-              prop="weaving_quantity"
+              prop="width"
+              label="Eni"
+              width="150"
+              header-align="center"
+              align="center"
+            />
+            <el-table-column
+              prop="grammage"
+              label="Grammage"
+              width="150"
+              header-align="center"
+              align="center"
+            />
+            <el-table-column
+              fixed="right"
+              prop="order_quantity"
               label="Miqdori"
               width="150"
               header-align="center"
@@ -344,7 +387,7 @@ const rules = ref({
               placeholder="..."
             >
               <el-option
-                v-for="item in detail.products"
+                v-for="item in detail.sale_products"
                 :key="item._id"
                 :label="item.color"
                 :value="item.color"

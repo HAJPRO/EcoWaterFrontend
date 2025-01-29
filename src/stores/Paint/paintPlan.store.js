@@ -14,9 +14,11 @@ export const PaintPlanStore = defineStore("paintPlanStore", {
         color_quantity: "",
         material_name: "",
         material_type: "",
-        delivery_time_provide: "",
-        weaving_quantity: "",
+        order_quantity: "",
+        width: "",
+        grammage: "",
         delivery_time_weaving: "",
+        delivery_time_provide: "",
       },
       report_paint: [],
       card_id: "",
@@ -61,7 +63,6 @@ export const PaintPlanStore = defineStore("paintPlanStore", {
         this.is_report = true;
         this.is_detail_modal = true;
         this.detail = data.data.data;
-
         this.card_id = payload;
       } else {
         const data = await PaintService.GetOneFromSale({ id: payload });
@@ -104,6 +105,7 @@ export const PaintPlanStore = defineStore("paintPlanStore", {
         items: this.detail,
         provide: payload,
       });
+
       this.GetAll({ is_active: this.is_active });
       this.is_detail_modal = false;
       ToastifyService.ToastSuccess({ msg: data.data.msg });

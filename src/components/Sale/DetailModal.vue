@@ -22,20 +22,20 @@ onMounted(async () => {
     <span>
       <div class="mt-3 grid grid-cols-12 gap-2">
         <div
-          v-if="detail.card.order_number"
+          v-if="detail.order_number"
           class="col-span-3 h-[200px] shadow-md rounded-md bg-white text-center text-slate-500 font-semibold text-[13px] p-4 cursor-pointer border-t-[1px] border-b-[1px] border-[#36d887]"
         >
           <div class="bg-[#e8eded] p-2 rounded">
-            Buyurtma nomeri: {{ detail.card.order_number }}
+            Buyurtma nomeri: {{ detail.order_number }}
           </div>
           <div class="mt-2 bg-[#e8eded] p-2 rounded">
-            Buyurtmachi: {{ detail.card.customer_name }}
+            Buyurtmachi: {{ detail.customer_name }}
           </div>
           <div class="mt-2 bg-[#e8eded] p-2 rounded">
-            Artikul: {{ detail.card.artikul }}
+            Artikul: {{ detail.artikul }}
           </div>
           <div class="mt-2 bg-[#e8eded] p-2 rounded">
-            Muddati: {{ String(detail.card.delivery_time).substring(0, 10) }}
+            Muddati: {{ String(detail.delivery_time).substring(0, 10) }}
           </div>
         </div>
         <div class="col-span-9 shadow-md bg-white rounded min-h-[15px]">
@@ -47,7 +47,7 @@ onMounted(async () => {
             class="w-full"
             header-align="center"
             empty-text="Mahsulot tanlanmagan... "
-            :data="detail.products"
+            :data="detail.sale_products"
             border
             height="150"
           >
@@ -61,7 +61,7 @@ onMounted(async () => {
               width="60"
             />
             <el-table-column
-              prop="product_name"
+              prop="material_name"
               label="Nomi"
               width="150"
               header-align="center"
@@ -69,7 +69,7 @@ onMounted(async () => {
             />
 
             <el-table-column
-              prop="product_type"
+              prop="material_type"
               label="Turi"
               width="150"
               header-align="center"
@@ -99,14 +99,13 @@ onMounted(async () => {
             />
             <el-table-column
               fixed="right"
-              prop="quantity"
               label="Miqdori"
               width="150"
               header-align="center"
               align="center"
               ><template #default="scope"
                 ><div class="text-red-500">
-                  {{ scope.row.quantity }} {{ scope.row.unit }}
+                  {{ scope.row.order_quantity }} {{ scope.row.unit }}
                 </div></template
               ></el-table-column
             >
@@ -139,7 +138,7 @@ onMounted(async () => {
           </el-table>
           <div class="flex justify-end col-span-10 p-1 bg-white">
             <el-button
-              v-if="detail.card.status === `Tasdiqlanmagan`"
+              v-if="detail.status === `Tasdiqlanmagan`"
               size="smal"
               @click="confirm()"
               style="
@@ -153,7 +152,7 @@ onMounted(async () => {
               <i class="fa-solid fa-check mr-2 fa-md"></i> Tasdiqlash
             </el-button>
             <el-button
-              v-if="detail.card.status === `Tasdiqlanmagan`"
+              v-if="detail.status === `Tasdiqlanmagan`"
               size="smal"
               @click="Cancel()"
               style="

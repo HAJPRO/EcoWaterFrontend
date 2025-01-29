@@ -19,13 +19,13 @@ const Plus = (data) => {
   store_helpers.PlusModal(data);
 };
 const ChangeMaterialName = (value) => {
-  model.pro_name = value;
+  model.material_name = value;
 };
 const ChangeMaterialType = (value) => {
-  model.pro_type = value;
+  model.material_type = value;
 };
 const ChangeColor = (value) => {
-  model.pro_color = value;
+  model.color = value;
 };
 const ChangeUnit = (value) => {
   model.unit = value;
@@ -52,13 +52,13 @@ const PlusOrder = async () => {
   try {
     order.value.products.push({
       id: uuidv4(),
-      product_name: model.value.product_name,
-      product_type: model.value.product_type,
+      material_name: model.value.material_name,
+      material_type: model.value.material_type,
       color: model.value.color,
       width: model.value.width,
       grammage: model.value.grammage,
       unit: model.value.unit,
-      quantity: model.value.quantity,
+      order_quantity: model.value.quantity,
     });
 
     order.value.customer_name = model.value.customer_name;
@@ -180,10 +180,10 @@ const rules = ref({
           </el-form-item>
         </div>
         <div class="mb-1 col-span-2">
-          <el-form-item label="Mato nomi" prop="product_name" :rules="rules">
+          <el-form-item label="Mato nomi" prop="material_name" :rules="rules">
             <el-input
               required
-              v-model="model.product_name"
+              v-model="model.material_name"
               clearable
               class="w-[100%]"
               size="smal"
@@ -205,7 +205,7 @@ const rules = ref({
               </template>
               <template #append>
                 <el-select
-                  v-model="model.product_name"
+                  v-model="model.material_name"
                   @click="Type({ type: `material_name` })"
                   @change="ChangeMaterialName($event)"
                   size="smal"
@@ -223,10 +223,10 @@ const rules = ref({
           </el-form-item>
         </div>
         <div class="mb-1 col-span-2">
-          <el-form-item label="Mato turi" prop="product_type" :rules="rules">
+          <el-form-item label="Mato turi" prop="material_type" :rules="rules">
             <el-input
               required
-              v-model="model.product_type"
+              v-model="model.material_type"
               clearable
               class="w-[100%]"
               size="smal"
@@ -248,7 +248,7 @@ const rules = ref({
               </template>
               <template #append>
                 <el-select
-                  v-model="model.product_type"
+                  v-model="model.material_type"
                   @click="Type({ type: `material_type` })"
                   @change="ChangeMaterialType($event)"
                   size="smal"
@@ -470,7 +470,7 @@ const rules = ref({
               width="60"
             />
             <el-table-column
-              prop="product_name"
+              prop="material_name"
               label="Nomi"
               width="150"
               header-align="center"
@@ -478,7 +478,7 @@ const rules = ref({
             />
 
             <el-table-column
-              prop="product_type"
+              prop="material_type"
               label="Turi"
               width="150"
               header-align="center"
@@ -508,14 +508,14 @@ const rules = ref({
             />
             <el-table-column
               fixed="right"
-              prop="quantity"
+              prop="order_quantity"
               label="Miqdori"
               width="150"
               header-align="center"
               align="center"
               ><template #default="scope"
                 ><div class="text-red-500">
-                  {{ scope.row.quantity }} {{ scope.row.unit }}
+                  {{ scope.row.order_quantity }} {{ scope.row.unit }}
                 </div></template
               ></el-table-column
             >
