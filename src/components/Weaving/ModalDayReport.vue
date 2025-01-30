@@ -1,20 +1,21 @@
 <script setup>
 import { ref } from "vue";
 import { v4 as uuidv4 } from "uuid";
-import { PaintPlanStore } from "../../stores/Paint/paintPlan.store";
-const store_paint = PaintPlanStore();
+import { WeavingPlanStore } from "../../stores/Weaving/weaving_plan.store";
+const store_weaving = WeavingPlanStore();
 import { storeToRefs } from "pinia";
-const { is_report_modal, report, report_paint, detail, DonePaint } =
-  storeToRefs(store_paint);
+const { is_report_modal, report, report_weaving, detail, DoneWeaving } =
+  storeToRefs(store_weaving);
 
 const model = ref({
-  input_plan_id: detail.value.card._id,
-  order_number: detail.value.card.order_number,
+  input_plan_id: detail.value._id,
+  order_number: detail.value.order_number,
   material_name: "",
   material_type: "",
   quantity: "",
   unit: "",
 });
+
 const units = ref([
   { id: 1, name: "Kg" },
   { id: 2, name: "Metr" },
@@ -33,7 +34,9 @@ const formRef = ref();
 const CreateDayReport = async (formRef) => {
   await formRef.validate((valid) => {
     if (valid === true && model.value.quantity > 0) {
-      store_paint.CreateDayReport(model.value);
+      console.log(model.value);
+
+      store_weaving.CreateDayReport(model.value);
       model.value = {
         quantity: "",
         unit: "",
@@ -50,14 +53,14 @@ const CreateDayReport = async (formRef) => {
   <el-dialog v-model="is_report_modal" width="1000">
     <span>
       <div class="flex justify-between text-[12px] font-semibold">
-        <div>Buyurtmachi: {{ detail.card.customer_name }}</div>
-        <div>Artikul: {{ detail.card.artikul }}</div>
-        <div>Buyurtma nomeri: {{ detail.card.order_number }}</div>
+        <div>Buyurtmachi: {{ detail.customer_name }}</div>
+        <div>Artikul: {{ detail.artikul }}</div>
+        <div>Buyurtma nomeri: {{ detail.order_number }}</div>
       </div>
       <div
         class="bg-slate-100 font-semibold p-1 mb-1 text-[15px] align-center text-center shadow rounded border-t-[1px] border-[#36d887]"
       >
-        To'quv hisoboti
+        Yigiruv hisoboti
       </div>
       <div class="shadow-md rounded">
         <el-table
@@ -85,32 +88,49 @@ const CreateDayReport = async (formRef) => {
           />
           <el-table-column
             header-align="center"
-            prop="name"
-            label="Mato nomi"
-            width="180"
-          />
-          <el-table-column
-            header-align="center"
-            prop="quantity"
-            label="Miqdori"
-            width="180"
-          />
-          <el-table-column
-            header-align="center"
-            prop="unit"
-            label="Birligi"
+            prop="yarn_name"
+            label="Ip nomi"
             width="150"
           />
           <el-table-column
             header-align="center"
+            prop="yarn_type"
+            label="Ip turi"
+            width="150"
+          />
+          <el-table-column
+            header-align="center"
+            prop="yarn_quantity"
+            label="Miqdori"
+            width="150"
+          />
+
+          <el-table-column
+            header-align="center"
             prop="date"
             label="Sana"
-            width="250"
+            width="150"
           />
           <el-table-column
             fixed="right"
+            label="Holati"
+            width="200"
+            header-align="center"
+            align="center"
+          >
+            <template #default="scope">
+              <router-link
+                to=""
+                class="inline-flex items-center text-red bg-[#e4e9e9] hover:bg-[#e1e1e3] font-medium rounded-md text-[12px] w-ful p-[5px] sm:w-auto text-center"
+              >
+                {{ scope.row.status }}
+              </router-link>
+            </template>
+          </el-table-column>
+          <el-table-column
+            fixed="right"
             label=""
-            width="127"
+            width="120"
             header-align="center"
             align="center"
           >
@@ -130,7 +150,7 @@ const CreateDayReport = async (formRef) => {
       >
         <div>
           Buyurtma:
-          {{ detail.card ? detail.card.weaving_qauntity : 0 }} kg
+          {{ detail ? detail.spinning_quantity : 0 }} kg
         </div>
         <div>Bajarildi: {{ 0 }} kg</div>
         <div>
@@ -143,13 +163,12 @@ const CreateDayReport = async (formRef) => {
           class="bg-slate-100 font-semibold p-1 mt-1 align-center text-center shadow rounded border-t-[1px] border-[#36d887]"
         >
           {{
-            detail.card.order_quantity - DonePaint <= 0
-              ? `Bo'yoq hisoboti`
-              : ` Bo'yoq hisobot qo'shish`
+            detail.order_quantity - Done <= 0
+              ? `To'quv hisoboti`
+              : ` To'quv hisobot qo'shish`
           }}
         </div>
         <el-form
-          v-if="detail.card.order_quantity - DonePaint > 0"
           ref="formRef"
           :model="model"
           label-width="auto"
@@ -167,10 +186,10 @@ const CreateDayReport = async (formRef) => {
                 placeholder="..."
               >
                 <el-option
-                  v-for="item in detail.products"
+                  v-for="item in detail.paint_products"
                   :key="item._id"
-                  :label="item.product_name"
-                  :value="item.product_name"
+                  :label="item.material_name"
+                  :value="item.material_name"
                 />
               </el-select>
             </el-form-item>
@@ -184,10 +203,10 @@ const CreateDayReport = async (formRef) => {
                 placeholder="..."
               >
                 <el-option
-                  v-for="item in detail.products"
+                  v-for="item in detail.paint_products"
                   :key="item._id"
-                  :label="item.product_type"
-                  :value="item.product_type"
+                  :label="item.material_type"
+                  :value="item.material_type"
                 />
               </el-select>
             </el-form-item>
@@ -248,7 +267,7 @@ const CreateDayReport = async (formRef) => {
         </el-form>
         <div class="shadow-md rounded">
           <el-table
-            :data="report_paint"
+            :data="report_weaving"
             :header-cell-style="{
               background: '#e8eded',
               border: '0.2px solid #e1e1e3',
@@ -286,7 +305,6 @@ const CreateDayReport = async (formRef) => {
               align="center"
             />
             <el-table-column
-              fixed="right"
               header-align="center"
               prop="quantity"
               label="Miqdori"
@@ -301,7 +319,7 @@ const CreateDayReport = async (formRef) => {
 
             <el-table-column
               header-align="center"
-              label="Vaqt"
+              label="Sana"
               width="150"
               align="center"
               ><template #default="scope">{{
@@ -346,12 +364,12 @@ const CreateDayReport = async (formRef) => {
           >
             <div>
               Buyurtma:
-              {{ detail.card ? detail.card.order_quantity : 0 }} kg
+              {{ detail ? detail.weaving_quantity : 0 }} kg
             </div>
-            <div>Bajarildi: {{ DonePaint ? DonePaint : 0 }} kg</div>
+            <div>Bajarildi: {{ DoneWeaving ? DoneWeaving : 0 }} kg</div>
             <div>
               Qoldi:
-              {{ DonePaint ? detail.card.order_quantity - DonePaint : 0 }} kg
+              {{ DoneWeaving ? detail.weaving_quantity - DoneWeaving : 0 }} kg
             </div>
           </div>
         </div>
@@ -368,7 +386,7 @@ const CreateDayReport = async (formRef) => {
     <template #footer>
       <div>
         <el-button
-          v-if="detail.card.order_quantity - DonePaint <= 0"
+          v-if="detail.weaving_quantity - DoneWeaving <= 0"
           @click="CreateDayReport(formRef)"
           style="
             background: linear-gradient(
@@ -387,7 +405,7 @@ const CreateDayReport = async (formRef) => {
             font-weight: bold;
           "
         >
-          Bo'yoq partyani yakunladi
+          To'quv partyani yakunladi
         </el-button>
       </div>
     </template>

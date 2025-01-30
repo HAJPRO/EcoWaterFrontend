@@ -36,15 +36,15 @@ onMounted(async () => {
           Yigiruv talabnoma jadvali
         </div>
         <div
-          v-if="detail.card.order_number"
+          v-if="detail.order_number"
           class="flex justify-between text-[11px] font-semibold"
         >
-          <div class="">Buyurtma nomeri: {{ detail.card.order_number }}</div>
-          <div class="">Buyurtmachi: {{ detail.card.customer_name }}</div>
-          <div class="">Artikul: {{ detail.card.artikul }}</div>
+          <div class="">Buyurtma nomeri: {{ detail.order_number }}</div>
+          <div class="">Buyurtmachi: {{ detail.customer_name }}</div>
+          <div class="">Artikul: {{ detail.artikul }}</div>
           <div class="">
             Muddati:
-            {{ String(detail.card.delivery_time_spinning).substring(0, 10) }}
+            {{ String(detail.delivery_time_spinning).substring(0, 10) }}
           </div>
         </div>
         <el-table
@@ -58,7 +58,7 @@ onMounted(async () => {
           class="w-full"
           header-align="center"
           empty-text="Mahsulot tanlanmagan... "
-          :data="detail.card.weaving_products"
+          :data="detail.spinning_products"
           border="true"
           height="150"
         >
@@ -72,15 +72,15 @@ onMounted(async () => {
             width="60"
           />
           <el-table-column
-            prop="material_name"
-            label="Mato nomi"
+            prop="yarn_name"
+            label="Ip nomi"
             width="300"
             header-align="center"
             align="center"
           />
           <el-table-column
-            prop="material_type"
-            label="Mato turi"
+            prop="yarn_type"
+            label="Ip turi"
             width="250"
             header-align="center"
             align="center"
@@ -93,19 +93,7 @@ onMounted(async () => {
             align="center"
             ><template #default="scope"
               ><div class="text-red-500">
-                {{ String(scope.row.weaving_quantity).substring(0, 10) }}
-              </div></template
-            ></el-table-column
-          >
-
-          <el-table-column
-            label="Muddati"
-            width="200"
-            header-align="center"
-            align="center"
-            ><template #default="scope"
-              ><div class="">
-                {{ String(scope.row.delivery_time_weaving).substring(0, 10) }}
+                {{ scope.row.yarn_quantity }}
               </div></template
             ></el-table-column
           >
@@ -137,15 +125,15 @@ onMounted(async () => {
           To'quv talabnoma jadvali
         </div>
         <div
-          v-if="detail.card.order_number"
+          v-if="detail.order_number"
           class="flex justify-between text-[11px] font-semibold"
         >
-          <div class="">Buyurtma nomeri: {{ detail.card.order_number }}</div>
-          <div class="">Buyurtmachi: {{ detail.card.customer_name }}</div>
-          <div class="">Artikul: {{ detail.card.artikul }}</div>
+          <div class="">Buyurtma nomeri: {{ detail.order_number }}</div>
+          <div class="">Buyurtmachi: {{ detail.customer_name }}</div>
+          <div class="">Artikul: {{ detail.artikul }}</div>
           <div class="">
             Muddati:
-            {{ String(detail.card.delivery_time_sale).substring(0, 10) }}
+            {{ String(detail.delivery_time_paint).substring(0, 10) }}
           </div>
         </div>
         <el-table
@@ -159,7 +147,7 @@ onMounted(async () => {
           class="w-full"
           header-align="center"
           empty-text="Mahsulot tanlanmagan... "
-          :data="detail.card.paint_products"
+          :data="detail.paint_products"
           border="true"
           height="150"
         >
@@ -194,7 +182,7 @@ onMounted(async () => {
             width="150"
             header-align="center"
             align="center"
-          />
+          /> -->
           <el-table-column
             prop="width"
             label="Eni"
@@ -208,7 +196,7 @@ onMounted(async () => {
             width="150"
             header-align="center"
             align="center"
-          /> -->
+          />
           <el-table-column
             fixed="right"
             prop="weaving_quantity"
@@ -218,11 +206,11 @@ onMounted(async () => {
             align="center"
             ><template #default="scope"
               ><div class="text-red-500">
-                {{ scope.row.weaving_quantity }}
+                {{ scope.row.order_quantity }}
               </div></template
             ></el-table-column
           >
-          <el-table-column
+          <!-- <el-table-column
             label="Muddati"
             width="200"
             header-align="center"
@@ -232,7 +220,7 @@ onMounted(async () => {
                 {{ String(scope.row.delivery_time_weaving).substring(0, 10) }}
               </div></template
             ></el-table-column
-          >
+          > -->
           <!-- <el-table-column
             prop="unit"
             label="Birligi"

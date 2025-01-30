@@ -27,4 +27,12 @@ export const WeavingService = {
     let url = "weaving/accept_and_create";
     return api.post(url, data);
   },
+  CreateDayReport(data) {
+    let url = "weaving/create_day_report";
+    return api.post(url, data);
+  },
+  GetDayReport(data) {
+    let url = "weaving/get_day_report";
+    return api.post(url, data);
+  },
 };

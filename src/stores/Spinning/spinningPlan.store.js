@@ -7,19 +7,26 @@ import { defineStore } from "pinia";
 export const SpinningPlanStore = defineStore("SpinningPlan", {
   state: () => {
     return {
-      process_order_id: "",
-      order_id: "",
-      sale_order_id: "",
+      confirm_model: {
+        begunok_name: "",
+        begunok_type: "",
+        begunok_quantity: "",
+        latun_name: "",
+        latun_type: "",
+        latun_quantity: "",
+        delivery_time_provide: "",
+      },
       all_length: {},
       card_id: "",
-      is_modal: false,
       is_active: "",
       items: [],
-      item: [],
       model: "",
       is_provide: false,
       is_report_modal: false,
-      order_report: [],
+      is_detail_modal: false,
+      is_report: false,
+      is_report: false,
+      detail: {},
       DoneSpinning: "",
     };
   },
@@ -40,83 +47,71 @@ export const SpinningPlanStore = defineStore("SpinningPlan", {
         const data = await SpinningService.getAll(status);
         this.items = data.data.items;
         this.all_length = data.data.all_length;
-        console.log(data.data);
       } catch (err) {
         console.log(err);
       }
     },
-    async openModalById(payload) {
-      this.card_id = payload.id;
-      const data = await SpinningService.getOne(payload.id);
-      this.is_modal = true;
-      this.item = data.data;
-      this.sale_order_id = data.data[0].in_process_detail._id;
-    },
-
-    async cancelSendReason(payload) {
-      try {
-        const loader = loading.show();
-        const data = await SpinningService.cancelReason({
-          reason: payload.reason,
-          card_id: payload.id,
-        });
-        loader.hide();
-        const Refresh = () => {
-          window.location.href = "/explore/department/spinning/workin/plan";
-        };
-        ToastifyService.ToastSuccess({ msg: data.data.msg });
-        setTimeout(Refresh, 1500);
-      } catch (error) {
-        ToastifyService.ToastError({
-          msg: error.message,
-        });
+    async DetailModal(payload) {
+      if (payload.report) {
+        const data = await SpinningService.GetOneFromWeaving(payload);
+        this.is_report = true;
+        this.is_detail_modal = true;
+        this.detail = data.data.data;
+        this.card_id = payload;
+      } else {
+        const data = await SpinningService.GetOneFromWeaving({ id: payload });
+        this.is_detail_modal = true;
+        this.is_report = false;
+        this.detail = data.data;
+        this.card_id = payload;
+        console.log(this.detail);
       }
     },
-    isConfirmModal(payload) {
-      this.is_provide = payload.is_modal;
+    async ProvideModal() {
+      this.is_provide = true;
     },
-    async SaveToProvide(payload) {
-      try {
-        const loader = loading.show();
-        const data = await SpinningService.create({
-          items: payload.data,
-          card_id: payload.id,
-          order_id: this.sale_order_id,
-        });
-        loader.hide();
-        const TimeOut = () => {
-          window.location.href = "/explore/department/spinning/working/plan";
-        };
-        ToastifyService.ToastSuccess({ msg: data.data.msg });
-        setTimeout(TimeOut, 1000);
-      } catch (err) {
-        console.log(err);
-      }
-    },
-    async OpenReportModalById(payload) {
-      const data = await SpinningService.getOneFromInProcess({
-        id: payload.id,
-      });
-      this.process_order_id = payload.id;
-      this.order_report = data.data;
+    async ReportModal() {
       this.is_report_modal = true;
-      this.order_id = data.data.sale_order_id;
+      this.GetDayReport(this.detail.order_number);
+    },
+    async CreateDayReport(data) {
+      const loader = loading.show();
+      const report = await SpinningService.CreateDayReport(data);
+      this.GetDayReport(data.order_number);
+      ToastifyService.ToastSuccess({ msg: report.data.msg });
+      loader.hide();
+    },
+    async GetDayReport(payload) {
+      const data = await SpinningService.GetDayReport({
+        order_number: payload,
+      });
+      this.report_paint = data.data.res;
 
-      if (data.data.report.length > 0) {
+      if (this.report_paint.length > 0) {
         const initialValuePaint = 0;
-        this.DoneSpinning = data.data.report.reduce(
+        this.DonePaint = this.report_paint.reduce(
           (a, b) => a + Number(b.quantity),
           initialValuePaint
         );
       }
     },
-
-    async addDayReportInProcess(items) {
-      const data = await SpinningService.addDayReportInProcess({
-        items,
-        id: this.order_id,
+    async AcceptAndCreate(payload) {
+      const loader = loading.show();
+      const data = await SpinningService.AcceptAndCreate({
+        id: this.card_id,
+        items: this.detail,
+        provide: payload,
       });
-      await this.OpenReportModalById({ id: this.process_order_id });
+
+      this.GetAll({ is_active: this.is_active });
+      this.is_detail_modal = false;
+      ToastifyService.ToastSuccess({ msg: data.data.msg });
+      loader.hide();
+    },
+    async GetOneOrderReport(payload) {
+      const data = await SpinningService.GetOneOrderReport(payload);
+      this.report.card = data.data[0];
+      this.is_report_modal = true;
     },
   },
 });

@@ -2,18 +2,19 @@
 import { onMounted, ref } from "vue";
 import { ToastifyService } from "../../utils/Toastify";
 import { loading } from "./../../utils/Loader";
-import { WeavingPlanStore } from "../../stores/Weaving/weaving_plan.store";
-const weaving_store = WeavingPlanStore();
+import { SpinningPlanStore } from "../../stores/Spinning/spinningPlan.store";
+const spinning_store = SpinningPlanStore();
 import { storeToRefs } from "pinia";
-const { detail, is_detail_modal, is_report } = storeToRefs(weaving_store);
-// const AcceptAndCreate = () => {
-//   store_paint.AcceptAndCreate();
-// };
+const { detail, is_detail_modal, is_report } = storeToRefs(spinning_store);
+const AcceptAndCreate = () => {
+  spinning_store.AcceptAndCreate();
+};
 const ProvideModal = () => {
-  weaving_store.ProvideModal();
+  spinning_store.ProvideModal();
 };
 const ReportModal = () => {
-  weaving_store.ReportModal();
+  spinning_store.ReportModal();
+  s;
 };
 onMounted(async () => {
   try {
@@ -28,21 +29,21 @@ onMounted(async () => {
     <span>
       <div class="mt-3 grid grid-cols-12 gap-2">
         <div
-          v-if="detail.card.order_number"
+          v-if="detail.order_number"
           class="col-span-3 h-[200px] shadow-md rounded-md bg-white text-center text-slate-500 font-semibold text-[13px] p-4 cursor-pointer border-t-[1px] border-b-[1px] border-[#36d887]"
         >
           <div class="bg-[#e8eded] p-2 rounded">
-            Buyurtma nomeri: {{ detail.card.order_number }}
+            Buyurtma nomeri: {{ detail.order_number }}
           </div>
           <div class="mt-2 bg-[#e8eded] p-2 rounded">
-            Buyurtmachi: {{ detail.card.customer_name }}
+            Buyurtmachi: {{ detail.customer_name }}
           </div>
           <div class="mt-2 bg-[#e8eded] p-2 rounded">
-            Artikul: {{ detail.card.artikul }}
+            Artikul: {{ detail.artikul }}
           </div>
           <div class="mt-2 bg-[#e8eded] p-2 rounded">
             Muddati:
-            {{ String(detail.card.delivery_time_weaving).substring(0, 10) }}
+            {{ String(detail.delivery_time_spinning).substring(0, 10) }}
           </div>
         </div>
         <div class="col-span-9 shadow-md bg-white rounded min-h-[15px]">
@@ -57,7 +58,7 @@ onMounted(async () => {
             class="w-full"
             header-align="center"
             empty-text="Mahsulot tanlanmagan... "
-            :data="detail.products"
+            :data="detail.spinning_products"
             border="true"
             height="150"
           >
@@ -71,7 +72,7 @@ onMounted(async () => {
               width="60"
             />
             <el-table-column
-              prop="product_name"
+              prop="yarn_name"
               label="Nomi"
               width="150"
               header-align="center"
@@ -79,7 +80,7 @@ onMounted(async () => {
             />
 
             <el-table-column
-              prop="product_type"
+              prop="yarn_type"
               label="Turi"
               width="150"
               header-align="center"
@@ -87,47 +88,32 @@ onMounted(async () => {
             />
 
             <el-table-column
-              prop="color"
-              label="Rangi"
-              width="150"
-              header-align="center"
-              align="center"
-            />
-            <el-table-column
-              prop="width"
-              label="Eni"
-              width="150"
-              header-align="center"
-              align="center"
-            />
-            <el-table-column
-              prop="grammage"
-              label="Grammage"
-              width="150"
-              header-align="center"
-              align="center"
-            />
-            <el-table-column
-              fixed="right"
-              prop="quantity"
+              prop="yarn_quantity"
               label="Miqdori"
               width="150"
               header-align="center"
               align="center"
               ><template #default="scope"
                 ><div class="text-red-500">
-                  {{ scope.row.quantity }} {{ scope.row.unit }}
+                  {{ scope.row.yarn_quantity }} kg
                 </div></template
               ></el-table-column
             >
             <el-table-column
-              prop="unit"
-              label="Birligi"
-              width="100"
+              fixed="right"
+              label="Holati"
+              width="150"
               header-align="center"
               align="center"
-            />
-
+              ><template #default="scope">
+                <router-link
+                  to=""
+                  class="inline-flex items-center text-red bg-[#e4e9e9] hover:bg-[#e1e1e3] font-medium rounded-md text-[12px] w-ful p-[5px] sm:w-auto text-center"
+                >
+                  {{ scope.row.status }}
+                </router-link></template
+              ></el-table-column
+            >
             <el-table-column
               fixed="right"
               prop="id"
@@ -163,7 +149,7 @@ onMounted(async () => {
               <i class="fa-solid fa-plus mr-2 fa-md"></i> Hisobot
             </el-button>
             <el-button
-              v-show="detail.card.status === `Jarayonda`"
+              v-show="detail.status === `Jarayonda`"
               size="smal"
               @click="ProvideModal()"
               style="
@@ -177,7 +163,7 @@ onMounted(async () => {
               <i class="fa-solid fa-check mr-2 fa-md"></i> Qabul qilish
             </el-button>
             <el-button
-              v-show="detail.card.status === `Jarayonda`"
+              v-show="detail.status === `Jarayonda`"
               size="smal"
               @click="Cancel()"
               style="

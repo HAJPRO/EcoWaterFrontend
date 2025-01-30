@@ -1,14 +1,14 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import { WeavingPlanStore } from "../../stores/Weaving/weaving_plan.store";
-const store_weaving = WeavingPlanStore();
+import { SpinningPlanStore } from "../../stores/Spinning/spinningPlan.store";
+const store_spinning = SpinningPlanStore();
 import { storeToRefs } from "pinia";
 const openModalById = async (id) => {
-  await store_weaving.openModalById({ id });
+  await store_spinning.openModalById({ id });
 };
-const { items, is_active } = storeToRefs(store_weaving);
+const { items, is_active } = storeToRefs(store_spinning);
 const DetailModal = async (id) => {
-  store_weaving.DetailModal({ id });
+  store_spinning.DetailModal(id);
 };
 </script>
 <template>
@@ -61,24 +61,23 @@ const DetailModal = async (id) => {
       />
 
       <el-table-column
-        prop="order_quantity"
-        label="Buyurtma miqdori"
+        prop="spinning_quantity"
+        label="Miqdori"
         width="250"
         header-align="center"
         align="center"
         ><template #default="scope">
-          <div class="text-red-500">{{ scope.row.order_quantity }}</div>
+          <div class="text-red-500">{{ scope.row.spinning_quantity }} kg</div>
         </template>
       </el-table-column>
       <el-table-column
-        prop="delivery_time"
         label="Muddati"
         width="250"
         header-align="center"
         align="center"
         ><template #default="scope"
           ><div>
-            {{ String(scope.row.delivery_time_weaving).substring(0, 10) }}
+            {{ String(scope.row.delivery_time_spinning).substring(0, 10) }}
           </div></template
         ></el-table-column
       >

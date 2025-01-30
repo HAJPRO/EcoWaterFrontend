@@ -45,7 +45,7 @@ onMounted(async () => {
             <div class="">Artikul: {{ detail.artikul }}</div>
             <div class="">
               Muddati:
-              {{ String(detail.delivery_time).substring(0, 10) }}
+              {{ String(detail.delivery_time_sale).substring(0, 10) }}
             </div>
           </div>
           <el-table
@@ -59,7 +59,7 @@ onMounted(async () => {
             class="w-full"
             header-align="center"
             empty-text="Mahsulot tanlanmagan... "
-            :data="detail.sale_products"
+            :data="detail.weaving_products"
             border="true"
             height="150"
           >
@@ -75,38 +75,40 @@ onMounted(async () => {
             <el-table-column
               prop="material_name"
               label="Mato nomi"
-              width="300"
+              width="200"
               header-align="center"
               align="center"
             />
             <el-table-column
               prop="material_type"
               label="Mato turi"
-              width="250"
+              width="200"
+              header-align="center"
+              align="center"
+            />
+            <el-table-column
+              prop="width"
+              label="Eni"
+              width="200"
+              header-align="center"
+              align="center"
+            />
+            <el-table-column
+              prop="grammage"
+              label="Grammage"
+              width="200"
               header-align="center"
               align="center"
             />
             <el-table-column
               fixed="right"
               label="Miqdori"
-              width="250"
-              header-align="center"
-              align="center"
-              ><template #default="scope"
-                ><div class="text-red-500">
-                  {{ String(scope.row.sale_quantity).substring(0, 10) }}
-                </div></template
-              ></el-table-column
-            >
-
-            <el-table-column
-              label="Muddati"
               width="200"
               header-align="center"
               align="center"
               ><template #default="scope"
-                ><div class="">
-                  {{ String(scope.row.delivery_time_weaving).substring(0, 10) }}
+                ><div class="text-red-500">
+                  {{ scope.row.order_quantity }} kg
                 </div></template
               ></el-table-column
             >

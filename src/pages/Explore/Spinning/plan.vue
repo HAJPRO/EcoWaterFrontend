@@ -5,6 +5,7 @@ import MainTable from "../../../components/Spinning/MainTable.vue";
 import ModalForProvide from "../../../components/Spinning/ModalForProvide.vue";
 import InProcessDetailTable from "../../../components/Spinning/InProcessDetailTable.vue";
 import ProvideTable from "../../../components/Spinning/ProvideTable.vue";
+import DetailModal from "../../../components/Spinning/DetailModal.vue";
 import { SpinningPlanStore } from "../../../stores/Spinning/spinningPlan.store";
 const store_spinning = SpinningPlanStore();
 import { storeToRefs } from "pinia";
@@ -24,6 +25,7 @@ const { is_active, is_report_modal } = storeToRefs(store_spinning);
     <ProvideTable v-if="is_active === 3" />
     <ModalDayReport v-if="is_report_modal === true" />
     <ModalForProvide />
+    <DetailModal />
   </div>
 </template>
 <style></style>

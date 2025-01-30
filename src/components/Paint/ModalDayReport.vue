@@ -8,8 +8,8 @@ const { is_report_modal, report, report_paint, detail, DonePaint } =
   storeToRefs(store_paint);
 
 const model = ref({
-  input_plan_id: detail.value.card._id,
-  order_number: detail.value.card.order_number,
+  input_plan_id: detail.value._id,
+  order_number: detail.value.order_number,
   material_name: "",
   material_type: "",
   quantity: "",
@@ -32,7 +32,11 @@ const rules = ref([
 const formRef = ref();
 const CreateDayReport = async (formRef) => {
   await formRef.validate((valid) => {
-    if (valid === true && model.value.quantity > 0) {
+    if (
+      valid === true &&
+      model.value.quantity > 0 &&
+      model.value.quantity <= detail.sale_quantity - DonePaint
+    ) {
       store_paint.CreateDayReport(model.value);
       model.value = {
         quantity: "",
@@ -50,9 +54,9 @@ const CreateDayReport = async (formRef) => {
   <el-dialog v-model="is_report_modal" width="1000">
     <span>
       <div class="flex justify-between text-[12px] font-semibold">
-        <div>Buyurtmachi: {{ detail.card.customer_name }}</div>
-        <div>Artikul: {{ detail.card.artikul }}</div>
-        <div>Buyurtma nomeri: {{ detail.card.order_number }}</div>
+        <div>Buyurtmachi: {{ detail.customer_name }}</div>
+        <div>Artikul: {{ detail.artikul }}</div>
+        <div>Buyurtma nomeri: {{ detail.order_number }}</div>
       </div>
       <div
         class="bg-slate-100 font-semibold p-1 mb-1 text-[15px] align-center text-center shadow rounded border-t-[1px] border-[#36d887]"
@@ -136,7 +140,7 @@ const CreateDayReport = async (formRef) => {
       >
         <div>
           Buyurtma:
-          {{ detail.card ? detail.card.weaving_quantity : 0 }} kg
+          {{ detail.card ? detail.weaving_quantity : 0 }} kg
         </div>
         <div>Bajarildi: {{ 0 }} kg</div>
         <div>
@@ -149,12 +153,13 @@ const CreateDayReport = async (formRef) => {
           class="bg-slate-100 font-semibold p-1 mt-1 align-center text-center shadow rounded border-t-[1px] border-[#36d887]"
         >
           {{
-            detail.card.order_quantity - DonePaint <= 0
+            detail.sale_quantity - DonePaint <= 0
               ? `Bo'yoq hisoboti`
               : ` Bo'yoq hisobot qo'shish`
           }}
         </div>
         <el-form
+          v-if="detail.sale_quantity - DonePaint > 0"
           ref="formRef"
           :model="model"
           label-width="auto"
@@ -172,10 +177,10 @@ const CreateDayReport = async (formRef) => {
                 placeholder="..."
               >
                 <el-option
-                  v-for="item in detail.products"
+                  v-for="item in detail.sale_products"
                   :key="item._id"
-                  :label="item.product_name"
-                  :value="item.product_name"
+                  :label="item.material_name"
+                  :value="item.material_name"
                 />
               </el-select>
             </el-form-item>
@@ -189,10 +194,10 @@ const CreateDayReport = async (formRef) => {
                 placeholder="..."
               >
                 <el-option
-                  v-for="item in detail.products"
+                  v-for="item in detail.sale_products"
                   :key="item._id"
-                  :label="item.product_type"
-                  :value="item.product_type"
+                  :label="item.material_type"
+                  :value="item.material_type"
                 />
               </el-select>
             </el-form-item>
@@ -351,12 +356,12 @@ const CreateDayReport = async (formRef) => {
           >
             <div>
               Buyurtma:
-              {{ detail.card ? detail.card.sale_quantity : 0 }} kg
+              {{ detail ? detail.sale_quantity : 0 }} kg
             </div>
             <div>Bajarildi: {{ DonePaint ? DonePaint : 0 }} kg</div>
             <div>
               Qoldi:
-              {{ DonePaint ? detail.card.sale_quantity - DonePaint : 0 }} kg
+              {{ DonePaint ? detail.sale_quantity - DonePaint : 0 }} kg
             </div>
           </div>
         </div>
@@ -373,7 +378,7 @@ const CreateDayReport = async (formRef) => {
     <template #footer>
       <div>
         <el-button
-          v-if="detail.card.order_quantity - DonePaint <= 0"
+          v-if="detail.sale_quantity - DonePaint <= 0"
           @click="CreateDayReport(formRef)"
           style="
             background: linear-gradient(

@@ -77,7 +77,7 @@ export const PaintPlanStore = defineStore("paintPlanStore", {
     },
     async ReportModal() {
       this.is_report_modal = true;
-      this.GetDayReport(this.detail.card.order_number);
+      this.GetDayReport(this.detail.order_number);
     },
     async CreateDayReport(data) {
       const loader = loading.show();
@@ -114,8 +114,8 @@ export const PaintPlanStore = defineStore("paintPlanStore", {
     async GetOneOrderReport(payload) {
       const data = await PaintService.GetOneOrderReport(payload);
       this.report.card = data.data[0];
-
       this.is_report_modal = true;
+      console.log(data.data[0]);
     },
     async GetAll(status) {
       try {

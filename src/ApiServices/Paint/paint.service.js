@@ -35,10 +35,7 @@ export const PaintService = {
     let url = "paint/get_one_order_report";
     return api.post(url, data);
   },
-  cancelReason(data) {
-    let url = "paint/cancel_reason";
-    return api.post(url, data);
-  },
+
   GetOne(data) {
     let url = "paint/get_one_from_sale";
     return api.post(url, data);

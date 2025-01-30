@@ -4,11 +4,11 @@ import { v4 as uuidv4 } from "uuid";
 import { ToastifyService } from "../../utils/Toastify";
 import AddOptionModal from "../../components/Helpers/AddOptionsModal.vue";
 import { storeToRefs } from "pinia";
-import { WeavingPlanStore } from "../../stores/Weaving/weaving_plan.store";
+import { SpinningPlanStore } from "../../stores/Spinning/spinningPlan.store";
 import { HelpersStore } from "../../stores/Helpers/helper.store.js";
-const weaving_store = WeavingPlanStore();
+const spinning_store = SpinningPlanStore();
 const { is_provide, confirm_model, card_id, item, detail } =
-  storeToRefs(weaving_store);
+  storeToRefs(spinning_store);
 const store_helpers = HelpersStore();
 const { options, is_modal } = storeToRefs(store_helpers);
 const Type = (type) => {
@@ -17,20 +17,20 @@ const Type = (type) => {
 const Plus = (data) => {
   store_helpers.PlusModal(data);
 };
-const ChangeYarnName = (value) => {
-  confirm_model.yarns_name = value;
+const ChangeBegunokName = (value) => {
+  confirm_model.begunok = value;
 };
-const ChangeYarnType = (value) => {
-  confirm_model.yarns_type = value;
+const ChangeBegunokType = (value) => {
+  confirm_model.begunok_type = value;
 };
 const ChangeLikra = (value) => {
   confirm_model.likra_type = value;
 };
-const ChangeMelaks = (value) => {
-  confirm_model.melaks_type = value;
+const ChangeLatunName = (value) => {
+  confirm_model.latun_name = value;
 };
-const ChangePolister = (value) => {
-  confirm_model.polister_type = value;
+const ChangeLatunType = (value) => {
+  confirm_model.latun_type = value;
 };
 const RefProvide = ref();
 const products = ref([]);
@@ -38,18 +38,17 @@ const AddProvide = async (RefProvide) => {
   await RefProvide.validate((valid) => {
     if (
       valid === true &&
-      confirm_model.value.likra_quantity > 0 &&
-      confirm_model.value.melaks_quantity > 0 &&
-      confirm_model.value.polister_quantity > 0
+      confirm_model.value.latun_quantity > 0 &&
+      confirm_model.value.begunok_quantity > 0
     ) {
       products.value.push({
         id: uuidv4(),
-        likra_type: confirm_model.value.likra_type,
-        likra_quantity: confirm_model.value.likra_quantity,
-        melaks_type: confirm_model.value.melaks_type,
-        melaks_quantity: confirm_model.value.melaks_quantity,
-        polister_quantity: confirm_model.value.polister_quantity,
-        polister_type: confirm_model.value.polister_type,
+        latun_type: confirm_model.value.latun_type,
+        latun_name: confirm_model.value.latun_type,
+        latun_quantity: confirm_model.value.latun_quantity,
+        begunok_type: confirm_model.value.begunok_type,
+        begunok_name: confirm_model.value.begunok_type,
+        begunok_quantity: confirm_model.value.begunok_quantity,
         delivery_time_provide: confirm_model.value.delivery_time_provide,
       });
     } else {
@@ -59,35 +58,16 @@ const AddProvide = async (RefProvide) => {
 };
 const RefSpinning = ref();
 const total_yarn = ref();
-const spinning = ref([]);
-const AddSpinning = async (RefSpinning) => {
-  await RefSpinning.validate((valid) => {
-    if (valid === true && confirm_model.value.yarn_qauntity > 0) {
-      spinning.value.push({
-        id: uuidv4(),
-        yarn_name: confirm_model.value.yarn_name,
-        yarn_type: confirm_model.value.yarn_type,
-        yarn_quantity: confirm_model.value.yarn_qauntity,
-        delivery_time_spinning: confirm_model.value.delivery_time_spinning,
-      });
-    } else {
-      return false;
-    }
-  });
-};
 const total = ref();
 const SaveToProvideAndAccept = async () => {
-  const initialValue = ref(0);
-  total.value = spinning.value.reduce(
-    (accumulator, currentValue) =>
-      accumulator + Number(currentValue.yarn_qauntity),
-    initialValue.value
-  );
-  if (products.value.length > 0 && spinning.value.length > 0) {
-    weaving_store.AcceptAndCreate({
-      products: products.value,
-      spinning: spinning.value,
-    });
+  // const initialValue = ref(0);
+  // total.value = spinning.value.reduce(
+  //   (accumulator, currentValue) =>
+  //     accumulator + Number(currentValue.yarn_qauntity),
+  //   initialValue.value
+  // );
+  if (products.value.length > 0) {
+    spinning_store.AcceptAndCreate(products.value);
     is_provide.value = false;
     confirm_model.value = {};
   } else {
@@ -119,239 +99,6 @@ const rules = ref({
   <el-dialog v-model="is_provide" width="900">
     <div class="border-b-[1px] border-[#36d887]">
       <div
-        class="font-semibold rounded text-[14px] p-1 mb-2 text-center bg-slate-100 shadow border-t-[1px] border-[#36d887] mt-2"
-      >
-        <h3>Yigiruv uchun talabnoma qo'shish</h3>
-      </div>
-
-      <el-form
-        ref="RefSpinning"
-        :model="confirm_model"
-        label-width="auto"
-        class="filter-box bg-white md:grid md:grid-cols-12 gap-1 sm:flex sm:flex-wrap rounded shadow-sm p-2 mt-2 mb-2 text-[13px]"
-        size="small"
-        label-position="top"
-      >
-        <div class="col-span-3">
-          <el-form-item label="Ip nomi" prop="yarn_name" :rules="rules">
-            <el-input
-              required
-              v-model="confirm_model.yarn_name"
-              clearable
-              class="w-[100%]"
-              size="smal"
-              type="String"
-              placeholder="..."
-            >
-              <template #prepend>
-                <div class="w-[8px] items-start text-center">
-                  <i
-                    @click="
-                      Plus({
-                        title: `Ip nomini qo'shish`,
-                        state: `yarn_name`,
-                      })
-                    "
-                    class="fa-solid fa-plus mr-2 fa-md cursor-pointer"
-                  ></i>
-                </div>
-              </template>
-              <template #append>
-                <el-select
-                  v-model="confirm_model.yarn_name"
-                  @click="Type({ type: `yarn_name` })"
-                  @change="ChangeYarnName($event)"
-                  size="smal"
-                  style="width: 40px"
-                >
-                  <el-option
-                    v-for="item in options"
-                    :key="item._id"
-                    :label="item.name"
-                    :value="item.name"
-                  />
-                </el-select>
-              </template>
-            </el-input>
-          </el-form-item>
-        </div>
-        <div class="col-span-3">
-          <el-form-item label="Ip Turi" prop="yarn_type" :rules="rules">
-            <el-input
-              required
-              v-model="confirm_model.yarn_type"
-              clearable
-              class="w-[100%]"
-              size="smal"
-              type="String"
-              placeholder="..."
-            >
-              <template #prepend>
-                <div class="w-[8px] items-start text-center">
-                  <i
-                    @click="
-                      Plus({
-                        title: `Ip turi qo'shish`,
-                        state: `yarn_type`,
-                      })
-                    "
-                    class="fa-solid fa-plus mr-2 fa-md cursor-pointer"
-                  ></i>
-                </div>
-              </template>
-              <template #append>
-                <el-select
-                  v-model="confirm_model.yarn_type"
-                  @click="Type({ type: `yarn_type` })"
-                  @change="ChangeYarnType($event)"
-                  size="smal"
-                  style="width: 40px"
-                >
-                  <el-option
-                    v-for="item in options"
-                    :key="item._id"
-                    :label="item.name"
-                    :value="item.name"
-                  />
-                </el-select>
-              </template>
-            </el-input>
-          </el-form-item>
-        </div>
-        <div class="col-span-3">
-          <el-form-item
-            label="Miqdori (kg)"
-            prop="yarn_qauntity"
-            :rules="[
-              { required: true, message: `Maydon to'ldirilishi zarur !` },
-              { type: 'number', message: `Qiymat musbat bo'lishi zarur` },
-            ]"
-          >
-            <el-input
-              v-model.number="confirm_model.yarn_qauntity"
-              clearable
-              class="w-[100%]"
-              size="smal"
-              type="String"
-              placeholder="..."
-            />
-          </el-form-item>
-        </div>
-        <div class="col-span-3">
-          <el-form-item
-            label="Muddati"
-            prop="delivery_time_spinning"
-            :rules="rules"
-          >
-            <el-date-picker
-              style="width: 100%"
-              v-model="confirm_model.delivery_time_spinning"
-              clearable
-              type="date"
-              placeholder="..."
-              size="smal"
-            />
-          </el-form-item>
-        </div>
-      </el-form>
-      <div class="flex justify-end">
-        <el-button
-          class="mr-2"
-          size="smal"
-          @click="AddSpinning(RefSpinning)"
-          style="
-            background-color: #36d887;
-            color: white;
-            border: none;
-            width: 210px;
-            margin-bottom: 4px;
-            font-size: 12px;
-          "
-          ><i class="mr-2 fa-solid fa-plus fa-sm"></i>Qo'shish
-        </el-button>
-      </div>
-      <div class="mt-3 grid grid-cols-12 gap-2">
-        <div class="col-span-12 shadow-md bg-white rounded min-h-[15px]">
-          <el-table
-            :data="spinning"
-            :header-cell-style="{
-              background: '#e8eded',
-              border: '0.2px solid #e1e1e3',
-            }"
-            load
-            class="w-full"
-            header-align="center"
-            style="width: 100%; font-size: 12px"
-            empty-text="Mahsulot tanlanmagan... "
-            border="true"
-            height="150"
-            size="small"
-          >
-            <el-table-column
-              header-align="center"
-              align="center"
-              type="index"
-              prop="index"
-              fixed="left"
-              label="№"
-              width="60"
-            />
-            <el-table-column
-              prop="yarn_name"
-              label="Ip nomi"
-              width="200"
-              header-align="center"
-              align="center"
-            />
-            <el-table-column
-              prop="yarn_type"
-              label="Ip turi"
-              width="150"
-              header-align="center"
-              align="center"
-            />
-
-            <el-table-column
-              prop="yarn_qauntity"
-              label="Miqdori"
-              width="150"
-              header-align="center"
-              align="center"
-            />
-            <el-table-column
-              prop="delivery_time_spinning"
-              label="Muddati"
-              width="200"
-              header-align="center"
-              align="center"
-              ><template #default="scope">
-                {{ String(scope.row.delivery_time_spinning).substring(0, 15) }}
-              </template></el-table-column
-            >
-
-            <el-table-column
-              prop="id"
-              fixed="right"
-              width="110"
-              header-align="center"
-              align="center"
-              ><template #default="scope">
-                <div>
-                  <router-link
-                    to=""
-                    @click="deleteByIdSpinning(scope.row.id)"
-                    class="inline-flex items-center mt-4 ml-2 text-white hover:bg-slate-300 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
-                  >
-                    <i class="text-black fa-sharp fa-solid fa-trash fa-xs"></i>
-                  </router-link>
-                </div> </template
-            ></el-table-column>
-          </el-table>
-        </div>
-      </div>
-    </div>
-    <div class="border-b-[1px] border-[#36d887]">
-      <div
         class="font-semibold rounded text-[14px] p-1 text-center bg-slate-100 shadow border-t-[1px] border-[#36d887] mt-2"
       >
         <h3>Taminot uchun talabnoma qo'shish</h3>
@@ -366,76 +113,14 @@ const rules = ref({
           label-position="top"
         >
           <div class="col-span-3">
-            <el-form-item label="Likra turi" prop="likra_type" :rules="rules">
-              <el-input
-                required
-                v-model="confirm_model.likra_type"
-                clearable
-                class="w-[100%]"
-                size="smal"
-                type="String"
-                placeholder="..."
-              >
-                <template #prepend>
-                  <div class="w-[8px] items-start text-center">
-                    <i
-                      @click="
-                        Plus({
-                          title: `Likra turini qo'shish`,
-                          state: `likra`,
-                        })
-                      "
-                      class="fa-solid fa-plus mr-2 fa-md cursor-pointer"
-                    ></i>
-                  </div>
-                </template>
-                <template #append>
-                  <el-select
-                    v-model="confirm_model.likra_type"
-                    @click="Type({ type: `likra` })"
-                    @change="ChangeLikra($event)"
-                    size="smal"
-                    style="width: 40px"
-                  >
-                    <el-option
-                      v-for="item in options"
-                      :key="item._id"
-                      :label="item.name"
-                      :value="item.name"
-                    />
-                  </el-select>
-                </template>
-              </el-input>
-            </el-form-item>
-          </div>
-          <div class="col-span-3">
             <el-form-item
-              label="Likra miqdori (kg)"
-              prop="likra_quantity"
-              :rules="[
-                { required: true, message: `Maydon to'ldirilishi zarur !` },
-                { type: 'number', message: `Qiymat musbat bo'lishi zarur` },
-              ]"
-            >
-              <el-input
-                v-model.number="confirm_model.likra_quantity"
-                clearable
-                class="w-[100%]"
-                size="smal"
-                type="String"
-                placeholder="..."
-              />
-            </el-form-item>
-          </div>
-          <div class="col-span-3">
-            <el-form-item
-              label="Melaks ip turi"
-              prop="melaks_type"
+              label="Begunok nomi"
+              prop="begunok_name"
               :rules="rules"
             >
               <el-input
                 required
-                v-model="confirm_model.melaks_type"
+                v-model="confirm_model.begunok_name"
                 clearable
                 class="w-[100%]"
                 size="smal"
@@ -447,8 +132,8 @@ const rules = ref({
                     <i
                       @click="
                         Plus({
-                          title: `Melaks turini qo'shish`,
-                          state: `melaks`,
+                          title: `Begunok nomini qo'shish`,
+                          state: `begunok_name`,
                         })
                       "
                       class="fa-solid fa-plus mr-2 fa-md cursor-pointer"
@@ -457,9 +142,9 @@ const rules = ref({
                 </template>
                 <template #append>
                   <el-select
-                    v-model="confirm_model.melaks_type"
-                    @click="Type({ type: `melaks` })"
-                    @change="ChangeMelaks($event)"
+                    v-model="confirm_model.begunok_name"
+                    @click="Type({ type: `begunok_name` })"
+                    @change="ChangeBegunokName($event)"
                     size="smal"
                     style="width: 40px"
                   >
@@ -476,32 +161,13 @@ const rules = ref({
           </div>
           <div class="col-span-3">
             <el-form-item
-              label="Melaks ip miqdori (kg)"
-              prop="melaks_quantity"
-              :rules="[
-                { required: true, message: `Maydon to'ldirilishi zarur !` },
-                { type: 'number', message: `Qiymat musbat bo'lishi zarur` },
-              ]"
-            >
-              <el-input
-                v-model.number="confirm_model.melaks_quantity"
-                clearable
-                class="w-[100%]"
-                size="smal"
-                type="String"
-                placeholder="..."
-              />
-            </el-form-item>
-          </div>
-          <div class="col-span-3">
-            <el-form-item
-              label="Polister turi"
-              prop="polister_type"
+              label="Begunok turi"
+              prop="begunok_type"
               :rules="rules"
             >
               <el-input
                 required
-                v-model="confirm_model.polister_type"
+                v-model="confirm_model.begunok_type"
                 clearable
                 class="w-[100%]"
                 size="smal"
@@ -513,8 +179,8 @@ const rules = ref({
                     <i
                       @click="
                         Plus({
-                          title: `Polister turini qo'shish`,
-                          state: `polister`,
+                          title: `Begunok turi qo'shish`,
+                          state: `begunok_type`,
                         })
                       "
                       class="fa-solid fa-plus mr-2 fa-md cursor-pointer"
@@ -523,9 +189,9 @@ const rules = ref({
                 </template>
                 <template #append>
                   <el-select
-                    v-model="confirm_model.polister_type"
-                    @click="Type({ type: `polister` })"
-                    @change="ChangePolister($event)"
+                    v-model="confirm_model.begunok_type"
+                    @click="Type({ type: `begunok_type` })"
+                    @change="ChangeBegunokType($event)"
                     size="smal"
                     style="width: 40px"
                   >
@@ -542,15 +208,15 @@ const rules = ref({
           </div>
           <div class="col-span-3">
             <el-form-item
-              label="Polister miqdori (kg)"
-              prop="polister_quantity"
+              label="Begunok miqdori (kg)"
+              prop="begunok_quantity"
               :rules="[
                 { required: true, message: `Maydon to'ldirilishi zarur !` },
                 { type: 'number', message: `Qiymat musbat bo'lishi zarur` },
               ]"
             >
               <el-input
-                v-model.number="confirm_model.polister_quantity"
+                v-model.number="confirm_model.begunok_quantity"
                 clearable
                 class="w-[100%]"
                 size="smal"
@@ -559,6 +225,113 @@ const rules = ref({
               />
             </el-form-item>
           </div>
+
+          <div class="col-span-3">
+            <el-form-item label="Latun nomi" prop="latun_name" :rules="rules">
+              <el-input
+                required
+                v-model="confirm_model.latun_name"
+                clearable
+                class="w-[100%]"
+                size="smal"
+                type="String"
+                placeholder="..."
+              >
+                <template #prepend>
+                  <div class="w-[8px] items-start text-center">
+                    <i
+                      @click="
+                        Plus({
+                          title: `Latun nomi qo'shish`,
+                          state: `latun_name`,
+                        })
+                      "
+                      class="fa-solid fa-plus mr-2 fa-md cursor-pointer"
+                    ></i>
+                  </div>
+                </template>
+                <template #append>
+                  <el-select
+                    v-model="confirm_model.latun_name"
+                    @click="Type({ type: `latun_name` })"
+                    @change="ChangeLatunName($event)"
+                    size="smal"
+                    style="width: 40px"
+                  >
+                    <el-option
+                      v-for="item in options"
+                      :key="item._id"
+                      :label="item.name"
+                      :value="item.name"
+                    />
+                  </el-select>
+                </template>
+              </el-input>
+            </el-form-item>
+          </div>
+          <div class="col-span-3">
+            <el-form-item label="Latun turi" prop="latun_type" :rules="rules">
+              <el-input
+                required
+                v-model="confirm_model.latun_type"
+                clearable
+                class="w-[100%]"
+                size="smal"
+                type="String"
+                placeholder="..."
+              >
+                <template #prepend>
+                  <div class="w-[8px] items-start text-center">
+                    <i
+                      @click="
+                        Plus({
+                          title: `Latun turini qo'shish`,
+                          state: `latun_type`,
+                        })
+                      "
+                      class="fa-solid fa-plus mr-2 fa-md cursor-pointer"
+                    ></i>
+                  </div>
+                </template>
+                <template #append>
+                  <el-select
+                    v-model="confirm_model.latun_type"
+                    @click="Type({ type: `latun_type` })"
+                    @change="ChangeLatunType($event)"
+                    size="smal"
+                    style="width: 40px"
+                  >
+                    <el-option
+                      v-for="item in options"
+                      :key="item._id"
+                      :label="item.name"
+                      :value="item.name"
+                    />
+                  </el-select>
+                </template>
+              </el-input>
+            </el-form-item>
+          </div>
+          <div class="col-span-3">
+            <el-form-item
+              label="Latun miqdori (kg)"
+              prop="latun_quantity"
+              :rules="[
+                { required: true, message: `Maydon to'ldirilishi zarur !` },
+                { type: 'number', message: `Qiymat musbat bo'lishi zarur` },
+              ]"
+            >
+              <el-input
+                v-model.number="confirm_model.latun_quantity"
+                clearable
+                class="w-[100%]"
+                size="smal"
+                type="String"
+                placeholder="..."
+              />
+            </el-form-item>
+          </div>
+
           <div class="col-span-3">
             <el-form-item
               label="Muddati"
@@ -635,48 +408,50 @@ const rules = ref({
               label="№"
               width="60"
             />
+
             <el-table-column
-              prop="likra_type"
-              label="Likra turi"
+              prop="begunok_name"
+              label="Begunok nomi"
               width="200"
               header-align="center"
               align="center"
             />
             <el-table-column
-              prop="likra_quantity"
-              label="Likra miqdori (kg)"
+              prop="begunok_type"
+              label="Begunok turi"
+              width="200"
+              header-align="center"
+              align="center"
+            />
+            <el-table-column
+              prop="begunok_quantity"
+              label="Begunok miqdori (kg)"
               width="150"
               header-align="center"
               align="center"
             />
             <el-table-column
-              prop="melaks_type"
-              label="Melaks turi"
+              prop="latun_name"
+              label="Latun nomi"
               width="200"
               header-align="center"
               align="center"
             />
             <el-table-column
-              prop="melaks_quantity"
-              label="Melaks miqdori (kg)"
+              prop="latun_type"
+              label="Latun turi"
               width="200"
               header-align="center"
               align="center"
             />
             <el-table-column
-              prop="polister_type"
-              label="Polister turi"
-              width="200"
+              prop="latun_quantity"
+              label="Latun miqdori (kg)"
+              width="150"
               header-align="center"
               align="center"
             />
-            <el-table-column
-              prop="polister_quantity"
-              label="Polister miqdori (kg)"
-              width="200"
-              header-align="center"
-              align="center"
-            />
+
             <el-table-column
               prop="delivery_time_provide"
               label="Muddati"

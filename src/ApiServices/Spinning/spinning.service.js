@@ -18,20 +18,20 @@ export const SpinningService = {
     let url = "spinning/spinning_all";
     return api.post(url, status);
   },
-  getOne(id) {
-    let url = "spinning/spinning_get_one";
-    return api.post(url, { id });
-  },
-  getOneFromInProcess(id) {
-    let url = "spinning/spinning_get_inprocess";
-    return api.post(url, id);
-  },
-  addDayReportInProcess(data) {
-    let url = "spinning/spinning_add_day_report";
+  GetOneFromWeaving(data) {
+    let url = `spinning/get_one_from_weaving`;
     return api.post(url, data);
   },
-  // getDayReportFromSpinning(id) {
-  //   let url = "spinning/spinning_get_report";
-  //   return api.post(url, { id });
-  // },
+  AcceptAndCreate(data) {
+    let url = `spinning/accept_and_create`;
+    return api.post(url, data);
+  },
+  CreateDayReport(data) {
+    let url = "spinning/create_day_report";
+    return api.post(url, data);
+  },
+  GetDayReport(data) {
+    let url = "spinning/get_day_report";
+    return api.post(url, data);
+  },
 };
