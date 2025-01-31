@@ -96,17 +96,24 @@ export const WeavingPlanStore = defineStore("WeavingPlan", {
           (a, b) => a + Number(b.quantity),
           initialValuePaint
         );
+      } else {
+        this.DoneWeaving = 0;
       }
     },
     async ProvideModal() {
       this.is_provide = true;
     },
-    async AcceptAndCreate(payload) {
+    async AcceptAndCreate(provide) {
+      const loader = loading.show();
       const data = await WeavingService.AcceptAndCreate({
-        ...payload,
-        card_id: this.card_id,
-        card: this.detail.card,
+        provide,
+        card: this.detail,
       });
+      this.is_provide = false;
+      this.is_detail_modal = false;
+      this.GetAll({ is_active: this.is_active });
+      ToastifyService.ToastSuccess({ msg: data.data.msg });
+      loader.hide();
     },
   },
 });

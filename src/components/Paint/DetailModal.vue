@@ -148,7 +148,13 @@ onMounted(async () => {
             <div class="">Artikul: {{ detail.artikul }}</div>
             <div class="">
               Muddati:
-              {{ String(detail.delivery_time).substring(0, 10) }}
+              {{
+                String(
+                  detail.delivery_time
+                    ? detail.delivery_time
+                    : detail.delivery_time_weaving
+                ).substring(0, 10)
+              }}
             </div>
           </div>
           <el-table

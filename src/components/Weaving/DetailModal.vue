@@ -133,7 +133,13 @@ onMounted(async () => {
           <div class="">Artikul: {{ detail.artikul }}</div>
           <div class="">
             Muddati:
-            {{ String(detail.delivery_time_paint).substring(0, 10) }}
+            {{
+              String(
+                detail.delivery_time_weaving
+                  ? detail.delivery_time_weaving
+                  : detail.delivery_time_paint
+              ).substring(0, 10)
+            }}
           </div>
         </div>
         <el-table
@@ -147,7 +153,11 @@ onMounted(async () => {
           class="w-full"
           header-align="center"
           empty-text="Mahsulot tanlanmagan... "
-          :data="detail.paint_products"
+          :data="
+            detail.weaving_products
+              ? detail.weaving_products
+              : detail.paint_products
+          "
           border="true"
           height="150"
         >

@@ -25,9 +25,9 @@ export const SpinningPlanStore = defineStore("SpinningPlan", {
       is_report_modal: false,
       is_detail_modal: false,
       is_report: false,
-      is_report: false,
       detail: {},
       DoneSpinning: "",
+      report_spinning: [],
     };
   },
   actions: {
@@ -56,7 +56,7 @@ export const SpinningPlanStore = defineStore("SpinningPlan", {
         const data = await SpinningService.GetOneFromWeaving(payload);
         this.is_report = true;
         this.is_detail_modal = true;
-        this.detail = data.data.data;
+        this.detail = data.data;
         this.card_id = payload;
       } else {
         const data = await SpinningService.GetOneFromWeaving({ id: payload });
@@ -64,7 +64,6 @@ export const SpinningPlanStore = defineStore("SpinningPlan", {
         this.is_report = false;
         this.detail = data.data;
         this.card_id = payload;
-        console.log(this.detail);
       }
     },
     async ProvideModal() {
@@ -85,14 +84,16 @@ export const SpinningPlanStore = defineStore("SpinningPlan", {
       const data = await SpinningService.GetDayReport({
         order_number: payload,
       });
-      this.report_paint = data.data.res;
+      this.report_spinning = data.data.res;
 
-      if (this.report_paint.length > 0) {
+      if (this.report_spinning.length > 0) {
         const initialValuePaint = 0;
-        this.DonePaint = this.report_paint.reduce(
+        this.DoneSpinning = this.report_spinning.reduce(
           (a, b) => a + Number(b.quantity),
           initialValuePaint
         );
+      } else {
+        this.DoneSpinning = 0;
       }
     },
     async AcceptAndCreate(payload) {
@@ -107,11 +108,6 @@ export const SpinningPlanStore = defineStore("SpinningPlan", {
       this.is_detail_modal = false;
       ToastifyService.ToastSuccess({ msg: data.data.msg });
       loader.hide();
-    },
-    async GetOneOrderReport(payload) {
-      const data = await SpinningService.GetOneOrderReport(payload);
-      this.report.card = data.data[0];
-      this.is_report_modal = true;
     },
   },
 });

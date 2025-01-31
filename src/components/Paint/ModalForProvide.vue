@@ -3,6 +3,7 @@ import { ref } from "vue";
 import { v4 as uuidv4 } from "uuid";
 import { ToastifyService } from "../../utils/Toastify";
 import { PaintPlanStore } from "../../stores/Paint/paintPlan.store";
+import AddOptionModal from "../../components/Helpers/AddOptionsModal.vue";
 const store = PaintPlanStore();
 import { storeToRefs } from "pinia";
 const { is_provide, confirm_model, card_id, item, detail } = storeToRefs(store);
@@ -16,18 +17,34 @@ const Type = (type) => {
 const Plus = (data) => {
   store_helpers.PlusModal(data);
 };
-const ChangeColor = (value) => {
-  confirm_model.color = value;
+const ChangePusName = (value) => {
+  confirm_model.pus_name = value;
+};
+const ChangePusType = (value) => {
+  confirm_model.pus_type = value;
+};
+const ChangeFikeName = (value) => {
+  confirm_model.fike_name = value;
+};
+const ChangeFikeType = (value) => {
+  confirm_model.fike_type = value;
 };
 const RefProvide = ref();
-const colors = ref([]);
+const products = ref([]);
 const AddProvide = async (RefProvide) => {
   await RefProvide.validate((valid) => {
     if (valid === true) {
-      colors.value.push({
+      products.value.push({
         id: uuidv4(),
+        pus_name: confirm_model.value.pus_name,
+        pus_type: confirm_model.value.pus_type,
+        pus_quantity: confirm_model.value.pus_quantity,
+        fike_name: confirm_model.value.fike_name,
+        fike_type: confirm_model.value.fike_type,
+        fike_quantity: confirm_model.value.fike_quantity,
         color: confirm_model.value.color,
         color_quantity: confirm_model.value.color_quantity,
+        delivery_time_provide: confirm_model.value.delivery_time_provide,
       });
     } else {
       return false;
@@ -66,14 +83,11 @@ const SaveToProvideAndAccept = async () => {
       accumulator + Number(currentValue.order_quantity),
     initialValue.value
   );
-  if (colors.value.length > 0 && weaving.value.length > 0) {
+  if (products.value.length > 0 && weaving.value.length > 0) {
     store.AcceptAndCreate({
-      pus: confirm_model.value.pus,
-      fike: confirm_model.value.fike,
-      delivery_time_provide: confirm_model.value.delivery_time_provide,
       weaving_quantity: total.value,
       delivery_time_weaving: confirm_model.value.delivery_time_weaving,
-      colors: colors.value,
+      products: products.value,
       weaving: weaving.value,
     });
 
@@ -91,11 +105,11 @@ const deleteByIdWeaving = (id) => {
   });
   weaving.value = filterLoad;
 };
-const deleteByIdColor = (id) => {
-  const filterLoad = colors.value.filter((item) => {
+const deleteByIdProvide = (id) => {
+  const filterLoad = products.value.filter((item) => {
     return item.id !== id;
   });
-  colors.value = filterLoad;
+  products.value = filterLoad;
 };
 const rules = ref({
   required: true,
@@ -337,10 +351,95 @@ const rules = ref({
         label-position="top"
       >
         <div class="col-span-4">
-          <el-form-item label="Pus (kg)" prop="pus" :rules="rules">
+          <el-form-item label="Pus nomi" prop="pus_name" :rules="rules">
             <el-input
-              :disabled="colors.length > 0"
-              v-model="confirm_model.pus"
+              required
+              v-model="confirm_model.pus_name"
+              clearable
+              class="w-[100%]"
+              size="smal"
+              type="String"
+              placeholder="..."
+            >
+              <template #prepend>
+                <div class="w-[8px] items-start text-center">
+                  <i
+                    @click="
+                      Plus({
+                        title: `Pus nomini qo'shish`,
+                        state: `pus_name`,
+                      })
+                    "
+                    class="fa-solid fa-plus mr-2 fa-md cursor-pointer"
+                  ></i>
+                </div>
+              </template>
+              <template #append>
+                <el-select
+                  v-model="confirm_model.pus_name"
+                  @click="Type({ type: `pus_name` })"
+                  @change="ChangePusName($event)"
+                  size="smal"
+                  style="width: 40px"
+                >
+                  <el-option
+                    v-for="item in options"
+                    :key="item._id"
+                    :label="item.name"
+                    :value="item.name"
+                  />
+                </el-select>
+              </template>
+            </el-input>
+          </el-form-item>
+        </div>
+        <div class="col-span-4">
+          <el-form-item label="Pus turi" prop="pus_type" :rules="rules">
+            <el-input
+              required
+              v-model="confirm_model.pus_type"
+              clearable
+              class="w-[100%]"
+              size="smal"
+              type="String"
+              placeholder="..."
+            >
+              <template #prepend>
+                <div class="w-[8px] items-start text-center">
+                  <i
+                    @click="
+                      Plus({
+                        title: `Pus turini qo'shish`,
+                        state: `pus_type`,
+                      })
+                    "
+                    class="fa-solid fa-plus mr-2 fa-md cursor-pointer"
+                  ></i>
+                </div>
+              </template>
+              <template #append>
+                <el-select
+                  v-model="confirm_model.pus_type"
+                  @click="Type({ type: `pus_type` })"
+                  @change="ChangePusType($event)"
+                  size="smal"
+                  style="width: 40px"
+                >
+                  <el-option
+                    v-for="item in options"
+                    :key="item._id"
+                    :label="item.name"
+                    :value="item.name"
+                  />
+                </el-select>
+              </template>
+            </el-input>
+          </el-form-item>
+        </div>
+        <div class="col-span-4">
+          <el-form-item label="Pus (kg)" prop="pus_quantity" :rules="rules">
+            <el-input
+              v-model="confirm_model.pus_quantity"
               clearable
               class="w-[100%]"
               size="smal"
@@ -350,16 +449,118 @@ const rules = ref({
           </el-form-item>
         </div>
         <div class="col-span-4">
-          <el-form-item label="Fike (kg)" prop="fike" :rules="rules">
+          <el-form-item label="Fike nomi" prop="fike_name" :rules="rules">
             <el-input
-              :disabled="colors.length > 0"
-              v-model="confirm_model.fike"
+              required
+              v-model="confirm_model.fike_name"
+              clearable
+              class="w-[100%]"
+              size="smal"
+              type="String"
+              placeholder="..."
+            >
+              <template #prepend>
+                <div class="w-[8px] items-start text-center">
+                  <i
+                    @click="
+                      Plus({
+                        title: `Fike nomini qo'shish`,
+                        state: `fike_name`,
+                      })
+                    "
+                    class="fa-solid fa-plus mr-2 fa-md cursor-pointer"
+                  ></i>
+                </div>
+              </template>
+              <template #append>
+                <el-select
+                  v-model="confirm_model.fike_name"
+                  @click="Type({ type: `fike_name` })"
+                  @change="ChangeFikeName($event)"
+                  size="smal"
+                  style="width: 40px"
+                >
+                  <el-option
+                    v-for="item in options"
+                    :key="item._id"
+                    :label="item.name"
+                    :value="item.name"
+                  />
+                </el-select>
+              </template>
+            </el-input>
+          </el-form-item>
+        </div>
+        <div class="col-span-4">
+          <el-form-item label="Fike turi" prop="fike_type" :rules="rules">
+            <el-input
+              required
+              v-model="confirm_model.fike_type"
+              clearable
+              class="w-[100%]"
+              size="smal"
+              type="String"
+              placeholder="..."
+            >
+              <template #prepend>
+                <div class="w-[8px] items-start text-center">
+                  <i
+                    @click="
+                      Plus({
+                        title: `Fike turini qo'shish`,
+                        state: `fike_type`,
+                      })
+                    "
+                    class="fa-solid fa-plus mr-2 fa-md cursor-pointer"
+                  ></i>
+                </div>
+              </template>
+              <template #append>
+                <el-select
+                  v-model="confirm_model.fike_type"
+                  @click="Type({ type: `fike_type` })"
+                  @change="ChangeFikeType($event)"
+                  size="smal"
+                  style="width: 40px"
+                >
+                  <el-option
+                    v-for="item in options"
+                    :key="item._id"
+                    :label="item.name"
+                    :value="item.name"
+                  />
+                </el-select>
+              </template>
+            </el-input>
+          </el-form-item>
+        </div>
+        <div class="col-span-4">
+          <el-form-item label="Fike (kg)" prop="fike_quantity" :rules="rules">
+            <el-input
+              v-model="confirm_model.fike_quantity"
               clearable
               class="w-[100%]"
               size="smal"
               type="Number"
               placeholder="..."
             />
+          </el-form-item>
+        </div>
+        <div class="col-span-4">
+          <el-form-item label="Rang nomi" prop="color" :rules="rules">
+            <el-select
+              v-model="confirm_model.color"
+              size="smal"
+              style="width: 100%"
+              placeholder="..."
+            >
+              <el-option
+                v-for="item in detail.sale_products"
+                :key="item._id"
+                :label="item.color"
+                :value="item.color"
+              />
+            </el-select>
           </el-form-item>
         </div>
         <div class="col-span-4">
@@ -378,32 +579,15 @@ const rules = ref({
             />
           </el-form-item>
         </div>
-        <div class="col-span-6">
-          <el-form-item label="Rang" prop="color" :rules="rules">
-            <el-select
-              v-model="confirm_model.color"
-              size="smal"
-              style="width: 100%"
-              placeholder="..."
-            >
-              <el-option
-                v-for="item in detail.sale_products"
-                :key="item._id"
-                :label="item.color"
-                :value="item.color"
-              />
-            </el-select>
-          </el-form-item>
-        </div>
 
-        <div class="col-span-6">
+        <div class="col-span-4">
           <el-form-item
             label="Tayyorlash muddati"
             prop="delivery_time_provide"
             :rules="rules"
           >
             <el-date-picker
-              :disabled="colors.length > 0"
+              :disabled="products.length > 0"
               style="width: 100%"
               v-model="confirm_model.delivery_time_provide"
               clearable
@@ -430,32 +614,10 @@ const rules = ref({
           ><i class="mr-2 fa-solid fa-plus fa-sm"></i>Qo'shish
         </el-button>
       </div>
-      <div class="mt-3 grid grid-cols-12 gap-2">
-        <div
-          class="col-span-4 h-[155px] shadow-md rounded-md bg-white text-center text-slate-500 font-semibold text-[12px] p-4 cursor-pointer border-t-[1px] border-b-[1px] border-[#36d887]"
-        >
-          <div class="mt-1 bg-[#e8eded] p-2 rounded">
-            Pus:
-            {{ confirm_model.pus ? confirm_model.pus : 0 }}
-            kg
-          </div>
-          <div class="mt-2 bg-[#e8eded] p-2 rounded">
-            Fike:
-            {{ confirm_model.fike ? confirm_model.pus : 0 }}
-            kg
-          </div>
-          <div class="mt-2 bg-[#e8eded] p-2 rounded">
-            Mudati:
-            {{
-              confirm_model.delivery_time_provide
-                ? String(confirm_model.delivery_time_provide).substring(0, 15)
-                : 0
-            }}
-          </div>
-        </div>
-        <div class="col-span-8 shadow-md bg-white rounded min-h-[15px]">
+      <div class="mt-2 grid grid-cols-12 gap-2">
+        <div class="col-span-12 shadow-md bg-white rounded min-h-[15px]">
           <el-table
-            :data="colors"
+            :data="products"
             :header-cell-style="{
               background: '#e8eded',
               border: '0.2px solid #e1e1e3',
@@ -479,28 +641,68 @@ const rules = ref({
               width="60"
             />
             <el-table-column
-              prop="color"
-              label="Rang"
+              prop="pus_name"
+              label="Pus nomi"
+              width="150"
+              header-align="center"
+              align="center"
+            />
+            <el-table-column
+              prop="pus_type"
+              label="Pus turi"
+              width="150"
+              header-align="center"
+              align="center"
+            />
+            <el-table-column
+              prop="pus_quantity"
+              label="Pus miqdori"
+              width="150"
+              header-align="center"
+              align="center"
+            />
+            <el-table-column
+              prop="fike_name"
+              label="Fike nomi"
+              width="150"
+              header-align="center"
+              align="center"
+            />
+            <el-table-column
+              prop="fike_type"
+              label="Fike turi"
+              width="150"
+              header-align="center"
+              align="center"
+            />
+            <el-table-column
+              prop="fike_quantity"
+              label="Fike miqdori"
               width="150"
               header-align="center"
               align="center"
             />
             <el-table-column
               prop="color"
-              label="Rang"
+              label="Rang nomi"
               width="150"
               header-align="center"
               align="center"
             />
-
+            <el-table-column
+              prop="color"
+              label="Rang nomi"
+              width="150"
+              header-align="center"
+              align="center"
+            />
             <el-table-column
               prop="color_quantity"
-              label="Miqdori"
+              label="Rang miqdori"
               width="150"
               header-align="center"
               align="center"
-            >
-            </el-table-column>
+            />
             <el-table-column
               prop="id"
               fixed="right"
@@ -511,7 +713,7 @@ const rules = ref({
                 <div>
                   <router-link
                     to=""
-                    @click="deleteByIdColor(scope.row.id)"
+                    @click="deleteByIdProvide(scope.row.id)"
                     class="inline-flex items-center mt-4 ml-2 text-white hover:bg-slate-300 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
                   >
                     <i class="text-black fa-sharp fa-solid fa-trash fa-xs"></i>

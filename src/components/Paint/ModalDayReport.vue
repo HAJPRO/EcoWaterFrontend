@@ -29,13 +29,23 @@ const rules = ref([
   },
 ]);
 
+const residue = ref();
+const is_residue = ref(false);
+const MatchResidue = (quantity) => {
+  residue.value = detail.value.sale_quantity - DonePaint.value;
+  if (quantity > residue.value) {
+    is_residue.value = true;
+  } else {
+    is_residue.value = false;
+  }
+};
 const formRef = ref();
 const CreateDayReport = async (formRef) => {
   await formRef.validate((valid) => {
     if (
       valid === true &&
       model.value.quantity > 0 &&
-      model.value.quantity <= detail.sale_quantity - DonePaint
+      model.value.quantity <= residue.value
     ) {
       store_paint.CreateDayReport(model.value);
       model.value = {
@@ -169,14 +179,21 @@ const CreateDayReport = async (formRef) => {
           size="smal"
         >
           <div class="col-span-3">
-            <el-form-item label="Mato nomi" prop="material_name" :rules="rules">
+            <el-form-item
+              :disabled="is_residue"
+              label="Mato nomi"
+              prop="material_name"
+              :rules="rules"
+            >
               <el-select
+                :disabled="is_residue"
                 required
                 v-model="model.material_name"
                 style="width: 100%"
                 placeholder="..."
               >
                 <el-option
+                  :disabled="is_residue"
                   v-for="item in detail.sale_products"
                   :key="item._id"
                   :label="item.material_name"
@@ -186,14 +203,21 @@ const CreateDayReport = async (formRef) => {
             </el-form-item>
           </div>
           <div class="col-span-2">
-            <el-form-item label="Turi" prop="material_type" :rules="rules">
+            <el-form-item
+              :disabled="is_residue"
+              label="Turi"
+              prop="material_type"
+              :rules="rules"
+            >
               <el-select
+                :disabled="is_residue"
                 required
                 v-model="model.material_type"
                 style="width: 100%"
                 placeholder="..."
               >
                 <el-option
+                  :disabled="is_residue"
                   v-for="item in detail.sale_products"
                   :key="item._id"
                   :label="item.material_type"
@@ -212,23 +236,34 @@ const CreateDayReport = async (formRef) => {
               ]"
             >
               <el-input
+                @input="MatchResidue(model.quantity)"
                 v-model.number="model.quantity"
                 clearable
                 class="w-[100%]"
                 type="String"
                 placeholder="..."
               />
+              <div v-if="is_residue" class="text-red-500 text-[12px]">
+                Qoldiqdan oshib ketdi !
+              </div>
             </el-form-item>
           </div>
           <div class="col-span-2">
-            <el-form-item label="Birligi" prop="unit" :rules="rules">
+            <el-form-item
+              :disabled="is_residue"
+              label="Birligi"
+              prop="unit"
+              :rules="rules"
+            >
               <el-select
+                :disabled="is_residue"
                 required
                 v-model="model.unit"
                 clearable
                 placeholder="..."
               >
                 <el-option
+                  :disabled="is_residue"
                   v-for="item in units"
                   :key="item.id"
                   :label="item.name"
@@ -358,10 +393,10 @@ const CreateDayReport = async (formRef) => {
               Buyurtma:
               {{ detail ? detail.sale_quantity : 0 }} kg
             </div>
-            <div>Bajarildi: {{ DonePaint ? DonePaint : 0 }} kg</div>
+            <div>Bajarildi: {{ DonePaint }} kg</div>
             <div>
               Qoldi:
-              {{ DonePaint ? detail.sale_quantity - DonePaint : 0 }} kg
+              {{ DonePaint >= 0 ? detail.sale_quantity - DonePaint : 0 }} kg
             </div>
           </div>
         </div>

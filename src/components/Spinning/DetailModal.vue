@@ -43,7 +43,13 @@ onMounted(async () => {
           </div>
           <div class="mt-2 bg-[#e8eded] p-2 rounded">
             Muddati:
-            {{ String(detail.delivery_time_spinning).substring(0, 10) }}
+            {{
+              String(
+                detail.delivery_time_spinning
+                  ? detail.delivery_time_spinning
+                  : detail.delivery_time_weaving
+              ).substring(0, 10)
+            }}
           </div>
         </div>
         <div class="col-span-9 shadow-md bg-white rounded min-h-[15px]">
@@ -58,7 +64,11 @@ onMounted(async () => {
             class="w-full"
             header-align="center"
             empty-text="Mahsulot tanlanmagan... "
-            :data="detail.spinning_products"
+            :data="
+              detail.spinning_products
+                ? detail.spinning_products
+                : detail.weaving_products
+            "
             border="true"
             height="150"
           >
@@ -149,7 +159,7 @@ onMounted(async () => {
               <i class="fa-solid fa-plus mr-2 fa-md"></i> Hisobot
             </el-button>
             <el-button
-              v-show="detail.status === `Jarayonda`"
+              v-if="is_report === false"
               size="smal"
               @click="ProvideModal()"
               style="
@@ -163,7 +173,7 @@ onMounted(async () => {
               <i class="fa-solid fa-check mr-2 fa-md"></i> Qabul qilish
             </el-button>
             <el-button
-              v-show="detail.status === `Jarayonda`"
+              v-if="is_report === false"
               size="smal"
               @click="Cancel()"
               style="

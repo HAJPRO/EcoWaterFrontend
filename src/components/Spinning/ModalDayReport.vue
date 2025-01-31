@@ -1,17 +1,17 @@
 <script setup>
 import { ref } from "vue";
 import { v4 as uuidv4 } from "uuid";
-import { PaintPlanStore } from "../../stores/Paint/paintPlan.store";
-const store_paint = PaintPlanStore();
+import { SpinningPlanStore } from "../../stores/Spinning/spinningPlan.store";
+const store_spinning = SpinningPlanStore();
 import { storeToRefs } from "pinia";
-const { is_report_modal, report, report_paint, detail, DonePaint } =
-  storeToRefs(store_paint);
+const { is_report_modal, report_spinning, detail, DoneSpinning } =
+  storeToRefs(store_spinning);
 
 const model = ref({
-  input_plan_id: detail.value.card._id,
-  order_number: detail.value.card.order_number,
-  material_name: "",
-  material_type: "",
+  input_plan_id: detail.value._id,
+  order_number: detail.value.order_number,
+  yarn_name: "",
+  yarn_type: "",
   quantity: "",
   unit: "",
 });
@@ -28,17 +28,27 @@ const rules = ref([
     trigger: "blur",
   },
 ]);
+const residue = ref();
+const is_residue = ref(false);
+const MatchResidue = (quantity) => {
+  residue.value = detail.value.weaving_quantity - DoneSpinning.value;
 
+  if (quantity > residue.value) {
+    is_residue.value = true;
+  } else {
+    is_residue.value = false;
+  }
+};
 const formRef = ref();
 const CreateDayReport = async (formRef) => {
   await formRef.validate((valid) => {
     if (valid === true && model.value.quantity > 0) {
-      store_paint.CreateDayReport(model.value);
+      store_spinning.CreateDayReport(model.value);
       model.value = {
+        yarn_name: "",
+        yarn_type: "",
         quantity: "",
         unit: "",
-        material_name: "",
-        material_type: "",
       };
     } else {
       return false;
@@ -50,92 +60,12 @@ const CreateDayReport = async (formRef) => {
   <el-dialog v-model="is_report_modal" width="1000">
     <span>
       <div class="flex justify-between text-[12px] font-semibold">
-        <div>Buyurtmachi: {{ detail.card.customer_name }}</div>
-        <div>Artikul: {{ detail.card.artikul }}</div>
-        <div>Buyurtma nomeri: {{ detail.card.order_number }}</div>
-      </div>
-      <div
-        class="bg-slate-100 font-semibold p-1 mb-1 text-[15px] align-center text-center shadow rounded border-t-[1px] border-[#36d887]"
-      >
-        To'quv hisoboti
-      </div>
-      <div class="shadow-md rounded">
-        <el-table
-          :header-cell-style="{
-            background: '#e8eded',
-            border: '0.2px solid #e1e1e3',
-          }"
-          load
-          class="w-full"
-          header-align="center"
-          empty-text="Mahsulot tanlanmagan... "
-          border="true"
-          style="width: 100%; font-size: 12px"
-          min-height="150"
-          max-height="150"
-        >
-          <el-table-column
-            header-align="center"
-            align="center"
-            type="index"
-            prop="index"
-            fixed="left"
-            label="№"
-            width="60"
-          />
-          <el-table-column
-            header-align="center"
-            prop="name"
-            label="Mato nomi"
-            width="180"
-          />
-          <el-table-column
-            header-align="center"
-            prop="quantity"
-            label="Miqdori"
-            width="180"
-          />
-          <el-table-column
-            header-align="center"
-            prop="unit"
-            label="Birligi"
-            width="150"
-          />
-          <el-table-column
-            header-align="center"
-            prop="date"
-            label="Sana"
-            width="250"
-          />
-          <el-table-column
-            fixed="right"
-            label=""
-            width="127"
-            header-align="center"
-            align="center"
-          >
-            <template #default="">
-              <router-link
-                to=""
-                class="inline-flex items-center mt-4 ml-2 text-red bg-[#eedc36] hover:bg-yellow-400 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
-              >
-                <i class="text-red fa-solid fa-check fa-xs fa- fa-xs"></i>
-              </router-link>
-            </template>
-          </el-table-column>
-        </el-table>
-      </div>
-      <div
-        class="flex justify-between flex-wrap font-semibold text-[12px] mb-2 p-1 bg-slate-100 shadow border-b-[1px] border-[#36d887]"
-      >
+        <div>Buyurtmachi: {{ detail.customer_name }}</div>
+        <div>Artikul: {{ detail.artikul }}</div>
+        <div>Buyurtma nomeri: {{ detail.order_number }}</div>
         <div>
-          Buyurtma:
-          {{ detail.card ? detail.card.weaving_qauntity : 0 }} kg
-        </div>
-        <div>Bajarildi: {{ 0 }} kg</div>
-        <div>
-          Qoldi:
-          {{ 0 }} kg
+          Muddati nomeri:
+          {{ String(detail.delivery_time_weaving).substring(0, 10) }}
         </div>
       </div>
       <div class="text-[15px] bg-white rounded shadow hover:shadow-md mt-2">
@@ -143,13 +73,13 @@ const CreateDayReport = async (formRef) => {
           class="bg-slate-100 font-semibold p-1 mt-1 align-center text-center shadow rounded border-t-[1px] border-[#36d887]"
         >
           {{
-            detail.card.order_quantity - DonePaint <= 0
-              ? `Bo'yoq hisoboti`
-              : ` Bo'yoq hisobot qo'shish`
+            detail.weaving_quantity - DoneSpinning > 0
+              ? ` Yigiruv hisobot qo'shish`
+              : `Yigiruv hisoboti`
           }}
         </div>
         <el-form
-          v-if="detail.card.order_quantity - DonePaint > 0"
+          v-if="detail.weaving_quantity - DoneSpinning > 0"
           ref="formRef"
           :model="model"
           label-width="auto"
@@ -159,40 +89,42 @@ const CreateDayReport = async (formRef) => {
           size="smal"
         >
           <div class="col-span-3">
-            <el-form-item label="Mato nomi" prop="material_name" :rules="rules">
+            <el-form-item label="Ip nomi" prop="yarn_name" :rules="rules">
               <el-select
+                :disabled="is_residue"
                 required
-                v-model="model.material_name"
+                v-model="model.yarn_name"
                 style="width: 100%"
                 placeholder="..."
               >
                 <el-option
-                  v-for="item in detail.products"
+                  v-for="item in detail.weaving_products"
                   :key="item._id"
-                  :label="item.product_name"
-                  :value="item.product_name"
-                />
-              </el-select>
-            </el-form-item>
-          </div>
-          <div class="col-span-2">
-            <el-form-item label="Turi" prop="material_type" :rules="rules">
-              <el-select
-                required
-                v-model="model.material_type"
-                style="width: 100%"
-                placeholder="..."
-              >
-                <el-option
-                  v-for="item in detail.products"
-                  :key="item._id"
-                  :label="item.product_type"
-                  :value="item.product_type"
+                  :label="item.yarn_name"
+                  :value="item.yarn_name"
                 />
               </el-select>
             </el-form-item>
           </div>
           <div class="col-span-3">
+            <el-form-item label="Ip turi" prop="yarn_type" :rules="rules">
+              <el-select
+                :disabled="is_residue"
+                required
+                v-model="model.yarn_type"
+                style="width: 100%"
+                placeholder="..."
+              >
+                <el-option
+                  v-for="item in detail.weaving_products"
+                  :key="item._id"
+                  :label="item.yarn_type"
+                  :value="item.yarn_type"
+                />
+              </el-select>
+            </el-form-item>
+          </div>
+          <div class="col-span-2">
             <el-form-item
               label="Miqdori (kg)"
               prop="quantity"
@@ -202,17 +134,22 @@ const CreateDayReport = async (formRef) => {
               ]"
             >
               <el-input
+                @input="MatchResidue(model.quantity)"
                 v-model.number="model.quantity"
                 clearable
                 class="w-[100%]"
                 type="String"
                 placeholder="..."
               />
+              <div v-if="is_residue" class="text-red-500 text-[12px]">
+                Qoldiqdan oshib ketdi !
+              </div>
             </el-form-item>
           </div>
           <div class="col-span-2">
             <el-form-item label="Birligi" prop="unit" :rules="rules">
               <el-select
+                :disabled="is_residue"
                 required
                 v-model="model.unit"
                 clearable
@@ -248,7 +185,7 @@ const CreateDayReport = async (formRef) => {
         </el-form>
         <div class="shadow-md rounded">
           <el-table
-            :data="report_paint"
+            :data="report_spinning"
             :header-cell-style="{
               background: '#e8eded',
               border: '0.2px solid #e1e1e3',
@@ -273,15 +210,15 @@ const CreateDayReport = async (formRef) => {
             />
             <el-table-column
               header-align="center"
-              prop="material_name"
-              label="Mato nomi"
+              prop="yarn_name"
+              label="Ip nomi"
               width="180"
               align="center"
             />
             <el-table-column
               header-align="center"
-              prop="material_type"
-              label="Mato turi"
+              prop="yarn_type"
+              label="Ip turi"
               width="150"
               align="center"
             />
@@ -346,12 +283,15 @@ const CreateDayReport = async (formRef) => {
           >
             <div>
               Buyurtma:
-              {{ detail.card ? detail.card.order_quantity : 0 }} kg
+              {{ detail ? detail.weaving_quantity : 0 }} kg
             </div>
-            <div>Bajarildi: {{ DonePaint ? DonePaint : 0 }} kg</div>
+            <div>Bajarildi: {{ DoneSpinning }} kg</div>
             <div>
               Qoldi:
-              {{ DonePaint ? detail.card.order_quantity - DonePaint : 0 }} kg
+              {{
+                DoneSpinning > 0 ? detail.weaving_quantity - DoneSpinning : 0
+              }}
+              kg
             </div>
           </div>
         </div>
@@ -366,10 +306,8 @@ const CreateDayReport = async (formRef) => {
       <span>Cancel And Of Reason</span>
     </el-dialog>
     <template #footer>
-      <div>
+      <div v-if="detail.weaving_quantity - DoneSpinning <= 0">
         <el-button
-          v-if="detail.card.order_quantity - DonePaint <= 0"
-          @click="CreateDayReport(formRef)"
           style="
             background: linear-gradient(
               90deg,
@@ -387,7 +325,7 @@ const CreateDayReport = async (formRef) => {
             font-weight: bold;
           "
         >
-          Bo'yoq partyani yakunladi
+          Yigiruv partyani yakunladi
         </el-button>
       </div>
     </template>

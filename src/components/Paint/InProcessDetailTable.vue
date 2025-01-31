@@ -90,7 +90,7 @@ const GetOneOrderReport = (id) => {
 
       <el-table-column
         header-align="center"
-        label="Yigiruv"
+        label="To'quv"
         width="200"
         align="center"
       >

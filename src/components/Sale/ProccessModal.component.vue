@@ -42,38 +42,18 @@ const active = ref(2);
 <template>
   <div>
     <Report v-show="report" id="report" />
-    <el-dialog
-      id="content"
-      v-model="proccess_modal"
-      title="Buyurtmani ishlab chiqarish jarayoni bo'yicha malumotlari"
-      width="900"
-    >
+    <el-dialog id="content" v-model="proccess_modal" width="900">
+      <div
+        class="font-semibold rounded text-[14px] p-1 mb-2 text-center bg-slate-100 shadow border-t-[1px] border-[#36d887] mt-1"
+      >
+        <h3>Buyurtmani ishlab chiqarish jarayoni bo'yicha malumotlari</h3>
+      </div>
       <div class="">
         <section class="lg:py-1 xl:py-2">
           <div class="mx-auto max-w-7xl">
             <ul
               class="mx-auto grid w-full grid-cols-8 gap-1 lg:mt-2 lg:max-w-5xl"
             >
-              <li
-                v-for="item in proccess_data.order[0].process_status"
-                :key="item.index"
-                class="flex-start group relative"
-              >
-                <span
-                  class="absolute top-14 w-px bg-gray-300 lg:right-0 lg:left-auto lg:top-[20px] lg:h-px lg:w-[calc(100%_-_40px)]"
-                  aria-hidden="true"
-                ></span>
-                <div
-                  class="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-gray-100 bg-[#36d887] transition-all duration-200 group-hover:bg-[#36d887]"
-                >
-                  <i class="fa-solid fa-check text-white"></i>
-                </div>
-                <div class="lg:ml-0">
-                  <h4 class="mt-1 text-[11px] text-gray-700">
-                    {{ item.status }}
-                  </h4>
-                </div>
-              </li>
               <li
                 v-for="item in proccess_data.order[0].process_status"
                 :key="item.index"

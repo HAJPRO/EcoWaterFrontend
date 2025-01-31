@@ -124,7 +124,8 @@ export const SaleStore = defineStore("saleStore", {
       try {
         const loader = loading.show();
         const confirmData = await SaleService.confirm(this.card_id);
-        this.getAll({ status: 1 });
+        this.getAll({ is_active: this.is_active });
+        this.is_detail_modal = false;
         ToastifyService.ToastSuccess({
           msg: confirmData.data.msg,
         });

@@ -29,13 +29,24 @@ const rules = ref([
     trigger: "blur",
   },
 ]);
-
+const residue = ref();
+const is_residue = ref(false);
+const MatchResidue = (quantity) => {
+  residue.value = detail.value.weaving_quantity - DoneWeaving.value;
+  if (quantity > residue.value) {
+    is_residue.value = true;
+  } else {
+    is_residue.value = false;
+  }
+};
 const formRef = ref();
 const CreateDayReport = async (formRef) => {
   await formRef.validate((valid) => {
-    if (valid === true && model.value.quantity > 0) {
-      console.log(model.value);
-
+    if (
+      valid === true &&
+      model.value.quantity > 0 &&
+      is_residue.value === false
+    ) {
       store_weaving.CreateDayReport(model.value);
       model.value = {
         quantity: "",
@@ -163,12 +174,13 @@ const CreateDayReport = async (formRef) => {
           class="bg-slate-100 font-semibold p-1 mt-1 align-center text-center shadow rounded border-t-[1px] border-[#36d887]"
         >
           {{
-            detail.order_quantity - Done <= 0
+            detail.weaving_quantity - DoneWeaving === 0
               ? `To'quv hisoboti`
               : ` To'quv hisobot qo'shish`
           }}
         </div>
         <el-form
+          v-if="detail.weaving_quantity - DoneWeaving > 0"
           ref="formRef"
           :model="model"
           label-width="auto"
@@ -180,6 +192,7 @@ const CreateDayReport = async (formRef) => {
           <div class="col-span-3">
             <el-form-item label="Mato nomi" prop="material_name" :rules="rules">
               <el-select
+                :disabled="is_residue"
                 required
                 v-model="model.material_name"
                 style="width: 100%"
@@ -197,6 +210,7 @@ const CreateDayReport = async (formRef) => {
           <div class="col-span-2">
             <el-form-item label="Turi" prop="material_type" :rules="rules">
               <el-select
+                :disabled="is_residue"
                 required
                 v-model="model.material_type"
                 style="width: 100%"
@@ -221,17 +235,22 @@ const CreateDayReport = async (formRef) => {
               ]"
             >
               <el-input
+                @input="MatchResidue(model.quantity)"
                 v-model.number="model.quantity"
                 clearable
                 class="w-[100%]"
                 type="String"
                 placeholder="..."
               />
+              <div v-if="is_residue" class="text-red-500 text-[12px]">
+                Qoldiqdan oshib ketdi !
+              </div>
             </el-form-item>
           </div>
           <div class="col-span-2">
             <el-form-item label="Birligi" prop="unit" :rules="rules">
               <el-select
+                :disabled="is_residue"
                 required
                 v-model="model.unit"
                 clearable
@@ -366,10 +385,11 @@ const CreateDayReport = async (formRef) => {
               Buyurtma:
               {{ detail ? detail.weaving_quantity : 0 }} kg
             </div>
-            <div>Bajarildi: {{ DoneWeaving ? DoneWeaving : 0 }} kg</div>
+            <div>Bajarildi: {{ DoneWeaving }} kg</div>
             <div>
               Qoldi:
-              {{ DoneWeaving ? detail.weaving_quantity - DoneWeaving : 0 }} kg
+              {{ DoneWeaving >= 0 ? detail.weaving_quantity - DoneWeaving : 0 }}
+              kg
             </div>
           </div>
         </div>

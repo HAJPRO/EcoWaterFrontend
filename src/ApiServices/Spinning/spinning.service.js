@@ -34,4 +34,8 @@ export const SpinningService = {
     let url = "spinning/get_day_report";
     return api.post(url, data);
   },
+  GetOneFromSpinningCard(data) {
+    let url = "spinning/get_one_from_spinning";
+    return api.post(url, data);
+  },
 };

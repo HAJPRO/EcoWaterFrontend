@@ -1,11 +1,11 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import { WeavingPlanStore } from "../../stores/Weaving/weaving_plan.store";
-const store_weaving = WeavingPlanStore();
+import { SpinningPlanStore } from "../../stores/Spinning/spinningPlan.store";
+const store_spinning = SpinningPlanStore();
 import { storeToRefs } from "pinia";
-const { items } = storeToRefs(store_weaving);
+const { items } = storeToRefs(store_spinning);
 const GetOneOrderReport = (id) => {
-  store_paint.DetailModal({ id, report: true });
+  store_spinning.DetailModal({ id, report: true });
 };
 </script>
 <template>
@@ -65,16 +65,13 @@ const GetOneOrderReport = (id) => {
         align="center"
       >
         <el-table-column
-          v-show="spinning_quantity"
           label="Miqdori"
           width="250"
           header-align="center"
           align="center"
         >
           <template #default="scope"
-            ><div class="text-red-500">
-              {{ scope.row.spinning_quantity }}
-            </div>
+            ><div class="text-red-500">{{ scope.row.weaving_quantity }} kg</div>
           </template>
         </el-table-column>
         <el-table-column
@@ -84,7 +81,7 @@ const GetOneOrderReport = (id) => {
           align="center"
         >
           <template #default="scope">
-            {{ String(scope.row.delivery_time_spinning).substring(0, 10) }}
+            {{ String(scope.row.delivery_time_weaving).substring(0, 10) }}
           </template>
         </el-table-column>
       </el-table-column>

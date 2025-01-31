@@ -8,8 +8,12 @@ export const PaintPlanStore = defineStore("paintPlanStore", {
   state: () => {
     return {
       confirm_model: {
-        pus: "",
-        fike: "",
+        pus_name: "",
+        pus_type: "",
+        pus_quantity: "",
+        fike_name: "",
+        fike_type: "",
+        fike_quantity: "",
         color: "",
         color_quantity: "",
         material_name: "",
@@ -64,6 +68,7 @@ export const PaintPlanStore = defineStore("paintPlanStore", {
         this.is_detail_modal = true;
         this.detail = data.data.data;
         this.card_id = payload;
+        console.log(data);
       } else {
         const data = await PaintService.GetOneFromSale({ id: payload });
         this.is_detail_modal = true;
@@ -96,6 +101,8 @@ export const PaintPlanStore = defineStore("paintPlanStore", {
           (a, b) => a + Number(b.quantity),
           initialValuePaint
         );
+      } else {
+        this.DonePaint = 0;
       }
     },
     async AcceptAndCreate(payload) {
