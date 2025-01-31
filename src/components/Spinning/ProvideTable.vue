@@ -10,20 +10,21 @@ console.log(items);
 // };
 </script>
 <template>
-  <div class="shadow-md rounded min-h-[15px]">
+  <div class="shadow rounded">
     <el-table
       :header-cell-style="{
         background: '#e8eded',
         border: '0.2px solid #e1e1e3',
       }"
       size="small"
+      show-header="true"
       load
       class="w-full"
       header-align="center"
       empty-text="Mahsulot tanlanmagan... "
       :data="items"
-      border
-      style="width: 100%"
+      border="true"
+      style="width: 100%; font-size: 12px"
       min-height="300"
       max-height="350"
     >
@@ -38,29 +39,56 @@ console.log(items);
       />
       <el-table-column
         header-align="center"
-        prop="delivery_product_box.begunok"
-        label="Begunok (kg)"
-        width="200"
+        prop="department"
+        label="Bo'lim"
+        width="150"
+        align="center"
       />
       <el-table-column
         header-align="center"
-        prop="delivery_product_box.latun"
-        label="Latun (kg)"
+        prop="username"
+        label="Xodim"
         width="200"
+        align="center"
       />
-
       <el-table-column
-        prop="delivery_product_box.duration_time"
-        label="Muddati"
-        width="300"
         header-align="center"
+        prop="customer_name"
+        label="Buyurtmachi"
+        width="200"
+        align="center"
+      />
+      <el-table-column
+        header-align="center"
+        prop="artikul"
+        label="Artikul"
+        width="200"
+        align="center"
+      />
+      <el-table-column
+        header-align="center"
+        prop="order_number"
+        label="Buyurtma nomeri"
+        width="200"
         align="center"
       />
       <el-table-column
         fixed="right"
+        label="Muddati"
+        width="150"
+        header-align="center"
+        align="center"
+        ><template #default="scope">
+          <div class="text-red-500">
+            {{ String(scope.row.delivery_time_provide).substring(0, 10) }}
+          </div>
+        </template></el-table-column
+      >
+      <el-table-column
+        fixed="right"
         prop="status"
         label="Holati"
-        width="200"
+        width="150"
         header-align="center"
         align="center"
       >
@@ -77,16 +105,16 @@ console.log(items);
         fixed="right"
         prop="id"
         label=""
-        width="150"
+        width="100"
         header-align="center"
         align="center"
       >
         <template #default="">
           <router-link
             to=""
-            class="inline-flex items-center ml-2 text-red hover:bg-red-600 font-medium rounded-md text-sm w-full sm:w-auto px-3 py-3 text-center"
+            class="inline-flex items-center ml-2 text-red hover:bg-slate-300 font-medium rounded-md text-sm w-full sm:w-auto px-3 py-3 text-center"
           >
-            <i class="text-black fa-trash fa-solid fa-trash fa-xs"></i>
+            <i class="text-black fa-check fa-solid fa-xs"></i>
           </router-link>
         </template>
       </el-table-column>

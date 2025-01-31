@@ -2,27 +2,26 @@
 import { ProvidePlanStore } from "../../stores/Provide/provideStore.js";
 const store_provide = ProvidePlanStore();
 import { storeToRefs } from "pinia";
-const { data, is_active } = storeToRefs(store_provide);
+const { items, is_active } = storeToRefs(store_provide);
 const OpenModalById = async (id) => {
   await store_provide.openModalById({ id });
 };
 </script>
 <template>
-  <div v-if="is_active === 2" class="shadow-md rounded min-h-[15px]">
+  <div v-if="is_active === 1" class="shadow-md rounded min-h-[15px]">
     <el-table
       :header-cell-style="{
         background: '#e8eded',
         border: '0.2px solid #e1e1e3',
       }"
-      show-header="true"
       size="small"
+      show-header="true"
       load
       class="w-full"
       header-align="center"
-      hight="5"
       empty-text="Mahsulot tanlanmagan... "
-      :data="data"
-      border
+      :data="items"
+      border="true"
       style="width: 100%; font-size: 12px"
       min-height="300"
       max-height="350"
@@ -34,38 +33,55 @@ const OpenModalById = async (id) => {
         prop="index"
         fixed="left"
         label="№"
-        width="80"
+        width="60"
       />
       <el-table-column
-        prop="delivery_product_box.pus"
-        label="Pus (kg)"
-        width="180"
         header-align="center"
+        prop="department"
+        label="Bo'lim"
+        width="150"
         align="center"
       />
       <el-table-column
-        prop="delivery_product_box.fike"
-        label="Fike (kg)"
-        width="180"
         header-align="center"
-        align="center"
-      />
-      <el-table-column
-        prop="delivery_product_box.color_code"
-        label="Rang kod"
+        prop="username"
+        label="Xodim"
         width="200"
-        header-align="center"
         align="center"
       />
-
       <el-table-column
-        prop="delivery_product_box.duration_time"
-        sortable
-        label="Yetkazish vaqti"
-        width="250"
         header-align="center"
+        prop="customer_name"
+        label="Buyurtmachi"
+        width="200"
         align="center"
       />
+      <el-table-column
+        header-align="center"
+        prop="artikul"
+        label="Artikul"
+        width="200"
+        align="center"
+      />
+      <el-table-column
+        header-align="center"
+        prop="order_number"
+        label="Buyurtma nomeri"
+        width="200"
+        align="center"
+      />
+      <el-table-column
+        fixed="right"
+        label="Muddati"
+        width="150"
+        header-align="center"
+        align="center"
+        ><template #default="scope">
+          <div class="text-red-500">
+            {{ String(scope.row.delivery_time_provide).substring(0, 10) }}
+          </div>
+        </template></el-table-column
+      >
       <el-table-column
         fixed="right"
         prop="status"
@@ -77,7 +93,7 @@ const OpenModalById = async (id) => {
         <template #default="scope">
           <router-link
             to=""
-            class="inline-flex items-center text-red bg-[#e4e9e9] hover:bg-[#d7ebeb] focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-md text-[12px] w-ful p-[5px] sm:w-auto text-center"
+            class="inline-flex items-center text-red bg-[#e4e9e9] hover:bg-[#d7ebeb] font-medium rounded-md text-[12px] w-ful p-[5px] sm:w-auto text-center"
           >
             {{ scope.row.status }}
           </router-link>
@@ -87,18 +103,16 @@ const OpenModalById = async (id) => {
         fixed="right"
         prop="id"
         label=""
-        width="150"
+        width="100"
         header-align="center"
         align="center"
       >
-        <template #default="scope">
+        <template #default="">
           <router-link
-            v-if="scope.row.status === `Tasdiqlanmagan`"
             to=""
-            @click="OpenModalById(scope.row._id)"
-            class="inline-flex items-center mt-4 ml-2 text-red bg-[#eedc36] hover:bg-yellow-400 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
+            class="inline-flex items-center ml-2 text-red hover:bg-slate-300 font-medium rounded-md text-sm w-full sm:w-auto px-3 py-3 text-center"
           >
-            <i class="text-red fa-solid fa-check fa-xs fa- fa-xs"></i>
+            <i class="text-black fa-check fa-solid fa-xs"></i>
           </router-link>
         </template>
       </el-table-column>

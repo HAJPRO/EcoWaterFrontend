@@ -9,7 +9,7 @@ export const ProvidePlanStore = defineStore("ProvidePlanStore", {
     return {
       card_id: "",
       is_modal: false,
-      data: [],
+      items: [],
       all_length: {},
       item: [],
       model: "",
@@ -31,9 +31,10 @@ export const ProvidePlanStore = defineStore("ProvidePlanStore", {
       this.is_active = payload.is_active;
     },
     async getAll(payload) {
-      const res = await ProvideService.getAll(payload);
-      this.data = res.data.items;
-      this.all_length = res.data.all_length;
+      const data = await ProvideService.getAll(payload);
+      this.items = data.data.items;
+      this.all_length = data.data.all_length;
+      console.log(data.data.items);
     },
 
     async openModalById(payload) {

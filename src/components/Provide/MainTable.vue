@@ -11,8 +11,8 @@ const { is_active } = storeToRefs(StoreProvide);
 <template>
   <div>
     <!-- <ProvideTable v-if="is_active === 1" /> -->
-    <PaintTable v-if="is_active === 2" />
-    <WeavingTable v-if="is_active === 3" />
-    <SpinningTable v-if="is_active === 4" />
+    <PaintTable v-if="is_active === 1" />
+    <WeavingTable v-if="is_active === 2" />
+    <SpinningTable v-if="is_active === 3" />
   </div>
 </template>

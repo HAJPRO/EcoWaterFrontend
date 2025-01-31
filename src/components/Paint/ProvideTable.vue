@@ -40,51 +40,54 @@ const OpenModalById = async (id) => {
         header-align="center"
         prop="department"
         label="Bo'lim"
-        width="250"
+        width="150"
         align="center"
       />
       <el-table-column
         header-align="center"
-        prop="delivery_product_box.pus"
-        label="Pus"
+        prop="username"
+        label="Xodim"
         width="200"
         align="center"
       />
       <el-table-column
         header-align="center"
-        prop="delivery_product_box.fike"
-        label="Fike"
+        prop="customer_name"
+        label="Buyurtmachi"
         width="200"
         align="center"
       />
       <el-table-column
-        prop="delivery_product_box.color"
-        label="Rang kod"
-        width="180"
         header-align="center"
+        prop="artikul"
+        label="Artikul"
+        width="200"
         align="center"
       />
-
+      <el-table-column
+        header-align="center"
+        prop="order_number"
+        label="Buyurtma nomeri"
+        width="200"
+        align="center"
+      />
       <el-table-column
         fixed="right"
-        prop="delivery_product_box.color_quantity"
-        label="Miqdori(kg)"
-        width="180"
-        header-align="center"
-        align="center"
-      />
-      <el-table-column
-        prop="delivery_product_box.delivery_time_provide"
         label="Muddati"
-        width="250"
+        width="150"
         header-align="center"
         align="center"
-      />
+        ><template #default="scope">
+          <div class="text-red-500">
+            {{ String(scope.row.delivery_time_provide).substring(0, 10) }}
+          </div>
+        </template></el-table-column
+      >
       <el-table-column
         fixed="right"
         prop="status"
         label="Holati"
-        width="200"
+        width="150"
         header-align="center"
         align="center"
       >
@@ -101,7 +104,7 @@ const OpenModalById = async (id) => {
         fixed="right"
         prop="id"
         label=""
-        width="150"
+        width="100"
         header-align="center"
         align="center"
       >
@@ -110,7 +113,7 @@ const OpenModalById = async (id) => {
             to=""
             class="inline-flex items-center ml-2 text-red hover:bg-slate-300 font-medium rounded-md text-sm w-full sm:w-auto px-3 py-3 text-center"
           >
-            <i class="text-black fa-trash fa-solid fa-trash fa-xs"></i>
+            <i class="text-black fa-check fa-solid fa-xs"></i>
           </router-link>
         </template>
       </el-table-column>

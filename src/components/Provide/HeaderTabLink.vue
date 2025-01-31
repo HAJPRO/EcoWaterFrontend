@@ -15,11 +15,11 @@ const is_Active = () => {
 };
 const isActive = ref(1);
 const ActiveTabLink = (num) => {
-  // if (num === 1) {
-  //   isActive.value = 1;
-  //   getAll();
-  //   is_Active();
-  // }
+  if (num === 1) {
+    isActive.value = 1;
+    getAll();
+    is_Active();
+  }
   if (num === 2) {
     isActive.value = 2;
     getAll();
@@ -27,11 +27,6 @@ const ActiveTabLink = (num) => {
   }
   if (num === 3) {
     isActive.value = 3;
-    getAll();
-    is_Active();
-  }
-  if (num === 4) {
-    isActive.value = 4;
     getAll();
     is_Active();
   }
@@ -71,14 +66,14 @@ onMounted(async () => {
       </router-link> -->
       <router-link
         to=""
-        @click="ActiveTabLink(2)"
-        :class="{ activeTab: isActive === 2 }"
+        @click="ActiveTabLink(1)"
+        :class="{ activeTab: isActive === 1 }"
         class="inline-flex text-[13px] items-center mr-1 px-4 py-1 mb-1 font-medium text-center hover:border-b-2 border-solid border-[#36d887] bg-[#e4e9e9] rounded"
       >
         <i class="fa-solid fa-info mr-2 fa-xm"></i> Bo'yoq
         <div class="flex flex-shrink-0 ml-2">
           <span
-            :class="{ activeTabIcon: isActive === 2 }"
+            :class="{ activeTabIcon: isActive === 1 }"
             class="inline-flex items-center justify-center h-5 text-[11px] text-white bg-[#36d887] px-3 py-2 rounded"
           >
             <span class=" ">0</span>/{{
@@ -89,14 +84,14 @@ onMounted(async () => {
       </router-link>
       <router-link
         to=""
-        @click="ActiveTabLink(3)"
-        :class="{ activeTab: isActive === 3 }"
+        @click="ActiveTabLink(2)"
+        :class="{ activeTab: isActive === 2 }"
         class="inline-flex text-[13px] items-center mr-1 px-4 py-1 mb-1 font-medium text-center hover:border-b-2 border-solid border-[#36d887] bg-[#e4e9e9] rounded"
       >
         <i class="fa-solid fa-info mr-2 fa-xm"></i> To'quv
         <div class="flex flex-shrink-0 ml-2">
           <span
-            :class="{ activeTabIcon: isActive === 3 }"
+            :class="{ activeTabIcon: isActive === 2 }"
             class="inline-flex items-center justify-center h-5 text-[11px] text-white bg-[#36d887] px-3 py-2 rounded"
             ><span class=" ">0</span>/{{
               (all_length ? all_length.weaving_length : 0) || 0
@@ -106,14 +101,14 @@ onMounted(async () => {
       </router-link>
       <router-link
         to=""
-        @click="ActiveTabLink(4)"
-        :class="{ activeTab: isActive === 4 }"
+        @click="ActiveTabLink(3)"
+        :class="{ activeTab: isActive === 3 }"
         class="inline-flex text-[13px] items-center mr-1 px-4 py-1 font-medium mb-1 text-center hover:border-b-2 border-solid border-[#36d887] bg-[#e4e9e9] rounded"
       >
         <i class="fa-solid fa-info mr-2 fa-xm"></i> Yigiruv
         <div class="flex flex-shrink-0 ml-2">
           <span
-            :class="{ activeTabIcon: isActive === 4 }"
+            :class="{ activeTabIcon: isActive === 3 }"
             class="inline-flex items-center justify-center h-5 text-[11px] text-white bg-[#36d887] px-3 py-2 rounded"
             ><span class=" ">0</span>/{{
               (all_length ? all_length.spinning_length : 0) || 0

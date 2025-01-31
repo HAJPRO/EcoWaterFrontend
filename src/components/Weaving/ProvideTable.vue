@@ -9,19 +9,21 @@ const { items, is_active } = storeToRefs(store_weaving);
 // };
 </script>
 <template>
-  <div class="shadow-md rounded min-h-[15px]">
+  <div class="shadow rounded">
     <el-table
-      load
-      class="w-full"
-      header-align="center"
-      empty-text="Mahsulot tanlanmagan... "
       :header-cell-style="{
         background: '#e8eded',
         border: '0.2px solid #e1e1e3',
       }"
-      style="width: 100%; font-size: 12px"
+      size="small"
+      show-header="true"
+      load
+      class="w-full"
+      header-align="center"
+      empty-text="Mahsulot tanlanmagan... "
       :data="items"
       border="true"
+      style="width: 100%; font-size: 12px"
       min-height="300"
       max-height="350"
     >
@@ -36,33 +38,51 @@ const { items, is_active } = storeToRefs(store_weaving);
       />
       <el-table-column
         header-align="center"
-        prop="delivery_product_box.likra"
-        label="Likra (kg)"
+        prop="department"
+        label="Bo'lim"
+        width="150"
+        align="center"
+      />
+      <el-table-column
+        header-align="center"
+        prop="username"
+        label="Xodim"
         width="200"
-      />
-      <el-table-column
-        prop="delivery_product_box.melaks_yarn"
-        label="Melaks Ip (kg)"
-        width="180"
-        header-align="center"
         align="center"
       />
       <el-table-column
-        prop="delivery_product_box.polister"
-        label="Polister (kg)"
-        width="180"
         header-align="center"
+        prop="customer_name"
+        label="Buyurtmachi"
+        width="200"
         align="center"
       />
-
       <el-table-column
-        prop="delivery_product_box.duration_time"
-        label="Yetkazish vaqti"
-        width="180"
         header-align="center"
+        prop="artikul"
+        label="Artikul"
+        width="200"
         align="center"
       />
-
+      <el-table-column
+        header-align="center"
+        prop="order_number"
+        label="Buyurtma nomeri"
+        width="200"
+        align="center"
+      />
+      <el-table-column
+        fixed="right"
+        label="Muddati"
+        width="150"
+        header-align="center"
+        align="center"
+        ><template #default="scope">
+          <div class="text-red-500">
+            {{ String(scope.row.delivery_time_provide).substring(0, 10) }}
+          </div>
+        </template></el-table-column
+      >
       <el-table-column
         fixed="right"
         prop="status"
@@ -84,16 +104,16 @@ const { items, is_active } = storeToRefs(store_weaving);
         fixed="right"
         prop="id"
         label=""
-        width="150"
+        width="100"
         header-align="center"
         align="center"
       >
         <template #default="">
           <router-link
             to=""
-            class="inline-flex items-center ml-2 text-red hover:bg-[ #e1e1e3] font-medium rounded-md text-sm w-full sm:w-auto px-3 py-3 text-center"
+            class="inline-flex items-center ml-2 text-red hover:bg-slate-300 font-medium rounded-md text-sm w-full sm:w-auto px-3 py-3 text-center"
           >
-            <i class="text-black fa-trash fa-solid fa-trash fa-xs"></i>
+            <i class="text-black fa-check fa-solid fa-xs"></i>
           </router-link>
         </template>
       </el-table-column>
