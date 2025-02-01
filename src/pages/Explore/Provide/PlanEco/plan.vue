@@ -7,8 +7,16 @@ import { ProvidePlanStore } from "../../../../stores/Provide/provideStore";
 const store_provide = ProvidePlanStore();
 import { storeToRefs } from "pinia";
 import PaintTable from "../../../../components/Provide/PaintTable.vue";
-import ModalConfirm from "../../../../components/Provide/ModalConfirm.vue";
-const { is_active, is_modal } = storeToRefs(store_provide);
+import DetailPaintModal from "../../../../components/Provide/DetailPaintModal.vue";
+import DetailWeavingModal from "../../../../components/Provide/DetailWeavingModal.vue";
+import DetailSpinningModal from "../../../../components/Provide/DetailSpinningModal.vue";
+
+const {
+  is_active,
+  detail_paint_modal,
+  detail_weaving_modal,
+  detail_spinning_modal,
+} = storeToRefs(store_provide);
 </script>
 
 <template>
@@ -20,7 +28,9 @@ const { is_active, is_modal } = storeToRefs(store_provide);
     </Title>
     <HeaderTabLink />
     <MainTable />
-    <ModalConfirm v-if="is_modal" />
+    <DetailPaintModal v-if="detail_paint_modal === true" />
+    <DetailWeavingModal v-if="detail_weaving_modal === true" />
+    <DetailSpinningModal v-if="detail_spinning_modal === true" />
   </div>
 </template>
 <style>

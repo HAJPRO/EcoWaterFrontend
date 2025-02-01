@@ -257,6 +257,7 @@
         <!-- Bo'limlar group -->
         <div
           v-if="
+            role === 1 ||
             role === 2 ||
             role === 1000 ||
             role === 2 ||

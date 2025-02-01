@@ -678,7 +678,6 @@ const active = ref(2);
             proccess_data.PaintCard.status === `Bo'yoq yakunladi` &&
             proccess_data.WeavingCard.status === `To'quv yakunladi` &&
             proccess_data.SpinningCard.status === `Yigiruv yakunladi` &&
-            proccess_data.SaleCard.status === `Bo'yoq yakunladi` &&
             isDepInfo
           "
           class="dialog-footer"

@@ -108,7 +108,7 @@ const DetailModal = async (id) => {
       >
         <template #default="scope">
           <router-link
-            v-show="scope.row.status === `Jarayonda`"
+            v-show="scope.row.weaving_status === `Yigiruvga yuborildi`"
             to=""
             @click="DetailModal(scope.row._id)"
             class="inline-flex items-center ml-2 text-red hover:bg-[#e1e1e3] font-medium rounded-md text-sm w-full sm:w-auto px-3 py-3 text-center"

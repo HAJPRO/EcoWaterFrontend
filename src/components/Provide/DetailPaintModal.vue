@@ -3,14 +3,17 @@ import { ref } from "vue";
 import { ProvidePlanStore } from "../../stores/Provide/provideStore";
 const store_provide = ProvidePlanStore();
 import { storeToRefs } from "pinia";
-const { is_modal, card_id, item, model } = storeToRefs(store_provide);
+const { detail_paint_modal, detail } = storeToRefs(store_provide);
 
 const is_cancel = ref(false);
 const Cancel = () => {
   is_cancel.value = !is_cancel.value;
 };
 const confirm = () => {
-  store_provide.Confirm();
+  store_provide.Confirm({ department: 2, delivered: false });
+};
+const delivered = () => {
+  store_provide.Confirm({ department: 2, delivered: true });
 };
 const cancel_reason = ref();
 const sendReason = async () => {
@@ -21,22 +24,28 @@ const sendReason = async () => {
 </script>
 <template>
   <div>
-    <el-dialog
-      v-model="is_modal"
-      title="Buyurtmani qabul qilish oynasi! "
-      width="800"
-    >
+    <el-dialog v-model="detail_paint_modal" width="1000">
       <span>
-        <div v-if="item[0].pus" class="shadow-md rounded min-h-[15px]">
+        <div class="shadow-md rounded">
+          <div
+            class="bg-slate-100 font-semibold p-1 mb-1 text-[15px] align-center text-center shadow rounded border-t-[1px] border-[#36d887]"
+          >
+            Buyurtma ma'lumotlari!
+          </div>
           <el-table
+            :header-cell-style="{
+              background: '#e8eded',
+              border: '0.2px solid #e1e1e3',
+            }"
+            size="small"
+            show-header="true"
             load
             class="w-full"
             header-align="center"
-            hight="5"
             empty-text="Mahsulot tanlanmagan... "
-            :data="item"
-            border
-            style="width: 100%"
+            :data="detail.delivery_product_box"
+            border="true"
+            style="width: 100%; font-size: 12px"
             min-height="300"
             max-height="350"
           >
@@ -47,166 +56,108 @@ const sendReason = async () => {
               prop="index"
               fixed="left"
               label="№"
-              width="80"
+              :max-width="80"
+              :min-width="60"
             />
             <el-table-column
-              prop="pus"
-              label="Pus"
-              width="180"
               header-align="center"
+              prop="pus_name"
+              label="Pus nomi"
+              :max-width="200"
+              :min-width="150"
               align="center"
             />
             <el-table-column
-              prop="fike"
-              label="Fike (kg)"
-              width="180"
               header-align="center"
+              prop="pus_type"
+              label="Pus turi"
+              :max-width="200"
+              :min-width="150"
               align="center"
             />
             <el-table-column
-              prop="color_code"
-              label="Rang kod"
-              width="200"
               header-align="center"
-              align="center"
-            />
-
-            <el-table-column
-              fixed="right"
-              prop="duration_time"
-              sortable
-              label="Yetkazish vaqti"
-              width="180"
-              header-align="center"
-              align="center"
-            />
-          </el-table>
-        </div>
-        <div v-if="item[0].likra" class="shadow-md rounded min-h-[15px]">
-          <el-table
-            load
-            class="w-full"
-            header-align="center"
-            hight="5"
-            empty-text="Mahsulot tanlanmagan... "
-            :data="item"
-            border
-            style="width: 100%"
-            min-height="300"
-            max-height="350"
-          >
-            <el-table-column
-              header-align="center"
-              align="center"
-              type="index"
-              prop="index"
-              fixed="left"
-              label="№"
-              width="80"
-            />
-            <el-table-column
-              prop="likra"
-              label="Likra"
-              width="180"
-              header-align="center"
+              prop="pus_quantity"
+              label="Pus miqdori(kg)"
+              :max-width="200"
+              :min-width="150"
               align="center"
             />
             <el-table-column
-              prop="polister"
-              label="Polister (kg)"
-              width="180"
               header-align="center"
+              prop="fike_name"
+              label="Fike nomi"
+              :max-width="200"
+              :min-width="150"
               align="center"
             />
             <el-table-column
-              prop="melaks_yarn"
-              label="Melaks ip"
-              width="200"
               header-align="center"
+              prop="fike_type"
+              label="Fike turi"
+              :max-width="200"
+              :min-width="150"
+              align="center"
+            />
+            <el-table-column
+              header-align="center"
+              prop="fike_quantity"
+              label="Fike miqdori(kg)"
+              :max-width="200"
+              :min-width="150"
+              align="center"
+            />
+            <el-table-column
+              header-align="center"
+              prop="color"
+              label="Rang nomi"
+              :max-width="200"
+              :min-width="150"
+              align="center"
+            />
+            <el-table-column
+              header-align="center"
+              prop="color_quantity"
+              label="Rang miqdori(kg)"
+              :max-width="200"
+              :min-width="150"
               align="center"
             />
 
             <el-table-column
               fixed="right"
-              prop="duration_time"
-              sortable
-              label="Yetkazish vaqti"
-              width="180"
+              label="Muddati"
+              :max-width="300"
+              :min-width="150"
               header-align="center"
               align="center"
-            />
-          </el-table>
-        </div>
-        <div v-if="item[0].latun" class="shadow-md rounded min-h-[15px]">
-          <el-table
-            load
-            class="w-full"
-            header-align="center"
-            hight="5"
-            empty-text="Mahsulot tanlanmagan... "
-            :data="item"
-            border
-            style="width: 100%"
-            min-height="300"
-            max-height="350"
-          >
-            <el-table-column
-              header-align="center"
-              align="center"
-              type="index"
-              prop="index"
-              fixed="left"
-              label="№"
-              width="80"
-            />
-            <el-table-column
-              prop="latun"
-              label="Latun"
-              width="200"
-              header-align="center"
-              align="center"
-            />
-            <el-table-column
-              prop="begunok"
-              label="Begunok (kg)"
-              width="200"
-              header-align="center"
-              align="center"
-            />
-
-            <el-table-column
-              fixed="right"
-              prop="duration_time"
-              sortable
-              label="Yetkazish vaqti"
-              width="300"
-              header-align="center"
-              align="center"
-            />
-          </el-table>
-        </div>
-        <form
-          v-show="is_cancel"
-          class="filter-box md:grid md:grid-cols-4 gap-2 sm:flex sm:flex-wrap rounded shadow-md bg-white p-2 mt-1 mb-1 text-[12px]"
-        >
-          <div class="mb-1 col-span-4">
-            <label
-              name="resul"
-              class="block mb-1 text-[12px] font-medium text-gray-900 dark:text-white"
-              >Bekor qilish sababi</label
+              ><template #default="scope">
+                <div class="text-red-500">
+                  {{ String(scope.row.delivery_time_provide).substring(0, 10) }}
+                </div>
+              </template></el-table-column
             >
 
-            <el-input
-              v-model="cancel_reason"
-              clearable
-              maxlength="200"
-              show-word-limit
-              autosize
-              type="textarea"
-              placeholder="Sababini kiriting !"
-            />
-          </div>
-        </form>
+            <el-table-column
+              fixed="right"
+              prop="id"
+              label=""
+              :max-width="200"
+              :min-width="100"
+              header-align="center"
+              align="center"
+            >
+              <template #default="">
+                <router-link
+                  to=""
+                  class="inline-flex items-center ml-2 text-red hover:bg-slate-300 font-medium rounded-md text-sm w-full sm:w-auto px-3 py-3 text-center"
+                >
+                  <i class="text-black fa-check fa-solid fa-xs"></i>
+                </router-link>
+              </template>
+            </el-table-column>
+          </el-table>
+        </div>
       </span>
 
       <el-dialog
@@ -218,7 +169,18 @@ const sendReason = async () => {
         <span>Cancel And Of Reason</span>
       </el-dialog>
       <template #footer>
-        <div class="dialog-footer">
+        <div>
+          <router-link
+            v-if="detail.status === `Jarayonda`"
+            type=""
+            to=""
+            @click="delivered()"
+            class="inline-flex text-[12px] items-center ml-2 px-3 py-1 mb-1 mt-2 text-sm font-medium text-center text-white bg-[#36d887] text-bold rounded"
+          >
+            <i class="mr-2 fa-solid fa-check fa-sm"></i>Yakunlash</router-link
+          >
+        </div>
+        <div v-if="detail.status === `Tasdiqlanmagan`" class="dialog-footer">
           <router-link
             v-if="!is_cancel"
             to=""
@@ -255,6 +217,15 @@ const sendReason = async () => {
             class="inline-flex text-[12px] items-center ml-2 px-3 py-1 mb-1 mt-2 text-sm font-medium text-center text-white bg-[#36d887] text-bold rounded"
           >
             <i class="mr-2 fa-solid fa-check fa-sm"></i>Yuborish</router-link
+          >
+          <router-link
+            v-if="detail.status === `Jarayonda`"
+            type=""
+            to=""
+            @click="confirm()"
+            class="inline-flex text-[12px] items-center ml-2 px-3 py-1 mb-1 mt-2 text-sm font-medium text-center text-white bg-[#36d887] text-bold rounded"
+          >
+            <i class="mr-2 fa-solid fa-check fa-sm"></i>Yakunlash</router-link
           >
         </div>
       </template>

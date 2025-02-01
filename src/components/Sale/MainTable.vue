@@ -1,15 +1,13 @@
 <script setup>
-const today = ref(new Date());
 import { ref } from "vue";
 import { SaleStore } from "../../stores/Sale/sale.store";
 const store_sale = SaleStore();
 import { storeToRefs } from "pinia";
 const { items } = storeToRefs(store_sale);
-const isModal = ref(false);
-const getByIdForUpdate = async (id) => {
-  const is_modal = !isModal.value;
-  store_sale.openModalById({ is_modal, id });
+const ExportExcel = async (id) => {
+  store_sale.ExportExcelById(id);
 };
+const isModal = ref(false);
 
 const DetailModal = async (id) => {
   await store_sale.DetailModal(id);
@@ -48,7 +46,8 @@ const proccessModalById = async (id) => {
         prop="index"
         fixed="left"
         label="№"
-        width="60"
+        :min-width="60"
+        :max-width="80"
       />
 
       <el-table-column
@@ -56,14 +55,16 @@ const proccessModalById = async (id) => {
         header-align="center"
         prop="customer_name"
         label="Buyurtmachi"
-        width="200"
+        :min-width="200"
+        :max-width="300"
       />
       <el-table-column
         align="center"
         header-align="center"
         prop="artikul"
         label="Artikul"
-        width="200"
+        :min-width="200"
+        :max-width="300"
       />
 
       <el-table-column
@@ -71,12 +72,14 @@ const proccessModalById = async (id) => {
         header-align="center"
         prop="order_number"
         label="Buyurtma nomeri"
-        width="200"
+        :min-width="200"
+        :max-width="300"
       />
       <el-table-column
         prop="order_quantity"
         label="Miqdori"
-        width="200"
+        :min-width="200"
+        :max-width="300"
         header-align="center"
         align="center"
         ><template #default="scope"
@@ -88,7 +91,8 @@ const proccessModalById = async (id) => {
 
       <el-table-column
         label="Muddati"
-        width="300"
+        :min-width="200"
+        :max-width="300"
         header-align="center"
         align="center"
       >
@@ -101,7 +105,8 @@ const proccessModalById = async (id) => {
         fixed="right"
         prop="order_status"
         label="Holati"
-        width="250"
+        :min-width="250"
+        :max-width="350"
         header-align="center"
         align="center"
       >
@@ -120,7 +125,8 @@ const proccessModalById = async (id) => {
         fixed="right"
         prop="id"
         label=""
-        width="250"
+        :min-width="250"
+        :max-width="300"
         header-align="center"
         align="center"
       >
@@ -139,20 +145,27 @@ const proccessModalById = async (id) => {
           >
             <i class="text-black fa-sharp fa-solid fa-info fa-xs"></i>
           </router-link>
-          <router-link
+          <!-- <router-link
             v-show="scope.row.status === 'Tasdiqlanmagan'"
             to=""
             @click="getByIdForUpdate(scope.row._id)"
             class="inline-flex items-center mt-1 ml-2 text-white hover:bg-slate-300 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
           >
             <i class="text-black fa-sharp fa-solid fa-edit fa-xs"></i>
-          </router-link>
+          </router-link> -->
           <router-link
             to=""
             @click="deleteById(scope.row._id)"
             class="inline-flex items-center mt-1 ml-2 text-white hover:bg-slate-300 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
           >
             <i class="text-black fa-sharp fa-solid fa-trash fa-xs"></i>
+          </router-link>
+          <router-link
+            to=""
+            @click="ExportExcel(scope.row._id)"
+            class="inline-flex items-center mt-1 ml-2 text-white hover:bg-slate-300 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
+          >
+            <i class="text-black fa-solid fa-file-excel fa-xs"></i>
           </router-link>
         </template>
       </el-table-column>

@@ -1,4 +1,5 @@
 import { SaleService } from "../../ApiServices/Sale/sale.service";
+import { utils, writeFileXLSX } from "xlsx";
 import { ToastifyService } from "../../utils/Toastify";
 import { loading } from "./../../utils/Loader";
 import { defineStore } from "pinia";
@@ -164,6 +165,56 @@ export const SaleStore = defineStore("saleStore", {
         loader.hide();
       } catch (error) {
         return ToastifyService.ToastError({ msg: error.messages });
+      }
+    },
+    async ExportExcelById(id) {
+      const data = await SaleService.GetOne({ id });
+      if (data.data) {
+        const card = data.data.sale_products.map((item) => {
+          const products = {
+            id: 1,
+            customer_name: data.data.customer_name,
+            artikul: data.data.artikul,
+            order_number: data.data.order_number,
+            material_name: item.material_name,
+            material_type: item.material_type,
+            color: item.color,
+            width: item.width,
+            grammage: item.grammage,
+            order_quantity: item.order_quantity,
+            unit: item.unit,
+            delivery_time: String(data.data.delivery_time).substring(0, 10),
+          };
+          console.log(products);
+
+          return products;
+        });
+        const heading = [
+          [
+            "№",
+            "Buyurtmachi",
+            "Artikul ",
+            "Buyurtma nomeri",
+            "Mato nomi",
+            "Mato turi ",
+            "Mato rangi",
+            "Eni",
+            "Grammage",
+            "Miqdori",
+            "Birligi",
+            "Muddati",
+          ],
+        ];
+
+        const ws1 = utils.json_to_sheet(card);
+        const wb = utils.book_new();
+        utils.sheet_add_aoa(ws1, heading);
+        utils.book_append_sheet(wb, ws1, `${card[0].customer_name}`);
+        writeFileXLSX(wb, `${Date.now()}.xlsx`);
+      } else {
+        ToastifyService.ToastError({
+          msg: "Exportda xatolik yuz berdi !",
+        });
       }
     },
   },

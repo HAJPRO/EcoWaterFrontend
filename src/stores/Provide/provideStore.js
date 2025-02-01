@@ -8,8 +8,11 @@ export const ProvidePlanStore = defineStore("ProvidePlanStore", {
   state: () => {
     return {
       card_id: "",
-      is_modal: false,
+      detail_paint_modal: false,
+      detail_weaving_modal: false,
+      detail_spinning_modal: false,
       items: [],
+      detail: [],
       all_length: {},
       item: [],
       model: "",
@@ -19,10 +22,22 @@ export const ProvidePlanStore = defineStore("ProvidePlanStore", {
     };
   },
   actions: {
-    async GetModel() {
+    async DetailModal(payload) {
       try {
-        const data = await SaleService.getModel();
-        this.model = data.data;
+        if (payload.department === 2) {
+          this.detail_paint_modal = true;
+          this.card_id = payload.id;
+        }
+        if (payload.department === 3) {
+          this.detail_weaving_modal = true;
+          this.card_id = payload.id;
+        }
+        if (payload.department === 4) {
+          this.detail_spinning_modal = true;
+          this.card_id = payload.id;
+        }
+        const data = await ProvideService.getOne(payload);
+        this.detail = data.data;
       } catch (err) {
         console.log(err);
       }
@@ -34,16 +49,8 @@ export const ProvidePlanStore = defineStore("ProvidePlanStore", {
       const data = await ProvideService.getAll(payload);
       this.items = data.data.items;
       this.all_length = data.data.all_length;
-      console.log(data.data.items);
     },
 
-    async openModalById(payload) {
-      this.card_id = payload.id;
-      this.is_modal = true;
-      const data = await ProvideService.getOne(payload.id);
-      this.item = Array(data.data.box);
-      this.card_id = payload.id;
-    },
     async cancelSendReason(payload) {
       try {
         const loader = loading.show();
@@ -63,17 +70,26 @@ export const ProvidePlanStore = defineStore("ProvidePlanStore", {
         });
       }
     },
-    async Confirm() {
+    async Confirm(item) {
       const loader = loading.show();
-      const data = await ProvideService.Confirm(this.card_id);
+      const data = await ProvideService.Confirm({
+        ...item,
+        card_id: this.card_id,
+      });
+      if (item.department === 2) {
+        this.detail_paint_modal = false;
+      }
+      if (item.department === 3) {
+        this.detail_weaving_modal = false;
+      }
+      if (item.department === 4) {
+        this.detail_spinning_modal = false;
+      }
+      this.getAll({ status: this.is_active });
       loader.hide();
       ToastifyService.ToastSuccess({
         msg: data.data.msg,
       });
-      const Refresh = () => {
-        window.location.href = "/explore/department/provide/working/plan";
-      };
-      setTimeout(Refresh, 1500);
     },
     async Delivered(payload) {
       try {
@@ -116,7 +132,7 @@ export const ProvidePlanStore = defineStore("ProvidePlanStore", {
     //     }
     // },
     // isConfirmModal(payload) {
-    //     this.is_provide = payload.is_modal;
+    //     this.is_provide = payload.is_detail_modal;
 
     // },
     // async SaveToProvide(payload) {
@@ -138,7 +154,7 @@ export const ProvidePlanStore = defineStore("ProvidePlanStore", {
     // },
     // async StatusModalById(payload) {
     //     this.status_modal.id = payload.id;
-    //     this.status_modal.isModal = payload.is_modal;
+    //     this.status_modal.isModal = payload.is_detail_modal;
     //     // const data = await SaleService.getOne(payload.id)
     //     // this.model = data.data
     // },
