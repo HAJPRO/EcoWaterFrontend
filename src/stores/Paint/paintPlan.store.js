@@ -25,6 +25,9 @@ export const PaintPlanStore = defineStore("paintPlanStore", {
         delivery_time_provide: "",
       },
       report_paint: [],
+      report_weaving: [],
+      DonePaint: "",
+      DoneWeaving: "",
       card_id: "",
       is_modal: false,
       items: [],
@@ -93,8 +96,8 @@ export const PaintPlanStore = defineStore("paintPlanStore", {
     },
     async GetDayReport(payload) {
       const data = await PaintService.GetDayReport({ order_number: payload });
-      this.report_paint = data.data.res;
-
+      this.report_paint = data.data.paint;
+      this.report_weaving = data.data.weaving;
       if (this.report_paint.length > 0) {
         const initialValuePaint = 0;
         this.DonePaint = this.report_paint.reduce(
@@ -103,6 +106,15 @@ export const PaintPlanStore = defineStore("paintPlanStore", {
         );
       } else {
         this.DonePaint = 0;
+      }
+      if (this.report_weaving.length > 0) {
+        const initialValueWeaving = 0;
+        this.DoneWeaving = this.report_weaving.reduce(
+          (a, b) => a + Number(b.quantity),
+          initialValueWeaving
+        );
+      } else {
+        this.DoneWeaving = 0;
       }
     },
     async AcceptAndCreate(payload) {
@@ -113,7 +125,7 @@ export const PaintPlanStore = defineStore("paintPlanStore", {
         provide: payload,
       });
 
-      this.GetAll({ is_active: this.is_active });
+      this.GetAll({ status: this.is_active });
       this.is_detail_modal = false;
       ToastifyService.ToastSuccess({ msg: data.data.msg });
       loader.hide();
@@ -122,7 +134,6 @@ export const PaintPlanStore = defineStore("paintPlanStore", {
       const data = await PaintService.GetOneOrderReport(payload);
       this.report.card = data.data[0];
       this.is_report_modal = true;
-      console.log(data.data[0]);
     },
     async GetAll(status) {
       try {
@@ -133,23 +144,7 @@ export const PaintPlanStore = defineStore("paintPlanStore", {
         console.log(err);
       }
     },
-    async openModalById(payload) {
-      this.card_id = payload.id;
-      this.is_modal = payload.is_modal;
-      const data = await SaleService.getOne(payload.id);
-      this.item = Array(data.data);
-    },
-    async PaintConfirmedOrders(payload) {
-      const data = await PaintService.PaintConfirmedOrders(payload.status).then(
-        (items) => {
-          items.map((item) => {
-            return item.confirmed_orders;
-          });
-        }
-      );
 
-      this.confirmed_orders = Array(data.data);
-    },
     async cancelSendReason(payload) {
       try {
         const loader = loading.show();
@@ -169,32 +164,32 @@ export const PaintPlanStore = defineStore("paintPlanStore", {
         });
       }
     },
-    isConfirmModal(payload) {
-      this.is_provide = payload.is_modal;
-    },
-    async SaveToProvide(payload) {
-      try {
-        const loader = loading.show();
-        const data = await PaintService.create({
-          items: payload.data,
-          card_id: payload.id,
-        });
-        loader.hide();
-        const TimeOut = () => {
-          window.location.href = "/explore/department/paint/working/plan";
-        };
-        ToastifyService.ToastSuccess({ msg: data.data.msg });
-        setTimeout(TimeOut, 1000);
-      } catch (err) {
-        console.log(err);
-      }
-    },
-    async StatusModalById(payload) {
-      this.status_modal.id = payload.id;
-      this.status_modal.isModal = payload.is_modal;
-      // const data = await SaleService.getOne(payload.id)
-      // this.model = data.data
-    },
+    // isConfirmModal(payload) {
+    //   this.is_provide = payload.is_modal;
+    // },
+    // async SaveToProvide(payload) {
+    //   try {
+    //     const loader = loading.show();
+    //     const data = await PaintService.create({
+    //       items: payload.data,
+    //       card_id: payload.id,
+    //     });
+    //     loader.hide();
+    //     const TimeOut = () => {
+    //       window.location.href = "/explore/department/paint/working/plan";
+    //     };
+    //     ToastifyService.ToastSuccess({ msg: data.data.msg });
+    //     setTimeout(TimeOut, 1000);
+    //   } catch (err) {
+    //     console.log(err);
+    //   }
+    // },
+    // async StatusModalById(payload) {
+    //   this.status_modal.id = payload.id;
+    //   this.status_modal.isModal = payload.is_modal;
+    //   // const data = await SaleService.getOne(payload.id)
+    //   // this.model = data.data
+    // },
     async Update(payload) {
       try {
         const loader = loading.show();

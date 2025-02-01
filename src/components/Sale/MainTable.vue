@@ -10,9 +10,7 @@ const getByIdForUpdate = async (id) => {
   const is_modal = !isModal.value;
   store_sale.openModalById({ is_modal, id });
 };
-const HeaderClass = (data) => {
-  console.log(data);
-};
+
 const DetailModal = async (id) => {
   await store_sale.DetailModal(id);
 };
@@ -20,7 +18,7 @@ const deleteById = async (id) => {
   await store_sale.DeleteById(id);
 };
 const proccessModalById = async (id) => {
-  await store_sale.AllOrderProccessById(id);
+  await store_sale.AllOrderProccessById({ id });
 };
 </script>
 <template>

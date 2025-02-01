@@ -35,10 +35,13 @@ export const WeavingPlanStore = defineStore("WeavingPlan", {
       paint_process_id: "",
       all_length: {},
       order_report: [],
-      report_weaving: [],
+
       is_report_modal: false,
       sale_order_id: "",
       DoneWeaving: "",
+      report_weaving: [],
+      report_spinning: [],
+      DoneSpinning: "",
     };
   },
   actions: {
@@ -88,8 +91,18 @@ export const WeavingPlanStore = defineStore("WeavingPlan", {
     },
     async GetDayReport(payload) {
       const data = await WeavingService.GetDayReport({ order_number: payload });
-      this.report_weaving = data.data.res;
+      this.report_weaving = data.data.weaving;
+      this.report_spinning = data.data.spinning;
 
+      if (this.report_spinning.length > 0) {
+        const initialValueSpinning = 0;
+        this.DoneSpinning = this.report_spinning.reduce(
+          (a, b) => a + Number(b.quantity),
+          initialValueSpinning
+        );
+      } else {
+        this.DoneSpinning = 0;
+      }
       if (this.report_weaving.length > 0) {
         const initialValuePaint = 0;
         this.DoneWeaving = this.report_weaving.reduce(
@@ -111,7 +124,7 @@ export const WeavingPlanStore = defineStore("WeavingPlan", {
       });
       this.is_provide = false;
       this.is_detail_modal = false;
-      this.GetAll({ is_active: this.is_active });
+      this.GetAll({ status: this.is_active });
       ToastifyService.ToastSuccess({ msg: data.data.msg });
       loader.hide();
     },

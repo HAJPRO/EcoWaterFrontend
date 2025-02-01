@@ -119,7 +119,7 @@ const rules = ref({
 </script>
 <template>
   <AddOptionModal v-if="is_modal === true" />
-  <el-dialog v-model="is_provide" width="900">
+  <el-dialog v-model="is_provide" width="1100">
     <span class="">
       <div
         class="font-semibold rounded text-[14px] p-1 mb-2 text-center bg-slate-100 shadow border-t-[1px] border-[#36d887] mt-2"

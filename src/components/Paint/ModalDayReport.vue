@@ -4,8 +4,14 @@ import { v4 as uuidv4 } from "uuid";
 import { PaintPlanStore } from "../../stores/Paint/paintPlan.store";
 const store_paint = PaintPlanStore();
 import { storeToRefs } from "pinia";
-const { is_report_modal, report, report_paint, detail, DonePaint } =
-  storeToRefs(store_paint);
+const {
+  is_report_modal,
+  report_weaving,
+  report_paint,
+  detail,
+  DonePaint,
+  DoneWeaving,
+} = storeToRefs(store_paint);
 
 const model = ref({
   input_plan_id: detail.value._id,
@@ -48,12 +54,6 @@ const CreateDayReport = async (formRef) => {
       model.value.quantity <= residue.value
     ) {
       store_paint.CreateDayReport(model.value);
-      model.value = {
-        quantity: "",
-        unit: "",
-        material_name: "",
-        material_type: "",
-      };
     } else {
       return false;
     }
@@ -75,6 +75,7 @@ const CreateDayReport = async (formRef) => {
       </div>
       <div class="shadow-md rounded">
         <el-table
+          :data="report_weaving"
           :header-cell-style="{
             background: '#e8eded',
             border: '0.2px solid #e1e1e3',
@@ -83,10 +84,10 @@ const CreateDayReport = async (formRef) => {
           class="w-full"
           header-align="center"
           empty-text="Mahsulot tanlanmagan... "
-          border="true"
+          border
           style="width: 100%; font-size: 12px"
-          min-height="150"
-          max-height="150"
+          min-height="200"
+          max-height="200"
         >
           <el-table-column
             header-align="center"
@@ -99,65 +100,113 @@ const CreateDayReport = async (formRef) => {
           />
           <el-table-column
             header-align="center"
-            prop="name"
+            prop="material_name"
             label="Mato nomi"
             width="180"
+            align="center"
           />
           <el-table-column
             header-align="center"
-            prop="type"
+            prop="material_type"
             label="Mato turi"
-            width="180"
-          />
-          <el-table-column
-            header-align="center"
-            prop="quantity"
-            label="Miqdori"
-            width="180"
-          />
-          <!-- <el-table-column
-            header-align="center"
-            prop="unit"
-            label="Birligi"
             width="150"
-          /> -->
-          <el-table-column
-            header-align="center"
-            prop="date"
-            label="Vaqti"
-            width="250"
+            align="center"
           />
           <el-table-column
             fixed="right"
+            header-align="center"
+            prop="quantity"
+            label="Miqdori"
+            width="150"
+            align="center"
+            ><template #default="scope"
+              ><div class="text-red-500 font-semibold">
+                {{ scope.row.quantity }} {{ scope.row.unit }}
+              </div></template
+            ></el-table-column
+          >
+
+          <el-table-column
+            header-align="center"
+            label="Vaqt"
+            width="150"
+            align="center"
+            ><template #default="scope">{{
+              String(scope.row.createdAt).substring(0, 10)
+            }}</template></el-table-column
+          >
+          <el-table-column
+            fixed="right"
+            label="Holati"
+            width="180"
+            header-align="center"
+            align="center"
+          >
+            <template #default="scope">
+              <router-link
+                to=""
+                class="inline-flex items-center text-red bg-[#e4e9e9] hover:bg-[#e1e1e3] font-medium rounded-md text-[12px] w-ful p-[5px] sm:w-auto text-center"
+              >
+                {{ scope.row.status }}
+              </router-link>
+            </template>
+          </el-table-column>
+          <el-table-column
+            fixed="right"
             label=""
-            width="127"
+            width="100"
             header-align="center"
             align="center"
           >
             <template #default="">
               <router-link
                 to=""
-                class="inline-flex items-center mt-4 ml-2 text-red bg-[#eedc36] hover:bg-yellow-400 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
+                class="inline-flex items-center mt-4 ml-2 text-red hover:bg-[#e8eded] font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
               >
-                <i class="text-red fa-solid fa-check fa-xs fa- fa-xs"></i>
+                <i class="text-red fa-solid fa-pen fa-xs fa- fa-xs"></i>
               </router-link>
             </template>
           </el-table-column>
         </el-table>
       </div>
       <div
-        class="flex justify-between flex-wrap font-semibold text-[12px] mb-2 p-1 bg-slate-100 shadow border-b-[1px] border-[#36d887]"
+        class="flex justify-between flex-wrap font-semibold text-[12px] p-[6px] bg-slate-100 shadow border-b-[1px] border-[#36d887]"
       >
-        <div>
+        <div class="mt-2">
           Buyurtma:
-          {{ detail.card ? detail.weaving_quantity : 0 }} kg
+          {{ detail ? detail.weaving_quantity : 0 }} kg
         </div>
-        <div>Bajarildi: {{ 0 }} kg</div>
-        <div>
+        <div class="mt-2">Bajarildi: {{ DoneWeaving }} kg</div>
+        <div class="mt-2">
           Qoldi:
-          {{ 0 }} kg
+          {{ DoneWeaving >= 0 ? detail.weaving_quantity - DoneWeaving : 0 }} kg
+        </div>
+        <div v-if="detail.weaving_quantity - DoneWeaving <= 0">
+          <el-button
+            @click="CreateDayReport(formRef)"
+            style="
+              background: linear-gradient(
+                90deg,
+                rgba(200, 200, 200, 1) 0%,
+                rgba(54, 216, 135, 1) 35%,
+                rgba(200, 200, 200, 1) 100%
+              );
+              color: rgb(80, 79, 79);
+              border: none;
+              cursor: pointer;
+              width: 100%;
+              padding: 12px;
+              font-size: 12px;
+              border: 1px solid #36d887;
+              font-weight: bold;
+              border: none;
+            "
+          >
+            To'quv partyani yakunladi
+          </el-button>
         </div>
       </div>
+
       <div class="text-[15px] bg-white rounded shadow hover:shadow-md mt-2">
         <div
           class="bg-slate-100 font-semibold p-1 mt-1 align-center text-center shadow rounded border-t-[1px] border-[#36d887]"
@@ -389,14 +438,37 @@ const CreateDayReport = async (formRef) => {
           <div
             class="flex justify-between flex-wrap font-semibold text-[12px] p-1 bg-slate-100 shadow border-b-[1px] border-[#36d887]"
           >
-            <div>
+            <div class="mt-2">
               Buyurtma:
               {{ detail ? detail.sale_quantity : 0 }} kg
             </div>
-            <div>Bajarildi: {{ DonePaint }} kg</div>
-            <div>
+            <div class="mt-2">Bajarildi: {{ DonePaint }} kg</div>
+            <div class="mt-2">
               Qoldi:
               {{ DonePaint >= 0 ? detail.sale_quantity - DonePaint : 0 }} kg
+            </div>
+            <div v-if="detail.sale_quantity - DonePaint <= 0">
+              <el-button
+                style="
+                  background: linear-gradient(
+                    90deg,
+                    rgba(200, 200, 200, 1) 0%,
+                    rgba(54, 216, 135, 1) 35%,
+                    rgba(200, 200, 200, 1) 100%
+                  );
+                  color: rgb(80, 79, 79);
+                  border: none;
+                  cursor: pointer;
+                  width: 100%;
+                  padding: 12px;
+                  font-size: 12px;
+                  border: 1px solid #36d887;
+                  font-weight: bold;
+                  border: none;
+                "
+              >
+                Bo'yoq partyani yakunladi
+              </el-button>
             </div>
           </div>
         </div>
@@ -411,30 +483,31 @@ const CreateDayReport = async (formRef) => {
       <span>Cancel And Of Reason</span>
     </el-dialog>
     <template #footer>
-      <div>
+      <!-- <div>
         <el-button
           v-if="detail.sale_quantity - DonePaint <= 0"
           @click="CreateDayReport(formRef)"
           style="
             background: linear-gradient(
               90deg,
-              rgba(14, 14, 14, 1) 0%,
+              rgba(200, 200, 200, 1) 0%,
               rgba(54, 216, 135, 1) 35%,
-              rgba(14, 14, 14, 1) 100%
+              rgba(200, 200, 200, 1) 100%
             );
-            color: white;
+            color: rgb(80, 79, 79);
             border: none;
             cursor: pointer;
             width: 100%;
             padding: 15px;
-            font-size: 13px;
+            font-size: 12px;
             border: 1px solid #36d887;
             font-weight: bold;
+            border: none;
           "
         >
           Bo'yoq partyani yakunladi
         </el-button>
-      </div>
+      </div> -->
     </template>
   </el-dialog>
 </template>

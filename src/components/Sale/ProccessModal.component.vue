@@ -34,7 +34,11 @@ import { ref } from "vue";
 import { SaleStore } from "../../stores/Sale/sale.store";
 const store_sale = SaleStore();
 import { storeToRefs } from "pinia";
-const { proccess_modal, proccess_data } = storeToRefs(store_sale);
+const { proccess_modal, proccess_data, DonePaint, DoneWeaving, DoneSpinning } =
+  storeToRefs(store_sale);
+const FinishParty = () => {
+  store_sale.FinishParty();
+};
 const isDepInfo = ref(false);
 const active = ref(2);
 </script>
@@ -42,11 +46,11 @@ const active = ref(2);
 <template>
   <div>
     <Report v-show="report" id="report" />
-    <el-dialog id="content" v-model="proccess_modal" width="900">
+    <el-dialog id="content" v-model="proccess_modal" width="1000">
       <div
         class="font-semibold rounded text-[14px] p-1 mb-2 text-center bg-slate-100 shadow border-t-[1px] border-[#36d887] mt-1"
       >
-        <h3>Buyurtmani ishlab chiqarish jarayoni bo'yicha malumotlari</h3>
+        <h3>Buyurtmani ishlab chiqarish jarayoni bo'yicha ma'lumotlari</h3>
       </div>
       <div class="">
         <section class="lg:py-1 xl:py-2">
@@ -55,7 +59,7 @@ const active = ref(2);
               class="mx-auto grid w-full grid-cols-8 gap-1 lg:mt-2 lg:max-w-5xl"
             >
               <li
-                v-for="item in proccess_data.order[0].process_status"
+                v-for="item in proccess_data.SaleCard.process_status"
                 :key="item.index"
                 class="flex-start group relative"
               >
@@ -91,7 +95,7 @@ const active = ref(2);
               <h5
                 class="font-semibold text-[12px] text-gray-800 dark:text-gray-100"
               >
-                Buyurtmachi nomi : {{ proccess_data.order[0].customer_name }}
+                Buyurtmachi nomi : {{ proccess_data.SaleCard.customer_name }}
               </h5>
             </header>
             <header
@@ -100,7 +104,7 @@ const active = ref(2);
               <h5
                 class="font-semibold text-[12px] text-gray-800 dark:text-gray-100"
               >
-                Buyurtma raqami : {{ proccess_data.order[0].order_number }}
+                Buyurtma raqami : {{ proccess_data.SaleCard.order_number }}
               </h5>
             </header>
             <header
@@ -110,7 +114,8 @@ const active = ref(2);
                 class="font-semibold text-[12px] text-gray-800 dark:text-gray-100"
               >
                 Buyurtmachi miqdori :
-                {{ proccess_data.order[0].order_quantity }} kg
+                {{ proccess_data.SaleCard.order_quantity }}
+                {{ proccess_data.SaleCard.unit }}
               </h5>
             </header>
           </div>
@@ -130,10 +135,45 @@ const active = ref(2);
                     <div class="mt-1 mr-3 text-[15px] font-semibold">
                       <i class="fa-solid fa-landmark mr-2"></i>Bo'yoq
                     </div>
-                    <div
-                      class="bg-red-50 p-1 rounded text-[11px] items-center text-center font-bold border-[1px] border-red-500"
-                    >
-                      Jarayonda
+                    <div class="flex gap-2">
+                      <div
+                        :class="{
+                          activeStatus:
+                            proccess_data.PaintCard &&
+                            proccess_data.PaintCard.status ===
+                              `Bo'yoq yakunladi`,
+                        }"
+                        class="bg-red-50 p-1 rounded text-[11px] items-center text-center font-bold border-[1px] border-red-500"
+                      >
+                        {{
+                          proccess_data.PaintCard
+                            ? proccess_data.PaintCard.status
+                            : `Jarayonda`
+                        }}
+                      </div>
+                      <div
+                        class="bg-red-50 p-1 rounded text-[11px] items-center text-center font-bold border-[1px] border-red-500"
+                      >
+                        Muddati:
+                        {{
+                          proccess_data.PaintCard
+                            ? String(
+                                proccess_data.PaintCard.delivery_time_sale
+                              ).substring(0, 10)
+                            : `Ma'lumot yo'q`
+                        }}
+                      </div>
+
+                      <div>
+                        <router-link
+                          @click="ExportExcel()"
+                          to=""
+                          class="py-[5px] px-2 rounded text-[12px] items-center text-center font-bold bg-gray-800 text-white"
+                        >
+                          <i class="fa-solid fa-file-excel mr-2 fa-xm"></i>
+                          Excel
+                        </router-link>
+                      </div>
                     </div>
                   </div>
                   <div
@@ -143,14 +183,17 @@ const active = ref(2);
                       <div class="overflow-x-auto">
                         <div class="shadow-md rounded min-h-[15px]">
                           <el-table
+                            :data="proccess_data.ReportPaint"
+                            :header-cell-style="{
+                              background: '#e8eded',
+                              border: '0.2px solid #e1e1e3',
+                            }"
                             load
                             class="w-full"
                             header-align="center"
-                            hight="5"
-                            style="width: 100%"
-                            empty-text="Mahsulot topilmadi... "
-                            :data="proccess_data.paint"
+                            empty-text="Mahsulot tanlanmagan... "
                             border
+                            style="width: 100%; font-size: 12px"
                             min-height="200"
                             max-height="200"
                           >
@@ -161,44 +204,97 @@ const active = ref(2);
                               prop="index"
                               fixed="left"
                               label="№"
-                              width="70"
+                              width="60"
                             />
-
                             <el-table-column
+                              header-align="center"
+                              prop="material_name"
+                              label="Mato nomi"
+                              width="180"
+                              align="center"
+                            />
+                            <el-table-column
+                              header-align="center"
+                              prop="material_type"
+                              label="Mato turi"
+                              width="150"
+                              align="center"
+                            />
+                            <el-table-column
+                              fixed="right"
                               header-align="center"
                               prop="quantity"
                               label="Miqdori"
-                              width="300"
-                            />
-                            <el-table-column
-                              prop="unit"
-                              label="Birligi"
-                              width="200"
-                              header-align="center"
+                              width="150"
                               align="center"
-                            />
+                              ><template #default="scope"
+                                ><div class="text-red-500 font-semibold">
+                                  {{ scope.row.quantity }} {{ scope.row.unit }}
+                                </div></template
+                              ></el-table-column
+                            >
+
                             <el-table-column
-                              prop="date"
-                              label="Vaqt"
-                              width="300"
                               header-align="center"
+                              label="Vaqt"
+                              width="150"
                               align="center"
                               ><template #default="scope">{{
-                                String(scope.row.date).substring(0, 10)
+                                String(scope.row.createdAt).substring(0, 10)
                               }}</template></el-table-column
                             >
+                            <el-table-column
+                              fixed="right"
+                              label="Holati"
+                              width="180"
+                              header-align="center"
+                              align="center"
+                            >
+                              <template #default="scope">
+                                <router-link
+                                  to=""
+                                  class="inline-flex items-center text-red bg-[#e4e9e9] hover:bg-[#e1e1e3] font-medium rounded-md text-[12px] w-ful p-[5px] sm:w-auto text-center"
+                                >
+                                  {{ scope.row.status }}
+                                </router-link>
+                              </template>
+                            </el-table-column>
+                            <el-table-column
+                              fixed="right"
+                              label=""
+                              width="100"
+                              header-align="center"
+                              align="center"
+                            >
+                              <template #default="">
+                                <router-link
+                                  to=""
+                                  class="inline-flex items-center mt-4 ml-2 text-red hover:bg-[#e8eded] font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
+                                >
+                                  <i
+                                    class="text-red fa-solid fa-pen fa-xs fa- fa-xs"
+                                  ></i>
+                                </router-link>
+                              </template>
+                            </el-table-column>
                           </el-table>
                           <div
                             class="flex justify-between flex-wrap font-semibold text-[12px] p-1 bg-slate-100 shadow"
                           >
                             <div>
                               Buyurtma:
-                              {{ 0 }}
+                              {{ proccess_data.SaleCard.order_quantity }}
                             </div>
-                            <div>Bajarildi: {{ 0 }}</div>
+                            <div>
+                              Bajarildi:
+                              {{ DonePaint }}
+                            </div>
                             <div>
                               Qoldi:
-                              {{ 0 }}
+                              {{
+                                proccess_data.SaleCard.order_quantity -
+                                DonePaint
+                              }}
                             </div>
                           </div>
                           <!-- // -->
@@ -212,10 +308,45 @@ const active = ref(2);
                     <div class="mt-1 mr-3 text-[15px] font-semibold">
                       <i class="fa-solid fa-landmark mr-2"></i>To'quv
                     </div>
-                    <div
-                      class="bg-red-50 p-1 rounded text-[11px] items-center text-center font-bold border-[1px] border-red-500"
-                    >
-                      Jarayonda
+                    <div class="flex gap-2">
+                      <div
+                        :class="{
+                          activeStatus:
+                            proccess_data.WeavingCard &&
+                            proccess_data.WeavingCard.status ===
+                              `To'quv yakunladi`,
+                        }"
+                        class="bg-red-50 p-1 rounded text-[11px] items-center text-center font-bold border-[1px] border-red-500"
+                      >
+                        {{
+                          proccess_data.WeavingCard
+                            ? proccess_data.WeavingCard.status
+                            : `Jarayonda`
+                        }}
+                      </div>
+                      <div
+                        class="bg-red-50 p-1 rounded text-[11px] items-center text-center font-bold border-[1px] border-red-500"
+                      >
+                        Muddati:
+                        {{
+                          proccess_data.WeavingCard
+                            ? String(
+                                proccess_data.WeavingCard.delivery_time_paint
+                              ).substring(0, 10)
+                            : `Ma'lumot yo'q`
+                        }}
+                      </div>
+
+                      <div>
+                        <router-link
+                          @click="ExportExcel()"
+                          to=""
+                          class="py-[5px] px-2 rounded text-[12px] items-center text-center font-bold bg-gray-800 text-white"
+                        >
+                          <i class="fa-solid fa-file-excel mr-2 fa-xm"></i>
+                          Excel
+                        </router-link>
+                      </div>
                     </div>
                   </div>
                   <div
@@ -225,15 +356,17 @@ const active = ref(2);
                       <div class="overflow-x-auto">
                         <div class="shadow-md rounded min-h-[15px]">
                           <el-table
+                            :data="proccess_data.ReportWeaving"
+                            :header-cell-style="{
+                              background: '#e8eded',
+                              border: '0.2px solid #e1e1e3',
+                            }"
                             load
-                            size="small"
                             class="w-full"
                             header-align="center"
-                            hight="5"
-                            style="width: 100%; font-size: 13px"
-                            empty-text="Mahsulot topilmadi... "
-                            :data="proccess_data.weaving"
+                            empty-text="Mahsulot tanlanmagan... "
                             border
+                            style="width: 100%; font-size: 12px"
                             min-height="200"
                             max-height="200"
                           >
@@ -244,44 +377,99 @@ const active = ref(2);
                               prop="index"
                               fixed="left"
                               label="№"
-                              width="70"
+                              width="60"
                             />
-
+                            <el-table-column
+                              header-align="center"
+                              prop="material_name"
+                              label="Mato nomi"
+                              width="180"
+                              align="center"
+                            />
+                            <el-table-column
+                              header-align="center"
+                              prop="material_type"
+                              label="Mato turi"
+                              width="150"
+                              align="center"
+                            />
                             <el-table-column
                               header-align="center"
                               prop="quantity"
                               label="Miqdori"
-                              width="300"
-                            />
-                            <el-table-column
-                              prop="unit"
-                              label="Birligi"
-                              width="200"
-                              header-align="center"
+                              width="150"
                               align="center"
-                            />
+                              ><template #default="scope"
+                                ><div class="text-red-500 font-semibold">
+                                  {{ scope.row.quantity }} {{ scope.row.unit }}
+                                </div></template
+                              ></el-table-column
+                            >
+
                             <el-table-column
-                              prop="date"
-                              label="Vaqt"
-                              width="300"
                               header-align="center"
+                              label="Sana"
+                              width="150"
                               align="center"
                               ><template #default="scope">{{
-                                String(scope.row.date).substring(0, 10)
+                                String(scope.row.createdAt).substring(0, 10)
                               }}</template></el-table-column
                             >
+                            <el-table-column
+                              fixed="right"
+                              label="Holati"
+                              width="180"
+                              header-align="center"
+                              align="center"
+                            >
+                              <template #default="scope">
+                                <router-link
+                                  to=""
+                                  class="inline-flex items-center text-red bg-[#e4e9e9] hover:bg-[#e1e1e3] font-medium rounded-md text-[12px] w-ful p-[5px] sm:w-auto text-center"
+                                >
+                                  {{ scope.row.status }}
+                                </router-link>
+                              </template>
+                            </el-table-column>
+                            <el-table-column
+                              fixed="right"
+                              label=""
+                              width="100"
+                              header-align="center"
+                              align="center"
+                            >
+                              <template #default="">
+                                <router-link
+                                  to=""
+                                  class="inline-flex items-center mt-4 ml-2 text-red hover:bg-[#e8eded] font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
+                                >
+                                  <i
+                                    class="text-red fa-solid fa-pen fa-xs fa- fa-xs"
+                                  ></i>
+                                </router-link>
+                              </template>
+                            </el-table-column>
                           </el-table>
                           <div
                             class="flex justify-between flex-wrap font-semibold text-[12px] p-1 bg-slate-100 shadow"
                           >
                             <div>
                               Buyurtma:
-                              {{ 0 }}
+                              {{
+                                proccess_data.WeavingCard
+                                  ? proccess_data.WeavingCard.weaving_quantity
+                                  : 0
+                              }}
                             </div>
-                            <div>Bajarildi: {{ 0 }}</div>
+                            <div>Bajarildi: {{ DoneWeaving }}</div>
                             <div>
                               Qoldi:
-                              {{ 0 }}
+                              {{
+                                proccess_data.WeavingCard
+                                  ? proccess_data.WeavingCard.weaving_quantity -
+                                    DoneWeaving
+                                  : 0
+                              }}
                             </div>
                           </div>
                           <!-- // -->
@@ -295,10 +483,45 @@ const active = ref(2);
                     <div class="mt-1 mr-3 text-[15px] font-semibold">
                       <i class="fa-solid fa-landmark mr-2"></i>Yigiruv
                     </div>
-                    <div
-                      class="bg-red-50 p-1 rounded text-[11px] items-center text-center font-bold border-[1px] border-red-500"
-                    >
-                      Jarayonda
+                    <div class="flex gap-2">
+                      <div
+                        :class="{
+                          activeStatus:
+                            proccess_data.SpinningCard &&
+                            proccess_data.SpinningCard.status ===
+                              `Yigiruv yakunladi`,
+                        }"
+                        class="bg-red-50 p-1 rounded text-[11px] items-center text-center font-bold border-[1px] border-red-500"
+                      >
+                        {{
+                          proccess_data.SpinningCard
+                            ? proccess_data.SpinningCard.status
+                            : `Jarayonda`
+                        }}
+                      </div>
+                      <div
+                        class="bg-red-50 p-1 rounded text-[11px] items-center text-center font-bold border-[1px] border-red-500"
+                      >
+                        Muddati:
+                        {{
+                          proccess_data.SpinningCard
+                            ? String(
+                                proccess_data.SpinningCard.delivery_time_weaving
+                              ).substring(0, 10)
+                            : `Ma'lumot yo'q`
+                        }}
+                      </div>
+
+                      <div>
+                        <router-link
+                          @click="ExportExcel()"
+                          to=""
+                          class="py-[5px] px-2 rounded text-[12px] items-center text-center font-bold bg-gray-800 text-white"
+                        >
+                          <i class="fa-solid fa-file-excel mr-2 fa-xm"></i>
+                          Excel
+                        </router-link>
+                      </div>
                     </div>
                   </div>
                   <div
@@ -309,14 +532,17 @@ const active = ref(2);
                       <div class="overflow-x-auto">
                         <div class="shadow-md rounded min-h-[15px]">
                           <el-table
+                            :data="proccess_data.ReportSpinning"
+                            :header-cell-style="{
+                              background: '#e8eded',
+                              border: '0.2px solid #e1e1e3',
+                            }"
                             load
                             class="w-full"
                             header-align="center"
-                            hight="5"
-                            style="width: 100%"
-                            empty-text="Mahsulot topilmadi... "
-                            :data="proccess_data.spinning"
+                            empty-text="Mahsulot tanlanmagan... "
                             border
+                            style="width: 100%; font-size: 12px"
                             min-height="200"
                             max-height="200"
                           >
@@ -327,44 +553,100 @@ const active = ref(2);
                               prop="index"
                               fixed="left"
                               label="№"
-                              width="70"
+                              width="60"
                             />
-
                             <el-table-column
+                              header-align="center"
+                              prop="yarn_name"
+                              label="Ip nomi"
+                              width="180"
+                              align="center"
+                            />
+                            <el-table-column
+                              header-align="center"
+                              prop="yarn_type"
+                              label="Ip turi"
+                              width="150"
+                              align="center"
+                            />
+                            <el-table-column
+                              fixed="right"
                               header-align="center"
                               prop="quantity"
                               label="Miqdori"
-                              width="300"
-                            />
-                            <el-table-column
-                              prop="unit"
-                              label="Birligi"
-                              width="200"
-                              header-align="center"
+                              width="150"
                               align="center"
-                            />
+                              ><template #default="scope"
+                                ><div class="text-red-500 font-semibold">
+                                  {{ scope.row.quantity }} {{ scope.row.unit }}
+                                </div></template
+                              ></el-table-column
+                            >
+
                             <el-table-column
-                              prop="date"
-                              label="Vaqt"
-                              width="300"
                               header-align="center"
+                              label="Vaqt"
+                              width="150"
                               align="center"
                               ><template #default="scope">{{
-                                String(scope.row.date).substring(0, 10)
+                                String(scope.row.createdAt).substring(0, 10)
                               }}</template></el-table-column
                             >
+                            <el-table-column
+                              fixed="right"
+                              label="Holati"
+                              width="180"
+                              header-align="center"
+                              align="center"
+                            >
+                              <template #default="scope">
+                                <router-link
+                                  to=""
+                                  class="inline-flex items-center text-red bg-[#e4e9e9] hover:bg-[#e1e1e3] font-medium rounded-md text-[12px] w-ful p-[5px] sm:w-auto text-center"
+                                >
+                                  {{ scope.row.status }}
+                                </router-link>
+                              </template>
+                            </el-table-column>
+                            <el-table-column
+                              fixed="right"
+                              label=""
+                              width="100"
+                              header-align="center"
+                              align="center"
+                            >
+                              <template #default="">
+                                <router-link
+                                  to=""
+                                  class="inline-flex items-center mt-4 ml-2 text-red hover:bg-[#e8eded] font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
+                                >
+                                  <i
+                                    class="text-red fa-solid fa-pen fa-xs fa- fa-xs"
+                                  ></i>
+                                </router-link>
+                              </template>
+                            </el-table-column>
                           </el-table>
                           <div
                             class="flex justify-between flex-wrap font-semibold text-[12px] p-1 bg-slate-100 shadow"
                           >
                             <div>
                               Buyurtma:
-                              {{ 0 }}
+                              {{
+                                proccess_data.SpinningCard
+                                  ? proccess_data.SpinningCard.weaving_quantity
+                                  : 0
+                              }}
                             </div>
-                            <div>Bajarildi: {{ 0 }}</div>
+                            <div>Bajarildi: {{ DoneSpinning }}</div>
                             <div>
                               Qoldi:
-                              {{ 0 }}
+                              {{
+                                proccess_data.SpinningCard
+                                  ? proccess_data.SpinningCard
+                                      .weaving_quantity - DoneSpinning
+                                  : 0
+                              }}
                             </div>
                           </div>
                           <!-- // -->
@@ -388,25 +670,63 @@ const active = ref(2);
         <span>This is the inner Dialog</span>
       </el-dialog>
       <template #footer>
-        <div v-if="isDepInfo" class="dialog-footer">
+        <div
+          v-if="
+            proccess_data.PaintCard &&
+            proccess_data.WeavingCard &&
+            proccess_data.SpinningCard &&
+            proccess_data.PaintCard.status === `Bo'yoq yakunladi` &&
+            proccess_data.WeavingCard.status === `To'quv yakunladi` &&
+            proccess_data.SpinningCard.status === `Yigiruv yakunladi` &&
+            proccess_data.SaleCard.status === `Bo'yoq yakunladi` &&
+            isDepInfo
+          "
+          class="dialog-footer"
+        >
           <div class="">
             <router-link
-              @click="ExportExcel()"
+              @click="FinishParty()"
               to=""
-              class="inline-flex text-[11px] items-center px-2 py-1 mb-1 font-medium text-center text-white bg-[#36d887] text-bold rounded"
+              class="py-[7px] px-2 rounded text-[12px] items-center text-center font-bold bg-[#36d887] text-white"
             >
-              <i class="fa-solid fa-file-excel mr-2 fa-xm"></i> Excel
+              <i class="fa-solid fa-file-check mr-2 fa-xm"></i>
+              Partyani yakunlash
             </router-link>
-            <router-link
+
+            <!-- <router-link
               to=""
               @click="PdfDownload()"
               class="inline-flex text-[11px] items-center ml-2 px-2 py-1 mb-1 font-medium text-center text-white bg-yellow-500 text-bold rounded"
             >
               <i class="fa-solid fa-file-pdf mr-2 fa-xm"></i> Pdf
-            </router-link>
+            </router-link> -->
           </div>
         </div>
       </template>
     </el-dialog>
   </div>
 </template>
+
+<style>
+.activeStatus {
+  transition-duration: 0.6s;
+  background: linear-gradient(
+    90deg,
+    rgba(200, 200, 200, 1) 0%,
+    rgba(54, 216, 135, 1) 35%,
+    rgba(200, 200, 200, 1) 100%
+  );
+  /* background: #36d887; */
+  color: rgb(80, 79, 79);
+  box-sizing: border-box;
+  width: 150px;
+  font-size: 11px;
+  font-weight: semibold;
+  border: none;
+  cursor: pointer;
+}
+.activeTabIcon {
+  background: whitesmoke;
+  color: black;
+}
+</style>

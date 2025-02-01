@@ -1,13 +1,11 @@
 <script setup>
 import Cookies from "js-cookie";
-const author = ref(JSON.parse(Cookies.get("account")).id);
-const department = ref(JSON.parse(Cookies.get("account")).department);
-const role = ref(JSON.parse(Cookies.get("account")).role);
+
 import { ref, onMounted } from "vue";
 import { SaleStore } from "../../stores/Sale/sale.store";
 const store = SaleStore();
 import { storeToRefs } from "pinia";
-const { length } = storeToRefs(store);
+const { all_length } = storeToRefs(store);
 const SaleCreateCardModal = async () => {
   await store.SaleCreateCardModal();
 };
@@ -50,7 +48,7 @@ onMounted(async () => {
             :class="{ activeTabIcon: isActive === 1 }"
             class="inline-flex items-center justify-center h-5 text-[11px] font-medium text-white bg-[#36d887] px-3 py-2 rounded"
           >
-            <span class=" ">0</span>/{{ 0 || 0 }}</span
+            <span class=" ">0</span>/{{ all_length.sale_length || 0 }}</span
           >
         </div>
       </router-link>

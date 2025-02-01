@@ -38,9 +38,9 @@ export const SaleService = {
     let url = "sale/confirm";
     return api.post(url, { id });
   },
-  AllOrderProccessById(id) {
-    let url = `sale/legal_proccess/${id}`;
-    return api.post(url);
+  AllOrderProccessById(data) {
+    let url = `sale/get_proccess_status`;
+    return api.post(url, data);
   },
   getAllLength() {
     let url = "sale/legal_all_length";
@@ -53,6 +53,10 @@ export const SaleService = {
   getAllWeaving() {
     let url = "sale/weaving_all";
     return api.post(url);
+  },
+  FinishParty(data) {
+    let url = "sale/finish_party";
+    return api.post(url, data);
   },
   Edit(id, data) {
     let url = `sale/legal_edit/${id}`;

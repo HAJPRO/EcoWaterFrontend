@@ -8,7 +8,7 @@ export const SaleStore = defineStore("saleStore", {
     return {
       model: {},
       detail: {},
-      length: "",
+      all_length: {},
       items: [],
       card_id: "",
       is_modal: false,
@@ -16,13 +16,10 @@ export const SaleStore = defineStore("saleStore", {
       is_detail_modal: false,
       model: "",
       proccess_modal: false,
-      proccess_data: {
-        order: [],
-        paint: [],
-        weaving: [],
-        spinning: [],
-      },
-      paint_process: [],
+      proccess_data: [],
+      DonePaint: "",
+      DoneWeaving: "",
+      DoneSpinning: "",
       is_active: "",
       plus_name_modal: false,
       plus_type_modal: false,
@@ -72,42 +69,61 @@ export const SaleStore = defineStore("saleStore", {
     },
     async getAll(payload) {
       const loader = loading.show();
-      const res = await SaleService.getAll(payload);
-      this.active_tab = payload;
-      this.length = res.data.length;
-      this.items = res.data.all;
+      const data = await SaleService.getAll(payload);
+      this.items = data.data.items;
+      this.all_length = data.data.all_length;
       loader.hide();
     },
     async AllOrderProccessById(payload) {
       const data = await SaleService.AllOrderProccessById(payload);
-
       this.proccess_modal = true;
-      this.proccess_data.order = data.data.order;
-      this.proccess_data.paint =
-        data.data.paint.length > 0
-          ? data.data.paint[0].paint_report.order_report_at_progress
-          : [];
-      this.proccess_data.weaving =
-        data.data.weaving.length > 0
-          ? data.data.weaving[0].weaving_report.order_report_at_progress
-          : [];
-      this.proccess_data.spinning =
-        data.data.spinning.length > 0
-          ? data.data.spinning[0].spinning_report.order_report_at_progress
-          : [];
-    },
-    async openModalById(payload) {
+      this.proccess_data = data.data;
       this.card_id = payload.id;
-      this.is_modal = payload.is_modal;
-      const data = await SaleService.getOne(payload.id);
-      this.model = data.data;
+
+      if (this.proccess_data.ReportPaint.length > 0) {
+        const initialValuePaint = 0;
+        this.DonePaint = this.proccess_data.ReportPaint.reduce(
+          (a, b) => a + Number(b.quantity),
+          initialValuePaint
+        );
+      } else {
+        this.DonePaint = 0;
+      }
+      if (this.proccess_data.ReportWeaving.length > 0) {
+        const initialValueWeaving = 0;
+        this.DoneWeaving = this.proccess_data.ReportWeaving.reduce(
+          (a, b) => a + Number(b.quantity),
+          initialValueWeaving
+        );
+      } else {
+        this.DoneWeaving = 0;
+      }
+      if (this.proccess_data.ReportSpinning.length > 0) {
+        const initialValueSpinning = 0;
+        this.DoneSpinning = this.proccess_data.ReportSpinning.reduce(
+          (a, b) => a + Number(b.quantity),
+          initialValueSpinning
+        );
+      } else {
+        this.DoneSpinning = 0;
+      }
     },
 
+    async FinishParty() {
+      const loader = loading.show();
+      const data = await SaleService.FinishParty({ id: this.card_id });
+      this.getAll({ status: 1 });
+      this.AllOrderProccessById({ id: this.card_id });
+      ToastifyService.ToastSuccess({
+        msg: data.data.msg,
+      });
+      loader.hide();
+    },
     async Update(payload) {
       try {
         const loader = loading.show();
         const updateData = await SaleService.Edit(this.card_id, payload);
-        loader.hide();
+
         ToastifyService.ToastSuccess({
           msg: updateData.data.msg,
         });
@@ -115,6 +131,7 @@ export const SaleStore = defineStore("saleStore", {
           window.location.href = "/explore/sale/legal";
         };
         setTimeout(Refresh, 1000);
+        loader.hide();
       } catch (error) {
         return ToastifyService.ToastError({ msg: error.messages });
       }
@@ -124,7 +141,7 @@ export const SaleStore = defineStore("saleStore", {
       try {
         const loader = loading.show();
         const confirmData = await SaleService.confirm(this.card_id);
-        this.getAll({ is_active: this.is_active });
+        this.getAll({ status: 1 });
         this.is_detail_modal = false;
         ToastifyService.ToastSuccess({
           msg: confirmData.data.msg,
@@ -139,11 +156,12 @@ export const SaleStore = defineStore("saleStore", {
       try {
         const loader = loading.show();
         const data = await SaleService.Delete(id);
-        loader.hide();
+        this.getAll({ status: 1 });
+
         ToastifyService.ToastSuccess({
           msg: data.data.msg,
         });
-        this.getAll(this.active_tab);
+        loader.hide();
       } catch (error) {
         return ToastifyService.ToastError({ msg: error.messages });
       }

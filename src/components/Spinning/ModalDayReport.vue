@@ -44,12 +44,6 @@ const CreateDayReport = async (formRef) => {
   await formRef.validate((valid) => {
     if (valid === true && model.value.quantity > 0) {
       store_spinning.CreateDayReport(model.value);
-      model.value = {
-        yarn_name: "",
-        yarn_type: "",
-        quantity: "",
-        unit: "",
-      };
     } else {
       return false;
     }
@@ -64,7 +58,7 @@ const CreateDayReport = async (formRef) => {
         <div>Artikul: {{ detail.artikul }}</div>
         <div>Buyurtma nomeri: {{ detail.order_number }}</div>
         <div>
-          Muddati nomeri:
+          Muddati:
           {{ String(detail.delivery_time_weaving).substring(0, 10) }}
         </div>
       </div>
@@ -281,17 +275,40 @@ const CreateDayReport = async (formRef) => {
           <div
             class="flex justify-between flex-wrap font-semibold text-[12px] p-1 bg-slate-100 shadow border-b-[1px] border-[#36d887]"
           >
-            <div>
+            <div class="mt-2">
               Buyurtma:
               {{ detail ? detail.weaving_quantity : 0 }} kg
             </div>
-            <div>Bajarildi: {{ DoneSpinning }} kg</div>
-            <div>
+            <div class="mt-2">Bajarildi: {{ DoneSpinning }} kg</div>
+            <div class="mt-2">
               Qoldi:
               {{
                 DoneSpinning > 0 ? detail.weaving_quantity - DoneSpinning : 0
               }}
               kg
+            </div>
+            <div v-if="detail.weaving_quantity - DoneSpinning <= 0" class="">
+              <el-button
+                style="
+                  background: linear-gradient(
+                    90deg,
+                    rgba(200, 200, 200, 1) 0%,
+                    rgba(54, 216, 135, 1) 35%,
+                    rgba(200, 200, 200, 1) 100%
+                  );
+                  color: rgb(80, 79, 79);
+                  border: none;
+                  cursor: pointer;
+                  width: 100%;
+                  padding: 12px;
+                  font-size: 12px;
+                  border: 1px solid #36d887;
+                  font-weight: bold;
+                  border: none;
+                "
+              >
+                Yigiruv partyani yakunladi
+              </el-button>
             </div>
           </div>
         </div>
@@ -305,29 +322,6 @@ const CreateDayReport = async (formRef) => {
     >
       <span>Cancel And Of Reason</span>
     </el-dialog>
-    <template #footer>
-      <div v-if="detail.weaving_quantity - DoneSpinning <= 0">
-        <el-button
-          style="
-            background: linear-gradient(
-              90deg,
-              rgba(14, 14, 14, 1) 0%,
-              rgba(54, 216, 135, 1) 35%,
-              rgba(14, 14, 14, 1) 100%
-            );
-            color: white;
-            border: none;
-            cursor: pointer;
-            width: 100%;
-            padding: 15px;
-            font-size: 13px;
-            border: 1px solid #36d887;
-            font-weight: bold;
-          "
-        >
-          Yigiruv partyani yakunladi
-        </el-button>
-      </div>
-    </template>
+    <template #footer> </template>
   </el-dialog>
 </template>
