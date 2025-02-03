@@ -12,6 +12,7 @@
     "@vueuse/core": "^10.1.2",
     "axios": "^1.6.0",
     "chart.js": "^4.4.7",
+    "date-fns": "^4.1.0",
     "echarts": "^5.5.1",
     "element-plus": "^2.8.8",
     "flatpickr": "^4.6.13",

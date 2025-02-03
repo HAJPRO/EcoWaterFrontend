@@ -1,4 +1,5 @@
 <script setup>
+import { format } from "date-fns";
 import { ref } from "vue";
 import { SaleStore } from "../../stores/Sale/sale.store";
 const store_sale = SaleStore();
@@ -97,7 +98,7 @@ const proccessModalById = async (id) => {
         align="center"
       >
         <template #default="scope">
-          {{ String(scope.row.delivery_time).substring(0, 10) }}
+          {{ format(scope.row.delivery_time, "dd.MM.yyyy HH:mm") }}
         </template>
       </el-table-column>
 
