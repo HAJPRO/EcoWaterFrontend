@@ -27,10 +27,8 @@ export const SeamWarehouseStore = defineStore("SeamWarehouseStore", {
       this.isActive = payload;
     },
     async AddFormModal() {
-      this.modal.is_modal = true;
-      this.modal.title = "Skladga mato qo'shish";
-      this.modal.input = true;
       this.GetModel();
+      this.modal.is_modal = true;
     },
     async GetOne(id) {
       const data = await SeamWarehouseService.GetOne(id);

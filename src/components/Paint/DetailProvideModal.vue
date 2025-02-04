@@ -1,30 +1,15 @@
 <script setup>
 import { ref } from "vue";
-import { ProvidePlanStore } from "../../stores/Provide/provideStore";
-const store_provide = ProvidePlanStore();
+import { PaintPlanStore } from "../../stores/Paint/paintPlan.store";
+const store_paint = PaintPlanStore();
 import { storeToRefs } from "pinia";
-const { detail_spinning_modal, detail } = storeToRefs(store_provide);
+const { detail_paint_modal, detail_provide } = storeToRefs(store_paint);
 
 const is_cancel = ref(false);
-const Cancel = () => {
-  is_cancel.value = !is_cancel.value;
-};
-const confirm = () => {
-  store_provide.Confirm({ department: 4, delivered: false });
-};
-const delivered = () => {
-  store_provide.Confirm({ department: 4, delivered: true });
-};
-const cancel_reason = ref();
-const sendReason = async () => {
-  await store_provide.cancelSendReason({
-    reason: cancel_reason.value,
-  });
-};
 </script>
 <template>
   <div>
-    <el-dialog v-model="detail_spinning_modal" width="1000">
+    <el-dialog v-model="detail_paint_modal" width="1000">
       <span>
         <div class="shadow-md rounded">
           <div
@@ -43,10 +28,11 @@ const sendReason = async () => {
             class="w-full"
             header-align="center"
             empty-text="Mahsulot tanlanmagan... "
-            :data="detail.delivery_product_box"
+            :data="detail_provide.delivery_product_box"
             border="true"
             style="width: 100%; font-size: 12px"
-            height="150"
+            :min-height="100"
+            :max-height="400"
           >
             <el-table-column
               header-align="center"
@@ -60,48 +46,64 @@ const sendReason = async () => {
             />
             <el-table-column
               header-align="center"
-              prop="begunok_name"
-              label="Begunok nomi"
+              prop="pus_name"
+              label="Pus nomi"
               :max-width="200"
               :min-width="150"
               align="center"
             />
             <el-table-column
               header-align="center"
-              prop="begunok_type"
-              label="Begunok turi"
+              prop="pus_type"
+              label="Pus turi"
               :max-width="200"
               :min-width="150"
               align="center"
             />
             <el-table-column
               header-align="center"
-              prop="begunok_quantity"
-              label="Begunok miqdori(kg)"
+              prop="pus_quantity"
+              label="Pus miqdori(kg)"
               :max-width="200"
               :min-width="150"
               align="center"
             />
             <el-table-column
               header-align="center"
-              prop="latun_name"
-              label="Latun nomi"
+              prop="fike_name"
+              label="Fike nomi"
               :max-width="200"
               :min-width="150"
               align="center"
             />
             <el-table-column
               header-align="center"
-              prop="latun_type"
-              label="Latun turi"
+              prop="fike_type"
+              label="Fike turi"
               :max-width="200"
               :min-width="150"
               align="center"
             />
             <el-table-column
               header-align="center"
-              prop="latun_quantity"
-              label="Latun miqdori(kg)"
+              prop="fike_quantity"
+              label="Fike miqdori(kg)"
+              :max-width="200"
+              :min-width="150"
+              align="center"
+            />
+            <el-table-column
+              header-align="center"
+              prop="color"
+              label="Rang nomi"
+              :max-width="200"
+              :min-width="150"
+              align="center"
+            />
+            <el-table-column
+              header-align="center"
+              prop="color_quantity"
+              label="Rang miqdori(kg)"
               :max-width="200"
               :min-width="150"
               align="center"
@@ -152,7 +154,7 @@ const sendReason = async () => {
         <span>Cancel And Of Reason</span>
       </el-dialog>
       <template #footer>
-        <div>
+        <!-- <div>
           <router-link
             v-if="detail.status === `Jarayonda`"
             type=""
@@ -210,7 +212,7 @@ const sendReason = async () => {
           >
             <i class="mr-2 fa-solid fa-check fa-sm"></i>Yakunlash</router-link
           >
-        </div>
+        </div> -->
       </template>
     </el-dialog>
   </div>

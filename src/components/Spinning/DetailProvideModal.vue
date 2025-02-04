@@ -1,26 +1,9 @@
 <script setup>
 import { ref } from "vue";
-import { ProvidePlanStore } from "../../stores/Provide/provideStore";
-const store_provide = ProvidePlanStore();
+import { SpinningPlanStore } from "../../stores/Spinning/spinningPlan.store";
+const store_spinning = SpinningPlanStore();
 import { storeToRefs } from "pinia";
-const { detail_spinning_modal, detail } = storeToRefs(store_provide);
-
-const is_cancel = ref(false);
-const Cancel = () => {
-  is_cancel.value = !is_cancel.value;
-};
-const confirm = () => {
-  store_provide.Confirm({ department: 4, delivered: false });
-};
-const delivered = () => {
-  store_provide.Confirm({ department: 4, delivered: true });
-};
-const cancel_reason = ref();
-const sendReason = async () => {
-  await store_provide.cancelSendReason({
-    reason: cancel_reason.value,
-  });
-};
+const { detail_spinning_modal, detail_provide } = storeToRefs(store_spinning);
 </script>
 <template>
   <div>
@@ -43,10 +26,11 @@ const sendReason = async () => {
             class="w-full"
             header-align="center"
             empty-text="Mahsulot tanlanmagan... "
-            :data="detail.delivery_product_box"
+            :data="detail_provide.delivery_product_box"
             border="true"
             style="width: 100%; font-size: 12px"
-            height="150"
+            :min-height="100"
+            :max-height="400"
           >
             <el-table-column
               header-align="center"
@@ -151,67 +135,7 @@ const sendReason = async () => {
       >
         <span>Cancel And Of Reason</span>
       </el-dialog>
-      <template #footer>
-        <div>
-          <router-link
-            v-if="detail.status === `Jarayonda`"
-            type=""
-            to=""
-            @click="delivered()"
-            class="inline-flex text-[12px] items-center ml-2 px-3 py-1 mb-1 mt-2 text-sm font-medium text-center text-white bg-[#36d887] text-bold rounded"
-          >
-            <i class="mr-2 fa-solid fa-check fa-sm"></i>Yakunlash</router-link
-          >
-        </div>
-        <div v-if="detail.status === `Tasdiqlanmagan`" class="dialog-footer">
-          <router-link
-            v-if="!is_cancel"
-            to=""
-            @click="Cancel()"
-            class="inline-flex text-[12px] items-center ml-2 px-3 py-1 mb-1 mt-2 text-sm font-medium text-center text-white bg-red-500 text-bold rounded"
-          >
-            <i class="mr-2 fa-solid fa-xmark fa-sm"></i>Bekor
-            qilish</router-link
-          >
-          <router-link
-            v-if="!is_cancel"
-            type=""
-            to=""
-            @click="confirm()"
-            class="inline-flex text-[12px] items-center ml-2 px-3 py-1 mb-1 mt-2 text-sm font-medium text-center text-white bg-[#36d887] text-bold rounded"
-          >
-            <i class="mr-2 fa-solid fa-check fa-sm"></i>Qabul
-            qilish</router-link
-          >
-          <router-link
-            v-if="is_cancel"
-            type=""
-            @click="is_cancel = false"
-            to=""
-            class="inline-flex text-[12px] items-center ml-2 px-3 py-1 mb-1 mt-2 text-sm font-medium text-center text-white bg-red-500 text-bold rounded"
-          >
-            <i class="mr-2 fa-solid fa-arrow-left fa-sm"></i>Orqaga</router-link
-          >
-          <router-link
-            v-if="is_cancel"
-            type=""
-            to=""
-            @click="sendReason()"
-            class="inline-flex text-[12px] items-center ml-2 px-3 py-1 mb-1 mt-2 text-sm font-medium text-center text-white bg-[#36d887] text-bold rounded"
-          >
-            <i class="mr-2 fa-solid fa-check fa-sm"></i>Yuborish</router-link
-          >
-          <router-link
-            v-if="detail.status === `Jarayonda`"
-            type=""
-            to=""
-            @click="confirm()"
-            class="inline-flex text-[12px] items-center ml-2 px-3 py-1 mb-1 mt-2 text-sm font-medium text-center text-white bg-[#36d887] text-bold rounded"
-          >
-            <i class="mr-2 fa-solid fa-check fa-sm"></i>Yakunlash</router-link
-          >
-        </div>
-      </template>
+      <template #footer> </template>
     </el-dialog>
   </div>
 </template>

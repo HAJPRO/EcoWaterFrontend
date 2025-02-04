@@ -1,16 +1,15 @@
 <script setup>
-import { ref, onMounted } from "vue";
 import { SpinningPlanStore } from "../../stores/Spinning/spinningPlan.store";
 const store_spinning = SpinningPlanStore();
 import { storeToRefs } from "pinia";
-const { items } = storeToRefs(store_spinning);
-console.log(items);
-// const OpenModalById = async (id) => {
-//   await store_paint.openModalById({ id, is_modal: true });
-// };
+const { items, is_active } = storeToRefs(store_spinning);
+
+const DetailModalProvide = (id) => {
+  store_spinning.DetailModalProvide({ id, department: 4 });
+};
 </script>
 <template>
-  <div class="shadow rounded">
+  <div v-if="is_active === 3" class="shadow-md rounded min-h-[15px]">
     <el-table
       :header-cell-style="{
         background: '#e8eded',
@@ -35,47 +34,54 @@ console.log(items);
         prop="index"
         fixed="left"
         label="№"
-        width="60"
+        :max-width="80"
+        :min-width="60"
       />
       <el-table-column
         header-align="center"
         prop="department"
         label="Bo'lim"
-        width="150"
+        :max-width="300"
+        :min-width="150"
         align="center"
       />
       <el-table-column
         header-align="center"
         prop="username"
         label="Xodim"
-        width="200"
+        :max-width="300"
+        :min-width="150"
         align="center"
       />
       <el-table-column
         header-align="center"
         prop="customer_name"
         label="Buyurtmachi"
-        width="200"
+        :max-width="300"
+        :min-width="150"
         align="center"
       />
       <el-table-column
         header-align="center"
         prop="artikul"
         label="Artikul"
-        width="200"
+        :max-width="300"
+        :min-width="150"
         align="center"
       />
       <el-table-column
         header-align="center"
         prop="order_number"
         label="Buyurtma nomeri"
-        width="200"
+        :max-width="300"
+        :min-width="150"
         align="center"
       />
       <el-table-column
         fixed="right"
         label="Muddati"
-        width="150"
+        :max-width="300"
+        :min-width="150"
         header-align="center"
         align="center"
         ><template #default="scope">
@@ -88,7 +94,8 @@ console.log(items);
         fixed="right"
         prop="status"
         label="Holati"
-        width="150"
+        :max-width="300"
+        :min-width="150"
         header-align="center"
         align="center"
       >
@@ -105,12 +112,14 @@ console.log(items);
         fixed="right"
         prop="id"
         label=""
-        width="100"
+        :max-width="200"
+        :min-width="100"
         header-align="center"
         align="center"
       >
-        <template #default="">
+        <template #default="scope">
           <router-link
+            @click="DetailModalProvide(scope.row._id)"
             to=""
             class="inline-flex items-center ml-2 text-red hover:bg-slate-300 font-medium rounded-md text-sm w-full sm:w-auto px-3 py-3 text-center"
           >

@@ -1,15 +1,15 @@
 <script setup>
-import { ref, onMounted } from "vue";
 import { PaintPlanStore } from "../../stores/Paint/paintPlan.store";
 const store_paint = PaintPlanStore();
 import { storeToRefs } from "pinia";
 const { items, is_active } = storeToRefs(store_paint);
-const OpenModalById = async (id) => {
-  await store_paint.openModalById({ id, is_modal: true });
+
+const DetailModalProvide = (id) => {
+  store_paint.DetailModalProvide({ id, department: 2 });
 };
 </script>
 <template>
-  <div class="shadow rounded">
+  <div v-if="is_active === 5" class="shadow-md rounded min-h-[15px]">
     <el-table
       :header-cell-style="{
         background: '#e8eded',
@@ -34,47 +34,54 @@ const OpenModalById = async (id) => {
         prop="index"
         fixed="left"
         label="№"
-        width="60"
+        :max-width="80"
+        :min-width="60"
       />
       <el-table-column
         header-align="center"
         prop="department"
         label="Bo'lim"
-        width="150"
+        :max-width="300"
+        :min-width="150"
         align="center"
       />
       <el-table-column
         header-align="center"
         prop="username"
         label="Xodim"
-        width="200"
+        :max-width="300"
+        :min-width="150"
         align="center"
       />
       <el-table-column
         header-align="center"
         prop="customer_name"
         label="Buyurtmachi"
-        width="200"
+        :max-width="300"
+        :min-width="150"
         align="center"
       />
       <el-table-column
         header-align="center"
         prop="artikul"
         label="Artikul"
-        width="200"
+        :max-width="300"
+        :min-width="150"
         align="center"
       />
       <el-table-column
         header-align="center"
         prop="order_number"
         label="Buyurtma nomeri"
-        width="200"
+        :max-width="300"
+        :min-width="150"
         align="center"
       />
       <el-table-column
         fixed="right"
         label="Muddati"
-        width="150"
+        :max-width="300"
+        :min-width="150"
         header-align="center"
         align="center"
         ><template #default="scope">
@@ -87,7 +94,8 @@ const OpenModalById = async (id) => {
         fixed="right"
         prop="status"
         label="Holati"
-        width="150"
+        :max-width="300"
+        :min-width="150"
         header-align="center"
         align="center"
       >
@@ -104,12 +112,14 @@ const OpenModalById = async (id) => {
         fixed="right"
         prop="id"
         label=""
-        width="100"
+        :max-width="200"
+        :min-width="100"
         header-align="center"
         align="center"
       >
-        <template #default="">
+        <template #default="scope">
           <router-link
+            @click="DetailModalProvide(scope.row._id)"
             to=""
             class="inline-flex items-center ml-2 text-red hover:bg-slate-300 font-medium rounded-md text-sm w-full sm:w-auto px-3 py-3 text-center"
           >

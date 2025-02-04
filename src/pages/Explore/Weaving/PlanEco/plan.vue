@@ -9,6 +9,7 @@ import InProcessDetailTable from "../../../../components/Weaving/InProcessDetail
 import ModalDayReport from "../../../../components/Weaving/ModalDayReport.vue";
 import DetailModal from "../../../../components/Weaving/DetailModal.vue";
 import ModalForProvide from "../../../../components/Weaving/ModalForProvide.vue";
+import DetailProvideModal from "../../../../components/Weaving/DetailProvideModal.vue";
 
 import { WeavingPlanStore } from "../../../../stores/Weaving/weaving_plan.store";
 const store_weaving = WeavingPlanStore();
@@ -39,5 +40,6 @@ onMounted(async () => {
     <ModalDayReport v-if="is_report_modal === true" />
     <DetailModal />
     <ModalForProvide />
+    <DetailProvideModal />
   </div>
 </template>

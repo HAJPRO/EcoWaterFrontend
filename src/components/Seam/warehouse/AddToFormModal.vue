@@ -48,7 +48,12 @@ const rules = ref({
 });
 </script>
 <template>
-  <el-dialog v-model="modal.is_modal" :title="modal.title" width="800">
+  <el-dialog v-model="modal.is_modal" width="800">
+    <div
+      class="bg-slate-100 font-semibold text-[15px] p-1 mt-1 align-center text-center shadow rounded border-t-[1px] border-[#36d887]"
+    >
+      <span>Skladga mato qo'shish</span>
+    </div>
     <span>
       <el-form
         :model="modal.model"
@@ -58,6 +63,23 @@ const rules = ref({
         label-position="top"
         class="filter-box md:grid md:grid-cols-12 gap-2 sm:flex sm:flex-wrap rounded shadow-md bg-white p-2 mt-1 mb-1 text-[12px]"
       >
+        <div class="mb-1 col-span-4">
+          <el-form-item
+            label="Buyurtma nomeri"
+            prop="order_number"
+            :rules="rules"
+          >
+            <el-input
+              required
+              v-model="modal.model.party_number"
+              clearable
+              class="w-[100%]"
+              size="smal"
+              type="Number"
+              placeholder="..."
+            />
+          </el-form-item>
+        </div>
         <div class="mb-1 col-span-4">
           <el-form-item
             label="Partya nomeri"
@@ -76,6 +98,7 @@ const rules = ref({
             />
           </el-form-item>
         </div>
+
         <div class="mb-1 col-span-4">
           <el-form-item label="Buyurtmachi" prop="customer_name" :rules="rules">
             <el-input
@@ -150,7 +173,52 @@ const rules = ref({
           </el-form-item>
         </div>
         <div class="mb-1 col-span-4">
-          <el-form-item label="Rangi" prop="color" :rules="rules">
+          <el-form-item label="Mato turi" prop="material_type" :rules="rules">
+            <el-input
+              :disabled="modal.output === true"
+              required
+              v-model="modal.model.material_type"
+              clearable
+              class="w-[100%]"
+              size="smal"
+              type="String"
+              placeholder="..."
+            >
+              <template #prepend>
+                <div class="w-[8px] items-start text-center">
+                  <i
+                    @click="
+                      Plus({
+                        title: `Mato nomi qo'shish`,
+                        state: `material_type`,
+                      })
+                    "
+                    class="fa-solid fa-plus mr-2 fa-md cursor-pointer"
+                  ></i>
+                </div>
+              </template>
+              <template #append>
+                <el-select
+                  :disabled="modal.output === true"
+                  v-model="modal.model.material_type"
+                  @click="Type({ type: `material_type` })"
+                  @change="ChangeMaterialName($event)"
+                  size="smal"
+                  style="width: 40px"
+                >
+                  <el-option
+                    v-for="item in options"
+                    :key="item._id"
+                    :label="item.name"
+                    :value="item.name"
+                  />
+                </el-select>
+              </template>
+            </el-input>
+          </el-form-item>
+        </div>
+        <div class="mb-1 col-span-4">
+          <el-form-item label="Mato rangi" prop="color" :rules="rules">
             <el-input
               :disabled="modal.output === true"
               required
@@ -232,48 +300,6 @@ const rules = ref({
                   v-model="modal.model.unit"
                   @click="Type({ type: `unit` })"
                   @change="ChangeUnit($event)"
-                  size="smal"
-                  style="width: 40px"
-                >
-                  <el-option
-                    v-for="item in options"
-                    :key="item._id"
-                    :label="item.name"
-                    :value="item.name"
-                  />
-                </el-select>
-              </template>
-            </el-input>
-          </el-form-item>
-        </div>
-        <div class="mb-1 col-span-4">
-          <el-form-item label="Sort" prop="sort" :rules="rules">
-            <el-input
-              :disabled="modal.output === true"
-              required
-              v-model="modal.model.sort"
-              clearable
-              class="w-[100%]"
-              size="smal"
-              type="String"
-              placeholder="..."
-            >
-              <template #prepend>
-                <div class="w-[8px] items-start text-center">
-                  <i
-                    @click="
-                      Plus({ title: `Sort nomi qo'shish`, state: `sort` })
-                    "
-                    class="fa-solid fa-plus mr-2 fa-md cursor-pointer"
-                  ></i>
-                </div>
-              </template>
-              <template #append>
-                <el-select
-                  :disabled="modal.output === true"
-                  v-model="modal.model.sort"
-                  @click="Type({ type: `sort` })"
-                  @change="ChangeSort($event)"
                   size="smal"
                   style="width: 40px"
                 >

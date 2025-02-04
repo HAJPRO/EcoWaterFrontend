@@ -8,6 +8,7 @@ import ModalForProvide from "../../../../components/Paint/ModalForProvide.vue";
 import InProcessDetailTable from "../../../../components/Paint/InProcessDetailTable.vue";
 import ProvideTable from "../../../../components/Paint/ProvideTable.vue";
 import ModalDayReport from "../../../../components/Paint/ModalDayReport.vue";
+import DetailPaintModal from "../../../../components/Paint/DetailProvideModal.vue";
 import { PaintPlanStore } from "../../../../stores/Paint/paintPlan.store";
 const store_paint = PaintPlanStore();
 import { storeToRefs } from "pinia";
@@ -38,4 +39,5 @@ onMounted(async () => {
   <ModalDayReport v-if="is_report_modal === true" />
   <DetailModal />
   <ModalForProvide />
+  <DetailPaintModal />
 </template>

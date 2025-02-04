@@ -3,6 +3,7 @@ import { SpinningService } from "../../ApiServices/Spinning/spinning.service";
 import { ToastifyService } from "../../utils/Toastify";
 import { loading } from "../../utils/Loader";
 import { defineStore } from "pinia";
+import { ProvideService } from "../../ApiServices/Provide/provide.service";
 
 export const SpinningPlanStore = defineStore("SpinningPlan", {
   state: () => {
@@ -28,6 +29,8 @@ export const SpinningPlanStore = defineStore("SpinningPlan", {
       detail: {},
       DoneSpinning: "",
       report_spinning: [],
+      detail_provide: {},
+      detail_spinning_modal: false,
     };
   },
   actions: {
@@ -108,6 +111,15 @@ export const SpinningPlanStore = defineStore("SpinningPlan", {
       this.is_detail_modal = false;
       ToastifyService.ToastSuccess({ msg: data.data.msg });
       loader.hide();
+    },
+    async DetailModalProvide(payload) {
+      try {
+        const data = await ProvideService.getOne(payload);
+        this.detail_provide = data.data;
+        this.detail_spinning_modal = true;
+      } catch (err) {
+        console.log(err);
+      }
     },
   },
 });

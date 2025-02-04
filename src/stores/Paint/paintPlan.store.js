@@ -3,6 +3,7 @@ import { PaintService } from "../../ApiServices/Paint/paint.service";
 import { ToastifyService } from "../../utils/Toastify";
 import { loading } from "./../../utils/Loader";
 import { defineStore } from "pinia";
+import { ProvideService } from "../../ApiServices/Provide/provide.service";
 
 export const PaintPlanStore = defineStore("paintPlanStore", {
   state: () => {
@@ -44,6 +45,8 @@ export const PaintPlanStore = defineStore("paintPlanStore", {
       DonePaint: "",
       paint_status: "",
       is_detail_modal: false,
+      detail_paint_modal: false,
+      detail_provide: [],
       is_report: false,
       detail: {},
       is_report: false,
@@ -71,7 +74,6 @@ export const PaintPlanStore = defineStore("paintPlanStore", {
         this.is_detail_modal = true;
         this.detail = data.data.data;
         this.card_id = payload;
-        console.log(data);
       } else {
         const data = await PaintService.GetOneFromSale({ id: payload });
         this.is_detail_modal = true;
@@ -164,32 +166,6 @@ export const PaintPlanStore = defineStore("paintPlanStore", {
         });
       }
     },
-    // isConfirmModal(payload) {
-    //   this.is_provide = payload.is_modal;
-    // },
-    // async SaveToProvide(payload) {
-    //   try {
-    //     const loader = loading.show();
-    //     const data = await PaintService.create({
-    //       items: payload.data,
-    //       card_id: payload.id,
-    //     });
-    //     loader.hide();
-    //     const TimeOut = () => {
-    //       window.location.href = "/explore/department/paint/working/plan";
-    //     };
-    //     ToastifyService.ToastSuccess({ msg: data.data.msg });
-    //     setTimeout(TimeOut, 1000);
-    //   } catch (err) {
-    //     console.log(err);
-    //   }
-    // },
-    // async StatusModalById(payload) {
-    //   this.status_modal.id = payload.id;
-    //   this.status_modal.isModal = payload.is_modal;
-    //   // const data = await SaleService.getOne(payload.id)
-    //   // this.model = data.data
-    // },
     async Update(payload) {
       try {
         const loader = loading.show();
@@ -279,6 +255,16 @@ export const PaintPlanStore = defineStore("paintPlanStore", {
         setTimeout(Refresh, 1500);
       } catch (error) {
         return ToastifyService.ToastError({ msg: error.messages });
+      }
+    },
+
+    async DetailModalProvide(payload) {
+      try {
+        const data = await ProvideService.getOne(payload);
+        this.detail_provide = data.data;
+        this.detail_paint_modal = true;
+      } catch (err) {
+        console.log(err);
       }
     },
   },

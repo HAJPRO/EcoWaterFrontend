@@ -23,7 +23,7 @@ onMounted(async () => {
       <div class="mt-3 grid grid-cols-12 gap-2">
         <div
           v-if="detail.order_number"
-          class="col-span-3 h-[200px] shadow-md rounded-md bg-white text-center text-slate-500 font-semibold text-[13px] p-4 cursor-pointer border-t-[1px] border-b-[1px] border-[#36d887]"
+          class="col-span-3 min-h-[200px] max-h-[300px] shadow-md rounded-md bg-white text-center text-slate-500 font-semibold text-[13px] p-4 cursor-pointer border-t-[1px] border-b-[1px] border-[#36d887]"
         >
           <div class="bg-[#e8eded] p-2 rounded">
             Buyurtma nomeri: {{ detail.order_number }}

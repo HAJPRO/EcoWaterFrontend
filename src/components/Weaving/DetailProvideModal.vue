@@ -1,30 +1,13 @@
 <script setup>
 import { ref } from "vue";
-import { ProvidePlanStore } from "../../stores/Provide/provideStore";
-const store_provide = ProvidePlanStore();
+import { WeavingPlanStore } from "../../stores/Weaving/weaving_plan.store";
+const store_weaving = WeavingPlanStore();
 import { storeToRefs } from "pinia";
-const { detail_spinning_modal, detail } = storeToRefs(store_provide);
-
-const is_cancel = ref(false);
-const Cancel = () => {
-  is_cancel.value = !is_cancel.value;
-};
-const confirm = () => {
-  store_provide.Confirm({ department: 4, delivered: false });
-};
-const delivered = () => {
-  store_provide.Confirm({ department: 4, delivered: true });
-};
-const cancel_reason = ref();
-const sendReason = async () => {
-  await store_provide.cancelSendReason({
-    reason: cancel_reason.value,
-  });
-};
+const { detail_weaving_modal, detail_provide } = storeToRefs(store_weaving);
 </script>
 <template>
   <div>
-    <el-dialog v-model="detail_spinning_modal" width="1000">
+    <el-dialog v-model="detail_weaving_modal" width="1000">
       <span>
         <div class="shadow-md rounded">
           <div
@@ -43,10 +26,11 @@ const sendReason = async () => {
             class="w-full"
             header-align="center"
             empty-text="Mahsulot tanlanmagan... "
-            :data="detail.delivery_product_box"
+            :data="detail_provide.delivery_product_box"
             border="true"
             style="width: 100%; font-size: 12px"
-            height="150"
+            :min-height="100"
+            :max-height="400"
           >
             <el-table-column
               header-align="center"
@@ -58,50 +42,52 @@ const sendReason = async () => {
               :max-width="80"
               :min-width="60"
             />
+
             <el-table-column
               header-align="center"
-              prop="begunok_name"
-              label="Begunok nomi"
+              prop="likra_type"
+              label="Likra turi"
               :max-width="200"
               :min-width="150"
               align="center"
             />
             <el-table-column
               header-align="center"
-              prop="begunok_type"
-              label="Begunok turi"
+              prop="likra_quantity"
+              label="Likra miqdori(kg)"
+              :max-width="200"
+              :min-width="150"
+              align="center"
+            />
+
+            <el-table-column
+              header-align="center"
+              prop="melaks_type"
+              label="Melaks ip turi"
               :max-width="200"
               :min-width="150"
               align="center"
             />
             <el-table-column
               header-align="center"
-              prop="begunok_quantity"
-              label="Begunok miqdori(kg)"
+              prop="melaks_quantity"
+              label="Melaks ip miqdori(kg)"
               :max-width="200"
               :min-width="150"
               align="center"
             />
             <el-table-column
               header-align="center"
-              prop="latun_name"
-              label="Latun nomi"
+              prop="polister_type"
+              label="Polister turi"
               :max-width="200"
               :min-width="150"
               align="center"
             />
             <el-table-column
               header-align="center"
-              prop="latun_type"
-              label="Latun turi"
-              :max-width="200"
-              :min-width="150"
-              align="center"
-            />
-            <el-table-column
-              header-align="center"
-              prop="latun_quantity"
-              label="Latun miqdori(kg)"
+              prop="polister_quantity"
+              label="Polister miqdori(kg)"
               :max-width="200"
               :min-width="150"
               align="center"
@@ -152,7 +138,7 @@ const sendReason = async () => {
         <span>Cancel And Of Reason</span>
       </el-dialog>
       <template #footer>
-        <div>
+        <!-- <div>
           <router-link
             v-if="detail.status === `Jarayonda`"
             type=""
@@ -210,7 +196,7 @@ const sendReason = async () => {
           >
             <i class="mr-2 fa-solid fa-check fa-sm"></i>Yakunlash</router-link
           >
-        </div>
+        </div> -->
       </template>
     </el-dialog>
   </div>

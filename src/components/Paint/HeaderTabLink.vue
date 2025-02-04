@@ -25,16 +25,7 @@ const ActiveTabLink = (num) => {
     is_Active();
     getAll();
   }
-  if (num === 3) {
-    isActive.value = 3;
-    is_Active();
-    getAll();
-  }
-  if (num === 4) {
-    isActive.value = 4;
-    is_Active();
-    getAll();
-  }
+
   if (num === 5) {
     isActive.value = 5;
     is_Active();

@@ -1,3 +1,4 @@
+import { ProvideService } from "../../ApiServices/Provide/provide.service";
 import { WeavingService } from "../../ApiServices/Weaving/weaving.service";
 import { ToastifyService } from "../../utils/Toastify";
 import { loading } from "./../../utils/Loader";
@@ -42,6 +43,8 @@ export const WeavingPlanStore = defineStore("WeavingPlan", {
       report_weaving: [],
       report_spinning: [],
       DoneSpinning: "",
+      detail_provide: {},
+      detail_weaving_modal: false,
     };
   },
   actions: {
@@ -122,11 +125,20 @@ export const WeavingPlanStore = defineStore("WeavingPlan", {
         provide,
         card: this.detail,
       });
+      this.GetAll({ status: this.is_active });
       this.is_provide = false;
       this.is_detail_modal = false;
-      this.GetAll({ status: this.is_active });
       ToastifyService.ToastSuccess({ msg: data.data.msg });
       loader.hide();
+    },
+    async DetailModalProvide(payload) {
+      try {
+        const data = await ProvideService.getOne(payload);
+        this.detail_provide = data.data;
+        this.detail_weaving_modal = true;
+      } catch (err) {
+        console.log(err);
+      }
     },
   },
 });
