@@ -13,37 +13,6 @@ const store_helpers = HelpersStore();
 import { storeToRefs } from "pinia";
 const { update_model, is_update_modal } = storeToRefs(store_sale);
 const { options, is_modal } = storeToRefs(store_helpers);
-const is_edit = ref(false);
-const IsEdit = () => {
-  is_edit.value = false;
-  product.value = {};
-};
-const itemExists = ref();
-itemExists.value = update_model.value.sale_products;
-const product = ref({
-  customer_name: update_model.value.customer_name,
-  order_number: update_model.value.order_number,
-  artikul: update_model.value.artikul,
-  material_name: "",
-  material_type: "",
-  color: "",
-  width: "",
-  grammage: "",
-  order_quantity: "",
-  unit: "",
-  delivery_time: update_model.value.customer_name,
-});
-const ProductById = (id) => {
-  product.value = {
-    customer_name: update_model.value.customer_name,
-    order_number: update_model.value.order_number,
-    artikul: update_model.value.artikul,
-    delivery_time: update_model.value.customer_name,
-    ...itemExists.value[id],
-  };
-  is_edit.value = true;
-};
-
 const Type = (type) => {
   store_helpers.SelectType(type);
 };
@@ -62,14 +31,66 @@ const ChangeColor = (value) => {
 const ChangeUnit = (value) => {
   model.unit = value;
 };
-
-const order = ref({
-  products: [],
-  customer_name: "",
-  order_number: "",
-  artikul: "",
-  delivery_time: "",
+const is_edit = ref(false);
+const current_id = ref();
+const itemExists = ref();
+itemExists.value = update_model.value.sale_products;
+const product = ref({
+  id: update_model.value.id,
+  customer_name: update_model.value.customer_name,
+  order_number: update_model.value.order_number,
+  artikul: update_model.value.artikul,
+  delivery_time: update_model.value.delivery_time,
+  material_name: "",
+  material_type: "",
+  color: "",
+  width: "",
+  grammage: "",
+  order_quantity: "",
+  unit: "",
 });
+const ProductById = (id) => {
+  current_id.value = id;
+  product.value = {
+    customer_name: product.value.customer_name,
+    order_number: product.value.order_number,
+    artikul: product.value.artikul,
+    delivery_time: product.value.delivery_time,
+    material_name: itemExists.value[id].material_name,
+    material_type: itemExists.value[id].material_type,
+    color: itemExists.value[id].color,
+    width: itemExists.value[id].width,
+    grammage: itemExists.value[id].grammage,
+    order_quantity: itemExists.value[id].order_quantity,
+    unit: itemExists.value[id].unit,
+  };
+  is_edit.value = true;
+};
+
+const IsEdit = () => {
+  try {
+    if (current_id.value !== "") {
+      itemExists.value[current_id.value] = {
+        id: product.value.id,
+        customer_name: product.value.customer_name,
+        order_number: product.value.order_number,
+        artikul: product.value.artikul,
+        delivery_time: product.value.delivery_time,
+        material_name: product.value.material_name,
+        material_type: product.value.material_type,
+        color: product.value.color,
+        width: product.value.width,
+        grammage: product.value.grammage,
+        unit: product.value.unit,
+        order_quantity: product.value.order_quantity,
+      };
+      is_edit.value = false;
+    }
+  } catch (error) {
+    return ToastifyService.ToastError({ msg: error.message });
+  }
+};
+
 const formRef = ref();
 const PlusValidate = async (formRef) => {
   await formRef.validate((valid) => {
@@ -82,40 +103,42 @@ const PlusValidate = async (formRef) => {
 };
 const PlusOrder = async () => {
   try {
-    itemExists.value.push({
-      id: uuidv4(),
-      customer_name: product.value.customer_name,
-      order_number: product.value.order_number,
-      artikul: product.value.artikul,
-      delivery_time: product.value.delivery_time,
-      material_name: product.value.material_name,
-      material_type: product.value.material_type,
-      color: product.value.color,
-      width: product.value.width,
-      grammage: product.value.grammage,
-      unit: product.value.unit,
-      order_quantity: product.value.order_quantity,
-    });
+    if (current_id.value === 0) {
+      itemExists.value.push({
+        id: product.value.id,
+        material_name: product.value.material_name,
+        material_type: product.value.material_type,
+        color: product.value.color,
+        width: product.value.width,
+        grammage: product.value.grammage,
+        unit: product.value.unit,
+        order_quantity: product.value.order_quantity,
+      });
+    } else {
+    }
   } catch (error) {
     return ToastifyService.ToastError({ msg: error.message });
   }
 };
 const Save = async () => {
   try {
-    if (
-      order.value.products.length <= 0 &&
-      order.value.customer_name === "" &&
-      order.value.order_number === "" &&
-      order.value.delivery_time === ""
-    ) {
+    if (itemExists.value.length <= 0) {
       return ToastifyService.ToastError({ msg: "Mahsulot qo'shilmagan !" });
     } else {
       const loader = loading.show();
-      const data = await SaleService.create(order.value);
+      const data = await SaleService.create({
+        id: update_model.value._id,
+        customer_name: product.value.customer_name,
+        order_number: product.value.order_number,
+        artikul: product.value.artikul,
+        delivery_time: product.value.delivery_time,
+        products: itemExists.value,
+        update: true,
+      });
       store_sale.getAll({ status: 1 });
       if (data) {
-        order.value.products = [];
-        model.value = {};
+        itemExists.value = [];
+        product.value = {};
       }
       ToastifyService.ToastSuccess({ msg: data.data.msg });
       loader.hide();
@@ -430,9 +453,8 @@ const rules = ref({
             :rules="rules"
           >
             <el-date-picker
-              :disabled="order.products.length"
               required
-              v-model="update_model.delivery_time"
+              v-model="product.delivery_time"
               style="width: 100%"
               clearable
               type="date"
@@ -482,17 +504,21 @@ const rules = ref({
           class="col-span-3 h-[250px] shadow-md rounded-md bg-white text-center text-slate-500 font-semibold text-[14px] p-4 cursor-pointer border-t-[1px] border-b-[1px] border-[#36d887]"
         >
           <div class="mt-2 bg-[#e8eded] p-2 rounded">
-            Buyurtma nomeri: {{ update_model.order_number }}
+            Buyurtma nomeri: {{ product.order_number }}
           </div>
           <div class="mt-4 bg-[#e8eded] p-2 rounded">
-            Buyurtmachi: {{ update_model.customer_name }}
+            Buyurtmachi: {{ product.customer_name }}
           </div>
           <div class="mt-4 bg-[#e8eded] p-2 rounded">
-            Artikul: {{ update_model.artikul }}
+            Artikul: {{ product.artikul }}
           </div>
           <div class="mt-4 bg-[#e8eded] p-2 rounded">
             Muddati:
-            {{ format(update_model.delivery_time, "dd.MM.yyyy HH:mm") }}
+            {{
+              product.delivery_time
+                ? format(product.delivery_time, "dd.MM.yyyy HH:mm")
+                : ``
+            }}
           </div>
         </div>
         <div class="col-span-9 shadow-md bg-white rounded min-h-[15px]">
@@ -617,7 +643,7 @@ const rules = ref({
                 padding: 15px;
               "
             >
-              <i class="fa-solid fa-check mr-2 fa-md"></i> Saqlash
+              <i class="fa-solid fa-check mr-2 fa-md"></i> Yangilash
             </el-button>
           </div>
         </div>

@@ -81,7 +81,7 @@ const proccessModalById = async (id) => {
       />
       <el-table-column
         prop="order_quantity"
-        label="Miqdori"
+        label="Buyurtma miqdori"
         :min-width="200"
         :max-width="300"
         header-align="center"
