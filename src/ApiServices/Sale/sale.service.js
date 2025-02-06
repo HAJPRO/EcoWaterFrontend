@@ -2,22 +2,6 @@ import api from "@/helpers/api";
 // import $api from "../../helpers/$api";
 
 export const SaleService = {
-  CreateProName(data) {
-    let url = "sale/add_pro_name";
-    return api.post(url, data);
-  },
-  CreateProType(data) {
-    let url = "sale/add_pro_type";
-    return api.post(url, data);
-  },
-  GetProType() {
-    let url = "sale/pro_type";
-    return api.post(url);
-  },
-  GetProName() {
-    let url = "sale/pro_name";
-    return api.post(url);
-  },
   GetCardModel() {
     let url = "sale/get_card_model";
     return api.get(url);
@@ -28,6 +12,10 @@ export const SaleService = {
   },
   GetOne(data) {
     let url = "sale/get_one";
+    return api.post(url, data);
+  },
+  UpdateById(data) {
+    let url = "sale/update_card";
     return api.post(url, data);
   },
   export_excel(id) {

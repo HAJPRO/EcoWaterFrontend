@@ -1,4 +1,5 @@
 <script setup>
+import { format } from "date-fns";
 import { SpinningPlanStore } from "../../stores/Spinning/spinningPlan.store";
 const store_spinning = SpinningPlanStore();
 import { storeToRefs } from "pinia";
@@ -86,7 +87,7 @@ const DetailModalProvide = (id) => {
         align="center"
         ><template #default="scope">
           <div class="text-red-500">
-            {{ String(scope.row.delivery_time_provide).substring(0, 10) }}
+            {{ format(scope.row.delivery_time_provide, "dd.MM.yyyy HH:mm") }}
           </div>
         </template></el-table-column
       >

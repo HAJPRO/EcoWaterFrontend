@@ -1,4 +1,5 @@
 <script setup>
+import { format } from "date-fns";
 import { ref, onMounted } from "vue";
 import { WeavingPlanStore } from "../../stores/Weaving/weaving_plan.store";
 const store_weaving = WeavingPlanStore();
@@ -71,14 +72,17 @@ const DetailModal = async (id) => {
         </template>
       </el-table-column>
       <el-table-column
-        prop="delivery_time"
         label="Muddati"
         width="250"
         header-align="center"
         align="center"
         ><template #default="scope"
           ><div>
-            {{ String(scope.row.delivery_time_weaving).substring(0, 10) }}
+            {{
+              scope.row.delivery_time_weaving
+                ? format(scope.row.delivery_time_weaving, "dd.MM.yyyy HH:mm")
+                : ""
+            }}
           </div></template
         ></el-table-column
       >
@@ -90,12 +94,12 @@ const DetailModal = async (id) => {
         header-align="center"
         align="center"
       >
-        <template #default="">
+        <template #default="scope">
           <router-link
             to=""
             class="inline-flex items-center text-red bg-[#e4e9e9] hover:bg-[#e1e1e3] font-medium rounded-md text-[12px] w-ful p-[5px] sm:w-auto text-center"
           >
-            To'quvga yuborildi
+            {{ scope.row.paint_status }}
           </router-link>
         </template>
       </el-table-column>

@@ -1,4 +1,5 @@
 <script setup>
+import { format } from "date-fns";
 import { ref } from "vue";
 import { v4 as uuidv4 } from "uuid";
 import { SpinningPlanStore } from "../../stores/Spinning/spinningPlan.store";
@@ -59,7 +60,7 @@ const CreateDayReport = async (formRef) => {
         <div>Buyurtma nomeri: {{ detail.order_number }}</div>
         <div>
           Muddati:
-          {{ String(detail.delivery_time_weaving).substring(0, 10) }}
+          {{ format(detail.delivery_time_weaving, "dd.MM.yyyy HH:mm") }}
         </div>
       </div>
       <div class="text-[15px] bg-white rounded shadow hover:shadow-md mt-2">
@@ -235,9 +236,9 @@ const CreateDayReport = async (formRef) => {
               label="Vaqt"
               width="150"
               align="center"
-              ><template #default="scope">{{
-                String(scope.row.createdAt).substring(0, 10)
-              }}</template></el-table-column
+              ><template #default="scope">
+                {{ format(scope.row.createdAt, "dd.MM.yyyy HH:mm") }}</template
+              ></el-table-column
             >
             <el-table-column
               fixed="right"

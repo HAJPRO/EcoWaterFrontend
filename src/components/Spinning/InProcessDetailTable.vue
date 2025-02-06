@@ -1,4 +1,5 @@
 <script setup>
+import { format } from "date-fns";
 import { ref, onMounted } from "vue";
 import { SpinningPlanStore } from "../../stores/Spinning/spinningPlan.store";
 const store_spinning = SpinningPlanStore();
@@ -81,7 +82,11 @@ const GetOneOrderReport = (id) => {
           align="center"
         >
           <template #default="scope">
-            {{ String(scope.row.delivery_time_weaving).substring(0, 10) }}
+            {{
+              scope.row.delivery_time_weaving
+                ? format(scope.row.delivery_time_weaving, "dd.MM.yyyy HH:mm")
+                : ""
+            }}
           </template>
         </el-table-column>
       </el-table-column>

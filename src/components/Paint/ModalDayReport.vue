@@ -1,10 +1,11 @@
 <script setup>
+import { format } from "date-fns";
 import { ref } from "vue";
 import { v4 as uuidv4 } from "uuid";
 import { PaintPlanStore } from "../../stores/Paint/paintPlan.store";
 const store_paint = PaintPlanStore();
 import { storeToRefs } from "pinia";
-const isActive = ref(1);
+const isActive = ref(2);
 const ActiveTabLink = (status) => {
   isActive.value = status;
 };
@@ -171,9 +172,9 @@ const CreateDayReport = async (formRef) => {
               label="Vaqt"
               width="150"
               align="center"
-              ><template #default="scope">{{
-                String(scope.row.createdAt).substring(0, 10)
-              }}</template></el-table-column
+              ><template #default="scope">
+                {{ format(scope.row.createdAt, "dd.MM.yyyy HH:mm") }}</template
+              ></el-table-column
             >
             <el-table-column
               fixed="right"
@@ -447,9 +448,11 @@ const CreateDayReport = async (formRef) => {
                 label="Vaqt"
                 width="150"
                 align="center"
-                ><template #default="scope">{{
-                  String(scope.row.createdAt).substring(0, 10)
-                }}</template></el-table-column
+                ><template #default="scope">
+                  {{
+                    format(scope.row.createdAt, "dd.MM.yyyy HH:mm")
+                  }}</template
+                ></el-table-column
               >
               <el-table-column
                 fixed="right"

@@ -1,15 +1,16 @@
 <script setup>
+import { format } from "date-fns";
 import { ref, onMounted } from "vue";
 import { PaintPlanStore } from "../../stores/Paint/paintPlan.store";
 const store_paint = PaintPlanStore();
 import { storeToRefs } from "pinia";
-const { items } = storeToRefs(store_paint);
+const { items, is_active } = storeToRefs(store_paint);
 const GetOneOrderReport = (id) => {
   store_paint.DetailModal({ id, report: true });
 };
 </script>
 <template>
-  <div class="shadow-md rounded min-h-[15px]">
+  <div v-if="is_active === 1" class="shadow-md rounded min-h-[15px]">
     <el-table
       :header-cell-style="{
         background: '#e8eded',
@@ -83,7 +84,11 @@ const GetOneOrderReport = (id) => {
           align="center"
         >
           <template #default="scope">
-            {{ String(scope.row.delivery_time_sale).substring(0, 10) }}
+            {{
+              scope.row.delivery_time_sale
+                ? format(scope.row.delivery_time_sale, "dd.MM.yyyy HH:mm")
+                : ""
+            }}
           </template>
         </el-table-column>
       </el-table-column>
@@ -113,7 +118,7 @@ const GetOneOrderReport = (id) => {
           align="center"
         >
           <template #default="scope">
-            {{ String(scope.row.delivery_time_weaving).substring(0, 10) }}
+            {{ format(scope.row.delivery_time_weaving, "dd.MM.yyyy HH:mm") }}
           </template>
         </el-table-column>
       </el-table-column>

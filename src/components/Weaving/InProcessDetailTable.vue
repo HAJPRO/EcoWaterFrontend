@@ -1,4 +1,5 @@
 <script setup>
+import { format } from "date-fns";
 import { ref, onMounted } from "vue";
 import { WeavingPlanStore } from "../../stores/Weaving/weaving_plan.store";
 const store_weaving = WeavingPlanStore();
@@ -84,7 +85,11 @@ const GetOneOrderReport = (id) => {
           align="center"
         >
           <template #default="scope">
-            {{ String(scope.row.delivery_time_paint).substring(0, 10) }}
+            {{
+              scope.row.delivery_time_paint
+                ? format(scope.row.delivery_time_paint, "dd.MM.yyyy HH:mm")
+                : ""
+            }}
           </template>
         </el-table-column>
       </el-table-column>
@@ -115,7 +120,7 @@ const GetOneOrderReport = (id) => {
           align="center"
         >
           <template #default="scope">
-            {{ String(scope.row.delivery_time_spinning).substring(0, 10) }}
+            {{ format(scope.row.delivery_time_spinning, "dd.MM.yyyy HH:mm") }}
           </template>
         </el-table-column>
       </el-table-column>

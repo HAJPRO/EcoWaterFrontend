@@ -13,6 +13,9 @@ const isModal = ref(false);
 const DetailModal = async (id) => {
   await store_sale.DetailModal(id);
 };
+const UpdateById = async (id) => {
+  await store_sale.UpdateModal(id);
+};
 const deleteById = async (id) => {
   await store_sale.DeleteById(id);
 };
@@ -140,6 +143,13 @@ const proccessModalById = async (id) => {
             <i class="text-black fa-solid fa-check fa-xs fa- fa-xs"></i>
           </router-link>
           <router-link
+            @click="UpdateById(scope.row._id)"
+            to=""
+            class="inline-flex items-center mt-2 ml-2 text-white hover:bg-slate-300 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
+          >
+            <i class="text-black fa-solid fa-pen-to-square fa-xs"></i>
+          </router-link>
+          <router-link
             to=""
             @click="proccessModalById(scope.row._id)"
             class="inline-flex items-center mt-1 ml-2 text-white hover:bg-slate-300 font-medium rounded-md text-sm w-full sm:w-auto px-3 py-3 text-center"
@@ -154,13 +164,13 @@ const proccessModalById = async (id) => {
           >
             <i class="text-black fa-sharp fa-solid fa-edit fa-xs"></i>
           </router-link> -->
-          <router-link
+          <!-- <router-link
             to=""
             @click="deleteById(scope.row._id)"
             class="inline-flex items-center mt-1 ml-2 text-white hover:bg-slate-300 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
           >
             <i class="text-black fa-sharp fa-solid fa-trash fa-xs"></i>
-          </router-link>
+          </router-link> -->
           <router-link
             to=""
             @click="ExportExcel(scope.row._id)"

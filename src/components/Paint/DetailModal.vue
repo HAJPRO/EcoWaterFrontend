@@ -7,7 +7,7 @@ import { PaintPlanStore } from "../../stores/Paint/paintPlan.store";
 const store_paint = PaintPlanStore();
 import { storeToRefs } from "pinia";
 const { detail, is_detail_modal, is_report } = storeToRefs(store_paint);
-const isActive = ref(1);
+const isActive = ref(2);
 const ActiveTabLink = (status) => {
   isActive.value = status;
 };
@@ -52,11 +52,10 @@ onMounted(async () => {
           <router-link
             @click="ActiveTabLink(2)"
             to=""
-            v-if="is_report === true"
             :class="{ activeTab: isActive === 2 }"
             class="inline-flex text-[13px] items-center mr-2 px-4 py-1 mb-1 text-sm font-medium text-center text-red hover:border-b-2 border-solid border-[#36d887] bg-[#e4e9e9] text-bold rounded"
           >
-            <i class="fa-solid fa-info mr-2 fa-xm"></i> Bo'yoq talabnoma
+            <i class="fa-solid fa-info mr-2 fa-xm"></i> Sotuv talabnoma
             <div class="flex flex-shrink-0 ml-2">
               <span
                 :class="{ activeTabIcon: isActive === 2 }"
@@ -169,7 +168,7 @@ onMounted(async () => {
               />
               <el-table-column
                 prop="color_code"
-                label="Rang kode"
+                label="Rang kod"
                 header-align="center"
                 align="center"
                 :min-width="150"

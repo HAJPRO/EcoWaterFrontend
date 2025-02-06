@@ -1,4 +1,5 @@
 <script setup>
+import { format } from "date-fns";
 import { ref, onMounted } from "vue";
 import { PaintPlanStore } from "../../stores/Paint/paintPlan.store";
 const store_paint = PaintPlanStore();
@@ -9,7 +10,7 @@ const DetailModal = async (id) => {
 };
 </script>
 <template>
-  <div class="shadow-md rounded">
+  <div v-if="is_active === 2" class="shadow-md rounded">
     <el-table
       :header-cell-style="{
         background: '#e8eded',
@@ -68,14 +69,18 @@ const DetailModal = async (id) => {
         </template>
       </el-table-column>
       <el-table-column
-        prop="delivery_time"
         label="Muddati"
-        width="250"
+        :min_width="200"
+        :max_width="250"
         header-align="center"
         align="center"
         ><template #default="scope"
           ><div>
-            {{ String(scope.row.delivery_time).substring(0, 10) }}
+            {{
+              scope.row.delivery_time
+                ? format(scope.row.delivery_time, "dd.MM.yyyy HH:mm")
+                : ""
+            }}
           </div></template
         ></el-table-column
       >

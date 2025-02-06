@@ -1,4 +1,5 @@
 <script setup>
+import { format } from "date-fns";
 import { ref } from "vue";
 import { v4 as uuidv4 } from "uuid";
 import { ToastifyService } from "../../utils/Toastify";
@@ -458,9 +459,11 @@ const rules = ref({
               width="160"
               header-align="center"
               align="center"
-              ><template #default="scope">{{
-                String(scope.row.delivery_time_provide).substring(0, 15)
-              }}</template>
+              ><template #default="scope">
+                {{
+                  format(scope.row.delivery_time_provide, "dd.MM.yyyy HH:mm")
+                }}</template
+              >
             </el-table-column>
             <el-table-column
               prop="id"

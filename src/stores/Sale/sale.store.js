@@ -7,6 +7,9 @@ import { defineStore } from "pinia";
 export const SaleStore = defineStore("saleStore", {
   state: () => {
     return {
+      update_model: {},
+      is_update_modal: false,
+      param_id: "",
       model: {},
       detail: {},
       all_length: {},
@@ -38,6 +41,7 @@ export const SaleStore = defineStore("saleStore", {
       this.detail = data.data;
       this.card_id = payload;
     },
+
     async SaleCreateCardModal() {
       this.is_create_modal = true;
       this.GetCardModel();
@@ -46,27 +50,20 @@ export const SaleStore = defineStore("saleStore", {
       const data = await SaleService.GetCardModel();
       this.model = data.data;
     },
-    PlusProNameModal() {
-      this.plus_name_modal = true;
+    async UpdateModal(id) {
+      const data = await SaleService.GetOne({ id });
+      this.update_model = data.data;
+      this.param_id = id;
+      this.is_update_modal = true;
     },
-    PlusProTypeModal() {
-      this.plus_type_modal = true;
-    },
-    async CreateProType(payload) {
-      const type = await SaleService.CreateProType(payload);
-      GetProType();
-    },
-    async CreateProName(payload) {
-      const name = await SaleService.CreateProName(payload);
-      GetProName();
-    },
-    async GetProName() {
-      const names = await SaleService.GetProName();
-      this.pro_names = names.data;
-    },
-    async GetProType() {
-      const types = await SaleService.GetProType();
-      this.pro_types = types.data;
+    async CardProductById(id) {
+      const data = await SaleService.GetOne({ id, product: true });
+      console.log(data.data);
+
+      // const data = await SaleService.UpdateById({
+      //   card_id: this.card_id,
+      //   param_id: id,
+      // });
     },
     async getAll(payload) {
       const loader = loading.show();

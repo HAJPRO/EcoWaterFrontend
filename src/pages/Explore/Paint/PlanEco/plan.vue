@@ -34,7 +34,7 @@ onMounted(async () => {
   </Title>
   <HeaderTabLink />
   <MainTable v-if="is_active === 2" />
-  <InProcessDetailTable v-if="is_active === 1 || is_active === 3" />
+  <InProcessDetailTable v-if="is_active === 1" />
   <ProvideTable v-if="is_active === 5" />
   <ModalDayReport v-if="is_report_modal === true" />
   <DetailModal />

@@ -6,6 +6,9 @@ import { SaleStore } from "../../stores/Sale/sale.store";
 const store_sale = SaleStore();
 import { storeToRefs } from "pinia";
 const { detail, is_detail_modal, is_report } = storeToRefs(store_sale);
+const UpdateById = (id) => {
+  store_sale.UpdateModal(id);
+};
 const confirm = () => {
   store_sale.Confirm();
 };
@@ -125,14 +128,20 @@ onMounted(async () => {
               header-align="center"
               align="center"
             >
-              <template #default="scope">
+              <template #default="">
                 <router-link
+                  to=""
+                  class="inline-flex items-center mt-2 ml-2 text-white hover:bg-slate-300 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-2 text-center"
+                >
+                  <i class="text-black fa-solid fa-pen-to-square fa-xm"></i>
+                </router-link>
+                <!-- <router-link
                   to=""
                   @click="deleteById(scope.row.id)"
                   class="inline-flex items-center mt-4 ml-2 text-white hover:bg-slate-300 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
                 >
                   <i class="text-black fa-sharp fa-solid fa-trash fa-xs"></i>
-                </router-link>
+                </router-link> -->
               </template>
             </el-table-column>
           </el-table>

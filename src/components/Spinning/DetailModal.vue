@@ -1,4 +1,5 @@
 <script setup>
+import { format } from "date-fns";
 import { onMounted, ref } from "vue";
 import { ToastifyService } from "../../utils/Toastify";
 import { loading } from "./../../utils/Loader";
@@ -44,33 +45,34 @@ onMounted(async () => {
           <div class="mt-2 bg-[#e8eded] p-2 rounded">
             Muddati:
             {{
-              String(
+              format(
                 detail.delivery_time_spinning
                   ? detail.delivery_time_spinning
-                  : detail.delivery_time_weaving
-              ).substring(0, 10)
+                  : detail.delivery_time_weaving,
+                "dd.MM.yyyy HH:mm"
+              )
             }}
           </div>
         </div>
         <div class="col-span-9 shadow-md bg-white rounded min-h-[15px]">
           <el-table
-            :header-cell-style="{
-              background: '#e8eded',
-              border: '0.2px solid #e1e1e3',
-            }"
-            load
-            style="font-size: 12px"
-            size="small"
-            class="w-full"
-            header-align="center"
-            empty-text="Mahsulot tanlanmagan... "
             :data="
               detail.spinning_products
                 ? detail.spinning_products
                 : detail.weaving_products
             "
+            :header-cell-style="{
+              background: '#e8eded',
+              border: '0.2px solid #e1e1e3',
+            }"
+            load
+            class="w-full"
+            header-align="center"
+            style="width: 100%; font-size: 12px"
+            empty-text="Mahsulot tanlanmagan... "
             border="true"
             height="150"
+            size="small"
           >
             <el-table-column
               header-align="center"
@@ -83,65 +85,87 @@ onMounted(async () => {
             />
             <el-table-column
               prop="yarn_name"
-              label="Nomi"
-              width="150"
+              label="Ip nomi"
+              :min-width="150"
+              :max-width="200"
               header-align="center"
               align="center"
             />
-
             <el-table-column
               prop="yarn_type"
-              label="Turi"
-              width="150"
+              label="Ip turi"
+              :min-width="150"
+              :max-width="200"
               header-align="center"
               align="center"
             />
 
             <el-table-column
               prop="yarn_quantity"
-              label="Miqdori"
-              width="150"
+              label="Ip miqdori (kg)"
+              :min-width="150"
+              :max-width="200"
+              header-align="center"
+              align="center"
+            />
+            <el-table-column
+              prop="likra_type"
+              label="Likra turi"
+              :min-width="150"
+              :max-width="200"
               header-align="center"
               align="center"
               ><template #default="scope"
-                ><div class="text-red-500">
-                  {{ scope.row.yarn_quantity }} kg
+                ><div>
+                  {{ scope.row.likra_type ? scope.row.likra_type : `-` }}
                 </div></template
               ></el-table-column
             >
             <el-table-column
-              fixed="right"
-              label="Holati"
-              width="150"
+              prop="melaks_type"
+              label="Melaks ip turi"
+              :min-width="150"
+              :max-width="200"
               header-align="center"
               align="center"
-              ><template #default="scope">
-                <router-link
-                  to=""
-                  class="inline-flex items-center text-red bg-[#e4e9e9] hover:bg-[#e1e1e3] font-medium rounded-md text-[12px] w-ful p-[5px] sm:w-auto text-center"
-                >
-                  {{ scope.row.status }}
-                </router-link></template
+              ><template #default="scope"
+                ><div>
+                  {{ scope.row.melaks_type ? scope.row.melaks_type : `-` }}
+                </div></template
               ></el-table-column
             >
             <el-table-column
-              fixed="right"
-              prop="id"
-              label=""
-              width="120"
+              prop="polister_type"
+              label="Polister turi"
+              :min-width="150"
+              :max-width="200"
               header-align="center"
               align="center"
+              ><template #default="scope"
+                ><div>
+                  {{ scope.row.polister_type ? scope.row.polister_type : `-` }}
+                </div></template
+              ></el-table-column
             >
-              <template #default="scope">
-                <router-link
-                  to=""
-                  @click="deleteById(scope.row.id)"
-                  class="inline-flex items-center mt-4 ml-2 text-white hover:bg-slate-300 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
-                >
-                  <i class="text-black fa-sharp fa-solid fa-trash fa-xs"></i>
-                </router-link>
-              </template>
-            </el-table-column>
+
+            <el-table-column
+              prop="id"
+              fixed="right"
+              :min-width="100"
+              :max-width="200"
+              header-align="center"
+              align="center"
+              ><template #default="scope">
+                <div>
+                  <router-link
+                    to=""
+                    @click="deleteByIdSpinning(scope.row.id)"
+                    class="inline-flex items-center mt-4 ml-2 text-white hover:bg-slate-300 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
+                  >
+                    <i class="text-black fa-sharp fa-solid fa-trash fa-xs"></i>
+                  </router-link>
+                </div> </template
+            ></el-table-column>
           </el-table>
           <div class="flex justify-end col-span-10 p-1 mt-1 bg-white">
             <el-button
