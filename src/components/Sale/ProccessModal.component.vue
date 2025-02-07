@@ -168,7 +168,7 @@ const active = ref(2);
                         <router-link
                           @click="ExportExcel()"
                           to=""
-                          class="py-[5px] px-2 rounded text-[12px] items-center text-center font-bold bg-gray-800 text-white"
+                          class="py-[5px] px-2 rounded text-[12px] items-center text-center font-bold bg-gray-700 text-white"
                         >
                           <i class="fa-solid fa-file-excel mr-2 fa-xm"></i>
                           Excel
@@ -177,7 +177,7 @@ const active = ref(2);
                     </div>
                   </div>
                   <div
-                    class="col-span-full xl:col-span-6 bg-white dark:bg-gray-800 shadow-sm rounded-xl"
+                    class="col-span-full xl:col-span-6 bg-white dark:bg-gray-700 shadow-sm rounded-xl"
                   >
                     <div class="">
                       <div class="overflow-x-auto">
@@ -341,7 +341,7 @@ const active = ref(2);
                         <router-link
                           @click="ExportExcel()"
                           to=""
-                          class="py-[5px] px-2 rounded text-[12px] items-center text-center font-bold bg-gray-800 text-white"
+                          class="py-[5px] px-2 rounded text-[12px] items-center text-center font-bold bg-gray-700 text-white"
                         >
                           <i class="fa-solid fa-file-excel mr-2 fa-xm"></i>
                           Excel

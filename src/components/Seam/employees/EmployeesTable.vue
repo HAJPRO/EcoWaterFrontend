@@ -4,12 +4,12 @@ import { ref, onMounted } from "vue";
 import { SeamEmployeesStore } from "../../../stores/Seam/Employees/employees.store";
 const store_employees = SeamEmployeesStore();
 import { storeToRefs } from "pinia";
+const { items, is_active } = storeToRefs(store_employees);
 const getOneEployeeReport = async (id) => {
   store_employees.getOneEployeeReport(id);
 };
-const { items, is_active } = storeToRefs(store_employees);
-const DetailModal = async (id) => {
-  store_employees.DetailModal({ id });
+const handleCurrentChange = (page) => {
+  store_employees.getAll(page);
 };
 </script>
 <template>
@@ -28,7 +28,7 @@ const DetailModal = async (id) => {
       :data="items"
       style="width: 100%; font-size: 12px"
       min-height="300"
-      max-height="350"
+      max-height="600"
     >
       <el-table-column
         header-align="center"
@@ -93,12 +93,12 @@ const DetailModal = async (id) => {
         :min-width="100"
         :max-width="200"
       >
-        <template #default="">
+        <template #default="scope">
           <router-link
             to=""
             class="inline-flex items-center text-red bg-[#e4e9e9] hover:bg-[#e1e1e3] font-medium rounded-md text-[12px] w-ful p-[5px] sm:w-auto text-center"
           >
-            Aktive
+            {{ scope.row.status }}
           </router-link>
         </template>
       </el-table-column>
@@ -122,5 +122,45 @@ const DetailModal = async (id) => {
         </template>
       </el-table-column>
     </el-table>
+    <div
+      class="flex justify-between flex-wrap font-semibold text-[12px] shadow border-b-[1px] border-[#36d887]"
+    >
+      <div class="flex justify-between bg-white pr-2 pl-2 w-full mx-auto">
+        <div class="flex gap-2 my-2 mt-4">
+          <div
+            class="text-[12px] items-center font-medium text-center text-white"
+          >
+            <el-input
+              clearable
+              size="smal"
+              type="String"
+              placeholder="Partya nomer bo'yicha..."
+              style="width: 200px; font-size: 12px"
+            />
+          </div>
+          <router-link
+            @click="ExportExcel()"
+            to=""
+            class="py-[7px] px-5 rounded text-[11px] items-center text-center font-bold bg-gray-700 text-white"
+          >
+            <i class="fa-solid fa-file-excel mr-2 fa-xm"></i>
+            Excel
+          </router-link>
+        </div>
+
+        <div class="block pt-5">
+          <el-pagination
+            small
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+            :current-page.sync="currentPage1"
+            :page-size="10"
+            layout="prev, pager, next"
+            :total="items.length"
+          >
+          </el-pagination>
+        </div>
+      </div>
+    </div>
   </div>
 </template>

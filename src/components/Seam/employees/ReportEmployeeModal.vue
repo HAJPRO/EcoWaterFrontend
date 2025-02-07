@@ -5,9 +5,15 @@ import { loading } from "../../../utils/Loader";
 import { SeamEmployeesStore } from "../../../stores/Seam/Employees/employees.store";
 const store_employees = SeamEmployeesStore();
 import { storeToRefs } from "pinia";
-const { reports, is_report_modal, employee } = storeToRefs(store_employees);
+const { reports, is_report_modal, employee, total_report } =
+  storeToRefs(store_employees);
 const ConfirmReportAndSendReply = (id) => {
   store_employees.ConfirmReportAndSendReply(id);
+};
+const currentPage = ref(1);
+const handleCurrentChange = (page) => {
+  store_employees.getOneEployeeReportPagenation(page);
+  currentPage.value = page;
 };
 </script>
 <template>
@@ -15,20 +21,11 @@ const ConfirmReportAndSendReply = (id) => {
     <span>
       <div class="text-[15px] bg-white rounded shadow hover:shadow-md mt-2">
         <div
-          class="bg-slate-100 font-semibold p-1 mt-1 align-center text-center shadow rounded border-t-[1px] border-[#36d887]"
+          class="bg-slate-100 font-semibold p-1 mt-1 mb-1 align-center text-center shadow rounded border-t-[1px] border-[#36d887]"
         >
           {{ employee ? employee : "Xodimning" }}ning hisobotlari
         </div>
 
-        <!-- <div class="flex justify-between text-[11px] font-semibold">
-          <div>Buyurtmachi: {{ detail.customer_name }}</div>
-          <div>Artikul: {{ detail.artikul }}</div>
-          <div>Buyurtma nomeri: {{ detail.order_number }}</div>
-          <div>
-            Muddati:
-            {{ format(detail.delivery_time_weaving, "dd.MM.yyyy HH:mm") }}
-          </div>
-        </div> -->
         <div class="shadow-md rounded">
           <el-table
             :data="reports"
@@ -160,44 +157,51 @@ const ConfirmReportAndSendReply = (id) => {
             class="flex justify-between flex-wrap font-semibold text-[12px] p-1 shadow border-b-[1px] border-[#36d887]"
           >
             <div
-              class="sticky b-0 flex justify-between bg-white pr-2 pl-2 w-full mx-auto"
+              class="sticky flex justify-between bg-white pr-2 pl-2 w-full mx-auto"
             >
-              <div class="pt-2">
+              <div class="flex gap-2">
                 <div
-                  class="inline-flex text-[13px] items-center px-2 py-1 mb-1 font-medium text-center text-white"
+                  class="my-2 text-[11px] items-center font-medium text-center text-white"
                 >
                   <el-input
                     clearable
                     size="smal"
-                    width="50px"
                     type="String"
-                    placeholder="Partya nomer bo'yicha"
+                    placeholder="Partya nomer bo'yicha..."
+                    style="width: 150px; font-size: 12px"
                   />
                 </div>
+
+                <div
+                  class="my-2 text-[11px] items-center font-medium text-center text-white"
+                >
+                  <el-input
+                    clearable
+                    size="smal"
+                    type="String"
+                    placeholder="Yil bo'yicha..."
+                    style="width: 150px; font-size: 12px"
+                  />
+                </div>
+
                 <router-link
                   @click="ExportExcel()"
                   to=""
-                  class="py-[6px] px-2 rounded text-[12px] items-center text-center font-bold bg-gray-800 text-white"
+                  class="py-[7px] my-2 px-5 rounded text-[11px] items-center text-center font-bold bg-gray-700 text-white"
                 >
                   <i class="fa-solid fa-file-excel mr-2 fa-xm"></i>
                   Excel
                 </router-link>
               </div>
-              <div
-                class="cursor-pointer opacity-[80%] text-[11px] text-slate-500 font-semibold pt-6"
-              >
-                HAJ Textile Company ©{{ String(new Date()).substr(11, 4) }}
-              </div>
 
-              <div class="block pt-4">
+              <div class="block pt-3">
                 <el-pagination
                   small
-                  @size-change="handleSizeChange"
                   @current-change="handleCurrentChange"
-                  :current-page.sync="currentPage1"
-                  :page-size="10"
+                  :current-page="currentPage"
+                  :page-size="5"
                   layout="prev, pager, next"
-                  :total="50"
+                  :total="total_report"
                 >
                 </el-pagination>
               </div>

@@ -266,10 +266,11 @@ const CreateDayReport = async (formRef) => {
             ref="formRef"
             :model="model"
             label-width="auto"
-            class="filter-box md:grid md:grid-cols-12 gap-1 sm:flex sm:flex-wrap rounded p-2 mt-1 mb-1 text-[12px]"
+            class="filter-box md:grid md:grid-cols-12 gap-1 sm:flex sm:flex-wrap rounded p-2 mt-1 mb-1 text-[11px]"
             label-position="top"
             status-icon
             size="smal"
+            style="font-size: 12px"
           >
             <div class="col-span-3">
               <el-form-item
@@ -277,12 +278,12 @@ const CreateDayReport = async (formRef) => {
                 label="Mato nomi"
                 prop="material_name"
                 :rules="rules"
+                style="font-size: 12px"
               >
                 <el-select
                   :disabled="is_residue"
                   required
                   v-model="model.material_name"
-                  style="width: 100%"
                   placeholder="..."
                 >
                   <el-option
@@ -301,12 +302,12 @@ const CreateDayReport = async (formRef) => {
                 label="Turi"
                 prop="material_type"
                 :rules="rules"
+                style="font-size: 12px"
               >
                 <el-select
                   :disabled="is_residue"
                   required
                   v-model="model.material_type"
-                  style="width: 100%"
                   placeholder="..."
                 >
                   <el-option
@@ -327,6 +328,7 @@ const CreateDayReport = async (formRef) => {
                   { required: true, message: `Maydon to'ldirilishi zarur !` },
                   { type: 'number', message: `Qiymat musbat bo'lishi zarur` },
                 ]"
+                style="font-size: 12px"
               >
                 <el-input
                   @input="MatchResidue(model.quantity)"
@@ -347,6 +349,7 @@ const CreateDayReport = async (formRef) => {
                 label="Birligi"
                 prop="unit"
                 :rules="rules"
+                style="font-size: 12px"
               >
                 <el-select
                   :disabled="is_residue"
@@ -367,7 +370,7 @@ const CreateDayReport = async (formRef) => {
               </el-form-item>
             </div>
             <div class="mb-1 col-span-2">
-              <el-form-item label=".">
+              <el-form-item label="." style="font-size: 12px">
                 <el-button
                   @click="CreateDayReport(formRef)"
                   style="

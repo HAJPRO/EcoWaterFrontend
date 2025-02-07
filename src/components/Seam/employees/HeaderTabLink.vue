@@ -10,8 +10,8 @@ const IsActive = (is_active) => {
 };
 
 const getAll = async () => {
-  await store_employees.getAll(isActive.value);
   IsActive(isActive.value);
+  store_employees.getAll(1);
 };
 const isActive = ref(1);
 const ActiveTabLink = (num) => {
