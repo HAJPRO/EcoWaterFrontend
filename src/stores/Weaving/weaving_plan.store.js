@@ -121,7 +121,7 @@ export const WeavingPlanStore = defineStore("WeavingPlan", {
         provide,
         card: this.detail,
       });
-      this.GetAll({ status: this.is_active });
+      this.GetAll({ is_active: this.is_active });
       this.is_provide = false;
       this.is_detail_modal = false;
       ToastifyService.ToastSuccess({ msg: data.data.msg });

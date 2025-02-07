@@ -32,7 +32,7 @@ const ChangeUnit = (value) => {
   model.unit = value;
 };
 const is_edit = ref(false);
-const current_id = ref();
+const current_id = ref(-1);
 const itemExists = ref();
 itemExists.value = update_model.value.sale_products;
 const product = ref({
@@ -69,7 +69,7 @@ const ProductById = (id) => {
 
 const IsEdit = () => {
   try {
-    if (current_id.value !== "") {
+    if (current_id.value !== -1) {
       itemExists.value[current_id.value] = {
         id: product.value.id,
         customer_name: product.value.customer_name,
@@ -85,6 +85,7 @@ const IsEdit = () => {
         order_quantity: product.value.order_quantity,
       };
       is_edit.value = false;
+      current_id.value = -1;
     }
   } catch (error) {
     return ToastifyService.ToastError({ msg: error.message });
@@ -103,9 +104,9 @@ const PlusValidate = async (formRef) => {
 };
 const PlusOrder = async () => {
   try {
-    if (current_id.value === 0) {
+    if (current_id.value === -1) {
       itemExists.value.push({
-        id: product.value.id,
+        id: uuidv4(),
         material_name: product.value.material_name,
         material_type: product.value.material_type,
         color: product.value.color,

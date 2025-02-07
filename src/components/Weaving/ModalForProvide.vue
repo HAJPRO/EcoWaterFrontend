@@ -1,4 +1,5 @@
 <script setup>
+import { format } from "date-fns";
 import { ref } from "vue";
 import { v4 as uuidv4 } from "uuid";
 import { ToastifyService } from "../../utils/Toastify";
@@ -465,7 +466,6 @@ const rules = ref({
               ></el-table-column
             >
             <el-table-column
-              prop="delivery_time_spinning"
               label="Muddati"
               :min-width="150"
               :max-width="200"
@@ -473,7 +473,12 @@ const rules = ref({
               align="center"
               ><template #default="scope">
                 {{
-                  format(scope.row.delivery_time_spinning, "dd.MM.yyyy HH:mm")
+                  scope.row.delivery_time_spinning
+                    ? format(
+                        scope.row.delivery_time_spinning,
+                        "dd.MM.yyyy HH:mm"
+                      )
+                    : ""
                 }}
               </template></el-table-column
             >

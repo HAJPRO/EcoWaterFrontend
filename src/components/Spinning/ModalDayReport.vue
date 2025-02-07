@@ -54,15 +54,6 @@ const CreateDayReport = async (formRef) => {
 <template>
   <el-dialog v-model="is_report_modal" width="1000">
     <span>
-      <div class="flex justify-between text-[12px] font-semibold">
-        <div>Buyurtmachi: {{ detail.customer_name }}</div>
-        <div>Artikul: {{ detail.artikul }}</div>
-        <div>Buyurtma nomeri: {{ detail.order_number }}</div>
-        <div>
-          Muddati:
-          {{ format(detail.delivery_time_weaving, "dd.MM.yyyy HH:mm") }}
-        </div>
-      </div>
       <div class="text-[15px] bg-white rounded shadow hover:shadow-md mt-2">
         <div
           class="bg-slate-100 font-semibold p-1 mt-1 align-center text-center shadow rounded border-t-[1px] border-[#36d887]"
@@ -178,6 +169,15 @@ const CreateDayReport = async (formRef) => {
             </el-form-item>
           </div>
         </el-form>
+        <div class="flex justify-between text-[11px] font-semibold">
+          <div>Buyurtmachi: {{ detail.customer_name }}</div>
+          <div>Artikul: {{ detail.artikul }}</div>
+          <div>Buyurtma nomeri: {{ detail.order_number }}</div>
+          <div>
+            Muddati:
+            {{ format(detail.delivery_time_weaving, "dd.MM.yyyy HH:mm") }}
+          </div>
+        </div>
         <div class="shadow-md rounded">
           <el-table
             :data="report_spinning"
@@ -283,9 +283,7 @@ const CreateDayReport = async (formRef) => {
             <div class="mt-2">Bajarildi: {{ DoneSpinning }} kg</div>
             <div class="mt-2">
               Qoldi:
-              {{
-                DoneSpinning > 0 ? detail.weaving_quantity - DoneSpinning : 0
-              }}
+              {{ detail.weaving_quantity - DoneSpinning }}
               kg
             </div>
             <div v-if="detail.weaving_quantity - DoneSpinning <= 0" class="">

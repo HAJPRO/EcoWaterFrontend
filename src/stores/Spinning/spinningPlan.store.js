@@ -106,10 +106,13 @@ export const SpinningPlanStore = defineStore("SpinningPlan", {
         items: this.detail,
         provide: payload,
       });
+      if (data) {
+        this.GetAll({ status: this.is_active });
+      }
 
-      this.GetAll({ status: this.is_active });
       this.is_detail_modal = false;
       ToastifyService.ToastSuccess({ msg: data.data.msg });
+
       loader.hide();
     },
     async DetailModalProvide(payload) {

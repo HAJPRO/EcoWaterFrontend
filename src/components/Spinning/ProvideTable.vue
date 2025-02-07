@@ -87,7 +87,11 @@ const DetailModalProvide = (id) => {
         align="center"
         ><template #default="scope">
           <div class="text-red-500">
-            {{ format(scope.row.delivery_time_provide, "dd.MM.yyyy HH:mm") }}
+            {{
+              scope.row.delivery_time_provide
+                ? format(scope.row.delivery_time_provide, "dd.MM.yyyy HH:mm")
+                : ""
+            }}
           </div>
         </template></el-table-column
       >
