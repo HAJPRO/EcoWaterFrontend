@@ -4,23 +4,19 @@ import { loading } from "../../../utils/Loader";
 import { SeamWarehouseStore } from "../../../stores/Seam/Warehouse/warehouse.store";
 const store_warehouse = SeamWarehouseStore();
 import { storeToRefs } from "pinia";
-const { all_length } = storeToRefs(store_warehouse);
+const { all_length, total_product } = storeToRefs(store_warehouse);
 const IsActive = (is_active) => {
   store_warehouse.GetIsActive(is_active);
 };
 
 const getAll = async () => {
   const loader = loading.show();
-  await store_warehouse.GetAll(isActive.value);
+  await store_warehouse.GetAll({ status: 1, page: 1, limit: 10 });
   IsActive(isActive.value);
   loader.hide();
 };
 const isActive = ref(1);
 const ActiveTabLink = (num) => {
-  if (num === 0) {
-    isActive.value = 0;
-    return getAll();
-  }
   if (num === 1) {
     isActive.value = 1;
     return getAll();
@@ -31,14 +27,6 @@ const ActiveTabLink = (num) => {
   }
   if (num === 3) {
     isActive.value = 3;
-    return getAll();
-  }
-  if (num === 4) {
-    isActive.value = 4;
-    return getAll();
-  }
-  if (num === 5) {
-    isActive.value = 5;
     return getAll();
   }
 };
@@ -67,9 +55,7 @@ onMounted(async () => {
             :class="{ activeTabIcon: isActive === 1 }"
             class="inline-flex items-center justify-center h-5 text-[11px] font-medium text-white bg-[#36d887] px-3 py-2 rounded"
           >
-            <span class=" ">0</span>/{{
-              (all_length ? all_length.sale_length : 0) || 0
-            }}</span
+            {{ total_product ? total_product : 0 }}</span
           >
         </div>
       </router-link>

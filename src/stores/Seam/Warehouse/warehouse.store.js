@@ -8,7 +8,18 @@ export const SeamWarehouseStore = defineStore("SeamWarehouseStore", {
     return {
       isActive: "",
       modal: {
-        model: {},
+        model: {
+          customer_name: "",
+          order_number: "",
+          material_name: "",
+          material_type: "",
+          artikul: "",
+          color: "",
+          width: "",
+          grammage: "",
+          quantity: "",
+          unit: "",
+        },
         output_total: "",
         is_modal: false,
         title: "",
@@ -18,7 +29,9 @@ export const SeamWarehouseStore = defineStore("SeamWarehouseStore", {
       },
       form_modal: false,
 
+
       items: [],
+      total_product: "",
       all_length: "",
     };
   },
@@ -48,9 +61,9 @@ export const SeamWarehouseStore = defineStore("SeamWarehouseStore", {
       const data = await SeamWarehouseService.GetModel();
       this.modal.model = data.data;
     },
-    async Create(payload) {
+    async create(payload) {
       const loader = loading.show();
-      const data = await SeamWarehouseService.Create(payload);
+      const data = await SeamWarehouseService.create(payload);
       if (data.data.status === 200) {
         ToastifyService.ToastSuccess({
           msg: data.data.msg,
@@ -62,23 +75,27 @@ export const SeamWarehouseStore = defineStore("SeamWarehouseStore", {
         });
       }
       this.GetAll();
-      this.GetOne(this.modal.card_id);
-
+      this.modal.is_modal = false
       loader.hide();
     },
-    // async CreateOutput(payload) {
-    //   const loader = loading.show();
-    //   const data = await SeamWarehouseService.CreateOutput(payload);
-    //   this.form_modal = false;
-    //   ToastifyService.ToastSuccess({
-    //     msg: data.data.msg,
-    //   });
-    //   this.GetAll();
-    //   loader.hide();
-    // },
-    async GetAll() {
-      const data = await SeamWarehouseService.GetAll();
-      this.items = data.data;
+
+    async GetAll(item) {
+      if (item) {
+        const loader = loading.show();
+        const data = await SeamWarehouseService.GetAll(item);
+        this.items = data.data.items;
+        this.total_product = data.data.total
+        loader.hide();
+      } else {
+        const loader = loading.show();
+        const data = await SeamWarehouseService.GetAll({ page: 1, status: 1, limit: 10 });
+        this.items = data.data.items;
+        this.total_product = data.data.total
+        loader.hide();
+      }
+
+
+
     },
   },
 });

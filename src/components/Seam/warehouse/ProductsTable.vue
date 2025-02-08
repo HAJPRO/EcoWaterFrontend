@@ -3,7 +3,7 @@ import Cookies from "js-cookie";
 const role = ref(JSON.parse(Cookies.get("account")).role);
 const permissions = ref(JSON.parse(Cookies.get("account")).permissions);
 const actions = ref(JSON.parse(Cookies.get("account")).actions);
-
+import { format } from "date-fns";
 import { ref, onMounted } from "vue";
 import AddToFormModal from "../../../components/Seam/warehouse/AddToFormModal.vue";
 import { SeamWarehouseStore } from "../../../stores/Seam/Warehouse/warehouse.store";
@@ -11,8 +11,13 @@ const store_warehouse = SeamWarehouseStore();
 import { HelpersStore } from "../../../stores/Helpers/helper.store";
 const store_heloers = HelpersStore();
 import { storeToRefs } from "pinia";
-const { form_modal, model, items } = storeToRefs(store_warehouse);
-
+const { form_modal, model, items, total_product } =
+  storeToRefs(store_warehouse);
+const currentPage = ref(1);
+const handleCurrentChange = (page) => {
+  store_warehouse.GetAll({ page, status: 1, limit: 10 });
+  currentPage.value = page;
+};
 const AddForm = async (id) => {
   await store_warehouse.AddFormModal(id);
 };
@@ -50,13 +55,17 @@ onMounted(async () => {
       </div>
       <div class="rounded text-[11px]">
         <el-table
-          style="font-size: 12px"
+          :header-cell-style="{
+            background: '#e8eded',
+            border: '0.2px solid #e1e1e3',
+          }"
           load
+          style="font-size: 12px"
           size="small"
           class="w-full"
           header-align="right"
-          header-hight="1"
-          max-height="400"
+          :min-height="200"
+          :max-height="450"
           empty-text="Mahsulot qo'shilmagan... "
           :data="items"
           border
@@ -71,9 +80,10 @@ onMounted(async () => {
             width="50"
           />
           <el-table-column
-            prop="party_number"
-            label="Partya nomeri"
-            width="300"
+            prop="order_number"
+            label="Buyurtma nomeri"
+            :min:width="200"
+            :max:width="300"
             header-align="center"
             align="center"
           />
@@ -82,65 +92,39 @@ onMounted(async () => {
             header-align="center"
             prop="customer_name"
             label="Buyurtmachi"
-            width="200"
+            :min:width="200"
+            :max:width="300"
           />
           <el-table-column
             align="center"
             header-align="center"
             prop="artikul"
             label="Artikul"
-            width="200"
-          />
-          <el-table-column
-            align="center"
-            header-align="center"
-            prop="material_name"
-            label="Mato nomi"
-            width="200"
-          />
-          <el-table-column
-            prop="color"
-            label="Rangi"
-            width="200"
-            header-align="center"
-            align="center"
+            :min:width="200"
+            :max:width="300"
           />
           <el-table-column
             fixed="right"
             prop="quantity"
             label="Miqdori"
-            width="200"
+            :min:width="200"
+            :max:width="300"
             header-align="center"
             align="center"
             ><template #default="scope"
               ><div class="text-red-500">
-                {{ scope.row.quantity }} {{ scope.row.unit }}
+                {{ scope.row.quantity }}
               </div></template
             ></el-table-column
           >
-          <!-- 
+
           <el-table-column
-            align="center"
-            prop="unit"
-            label="Birligi"
-            width="180"
-            header-align="center"
-          /> -->
-          <el-table-column
-            align="center"
-            prop="sort"
-            label="Sorti"
-            width="180"
-            header-align="center"
-          />
-          <el-table-column
-            prop="createdAt"
-            label="Vaqti"
+            label="Yuborilgan vaqti"
             width="190"
             header-align="center"
             align="center"
             ><template #default="scope">{{
-              String(scope.row.createdAt).substring(0, 10)
+              format(scope.row.createdAt, "dd.MM.yyyy HH:mm")
             }}</template></el-table-column
           >
           <el-table-column
@@ -202,6 +186,60 @@ onMounted(async () => {
             </template>
           </el-table-column>
         </el-table>
+        <div
+          class="flex justify-between flex-wrap font-semibold text-[12px] p-1 shadow border-b-[1px] border-[#36d887]"
+        >
+          <div
+            class="sticky flex justify-between bg-white pr-2 pl-2 w-full mx-auto"
+          >
+            <div class="flex gap-2">
+              <div
+                class="my-2 text-[11px] items-center font-medium text-center text-white"
+              >
+                <el-input
+                  clearable
+                  size="smal"
+                  type="String"
+                  placeholder="Partya nomer bo'yicha..."
+                  style="width: 150px; font-size: 12px"
+                />
+              </div>
+
+              <div
+                class="my-2 text-[11px] items-center font-medium text-center text-white"
+              >
+                <el-input
+                  clearable
+                  size="smal"
+                  type="String"
+                  placeholder="Yil bo'yicha..."
+                  style="width: 150px; font-size: 12px"
+                />
+              </div>
+
+              <router-link
+                @click="ExportExcel()"
+                to=""
+                class="py-[7px] my-2 px-5 rounded text-[11px] items-center text-center font-bold bg-gray-700 text-white"
+              >
+                <i class="fa-solid fa-file-excel mr-2 fa-xm"></i>
+                Excel
+              </router-link>
+            </div>
+
+            <div class="block pt-3">
+              <el-pagination
+                small
+                @current-change="handleCurrentChange"
+                :current-page="currentPage"
+                :page-size="10"
+                layout="prev, pager, next"
+                :total="total_product"
+              >
+              </el-pagination>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>

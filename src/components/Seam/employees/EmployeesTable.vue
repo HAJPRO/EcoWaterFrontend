@@ -134,7 +134,7 @@ const handleCurrentChange = (page) => {
               clearable
               size="smal"
               type="String"
-              placeholder="Partya nomer bo'yicha..."
+              placeholder="F.I.O ..."
               style="width: 200px; font-size: 12px"
             />
           </div>
@@ -151,9 +151,7 @@ const handleCurrentChange = (page) => {
         <div class="block pt-5">
           <el-pagination
             small
-            @size-change="handleSizeChange"
             @current-change="handleCurrentChange"
-            :current-page.sync="currentPage1"
             :page-size="10"
             layout="prev, pager, next"
             :total="items.length"

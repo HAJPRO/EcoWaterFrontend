@@ -144,6 +144,7 @@ const handleCurrentChange = (page) => {
             >
               <template #default="scope">
                 <router-link
+                  v-if="scope.row.status === `Tasdiqlanmagan`"
                   @click="ConfirmReportAndSendReply(scope.row._id)"
                   to=""
                   class="inline-flex items-center mt-4 ml-2 text-red hover:bg-[#e8eded] font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"

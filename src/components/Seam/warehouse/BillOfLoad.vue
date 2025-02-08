@@ -173,7 +173,7 @@ const rules = ref({
   <div>
     <Scanner v-if="isActive === 3" />
     <div
-      v-show="isActive === 2"
+      v-if="isActive === 2"
       class="grid grid-cols-7 gap-2 bg-white p-1 h-[700px]"
     >
       <div class="col-span-2 shadow overflow-y-auto h-[800]">
