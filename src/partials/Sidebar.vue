@@ -1427,6 +1427,33 @@
                 <ul class="pl-9 mt-1" :class="!parentLink.expanded && 'hidden'">
                   <router-link
                     v-if="
+                      (role === 5 && permissions.includes('seam_employees')) ||
+                      role === 1000
+                    "
+                    :to="{ name: 'SeamEmployeesReport' }"
+                    custom
+                    v-slot="{ href, navigate, isExactActive }"
+                  >
+                    <li class="mb-1 last:mb-0">
+                      <a
+                        class="block transition duration-150 truncate"
+                        :class="
+                          isExactActive
+                            ? 'text-[#36d887]'
+                            : 'text-slate-400 hover:text-slate-200'
+                        "
+                        :href="href"
+                        @click="navigate"
+                      >
+                        <span
+                          class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                          >Xodimlar hisoboti</span
+                        >
+                      </a>
+                    </li>
+                  </router-link>
+                  <router-link
+                    v-if="
                       (role === 5 &&
                         permissions.includes('seam raw warehouse')) ||
                       role === 1000 ||

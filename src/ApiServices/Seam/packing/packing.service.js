@@ -8,8 +8,6 @@ export const SeamInPackingService = {
   },
 
   GetAll(status) {
-    console.log(status);
-
     let url = "seam/packing/all_packing";
     return api.post(url, { status });
   },

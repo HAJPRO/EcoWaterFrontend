@@ -174,6 +174,21 @@ const routes = [
       },
       //Tikuv bolimi
       {
+        path: "department/seam/employees_report",
+        name: "SeamEmployeesReport",
+        component: () => import("../pages/Explore/Seam/employees/index.vue"),
+        beforeEnter(to, from, next) {
+          if (
+            JSON.parse(Cookies.get("account")).role === 5 ||
+            JSON.parse(Cookies.get("account")).role === 1000
+          ) {
+            next();
+          } else {
+            window.location.href = "/explore";
+          }
+        },
+      },
+      {
         path: "department/seam/raw_material_warehouse",
         name: "RawMaterialWarehouse",
         component: () =>
