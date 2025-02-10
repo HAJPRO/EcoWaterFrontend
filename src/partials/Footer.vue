@@ -8,7 +8,7 @@ import { format } from "date-fns";
     <div
       class="cursor-pointer opacity-[80%] mb-[8px] text-[11px] text-slate-500 font-semibold"
     >
-      HAJ Textile Company {{ format(new Date(), "dd.MM.yyyy ") }}
+      Eco Water Company {{ format(new Date(), "dd.MM.yyyy ") }}
     </div>
   </div>
   <!-- //////// -->

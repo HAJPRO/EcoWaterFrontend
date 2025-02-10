@@ -21,11 +21,11 @@
           <router-link class="flex" to="/explore">
             <img
               class="rounded-[50%] ml-[-20px]"
-              src="../../public/logo icon.jpg"
+              src="../../public/eco_logo.jpg"
               style="width: 50px; height: 50px"
               alt="logo"
             />
-            <h5 class="text-white mt-3 ml-7 font-serif font-bold">HAJ ERP</h5>
+            <h5 class="text-white mt-3 ml-7 font-serif font-bold">Eco Water</h5>
           </router-link>
           <div class="mt-4 ml-[-30px] border-b-[0.2px] w-screen"></div>
         </div>

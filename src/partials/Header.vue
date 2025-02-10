@@ -28,13 +28,13 @@
 
         <!-- Header: Right side -->
         <div class="flex items-center space-x-3">
-          <router-link
+          <!-- <router-link
             to=""
             @click="goBack"
             class="inline-flex text-[11px] items-center px-2 py-1 mb-1 mt-2 font-medium text-center text-white bg-red-500 text-bold rounded"
           >
             <i class="fa-solid fa-arrow-left mr-2 fa-sm"></i>Orqaga</router-link
-          >
+          > -->
           <div>
             <button
               class="w-8 h-8 flex items-center justify-center bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600/80 rounded-full ml-3"

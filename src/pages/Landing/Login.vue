@@ -34,36 +34,24 @@ const rules = ref({
 
 <template>
   <div class="bg-white dark:bg-gray-900">
-    <!-- <div class="col-span-1 row-span-2">
-      <img
-        class="w-full h-full items-center text-center"
-        src="../../../public/login1.png"
-        width="400px"
-        height="400px"
-        alt=""
-      />
-    </div> -->
     <div
       class="flex flex-col col-span-1 row-span-2 bg-white items-center justify-center px-4 py-4 mx-auto md:h-screen lg:py-0"
     >
       <div
         class="w-full bg-white rounded-lg shadow-[0_20px_20px_0px_rgba(0,0,0,0.3)] dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700"
       >
-        <div class="p-4 space-y-4 md:space-y-4 sm:p-6">
+        <h1
+          class="bg-white rounded-md p-2 border-t-[2px] border-[#36d887] text-[18px] font-bold leading-tight text-center tracking-tight text-gray-500 dark:text-white"
+        ></h1>
+        <div class="p-4 md:space-y-4 sm:p-4">
           <img
             class="rounded-[50%]"
-            src="../../../public/logo icon.jpg"
-            width="90px"
-            height="90px"
+            src="../../../public/eco_logo.jpg"
+            width="120px"
+            height="120px"
             alt="logo"
             style="align-items: center; margin: 0 auto 0"
           />
-
-          <h1
-            class="bg-white rounded-md p-2 shadow-md border-t-[2px] border-[#36d887] text-[18px] font-bold leading-tight text-center tracking-tight text-gray-700 dark:text-white"
-          >
-            HAJ ERP
-          </h1>
 
           <h1
             class="text-[15px] font-bold leading-tight text-center tracking-tight text-gray-500 md:text-md dark:text-white"
@@ -85,11 +73,7 @@ const rules = ref({
             label-position="top"
             class="space-y-4 md:space-y-6 text-[13px]"
           >
-            <el-form-item
-              label="Foydalanuvchi nomi"
-              prop="username"
-              :rules="rules"
-            >
+            <el-form-item label="Login" prop="username" :rules="rules">
               <el-input
                 clearable
                 v-model="user.username"
@@ -98,7 +82,7 @@ const rules = ref({
                 required
               />
             </el-form-item>
-            <el-form-item label="Paroli" prop="password" :rules="rules">
+            <el-form-item label="Password" prop="password" :rules="rules">
               <el-input
                 clearable
                 v-model="user.password"
