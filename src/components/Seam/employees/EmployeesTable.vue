@@ -5,9 +5,11 @@ import { SeamEmployeesStore } from "../../../stores/Seam/Employees/employees.sto
 const store_employees = SeamEmployeesStore();
 import { storeToRefs } from "pinia";
 const { items, is_active } = storeToRefs(store_employees);
+
 const getOneEployeeReport = async (id) => {
   store_employees.getOneEployeeReport(id);
 };
+
 const handleCurrentChange = (page) => {
   store_employees.getAll(page);
 };
@@ -27,8 +29,9 @@ const handleCurrentChange = (page) => {
       empty-text="Ma'lumot topilmadi... "
       :data="items"
       style="width: 100%; font-size: 12px"
-      min-height="300"
-      max-height="600"
+      :min-height="150"
+      :max-height="600"
+      class="w-full relative z-10"
     >
       <el-table-column
         header-align="center"
@@ -106,19 +109,54 @@ const handleCurrentChange = (page) => {
         fixed="right"
         prop="id"
         label=""
-        :min-width="100"
-        :max-width="200"
+        min-width="60"
         header-align="center"
         align="center"
       >
-        <template #default="scope">
-          <router-link
-            to=""
-            @click="getOneEployeeReport(scope.row._id)"
-            class="inline-flex items-center ml-2 text-red hover:bg-[#e1e1e3] font-medium rounded-md text-sm w-full sm:w-auto px-3 py-3 text-center"
+        <template #default="{ row }">
+          <!-- Dropdown -->
+          <el-dropdown
+            trigger="click"
+            class="relative"
+            :popper-options="{
+              modifiers: [
+                { name: 'preventOverflow', options: { boundary: 'window' } },
+              ],
+            }"
           >
-            <i class="text-black fa-sharp fa-solid fa-check fa-xs"></i>
-          </router-link>
+            <el-button type="text" class="text-sm; text-gray-500">
+              <i class="fa-solid fa-ellipsis-vertical"></i>
+            </el-button>
+            <template #dropdown>
+              <el-dropdown-menu slot="dropdown" append-to-body class="z-50">
+                <el-dropdown-item @click="getOneEployeeReport(row)"
+                  ><template #default=""
+                    ><div>
+                      <i class="text-black fa-solid fa-eye fa-md mr-1"></i
+                      >Hisotlari
+                    </div>
+                  </template></el-dropdown-item
+                >
+                <el-dropdown-item @click="updateRow(row)"
+                  ><template #default="scope"
+                    ><div>
+                      <i class="text-black fa-solid fa-pen fa-sm mr-1"></i>
+                      Yangilash
+                    </div>
+                  </template></el-dropdown-item
+                >
+
+                <el-dropdown-item @click="deleteRow(row)" class="text-red-500">
+                  <template #default=""
+                    ><div>
+                      <i class="text-black fa-solid fa-trash fa-sm mr-1"></i>
+                      O'chirish
+                    </div>
+                  </template>
+                </el-dropdown-item>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
         </template>
       </el-table-column>
     </el-table>
@@ -162,3 +200,8 @@ const handleCurrentChange = (page) => {
     </div>
   </div>
 </template>
+<style>
+.el-table__inner-wrapper {
+  z-index: 0 !important;
+}
+</style>

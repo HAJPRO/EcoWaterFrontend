@@ -9,3 +9,7 @@
 
 @import "tailwindcss/utilities";
 @import "vue-loading-overlay/dist/css/index.css";
+
+.el-table__inner-wrapper {
+  z-index: 0 !important;
+}

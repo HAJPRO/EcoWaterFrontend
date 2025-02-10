@@ -50,8 +50,7 @@ const proccessModalById = async (id) => {
         prop="index"
         fixed="left"
         label="№"
-        :min-width="60"
-        :max-width="80"
+        width="60"
       />
 
       <el-table-column
@@ -59,7 +58,7 @@ const proccessModalById = async (id) => {
         header-align="center"
         prop="customer_name"
         label="Buyurtmachi"
-        :min-width="200"
+        :min-width="150"
         :max-width="300"
       />
       <el-table-column
@@ -67,7 +66,7 @@ const proccessModalById = async (id) => {
         header-align="center"
         prop="artikul"
         label="Artikul"
-        :min-width="200"
+        :min-width="150"
         :max-width="300"
       />
 
@@ -76,13 +75,13 @@ const proccessModalById = async (id) => {
         header-align="center"
         prop="order_number"
         label="Buyurtma nomeri"
-        :min-width="200"
+        :min-width="150"
         :max-width="300"
       />
       <el-table-column
         prop="order_quantity"
         label="Buyurtma miqdori"
-        :min-width="200"
+        :min-width="150"
         :max-width="300"
         header-align="center"
         align="center"
@@ -95,7 +94,7 @@ const proccessModalById = async (id) => {
 
       <el-table-column
         label="Muddati"
-        :min-width="200"
+        :min-width="150"
         :max-width="300"
         header-align="center"
         align="center"
@@ -109,7 +108,7 @@ const proccessModalById = async (id) => {
         fixed="right"
         prop="order_status"
         label="Holati"
-        :min-width="250"
+        :min-width="150"
         :max-width="350"
         header-align="center"
         align="center"
@@ -117,7 +116,6 @@ const proccessModalById = async (id) => {
         <template #default="scope">
           <router-link
             to=""
-            @click="statusModalById(scope.row._id)"
             :class="{ status_bg: scope.row.status === 'Tasdiqlanmagan' }"
             class="cursor-pointer inline-flex items-center text-red bg-[#e4e9e9] hover:bg-[#d7ebeb] font-medium rounded-md text-[12px] w-ful p-[5px] sm:w-auto text-center"
           >
@@ -129,55 +127,70 @@ const proccessModalById = async (id) => {
         fixed="right"
         prop="id"
         label=""
-        :min-width="250"
-        :max-width="300"
+        width="60"
         header-align="center"
         align="center"
       >
-        <template #default="scope">
-          <router-link
-            to=""
-            @click="DetailModal(scope.row._id)"
-            class="inline-flex items-center mt-1 ml-2 text-red hover:bg-slate-300 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
+        <template #default="{ row }">
+          <!-- Dropdown -->
+          <el-dropdown
+            trigger="click"
+            class="relative"
+            :popper-options="{
+              modifiers: [
+                {
+                  name: 'preventOverflow',
+                  options: { boundary: 'window' },
+                },
+              ],
+            }"
           >
-            <i class="text-black fa-solid fa-check fa-xs fa- fa-xs"></i>
-          </router-link>
-          <router-link
-            @click="UpdateById(scope.row._id)"
-            to=""
-            class="inline-flex items-center mt-2 ml-2 text-white hover:bg-slate-300 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
-          >
-            <i class="text-black fa-solid fa-pen-to-square fa-xs"></i>
-          </router-link>
-          <router-link
-            to=""
-            @click="proccessModalById(scope.row._id)"
-            class="inline-flex items-center mt-1 ml-2 text-white hover:bg-slate-300 font-medium rounded-md text-sm w-full sm:w-auto px-3 py-3 text-center"
-          >
-            <i class="text-black fa-sharp fa-solid fa-info fa-xs"></i>
-          </router-link>
-          <!-- <router-link
-            v-show="scope.row.status === 'Tasdiqlanmagan'"
-            to=""
-            @click="getByIdForUpdate(scope.row._id)"
-            class="inline-flex items-center mt-1 ml-2 text-white hover:bg-slate-300 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
-          >
-            <i class="text-black fa-sharp fa-solid fa-edit fa-xs"></i>
-          </router-link> -->
-          <!-- <router-link
-            to=""
-            @click="deleteById(scope.row._id)"
-            class="inline-flex items-center mt-1 ml-2 text-white hover:bg-slate-300 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
-          >
-            <i class="text-black fa-sharp fa-solid fa-trash fa-xs"></i>
-          </router-link> -->
-          <router-link
-            to=""
-            @click="ExportExcel(scope.row._id)"
-            class="inline-flex items-center mt-1 ml-2 text-white hover:bg-slate-300 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
-          >
-            <i class="text-black fa-solid fa-file-excel fa-xs"></i>
-          </router-link>
+            <el-button type="text" class="text-sm; text-gray-500">
+              <i class="fa-solid fa-ellipsis-vertical"></i>
+            </el-button>
+            <template #dropdown>
+              <el-dropdown-menu slot="dropdown" append-to-body class="z-50">
+                <el-dropdown-item class="text-[13px]" @click="DetailModal(row)"
+                  ><template #default="scope"
+                    ><div>
+                      <i class="text-black fa-solid fa-check fa-md mr-2"></i
+                      >Tasdiqlash
+                    </div>
+                  </template></el-dropdown-item
+                >
+                <el-dropdown-item class="text-[13px]" @click="UpdateById(row)"
+                  ><template #default="{ row }"
+                    ><div>
+                      <i class="text-black fa-solid fa-pen fa-sm mr-1"></i>
+                      Yangilash
+                    </div>
+                  </template></el-dropdown-item
+                >
+                <el-dropdown-item
+                  class="text-[13px]"
+                  @click="proccessModalById(row._id)"
+                  ><template #default="{ row }"
+                    ><div>
+                      <i class="text-black fa-solid fa-eye fa-sm mr-1"></i>
+                      Jarayon
+                    </div>
+                  </template></el-dropdown-item
+                >
+                <el-dropdown-item
+                  v-if="row.status === 'Tasdiqlanmagan'"
+                  @click="deleteById(row)"
+                  class="text-red-500 text-[13px]"
+                >
+                  <template #default=""
+                    ><div>
+                      <i class="text-black fa-solid fa-trash fa-sm mr-1"></i>
+                      O'chirish
+                    </div>
+                  </template>
+                </el-dropdown-item>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
         </template>
       </el-table-column>
     </el-table>

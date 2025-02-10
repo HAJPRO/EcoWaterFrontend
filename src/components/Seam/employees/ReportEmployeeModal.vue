@@ -142,15 +142,71 @@ const handleCurrentChange = (page) => {
               header-align="center"
               align="center"
             >
-              <template #default="scope">
-                <router-link
-                  v-if="scope.row.status === `Tasdiqlanmagan`"
-                  @click="ConfirmReportAndSendReply(scope.row._id)"
-                  to=""
-                  class="inline-flex items-center mt-4 ml-2 text-red hover:bg-[#e8eded] font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
+              <template #default="{ row }">
+                <!-- Dropdown -->
+                <el-dropdown
+                  trigger="click"
+                  class="relative"
+                  :popper-options="{
+                    modifiers: [
+                      {
+                        name: 'preventOverflow',
+                        options: { boundary: 'window' },
+                      },
+                    ],
+                  }"
                 >
-                  <i class="text-red fa-solid fa-check fa-xs fa- fa-xs"></i>
-                </router-link>
+                  <el-button type="text" class="text-sm; text-gray-500">
+                    <i class="fa-solid fa-ellipsis-vertical"></i>
+                  </el-button>
+                  <template #dropdown>
+                    <el-dropdown-menu
+                      slot="dropdown"
+                      append-to-body
+                      class="z-50"
+                    >
+                      <el-dropdown-item
+                        class="text-[13px]"
+                        v-if="row.status === `Tasdiqlanmagan`"
+                        @click="ConfirmReportAndSendReply(row)"
+                        ><template #default="scope"
+                          ><div>
+                            <i
+                              class="text-black fa-solid fa-check fa-md mr-2"
+                            ></i
+                            >Tasdiqlash
+                          </div>
+                        </template></el-dropdown-item
+                      >
+                      <el-dropdown-item
+                        class="text-[13px]"
+                        @click="updateRow(row)"
+                        ><template #default="{ row }"
+                          ><div>
+                            <i
+                              class="text-black fa-solid fa-pen fa-sm mr-1"
+                            ></i>
+                            Yangilash
+                          </div>
+                        </template></el-dropdown-item
+                      >
+
+                      <el-dropdown-item
+                        @click="deleteRow(row)"
+                        class="text-red-500 text-[13px]"
+                      >
+                        <template #default=""
+                          ><div>
+                            <i
+                              class="text-black fa-solid fa-trash fa-sm mr-1"
+                            ></i>
+                            O'chirish
+                          </div>
+                        </template>
+                      </el-dropdown-item>
+                    </el-dropdown-menu>
+                  </template>
+                </el-dropdown>
               </template>
             </el-table-column>
           </el-table>

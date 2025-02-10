@@ -73,10 +73,12 @@ export const SaleStore = defineStore("saleStore", {
       loader.hide();
     },
     async AllOrderProccessById(payload) {
+      const loader = loading.show();
       const data = await SaleService.AllOrderProccessById(payload);
       this.proccess_modal = true;
       this.proccess_data = data.data;
       this.card_id = payload.id;
+      loader.hide();
 
       if (this.proccess_data.ReportPaint.length > 0) {
         const initialValuePaint = 0;
