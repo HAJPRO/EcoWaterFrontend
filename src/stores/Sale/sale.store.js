@@ -3,7 +3,7 @@ import { utils, writeFileXLSX } from "xlsx";
 import { ToastifyService } from "../../utils/Toastify";
 import { loading } from "./../../utils/Loader";
 import { defineStore } from "pinia";
-
+import { format } from "date-fns"
 export const SaleStore = defineStore("saleStore", {
   state: () => {
     return {
@@ -25,6 +25,7 @@ export const SaleStore = defineStore("saleStore", {
       DoneWeaving: "",
       DoneSpinning: "",
       is_active: "",
+      current_page: "",
       plus_name_modal: false,
       plus_type_modal: false,
       pro_names: [],
@@ -50,6 +51,19 @@ export const SaleStore = defineStore("saleStore", {
       const data = await SaleService.GetCardModel();
       this.model = data.data;
     },
+    async create(payload) {
+      const loader = loading.show();
+      const data = await SaleService.create(payload);
+      this.getAll({ status: 1, page: this.current_page, limit: 15 });
+      ToastifyService.ToastSuccess({
+        msg: data.data.msg,
+      });
+      loader.hide();
+    },
+
+    async CardProductById(id) {
+      const data = await SaleService.GetOne({ id, product: true });
+    },
     async UpdateModal(id) {
       const data = await SaleService.GetOne({ id });
       this.update_model = data.data;
@@ -58,15 +72,10 @@ export const SaleStore = defineStore("saleStore", {
     },
     async CardProductById(id) {
       const data = await SaleService.GetOne({ id, product: true });
-      console.log(data.data);
-
-      // const data = await SaleService.UpdateById({
-      //   card_id: this.card_id,
-      //   param_id: id,
-      // });
     },
     async getAll(payload) {
       const loader = loading.show();
+      this.current_page = payload.page
       const data = await SaleService.getAll(payload);
       this.items = data.data.items;
       this.all_length = data.data.all_length;
@@ -112,36 +121,20 @@ export const SaleStore = defineStore("saleStore", {
     async FinishParty() {
       const loader = loading.show();
       const data = await SaleService.FinishParty({ id: this.card_id });
-      this.getAll({ status: 1 });
+      this.getAll({ status: 1, page: this.current_page, limit: 15 });
       this.AllOrderProccessById({ id: this.card_id });
       ToastifyService.ToastSuccess({
         msg: data.data.msg,
       });
       loader.hide();
     },
-    async Update(payload) {
-      try {
-        const loader = loading.show();
-        const updateData = await SaleService.Edit(this.card_id, payload);
 
-        ToastifyService.ToastSuccess({
-          msg: updateData.data.msg,
-        });
-        const Refresh = () => {
-          window.location.href = "/explore/sale/legal";
-        };
-        setTimeout(Refresh, 1000);
-        loader.hide();
-      } catch (error) {
-        return ToastifyService.ToastError({ msg: error.messages });
-      }
-    },
 
     async Confirm() {
       try {
         const loader = loading.show();
         const confirmData = await SaleService.confirm(this.card_id);
-        this.getAll({ status: 1 });
+        this.getAll({ status: 1, page: this.current_page, limit: 15 });
         this.is_detail_modal = false;
         ToastifyService.ToastSuccess({
           msg: confirmData.data.msg,
@@ -156,7 +149,7 @@ export const SaleStore = defineStore("saleStore", {
       try {
         const loader = loading.show();
         const data = await SaleService.Delete(id);
-        this.getAll({ status: 1 });
+        this.getAll({ status: 1, page: this.current_page, limit: 15 });
 
         ToastifyService.ToastSuccess({
           msg: data.data.msg,
@@ -182,9 +175,9 @@ export const SaleStore = defineStore("saleStore", {
             grammage: item.grammage,
             order_quantity: item.order_quantity,
             unit: item.unit,
-            delivery_time: String(data.data.delivery_time).substring(0, 10),
+            delivery_time: format(data.data.delivery_time, "dd.MM.yyyy HH:mm"),
+            received_time: data.data.received_time ? format(data.data.received_time, "dd.MM.yyyy HH:mm") : "-",
           };
-          console.log(products);
 
           return products;
         });
@@ -202,6 +195,7 @@ export const SaleStore = defineStore("saleStore", {
             "Miqdori",
             "Birligi",
             "Muddati",
+            "Tasdiqlangan vaqti",
           ],
         ];
 

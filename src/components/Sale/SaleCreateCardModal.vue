@@ -10,7 +10,7 @@ import { HelpersStore } from "../../stores/Helpers/helper.store.js";
 const store_sale = SaleStore();
 const store_helpers = HelpersStore();
 import { storeToRefs } from "pinia";
-const { model, is_create_modal } = storeToRefs(store_sale);
+const { model, is_create_modal, current_page } = storeToRefs(store_sale);
 const { options, is_modal } = storeToRefs(store_helpers);
 const Type = (type) => {
   store_helpers.SelectType(type);
@@ -79,15 +79,9 @@ const Save = async () => {
     ) {
       return ToastifyService.ToastError({ msg: "Mahsulot qo'shilmagan !" });
     } else {
-      const loader = loading.show();
-      const data = await SaleService.create(order.value);
-      store_sale.getAll({ status: 1 });
-      if (data) {
-        order.value.products = [];
-        model.value = {};
-      }
-      ToastifyService.ToastSuccess({ msg: data.data.msg });
-      loader.hide();
+      store_sale.create(order.value);
+      order.value.products = [];
+      model.value = {};
     }
   } catch (error) {
     return ToastifyService.ToastError({ msg: error.message });

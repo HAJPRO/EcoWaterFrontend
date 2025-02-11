@@ -10,7 +10,7 @@ const SaleCreateCardModal = async () => {
   await store.SaleCreateCardModal();
 };
 const getAll = async () => {
-  await store.getAll({ status: isActive.value });
+  await store.getAll({ status: isActive.value, page: 1, limit: 15 });
 };
 const isActive = ref(1);
 const ActiveTabLink = (num) => {

@@ -10,7 +10,6 @@ import * as ElementPlusIconsVue from "@element-plus/icons-vue";
 import toast from "vue3-toastify";
 import Loading from 'vue-loading-overlay';
 
-
 import router from "./router/index";
 
 import App from "./App.vue";

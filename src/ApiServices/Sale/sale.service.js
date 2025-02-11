@@ -34,9 +34,9 @@ export const SaleService = {
     let url = "sale/legal_all_length";
     return api.post(url);
   },
-  getAll(status) {
+  getAll(data) {
     let url = "sale/all";
-    return api.post(url, status);
+    return api.post(url, data);
   },
   getAllWeaving() {
     let url = "sale/weaving_all";

@@ -11,7 +11,7 @@ import { HelpersStore } from "../../stores/Helpers/helper.store.js";
 const store_sale = SaleStore();
 const store_helpers = HelpersStore();
 import { storeToRefs } from "pinia";
-const { update_model, is_update_modal } = storeToRefs(store_sale);
+const { update_model, is_update_modal, current_page } = storeToRefs(store_sale);
 const { options, is_modal } = storeToRefs(store_helpers);
 const Type = (type) => {
   store_helpers.SelectType(type);
@@ -136,7 +136,7 @@ const Save = async () => {
         products: itemExists.value,
         update: true,
       });
-      store_sale.getAll({ status: 1 });
+      store_sale.getAll({ status: 1, page: current_page.value, limit: 15 });
       if (data) {
         itemExists.value = [];
         product.value = {};

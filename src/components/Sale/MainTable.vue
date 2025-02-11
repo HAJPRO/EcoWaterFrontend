@@ -4,12 +4,14 @@ import { ref } from "vue";
 import { SaleStore } from "../../stores/Sale/sale.store";
 const store_sale = SaleStore();
 import { storeToRefs } from "pinia";
-const { items } = storeToRefs(store_sale);
+const { items, all_length } = storeToRefs(store_sale);
 const ExportExcel = async (id) => {
   store_sale.ExportExcelById(id);
 };
+const handleCurrentChange = (page) => {
+  store_sale.getAll({ status: 1, page: page, limit: 15 });
+};
 const isModal = ref(false);
-
 const DetailModal = async (id) => {
   await store_sale.DetailModal(id);
 };
@@ -40,8 +42,8 @@ const proccessModalById = async (id) => {
       :data="items"
       border="true"
       fit="true"
-      min-height="300"
-      max-height="400"
+      min-height="200"
+      max-height="680"
     >
       <el-table-column
         header-align="center"
@@ -103,7 +105,21 @@ const proccessModalById = async (id) => {
           {{ format(scope.row.delivery_time, "dd.MM.yyyy HH:mm") }}
         </template>
       </el-table-column>
-
+      <el-table-column
+        label="Tasdiqlangan vaqti"
+        :min-width="100"
+        :max-width="300"
+        header-align="center"
+        align="center"
+      >
+        <template #default="scope">
+          {{
+            scope.row.received_time
+              ? format(scope.row.received_time, "dd.MM.yyyy HH:mm")
+              : "-"
+          }}
+        </template>
+      </el-table-column>
       <el-table-column
         fixed="right"
         prop="order_status"
@@ -150,7 +166,9 @@ const proccessModalById = async (id) => {
             </el-button>
             <template #dropdown>
               <el-dropdown-menu slot="dropdown" append-to-body class="z-50">
-                <el-dropdown-item class="text-[13px]" @click="DetailModal(row)"
+                <el-dropdown-item
+                  class="text-[13px]"
+                  @click="DetailModal(row._id)"
                   ><template #default="scope"
                     ><div>
                       <i class="text-black fa-solid fa-check fa-md mr-2"></i
@@ -158,7 +176,9 @@ const proccessModalById = async (id) => {
                     </div>
                   </template></el-dropdown-item
                 >
-                <el-dropdown-item class="text-[13px]" @click="UpdateById(row)"
+                <el-dropdown-item
+                  class="text-[13px]"
+                  @click="UpdateById(row._id)"
                   ><template #default="{ row }"
                     ><div>
                       <i class="text-black fa-solid fa-pen fa-sm mr-1"></i>
@@ -177,8 +197,20 @@ const proccessModalById = async (id) => {
                   </template></el-dropdown-item
                 >
                 <el-dropdown-item
+                  class="text-[13px]"
+                  @click="ExportExcel(row._id)"
+                  ><template #default="{ row }"
+                    ><div>
+                      <i
+                        class="text-black fa-solid fa-file-excel fa-sm mr-1"
+                      ></i>
+                      Excel
+                    </div>
+                  </template></el-dropdown-item
+                >
+                <el-dropdown-item
                   v-if="row.status === 'Tasdiqlanmagan'"
-                  @click="deleteById(row)"
+                  @click="deleteById(row._id)"
                   class="text-red-500 text-[13px]"
                 >
                   <template #default=""
@@ -195,6 +227,44 @@ const proccessModalById = async (id) => {
       </el-table-column>
     </el-table>
     <!-- // -->
+    <div
+      class="flex justify-between flex-wrap font-semibold text-[12px] shadow border-b-[1px] border-[#36d887]"
+    >
+      <div class="flex justify-between bg-white pr-2 pl-2 w-full mx-auto">
+        <div class="flex gap-2 my-2 mt-4">
+          <div
+            class="text-[12px] items-center font-medium text-center text-white"
+          >
+            <el-input
+              clearable
+              size="smal"
+              type="String"
+              placeholder="F.I.O ..."
+              style="width: 200px; font-size: 12px"
+            />
+          </div>
+          <router-link
+            @click="ExportExcel()"
+            to=""
+            class="py-[7px] px-5 rounded text-[11px] items-center text-center font-bold bg-gray-700 text-white"
+          >
+            <i class="fa-solid fa-file-excel mr-2 fa-xm"></i>
+            Excel
+          </router-link>
+        </div>
+
+        <div class="block pt-5">
+          <el-pagination
+            small
+            @current-change="handleCurrentChange"
+            :page-size="15"
+            layout="prev, pager, next"
+            :total="all_length.sale_length"
+          >
+          </el-pagination>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 <style scoped>
