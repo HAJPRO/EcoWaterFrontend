@@ -4,12 +4,33 @@ import { AuthStore } from "../../stores/Auth/auth.js";
 const store = AuthStore();
 import { storeToRefs } from "pinia";
 
-const user = {
+const user = ref({
   username: "",
   department: "",
   password: "",
+});
+const formRef = ref();
+const LoginValidate = async (formRef) => {
+  await formRef.validate((valid) => {
+    if (valid === true) {
+      Login();
+    } else {
+      return false;
+    }
+  });
 };
-
+const Register = async () => {
+  try {
+    await store.register(user.value);
+  } catch (err) {
+    console.log(err.message);
+  }
+};
+const rules = ref({
+  required: true,
+  message: `Maydon to'ldirilishi zarur !`,
+  trigger: "blur",
+});
 const register = async () => {
   try {
     if (!user.username || !user.password || !user.department) {
@@ -85,7 +106,7 @@ const register = async () => {
             <el-form-item label="Department" prop="department" :rules="rules">
               <el-input
                 clearable
-                v-model="user.username"
+                v-model="user.department"
                 type="String"
                 placeholder="..."
                 required
@@ -93,7 +114,7 @@ const register = async () => {
             </el-form-item>
             <el-form-item>
               <el-button
-                @click="LoginValidate(formRef)"
+                @click="Register(formRef)"
                 style="
                   background-color: #36d887;
                   width: 100%;

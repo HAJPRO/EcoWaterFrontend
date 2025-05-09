@@ -1,18 +1,16 @@
 import { createRouter, createWebHistory } from "vue-router";
-import { ref } from "vue";
 import ExploreLayout from "../layouts/ExploreView.vue";
 import LandingLayout from "../layouts/LandingView.vue";
 import Cookies from "js-cookie";
 
 const routes = [
-  // LandingLayout
   {
     path: "/",
     name: "home",
     component: LandingLayout,
     children: [
       {
-        path: "/",
+        path: "",
         name: "landingPage",
         component: () => import("../pages/Landing/index.vue"),
       },
@@ -20,53 +18,66 @@ const routes = [
         path: "register",
         name: "Register",
         component: () => import("../pages/Landing/Register.vue"),
-
       },
       {
         path: "login",
         name: "Login",
         component: () => import("../pages/Landing/Login.vue"),
       },
-
     ],
     beforeEnter(to, from, next) {
-      if (Cookies.get("token")) {
-        window.location.href = "/explore";
+      if (Cookies.get("token") && to.path === "/") {
+        next("/explore");
       } else {
         next();
       }
     },
   },
 
-  // ExploreLayout
-
   {
     path: "/explore",
     name: "Explore",
     component: ExploreLayout,
     children: [
-      // Admin
+
+      // Dashboard
       {
-        path: "admin/users",
+        path: "dashboard/statistic/sale",
+        name: "StatisticSale",
+        component: () => import("../pages/Explore/Dashboard/statistic/sale/index.vue"),
+        beforeEnter(to, from, next) {
+          const account = Cookies.get("account") ? JSON.parse(Cookies.get("account")) : null;
+          if (account && account.role === 1000) {
+            next();
+          } else {
+            next("/explore");
+          }
+        },
+      },
+      //Admin
+      {
+        path: "/admin/users",
         name: "Users",
         component: () => import("../pages/Explore/Admin/users.vue"),
         beforeEnter(to, from, next) {
-          if (JSON.parse(Cookies.get("account")).role === 1000) {
+          const account = Cookies.get("account") ? JSON.parse(Cookies.get("account")) : null;
+          if (account && account.role === 1000) {
             next();
           } else {
-            window.location.href = "/explore";
+            next("/explore");
           }
         },
       },
       {
-        path: "admin/role",
+        path: "/admin/role",
         name: "Role",
         component: () => import("../pages/Explore/Admin/role.vue"),
         beforeEnter(to, from, next) {
-          if (JSON.parse(Cookies.get("account")).role === 1000) {
+          const account = Cookies.get("account") ? JSON.parse(Cookies.get("account")) : null;
+          if (account && account.role === 1000) {
             next();
           } else {
-            window.location.href = "/explore";
+            next("/explore");
           }
         },
       },
@@ -81,14 +92,44 @@ const routes = [
         name: "profile_settings",
         component: () => import("../pages/Explore/Profile/Settings.vue"),
       },
-      // Dashboard
+      //HR
       {
-        path: "",
-        name: "Dashboard",
-        component: () => import("../pages/Explore/Dashboard/Dashboard.vue"),
+        path: "employees",
+        name: "Employees",
+        component: () => import("../pages/Explore/HR/employees/index.vue"),
+      },
+      //Sale
+      {
+        path: "sale/products",
+        name: "Products",
+        component: () => import("../pages/Explore/Sale/products/index.vue"),
+      },
+      {
+        path: "sale/orders",
+        name: "Orders",
+        component: () => import("../pages/Explore/Sale/orders/index.vue"),
       },
 
+      // Customers
+      {
+        path: "customers",
+        name: "CustomersManagement",
+        component: () => import("../pages/Explore/Customers/customers/index.vue"),
+      },
 
+      // Drivers
+      {
+        path: "drivers/monitoring",
+        name: "Monitoring",
+        component: () => import("../pages/Explore/Drivers/monitoring/index.vue"),
+      },
+
+      // Warehouses
+      {
+        path: "warehouses/r-warehouse",
+        name: "ReadyWarehouse",
+        component: () => import("../pages/Explore/Warehouses/r-warehouse/index.vue"),
+      },
     ],
     beforeEnter(to, from, next) {
       if (!Cookies.get("token")) {
@@ -98,6 +139,7 @@ const routes = [
       }
     },
   },
+
   {
     path: "/:pathMatch(.*)*",
     name: "notfound",

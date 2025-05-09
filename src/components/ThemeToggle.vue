@@ -4,7 +4,6 @@
       type="checkbox"
       name="light-switch"
       id="light-switch"
-      v-model="isDark"
       class="light-switch sr-only"
     />
     <label

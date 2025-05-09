@@ -18,7 +18,9 @@ export default defineConfig({
   ],
   resolve: {
     alias: [
+
       {
+
         find: /^~.+/,
         replacement: (val) => {
           return val.replace(/^~/, "");

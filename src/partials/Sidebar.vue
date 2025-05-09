@@ -52,2539 +52,2891 @@
 
       <!-- Links -->
       <div class="space-y-5">
-        <!-- Dashboard-->
-        <div>
-          <h3 class="text-xs uppercase text-slate-500 font-semibold pl-3">
-            <span class="lg:hidden lg:sidebar-expanded:block 2xl:block"></span>
-          </h3>
-          <ul class="mt-3">
-            <!-- Dashboard items -->
-            <SidebarLinkGroup
-              v-slot="parentLink"
-              :activeCondition="
-                currentRoute.fullPath === '/' ||
-                currentRoute.fullPath.includes('dashboard')
-              "
-            >
-              <a
-                class="block text-slate-200 truncate transition duration-150"
-                :class="
-                  currentRoute.fullPath === '/' ||
-                  currentRoute.fullPath.includes('dashboard')
-                    ? 'hover:text-slate-200'
-                    : 'hover:text-white'
-                "
-                href="#0"
-                @click.prevent="
-                  sidebarExpanded
-                    ? parentLink.handleClick()
-                    : (sidebarExpanded = true)
-                "
-              >
-                <div class="flex items-center justify-between">
-                  <div class="flex items-center">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                    >
-                      <rect width="2.8" height="12" x="1" y="6" fill="#24a8e5">
-                        <animate
-                          attributeName="y"
-                          begin="svgSpinnersBarsScaleMiddle0.begin+0.4s"
-                          calcMode="spline"
-                          dur="0.6s"
-                          keySplines=".14,.73,.34,1;.65,.26,.82,.45"
-                          values="6;1;6"
-                        />
-                        <animate
-                          attributeName="height"
-                          begin="svgSpinnersBarsScaleMiddle0.begin+0.4s"
-                          calcMode="spline"
-                          dur="0.6s"
-                          keySplines=".14,.73,.34,1;.65,.26,.82,.45"
-                          values="12;22;12"
-                        />
-                      </rect>
-                      <rect
-                        width="2.8"
-                        height="12"
-                        x="5.8"
-                        y="6"
-                        fill="#24a8e5"
-                      >
-                        <animate
-                          attributeName="y"
-                          begin="svgSpinnersBarsScaleMiddle0.begin+0.2s"
-                          calcMode="spline"
-                          dur="0.6s"
-                          keySplines=".14,.73,.34,1;.65,.26,.82,.45"
-                          values="6;1;6"
-                        />
-                        <animate
-                          attributeName="height"
-                          begin="svgSpinnersBarsScaleMiddle0.begin+0.2s"
-                          calcMode="spline"
-                          dur="0.6s"
-                          keySplines=".14,.73,.34,1;.65,.26,.82,.45"
-                          values="12;22;12"
-                        />
-                      </rect>
-                      <rect
-                        width="2.8"
-                        height="12"
-                        x="10.6"
-                        y="6"
-                        fill="#24a8e5"
-                      >
-                        <animate
-                          id="svgSpinnersBarsScaleMiddle0"
-                          attributeName="y"
-                          begin="0;svgSpinnersBarsScaleMiddle1.end-0.1s"
-                          calcMode="spline"
-                          dur="0.6s"
-                          keySplines=".14,.73,.34,1;.65,.26,.82,.45"
-                          values="6;1;6"
-                        />
-                        <animate
-                          attributeName="height"
-                          begin="0;svgSpinnersBarsScaleMiddle1.end-0.1s"
-                          calcMode="spline"
-                          dur="0.6s"
-                          keySplines=".14,.73,.34,1;.65,.26,.82,.45"
-                          values="12;22;12"
-                        />
-                      </rect>
-                      <rect
-                        width="2.8"
-                        height="12"
-                        x="15.4"
-                        y="6"
-                        fill="#24a8e5"
-                      >
-                        <animate
-                          attributeName="y"
-                          begin="svgSpinnersBarsScaleMiddle0.begin+0.2s"
-                          calcMode="spline"
-                          dur="0.6s"
-                          keySplines=".14,.73,.34,1;.65,.26,.82,.45"
-                          values="6;1;6"
-                        />
-                        <animate
-                          attributeName="height"
-                          begin="svgSpinnersBarsScaleMiddle0.begin+0.2s"
-                          calcMode="spline"
-                          dur="0.6s"
-                          keySplines=".14,.73,.34,1;.65,.26,.82,.45"
-                          values="12;22;12"
-                        />
-                      </rect>
-                      <rect
-                        width="2.8"
-                        height="12"
-                        x="20.2"
-                        y="6"
-                        fill="#24a8e5"
-                      >
-                        <animate
-                          id="svgSpinnersBarsScaleMiddle1"
-                          attributeName="y"
-                          begin="svgSpinnersBarsScaleMiddle0.begin+0.4s"
-                          calcMode="spline"
-                          dur="0.6s"
-                          keySplines=".14,.73,.34,1;.65,.26,.82,.45"
-                          values="6;1;6"
-                        />
-                        <animate
-                          attributeName="height"
-                          begin="svgSpinnersBarsScaleMiddle0.begin+0.4s"
-                          calcMode="spline"
-                          dur="0.6s"
-                          keySplines=".14,.73,.34,1;.65,.26,.82,.45"
-                          values="12;22;12"
-                        />
-                      </rect>
-                    </svg>
-                    <span
-                      class="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
-                      >Dashboard</span
-                    >
-                  </div>
-                  <!-- Icon -->
-                  <div class="flex shrink-0 ml-2">
-                    <svg
-                      class="w-3 h-3 shrink-0 ml-1 fill-current text-slate-400"
-                      :class="parentLink.expanded && 'rotate-180'"
-                      viewBox="0 0 12 12"
-                    >
-                      <path d="M5.9 11.4L.5 6l1.4-1.4 4 4 4-4L11.3 6z" />
-                    </svg>
-                  </div>
-                </div>
-              </a>
-              <div class="lg:hidden lg:sidebar-expanded:block 2xl:block">
-                <ul class="pl-9 mt-1" :class="!parentLink.expanded && 'hidden'">
-                  <router-link
-                    to="/explore"
-                    custom
-                    v-slot="{ href, navigate, isExactActive }"
-                  >
-                    <li class="mb-1 last:mb-0">
-                      <a
-                        class="block transition duration-150 truncate"
-                        :class="
-                          isExactActive
-                            ? 'text-[#36d887]'
-                            : 'text-slate-400 hover:text-slate-200'
-                        "
-                        :href="href"
-                        @click="navigate"
-                      >
-                        <span
-                          class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
-                          >Graphical statistics</span
-                        >
-                      </a>
-                    </li>
-                  </router-link>
-                </ul>
-              </div>
-            </SidebarLinkGroup>
-          </ul>
-        </div>
-
-        <!-- Bo'limlar group -->
-        <div
-          v-if="
-            role === 1 ||
-            role === 2 ||
-            role === 1000 ||
-            role === 2 ||
-            role === 3 ||
-            role === 4 ||
-            role === 5 ||
-            role === 6 ||
-            role === 7
-          "
-        >
-          <h3 class="text-xs uppercase text-slate-500 font-semibold pl-3">
-            <span
-              class="hidden lg:block lg:sidebar-expanded:hidden 2xl:hidden text-center w-6"
-              aria-hidden="true"
-              >•••</span
-            >
-            <span class="lg:hidden lg:sidebar-expanded:block 2xl:block"
-              >Bo'limlar</span
-            >
-          </h3>
-          <ul v-if="role == 1 || role === 1000" class="mt-3">
-            <!-- Sotuv  -->
-            <SidebarLinkGroup
-              v-slot="parentLink"
-              :activeCondition="currentRoute.fullPath.includes('ecommerce')"
-            >
-              <a
-                class="block text-slate-200 truncate transition duration-150"
-                :class="
-                  currentRoute.fullPath.includes('ecommerce')
-                    ? 'hover:text-slate-200'
-                    : 'hover:text-white'
-                "
-                href="#0"
-                @click.prevent="
-                  sidebarExpanded
-                    ? parentLink.handleClick()
-                    : (sidebarExpanded = true)
-                "
-              >
-                <div class="flex items-center justify-between">
-                  <div class="flex items-center">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                    >
-                      <rect
-                        width="10"
-                        height="10"
-                        x="1"
-                        y="1"
-                        fill="#24a8e5"
-                        rx="1"
-                      >
-                        <animate
-                          id="svgSpinnersBlocksShuffle20"
-                          fill="freeze"
-                          attributeName="x"
-                          begin="0;svgSpinnersBlocksShuffle27.end"
-                          dur="0.2s"
-                          values="1;13"
-                        />
-                        <animate
-                          id="svgSpinnersBlocksShuffle21"
-                          fill="freeze"
-                          attributeName="y"
-                          begin="svgSpinnersBlocksShuffle24.end"
-                          dur="0.2s"
-                          values="1;13"
-                        />
-                        <animate
-                          id="svgSpinnersBlocksShuffle22"
-                          fill="freeze"
-                          attributeName="x"
-                          begin="svgSpinnersBlocksShuffle25.end"
-                          dur="0.2s"
-                          values="13;1"
-                        />
-                        <animate
-                          id="svgSpinnersBlocksShuffle23"
-                          fill="freeze"
-                          attributeName="y"
-                          begin="svgSpinnersBlocksShuffle26.end"
-                          dur="0.2s"
-                          values="13;1"
-                        />
-                      </rect>
-                      <rect
-                        width="10"
-                        height="10"
-                        x="1"
-                        y="13"
-                        fill="#24a8e5"
-                        rx="1"
-                      >
-                        <animate
-                          id="svgSpinnersBlocksShuffle24"
-                          fill="freeze"
-                          attributeName="y"
-                          begin="svgSpinnersBlocksShuffle20.end"
-                          dur="0.2s"
-                          values="13;1"
-                        />
-                        <animate
-                          id="svgSpinnersBlocksShuffle25"
-                          fill="freeze"
-                          attributeName="x"
-                          begin="svgSpinnersBlocksShuffle21.end"
-                          dur="0.2s"
-                          values="1;13"
-                        />
-                        <animate
-                          id="svgSpinnersBlocksShuffle26"
-                          fill="freeze"
-                          attributeName="y"
-                          begin="svgSpinnersBlocksShuffle22.end"
-                          dur="0.2s"
-                          values="1;13"
-                        />
-                        <animate
-                          id="svgSpinnersBlocksShuffle27"
-                          fill="freeze"
-                          attributeName="x"
-                          begin="svgSpinnersBlocksShuffle23.end"
-                          dur="0.2s"
-                          values="13;1"
-                        />
-                      </rect>
-                    </svg>
-                    <span
-                      class="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
-                      >Sotuv
-                    </span>
-                  </div>
-                  <!-- Icon -->
-                  <div class="flex shrink-0 ml-2">
-                    <svg
-                      class="w-3 h-3 shrink-0 ml-1 fill-current text-slate-400"
-                      :class="parentLink.expanded && 'rotate-180'"
-                      viewBox="0 0 12 12"
-                    >
-                      <path d="M5.9 11.4L.5 6l1.4-1.4 4 4 4-4L11.3 6z" />
-                    </svg>
-                  </div>
-                </div>
-              </a>
-              <div class="lg:hidden lg:sidebar-expanded:block 2xl:block">
-                <ul class="pl-9 mt-1" :class="!parentLink.expanded && 'hidden'">
-                  <router-link
-                    :to="{ name: 'legal' }"
-                    custom
-                    v-slot="{ href, navigate, isExactActive }"
-                  >
-                    <li class="mb-1 last:mb-0">
-                      <a
-                        class="block transition duration-150 truncate"
-                        :class="
-                          isExactActive
-                            ? 'text-[#36d887]'
-                            : 'text-slate-400 hover:text-slate-200'
-                        "
-                        :href="href"
-                        @click="navigate"
-                      >
-                        <span
-                          class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
-                          >Yuridik</span
-                        >
-                      </a>
-                    </li>
-                  </router-link>
-                  <router-link
-                    to="/explore/sale/physical"
-                    custom
-                    v-slot="{ href, navigate, isExactActive }"
-                  >
-                    <li class="mb-1 last:mb-0">
-                      <a
-                        class="block transition duration-150 truncate"
-                        :class="
-                          isExactActive
-                            ? 'text-[#36d887]'
-                            : 'text-slate-400 hover:text-slate-200'
-                        "
-                        :href="href"
-                        @click="navigate"
-                      >
-                        <span
-                          class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
-                          >Jismoniy</span
-                        >
-                      </a>
-                    </li>
-                  </router-link>
-                </ul>
-              </div>
-            </SidebarLinkGroup>
-          </ul>
-          <ul v-if="role === 2 || role === 1000" class="mt-3">
-            <!-- Bo'yash harakati  -->
-            <SidebarLinkGroup
-              v-slot="parentLink"
-              :activeCondition="currentRoute.fullPath.includes('ecommerce')"
-            >
-              <a
-                class="block text-slate-200 truncate transition duration-150"
-                :class="
-                  currentRoute.fullPath.includes('ecommerce')
-                    ? 'hover:text-slate-200'
-                    : 'hover:text-white'
-                "
-                href="#0"
-                @click.prevent="
-                  sidebarExpanded
-                    ? parentLink.handleClick()
-                    : (sidebarExpanded = true)
-                "
-              >
-                <div class="flex items-center justify-between">
-                  <div class="flex items-center">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="25"
-                      height="25"
-                      viewBox="0 0 1024 1024"
-                    >
-                      <path
-                        fill="#24a8e5"
-                        d="M512 1024q-139 0-257-68.5T68.5 769T0 512t68.5-257T255 68.5T512 0q112 0 152 27.5T704 128q0 32-15 61t-33 47t-33 40.5t-15 43.5q0 96 96 96q21 0 43.5-15t40.5-33t47-33t61-15q72 0 100 41t28 151q0 104-40.5 199t-109 163.5t-163.5 109t-199 40.5M288 832q40 0 68-28t28-68t-28-68t-68-28t-68 28t-28 68t28 68t68 28m-64-512q-40 0-68 28t-28 68t28 68t68 28t68-28t28-68t-28-68t-68-28m192-192q-40 0-68 28t-28 68t28 68t68 28t68-28t28-68t-28-68t-68-28m192 576q-40 0-68 28t-28 68t28 68t68 28t68-28t28-68t-28-68t-68-28m192-192q-40 0-68 28t-28 68t28 68t68 28t68-28t28-68t-28-68t-68-28"
-                      />
-                    </svg>
-                    <span
-                      class="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
-                      >Bo'yoq
-                    </span>
-                  </div>
-                  <!-- Icon -->
-                  <div class="flex shrink-0 ml-2">
-                    <svg
-                      class="w-3 h-3 shrink-0 ml-1 fill-current text-slate-400"
-                      :class="parentLink.expanded && 'rotate-180'"
-                      viewBox="0 0 12 12"
-                    >
-                      <path d="M5.9 11.4L.5 6l1.4-1.4 4 4 4-4L11.3 6z" />
-                    </svg>
-                  </div>
-                </div>
-              </a>
-              <div class="lg:hidden lg:sidebar-expanded:block 2xl:block">
-                <ul class="pl-9 mt-1" :class="!parentLink.expanded && 'hidden'">
-                  <!-- //Xommato skladi -->
-                  <router-link
-                    to="/explore/products/list"
-                    custom
-                    v-slot="{ href, navigate, isExactActive }"
-                  >
-                    <li class="mb-1 last:mb-0">
-                      <a
-                        class="block transition duration-150 truncate"
-                        :class="
-                          isExactActive
-                            ? 'text-[#36d887]'
-                            : 'text-slate-400 hover:text-slate-200'
-                        "
-                        :href="href"
-                        @click="navigate"
-                      >
-                        <span
-                          class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
-                          >Xom mato sklad</span
-                        >
-                      </a>
-                    </li>
-                  </router-link>
-                  <!-- // -->
-                  <ul class="mt-1">
-                    <!-- ishlab chiqarish  -->
-                    <SidebarLinkGroup
-                      v-slot="parentLink"
-                      :activeCondition="
-                        currentRoute.fullPath.includes('ecommerce')
-                      "
-                    >
-                      <a
-                        class="block text-slate-200 truncate transition duration-150"
-                        :class="
-                          currentRoute.fullPath.includes('ecommerce')
-                            ? 'hover:text-slate-200'
-                            : 'hover:text-white'
-                        "
-                        href="#0"
-                        @click.prevent="
-                          sidebarExpanded
-                            ? parentLink.handleClick()
-                            : (sidebarExpanded = true)
-                        "
-                      >
-                        <div class="flex items-center justify-between">
-                          <div class="flex items-center">
-                            <span
-                              class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
-                              >Ishlab chiqarish
-                            </span>
-                          </div>
-                          <!-- Icon -->
-                          <div class="flex shrink-0 ml-2">
-                            <svg
-                              class="w-3 h-3 shrink-0 ml-1 fill-current text-slate-400"
-                              :class="parentLink.expanded && 'rotate-180'"
-                              viewBox="0 0 12 12"
-                            >
-                              <path
-                                d="M5.9 11.4L.5 6l1.4-1.4 4 4 4-4L11.3 6z"
-                              />
-                            </svg>
-                          </div>
-                        </div>
-                      </a>
-                      <div
-                        class="lg:hidden lg:sidebar-expanded:block 2xl:block"
-                      >
-                        <ul
-                          class="mt-1"
-                          :class="!parentLink.expanded && 'hidden'"
-                        >
-                          <!-- //Reja iqtisod -->
-                          <router-link
-                            to="/explore/department/paint/working/plan"
-                            custom
-                            v-slot="{ href, navigate, isExactActive }"
-                          >
-                            <li class="mb-1 ml-2 last:mb-0">
-                              <a
-                                class="block transition duration-150 truncate"
-                                :class="
-                                  isExactActive
-                                    ? 'text-[#36d887]'
-                                    : 'text-slate-400 hover:text-slate-200'
-                                "
-                                :href="href"
-                                @click="navigate"
-                              >
-                                <span
-                                  class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
-                                  >Reja iqtisod</span
-                                >
-                              </a>
-                            </li>
-                          </router-link>
-                          <!-- // -->
-                          <!-- //Xommato skladi -->
-                          <router-link
-                            to="/explore/products/list"
-                            custom
-                            v-slot="{ href, navigate, isExactActive }"
-                          >
-                            <li class="mb-1 ml-2 last:mb-0">
-                              <a
-                                class="block transition duration-150 truncate"
-                                :class="
-                                  isExactActive
-                                    ? 'text-[#36d887]'
-                                    : 'text-slate-400 hover:text-slate-200'
-                                "
-                                :href="href"
-                                @click="navigate"
-                              >
-                                <span
-                                  class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
-                                  >Xom mato sklad</span
-                                >
-                              </a>
-                            </li>
-                          </router-link>
-                          <!-- // -->
-                          <!-- //fipsa -->
-                          <router-link
-                            to="/explore/products/islabchiqarish/fipsa"
-                            custom
-                            v-slot="{ href, navigate, isExactActive }"
-                          >
-                            <li class="mb-1 ml-2 last:mb-0">
-                              <a
-                                class="block transition duration-150 truncate"
-                                :class="
-                                  isExactActive
-                                    ? 'text-[#36d887]'
-                                    : 'text-slate-400 hover:text-slate-200'
-                                "
-                                :href="href"
-                                @click="navigate"
-                              >
-                                <span
-                                  class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
-                                  >Fipsa</span
-                                >
-                              </a>
-                            </li>
-                          </router-link>
-                          <!-- // -->
-                          <!-- //Bo'yoq -->
-                          <router-link
-                            to="/explore/products/ishlabchiqarish/bo'yoq"
-                            custom
-                            v-slot="{ href, navigate, isExactActive }"
-                          >
-                            <li class="mb-1 ml-2 last:mb-0">
-                              <a
-                                class="block transition duration-150 truncate"
-                                :class="
-                                  isExactActive
-                                    ? 'text-[#36d887]'
-                                    : 'text-slate-400 hover:text-slate-200'
-                                "
-                                :href="href"
-                                @click="navigate"
-                              >
-                                <span
-                                  class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
-                                  >Bo'yoq</span
-                                >
-                              </a>
-                            </li>
-                          </router-link>
-                          <!-- // -->
-                          <!-- //Qurutma-->
-                          <router-link
-                            to="/explore/products/ishlabciqarish/qurutma"
-                            custom
-                            v-slot="{ href, navigate, isExactActive }"
-                          >
-                            <li class="mb-1 ml-2 last:mb-0">
-                              <a
-                                class="block transition duration-150 truncate"
-                                :class="
-                                  isExactActive
-                                    ? 'text-[#36d887]'
-                                    : 'text-slate-400 hover:text-slate-200'
-                                "
-                                :href="href"
-                                @click="navigate"
-                              >
-                                <span
-                                  class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
-                                  >Qurutma</span
-                                >
-                              </a>
-                            </li>
-                          </router-link>
-                          <!-- // -->
-                          <!-- //pechat -->
-                          <router-link
-                            to="/explore/products/ishlabciqarish/pechat"
-                            custom
-                            v-slot="{ href, navigate, isExactActive }"
-                          >
-                            <li class="mb-1 ml-2 last:mb-0">
-                              <a
-                                class="block transition duration-150 truncate"
-                                :class="
-                                  isExactActive
-                                    ? 'text-[#36d887]'
-                                    : 'text-slate-400 hover:text-slate-200'
-                                "
-                                :href="href"
-                                @click="navigate"
-                              >
-                                <span
-                                  class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
-                                  >Pechat</span
-                                >
-                              </a>
-                            </li>
-                          </router-link>
-                          <!-- // -->
-                          <!-- //Rolik -->
-                          <router-link
-                            to="/explore/products/ishlabciqarish/rolik"
-                            custom
-                            v-slot="{ href, navigate, isExactActive }"
-                          >
-                            <li class="mb-1 ml-2 last:mb-0">
-                              <a
-                                class="block transition duration-150 truncate"
-                                :class="
-                                  isExactActive
-                                    ? 'text-[#36d887]'
-                                    : 'text-slate-400 hover:text-slate-200'
-                                "
-                                :href="href"
-                                @click="navigate"
-                              >
-                                <span
-                                  class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
-                                  >Rolik</span
-                                >
-                              </a>
-                            </li>
-                          </router-link>
-                          <!-- // -->
-                          <!-- //Tarozi -->
-                          <router-link
-                            to="/explore/products/ishlabciqarish/tarozi"
-                            custom
-                            v-slot="{ href, navigate, isExactActive }"
-                          >
-                            <li class="mb-1 ml-2 last:mb-0">
-                              <a
-                                class="block transition duration-150 truncate"
-                                :class="
-                                  isExactActive
-                                    ? 'text-[#36d887]'
-                                    : 'text-slate-400 hover:text-slate-200'
-                                "
-                                :href="href"
-                                @click="navigate"
-                              >
-                                <span
-                                  class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
-                                  >Tarozi</span
-                                >
-                              </a>
-                            </li>
-                          </router-link>
-                          <!-- // -->
-                          <!-- //Sklad -->
-                          <router-link
-                            to="/explore/products/ishlabciqarish/skalad"
-                            custom
-                            v-slot="{ href, navigate, isExactActive }"
-                          >
-                            <li class="mb-1 ml-2 last:mb-0">
-                              <a
-                                class="block transition duration-150 truncate"
-                                :class="
-                                  isExactActive
-                                    ? 'text-[#36d887]'
-                                    : 'text-slate-400 hover:text-slate-200'
-                                "
-                                :href="href"
-                                @click="navigate"
-                              >
-                                <span
-                                  class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
-                                  >Tayyor mato sklad</span
-                                >
-                              </a>
-                            </li>
-                          </router-link>
-                          <!-- // -->
-                        </ul>
-                      </div>
-                    </SidebarLinkGroup>
-                  </ul>
-                </ul>
-              </div>
-            </SidebarLinkGroup>
-          </ul>
-          <ul v-if="role === 3 || role === 1000" class="mt-3">
-            <!-- To'quv harakatlari  -->
-            <SidebarLinkGroup
-              v-slot="parentLink"
-              :activeCondition="currentRoute.fullPath.includes('ecommerce')"
-            >
-              <a
-                class="block text-slate-200 truncate transition duration-150"
-                :class="
-                  currentRoute.fullPath.includes('ecommerce')
-                    ? 'hover:text-slate-200'
-                    : 'hover:text-white'
-                "
-                href="#0"
-                @click.prevent="
-                  sidebarExpanded
-                    ? parentLink.handleClick()
-                    : (sidebarExpanded = true)
-                "
-              >
-                <div class="flex items-center justify-between">
-                  <div class="flex items-center">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="28"
-                      height="28"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        fill="#24a8e5"
-                        d="M20.27,4.74a4.93,4.93,0,0,1,1.52,4.61,5.32,5.32,0,0,1-4.1,4.51,5.12,5.12,0,0,1-5.2-1.5,5.53,5.53,0,0,0,6.13-1.48A5.66,5.66,0,0,0,20.27,4.74ZM12.32,11.53a5.49,5.49,0,0,0-1.47-6.2A5.57,5.57,0,0,0,4.71,3.72,5.17,5.17,0,0,1,9.53,2.2,5.52,5.52,0,0,1,13.9,6.45,5.28,5.28,0,0,1,12.32,11.53ZM19.2,20.29a4.92,4.92,0,0,1-4.72,1.49,5.32,5.32,0,0,1-4.34-4.05A5.2,5.2,0,0,1,11.6,12.5a5.6,5.6,0,0,0,1.51,6.13A5.63,5.63,0,0,0,19.2,20.29ZM3.79,19.38A5.18,5.18,0,0,1,2.32,14a5.3,5.3,0,0,1,4.59-4,5,5,0,0,1,4.58,1.61,5.55,5.55,0,0,0-6.32,1.69A5.46,5.46,0,0,0,3.79,19.38ZM12.23,12a5.11,5.11,0,0,0,3.66-5,5.75,5.75,0,0,0-3.18-6,5,5,0,0,1,4.42,2.3,5.21,5.21,0,0,1,.24,5.92A5.4,5.4,0,0,1,12.23,12ZM11.76,12a5.18,5.18,0,0,0-3.68,5.09,5.58,5.58,0,0,0,3.19,5.79c-1,.35-2.9-.46-4-1.68A5.51,5.51,0,0,1,11.76,12ZM23,12.63a5.07,5.07,0,0,1-2.35,4.52,5.23,5.23,0,0,1-5.91.2,5.24,5.24,0,0,1-2.67-4.77,5.51,5.51,0,0,0,5.45,3.33A5.52,5.52,0,0,0,23,12.63ZM1,11.23a5,5,0,0,1,2.49-4.5,5.23,5.23,0,0,1,5.81-.06,5.3,5.3,0,0,1,2.61,4.74A5.56,5.56,0,0,0,6.56,8.06,5.71,5.71,0,0,0,1,11.23Z"
-                      >
-                        <animateTransform
-                          attributeName="transform"
-                          dur="1.5s"
-                          repeatCount="indefinite"
-                          type="rotate"
-                          values="0 12 12;360 12 12"
-                        />
-                      </path>
-                    </svg>
-                    <span
-                      class="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
-                      >To'quv
-                    </span>
-                  </div>
-                  <!-- Icon -->
-                  <div class="flex shrink-0 ml-2">
-                    <svg
-                      class="w-3 h-3 shrink-0 ml-1 fill-current text-slate-400"
-                      :class="parentLink.expanded && 'rotate-180'"
-                      viewBox="0 0 12 12"
-                    >
-                      <path d="M5.9 11.4L.5 6l1.4-1.4 4 4 4-4L11.3 6z" />
-                    </svg>
-                  </div>
-                </div>
-              </a>
-              <div class="lg:hidden lg:sidebar-expanded:block 2xl:block">
-                <ul class="pl-9 mt-1" :class="!parentLink.expanded && 'hidden'">
-                  <ul class="mt-1">
-                    <!-- ishlab chiqarish  -->
-                    <SidebarLinkGroup
-                      v-slot="parentLink"
-                      :activeCondition="
-                        currentRoute.fullPath.includes('ecommerce')
-                      "
-                    >
-                      <a
-                        class="block text-slate-200 truncate transition duration-150"
-                        :class="
-                          currentRoute.fullPath.includes('ecommerce')
-                            ? 'hover:text-slate-200'
-                            : 'hover:text-white'
-                        "
-                        href="#0"
-                        @click.prevent="
-                          sidebarExpanded
-                            ? parentLink.handleClick()
-                            : (sidebarExpanded = true)
-                        "
-                      >
-                        <div class="flex items-center justify-between">
-                          <div class="flex items-center">
-                            <span
-                              class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
-                              >Ishlab chiqarish
-                            </span>
-                          </div>
-                          <!-- Icon -->
-                          <div class="flex shrink-0 ml-2">
-                            <svg
-                              class="w-3 h-3 shrink-0 ml-1 fill-current text-slate-400"
-                              :class="parentLink.expanded && 'rotate-180'"
-                              viewBox="0 0 12 12"
-                            >
-                              <path
-                                d="M5.9 11.4L.5 6l1.4-1.4 4 4 4-4L11.3 6z"
-                              />
-                            </svg>
-                          </div>
-                        </div>
-                      </a>
-                      <div
-                        class="lg:hidden lg:sidebar-expanded:block 2xl:block"
-                      >
-                        <ul
-                          class="mt-1"
-                          :class="!parentLink.expanded && 'hidden'"
-                        >
-                          <!-- //Reja iqtisod to'quv -->
-                          <router-link
-                            to="/explore/department/weaving/working/plan"
-                            custom
-                            v-slot="{ href, navigate, isExactActive }"
-                          >
-                            <li class="mb-1 ml-2 last:mb-0">
-                              <a
-                                class="block transition duration-150 truncate"
-                                :class="
-                                  isExactActive
-                                    ? 'text-[#36d887]'
-                                    : 'text-slate-400 hover:text-slate-200'
-                                "
-                                :href="href"
-                                @click="navigate"
-                              >
-                                <span
-                                  class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
-                                  >Reja iqtisod</span
-                                >
-                              </a>
-                            </li>
-                          </router-link>
-                          <!-- // -->
-                          <router-link
-                            to="/explore/products/tuquv/kolsa"
-                            custom
-                            v-slot="{ href, navigate, isExactActive }"
-                          >
-                            <li class="mb-1 last:mb-0">
-                              <a
-                                class="block transition duration-150 truncate"
-                                :class="
-                                  isExactActive
-                                    ? 'text-[#36d887]'
-                                    : 'text-slate-400 hover:text-slate-200'
-                                "
-                                :href="href"
-                                @click="navigate"
-                              >
-                                <span
-                                  class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
-                                  >Kolsa</span
-                                >
-                              </a>
-                            </li>
-                          </router-link>
-                          <!-- // -->
-                          <!-- //opela -->
-                          <router-link
-                            to="/explore/products/tuquv/opelad"
-                            custom
-                            v-slot="{ href, navigate, isExactActive }"
-                          >
-                            <li class="mb-1 last:mb-0">
-                              <a
-                                class="block transition duration-150 truncate"
-                                :class="
-                                  isExactActive
-                                    ? 'text-[#36d887]'
-                                    : 'text-slate-400 hover:text-slate-200'
-                                "
-                                :href="href"
-                                @click="navigate"
-                              >
-                                <span
-                                  class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
-                                  >Opelad</span
-                                >
-                              </a>
-                            </li>
-                          </router-link>
-                          <!-- // -->
-                        </ul>
-                      </div>
-                    </SidebarLinkGroup>
-                  </ul>
-                  <!-- Xom mato skaldi -->
-                  <router-link
-                    to="/explore/products/tikuv/xommato_skladi"
-                    custom
-                    v-slot="{ href, navigate, isExactActive }"
-                  >
-                    <li class="mb-1 last:mb-0">
-                      <a
-                        class="block transition duration-150 truncate"
-                        :class="
-                          isExactActive
-                            ? 'text-[#36d887]'
-                            : 'text-slate-400 hover:text-slate-200'
-                        "
-                        :href="href"
-                        @click="navigate"
-                      >
-                        <span
-                          class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
-                          >Xom mato sklad</span
-                        >
-                      </a>
-                    </li>
-                  </router-link>
-                  <!-- // -->
-                  <!-- Ip-Polister Sklad -->
-                  <router-link
-                    to="/explore/products/tikuv/ip_skald"
-                    custom
-                    v-slot="{ href, navigate, isExactActive }"
-                  >
-                    <li class="mb-1 last:mb-0">
-                      <a
-                        class="block transition duration-150 truncate"
-                        :class="
-                          isExactActive
-                            ? 'text-[#36d887]'
-                            : 'text-slate-400 hover:text-slate-200'
-                        "
-                        :href="href"
-                        @click="navigate"
-                      >
-                        <span
-                          class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
-                          >Ip-Polister Sklad</span
-                        >
-                      </a>
-                    </li>
-                  </router-link>
-                  <!-- /// -->
-                </ul>
-              </div>
-            </SidebarLinkGroup>
-          </ul>
-          <ul v-if="role === 4 || role === 1000" class="mt-3">
-            <!-- Yigiruv harakatlari  -->
-            <SidebarLinkGroup
-              v-slot="parentLink"
-              :activeCondition="currentRoute.fullPath.includes('ecommerce')"
-            >
-              <a
-                class="block text-slate-200 truncate transition duration-150"
-                :class="
-                  currentRoute.fullPath.includes('ecommerce')
-                    ? 'hover:text-slate-200'
-                    : 'hover:text-white'
-                "
-                href="#0"
-                @click.prevent="
-                  sidebarExpanded
-                    ? parentLink.handleClick()
-                    : (sidebarExpanded = true)
-                "
-              >
-                <div class="flex items-center justify-between">
-                  <div class="flex items-center">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="25"
-                      height="25"
-                      viewBox="0 0 1025 1023"
-                    >
-                      <path
-                        fill="#24a8e5"
-                        d="M996.413 959h-234q-115-638-122-895h224q13 0 22.5 9.5t9.5 22.5q0 79 12 181.5t26 179t44 231t46 239.5q2 13-6 22.5t-22 9.5m-320 64h-648q-14 0-22-9.5t-5-22.5q127-703 127-959q0-13 9.5-22.5t22.5-9.5h384q13 0 22.5 9.5t9.5 22.5q0 256 128 959q2 13-6 22.5t-22 9.5"
-                      />
-                    </svg>
-
-                    <span
-                      class="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
-                      >Yigiruv
-                    </span>
-                  </div>
-                  <!-- Icon -->
-                  <div class="flex shrink-0 ml-2">
-                    <svg
-                      class="w-3 h-3 shrink-0 ml-1 fill-current text-slate-400"
-                      :class="parentLink.expanded && 'rotate-180'"
-                      viewBox="0 0 12 12"
-                    >
-                      <path d="M5.9 11.4L.5 6l1.4-1.4 4 4 4-4L11.3 6z" />
-                    </svg>
-                  </div>
-                </div>
-              </a>
-              <div class="lg:hidden lg:sidebar-expanded:block 2xl:block">
-                <ul class="pl-9 mt-1" :class="!parentLink.expanded && 'hidden'">
-                  <div class="mt-1">
-                    <!-- ishlab chiqarish  -->
-                    <SidebarLinkGroup
-                      v-slot="parentLink"
-                      :activeCondition="
-                        currentRoute.fullPath.includes('ecommerce')
-                      "
-                    >
-                      <a
-                        class="block text-slate-200 truncate transition duration-150"
-                        :class="
-                          currentRoute.fullPath.includes('ecommerce')
-                            ? 'hover:text-slate-200'
-                            : 'hover:text-white'
-                        "
-                        href="#0"
-                        @click.prevent="
-                          sidebarExpanded
-                            ? parentLink.handleClick()
-                            : (sidebarExpanded = true)
-                        "
-                      >
-                        <div class="flex items-center justify-between">
-                          <div class="flex items-center">
-                            <span
-                              class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
-                              >Ishlab chiqarish
-                            </span>
-                          </div>
-                          <!-- Icon -->
-                          <div class="flex shrink-0 ml-2">
-                            <svg
-                              class="w-3 h-3 shrink-0 ml-1 fill-current text-slate-400"
-                              :class="parentLink.expanded && 'rotate-180'"
-                              viewBox="0 0 12 12"
-                            >
-                              <path
-                                d="M5.9 11.4L.5 6l1.4-1.4 4 4 4-4L11.3 6z"
-                              />
-                            </svg>
-                          </div>
-                        </div>
-                      </a>
-                      <div
-                        class="lg:hidden lg:sidebar-expanded:block 2xl:block"
-                      >
-                        <ul
-                          class="mt-1"
-                          :class="!parentLink.expanded && 'hidden'"
-                        >
-                          <!-- //kolsa -->
-                          <!-- //Reja iqtisod to'quv -->
-                          <router-link
-                            to="/explore/department/spinning/working/plan"
-                            custom
-                            v-slot="{ href, navigate, isExactActive }"
-                          >
-                            <li class="mb-1 ml-2 last:mb-0">
-                              <a
-                                class="block transition duration-150 truncate"
-                                :class="
-                                  isExactActive
-                                    ? 'text-[#36d887]'
-                                    : 'text-slate-400 hover:text-slate-200'
-                                "
-                                :href="href"
-                                @click="navigate"
-                              >
-                                <span
-                                  class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
-                                  >Reja iqtisod</span
-                                >
-                              </a>
-                            </li>
-                          </router-link>
-                          <!-- // -->
-                          <router-link
-                            to="/explore/products/tuquv/kolsa"
-                            custom
-                            v-slot="{ href, navigate, isExactActive }"
-                          >
-                            <li class="mb-1 last:mb-0">
-                              <a
-                                class="block transition duration-150 truncate"
-                                :class="
-                                  isExactActive
-                                    ? 'text-[#36d887]'
-                                    : 'text-slate-400 hover:text-slate-200'
-                                "
-                                :href="href"
-                                @click="navigate"
-                              >
-                                <span
-                                  class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
-                                  >Kolsa</span
-                                >
-                              </a>
-                            </li>
-                          </router-link>
-                          <!-- // -->
-                          <!-- //opela -->
-                          <router-link
-                            to="/explore/products/tuquv/opelad"
-                            custom
-                            v-slot="{ href, navigate, isExactActive }"
-                          >
-                            <li class="mb-1 last:mb-0">
-                              <a
-                                class="block transition duration-150 truncate"
-                                :class="
-                                  isExactActive
-                                    ? 'text-[#36d887]'
-                                    : 'text-slate-400 hover:text-slate-200'
-                                "
-                                :href="href"
-                                @click="navigate"
-                              >
-                                <span
-                                  class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
-                                  >Opelad</span
-                                >
-                              </a>
-                            </li>
-                          </router-link>
-                          <!-- // -->
-                        </ul>
-                      </div>
-                    </SidebarLinkGroup>
-                  </div>
-                  <!-- PAXTA SKLADI -->
-                  <router-link
-                    to="/explore/products/yigiruv/cotton_sklad"
-                    custom
-                    v-slot="{ href, navigate, isExactActive }"
-                  >
-                    <li class="mb-1 last:mb-0">
-                      <a
-                        class="block transition duration-150 truncate"
-                        :class="
-                          isExactActive
-                            ? 'text-[#36d887]'
-                            : 'text-slate-400 hover:text-slate-200'
-                        "
-                        :href="href"
-                        @click="navigate"
-                      >
-                        <span
-                          class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
-                          >Paxta skalad</span
-                        >
-                      </a>
-                    </li>
-                  </router-link>
-                  <!-- //// -->
-                  <!-- STELAJ -->
-                  <router-link
-                    to="/explore/products/yigiruv/staris"
-                    custom
-                    v-slot="{ href, navigate, isExactActive }"
-                  >
-                    <li class="mb-1 last:mb-0">
-                      <a
-                        class="block transition duration-150 truncate"
-                        :class="
-                          isExactActive
-                            ? 'text-[#36d887]'
-                            : 'text-slate-400 hover:text-slate-200'
-                        "
-                        :href="href"
-                        @click="navigate"
-                      >
-                        <span
-                          class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
-                          >Staris</span
-                        >
-                      </a>
-                    </li>
-                  </router-link>
-                  <!-- /// -->
-
-                  <!-- // kolsa -->
-                  <router-link
-                    to="/explore/products/yigiruv/kolsa"
-                    custom
-                    v-slot="{ href, navigate, isExactActive }"
-                  >
-                    <li class="mb-1 last:mb-0">
-                      <a
-                        class="block transition duration-150 truncate"
-                        :class="
-                          isExactActive
-                            ? 'text-[#36d887]'
-                            : 'text-slate-400 hover:text-slate-200'
-                        "
-                        :href="href"
-                        @click="navigate"
-                      >
-                        <span
-                          class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
-                          >Kolsa</span
-                        >
-                      </a>
-                    </li>
-                  </router-link>
-                  <!-- //// -->
-                  <!-- ///opened -->
-                  <router-link
-                    to="/explore/products/yigiruv/opened"
-                    custom
-                    v-slot="{ href, navigate, isExactActive }"
-                  >
-                    <li class="mb-1 last:mb-0">
-                      <a
-                        class="block transition duration-150 truncate"
-                        :class="
-                          isExactActive
-                            ? 'text-[#36d887]'
-                            : 'text-slate-400 hover:text-slate-200'
-                        "
-                        :href="href"
-                        @click="navigate"
-                      >
-                        <span
-                          class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
-                          >Opened</span
-                        >
-                      </a>
-                    </li>
-                  </router-link>
-                  <!-- ///< -->
-                  <!-- // Ip sklad -->
-                  <router-link
-                    to="/explore/products/yigiruv/ip_skald"
-                    custom
-                    v-slot="{ href, navigate, isExactActive }"
-                  >
-                    <li class="mb-1 last:mb-0">
-                      <a
-                        class="block transition duration-150 truncate"
-                        :class="
-                          isExactActive
-                            ? 'text-[#36d887]'
-                            : 'text-slate-400 hover:text-slate-200'
-                        "
-                        :href="href"
-                        @click="navigate"
-                      >
-                        <span
-                          class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
-                          >Ip sklad</span
-                        >
-                      </a>
-                    </li>
-                  </router-link>
-                  <!-- // -->
-                </ul>
-              </div>
-            </SidebarLinkGroup>
-          </ul>
-          <ul v-if="role === 5 || role === 1000" class="mt-3">
-            <!-- Tikuv harakati  -->
-            <SidebarLinkGroup
-              v-slot="parentLink"
-              :activeCondition="currentRoute.fullPath.includes('ecommerce')"
-            >
-              <a
-                class="block text-slate-200 truncate transition duration-150"
-                :class="
-                  currentRoute.fullPath.includes('ecommerce')
-                    ? 'hover:text-slate-200'
-                    : 'hover:text-white'
-                "
-                href="#0"
-                @click.prevent="
-                  sidebarExpanded
-                    ? parentLink.handleClick()
-                    : (sidebarExpanded = true)
-                "
-              >
-                <div class="flex items-center justify-between">
-                  <div class="flex items-center">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="25"
-                      height="25"
-                      viewBox="0 0 1025 1024"
-                    >
-                      <path
-                        fill="#24a8e5"
-                        d="M896.428 1024h-768q-53 0-90.5-37.5T.428 896V128q0-53 37.5-90.5t90.5-37.5h768q53 0 90.5 37.5t37.5 90.5v768q0 53-37.5 90.5t-90.5 37.5m-288-768h-256q-13 0-22.5 9.5t-9.5 22.5t9.5 22.5t22.5 9.5h96v416q0 13 9.5 22.5t22.5 9.5t22.5-9.5t9.5-22.5V320h96q13 0 22.5-9.5t9.5-22.5t-9.5-22.5t-22.5-9.5"
-                      />
-                    </svg>
-
-                    <span
-                      class="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
-                      >Tikuv
-                    </span>
-                  </div>
-                  <!-- Icon -->
-                  <div class="flex shrink-0 ml-2">
-                    <svg
-                      class="w-3 h-3 shrink-0 ml-1 fill-current text-slate-400"
-                      :class="parentLink.expanded && 'rotate-180'"
-                      viewBox="0 0 12 12"
-                    >
-                      <path d="M5.9 11.4L.5 6l1.4-1.4 4 4 4-4L11.3 6z" />
-                    </svg>
-                  </div>
-                </div>
-              </a>
-              <div class="lg:hidden lg:sidebar-expanded:block 2xl:block">
-                <ul class="pl-9 mt-1" :class="!parentLink.expanded && 'hidden'">
-                  <router-link
-                    v-if="
-                      (role === 5 && permissions.includes('seam_employees')) ||
-                      role === 1000
-                    "
-                    :to="{ name: 'SeamEmployeesReport' }"
-                    custom
-                    v-slot="{ href, navigate, isExactActive }"
-                  >
-                    <li class="mb-1 last:mb-0">
-                      <a
-                        class="block transition duration-150 truncate"
-                        :class="
-                          isExactActive
-                            ? 'text-[#36d887]'
-                            : 'text-slate-400 hover:text-slate-200'
-                        "
-                        :href="href"
-                        @click="navigate"
-                      >
-                        <span
-                          class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
-                          >Xodimlar hisoboti</span
-                        >
-                      </a>
-                    </li>
-                  </router-link>
-                  <router-link
-                    v-if="
-                      (role === 5 &&
-                        permissions.includes('seam raw warehouse')) ||
-                      role === 1000 ||
-                      permissions.includes('seam accountant')
-                    "
-                    :to="{ name: 'RawMaterialWarehouse' }"
-                    custom
-                    v-slot="{ href, navigate, isExactActive }"
-                  >
-                    <li class="mb-1 last:mb-0">
-                      <a
-                        class="block transition duration-150 truncate"
-                        :class="
-                          isExactActive
-                            ? 'text-[#36d887]'
-                            : 'text-slate-400 hover:text-slate-200'
-                        "
-                        :href="href"
-                        @click="navigate"
-                      >
-                        <span
-                          class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
-                          >Sklad (xom mato)</span
-                        >
-                      </a>
-                    </li>
-                  </router-link>
-                  <router-link
-                    v-if="
-                      (role === 5 && permissions.includes('form warehouse')) ||
-                      role === 1000 ||
-                      permissions.includes('seam accountant')
-                    "
-                    :to="{ name: 'FormWarehouse' }"
-                    custom
-                    v-slot="{ href, navigate, isExactActive }"
-                  >
-                    <li class="mb-1 last:mb-0">
-                      <a
-                        class="block transition duration-150 truncate"
-                        :class="
-                          isExactActive
-                            ? 'text-[#36d887]'
-                            : 'text-slate-400 hover:text-slate-200'
-                        "
-                        :href="href"
-                        @click="navigate"
-                      >
-                        <span
-                          class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
-                          >Sklad (bichuv)</span
-                        >
-                      </a>
-                    </li>
-                  </router-link>
-                  <router-link
-                    v-if="
-                      (role === 5 && permissions.includes('form')) ||
-                      role === 1000 ||
-                      permissions.includes('seam accountant')
-                    "
-                    :to="{ name: 'SeamForm' }"
-                    custom
-                    v-slot="{ href, navigate, isExactActive }"
-                  >
-                    <li class="mb-1 last:mb-0">
-                      <a
-                        class="block transition duration-150 truncate"
-                        :class="
-                          isExactActive
-                            ? 'text-[#36d887]'
-                            : 'text-slate-400 hover:text-slate-200'
-                        "
-                        :href="href"
-                        @click="navigate"
-                      >
-                        <span
-                          class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
-                          >Bichuv</span
-                        >
-                      </a>
-                    </li>
-                  </router-link>
-
-                  <router-link
-                    v-if="
-                      (role === 5 && permissions.includes('classification')) ||
-                      role === 1000 ||
-                      permissions.includes('seam accountant')
-                    "
-                    :to="{ name: 'SeamClassification' }"
-                    custom
-                    v-slot="{ href, navigate, isExactActive }"
-                  >
-                    <li class="mb-1 last:mb-0">
-                      <a
-                        class="block transition duration-150 truncate"
-                        :class="
-                          isExactActive
-                            ? 'text-[#36d887]'
-                            : 'text-slate-400 hover:text-slate-200'
-                        "
-                        :href="href"
-                        @click="navigate"
-                      >
-                        <span
-                          class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
-                          >Tasnif</span
-                        >
-                      </a>
-                    </li>
-                  </router-link>
-                  <router-link
-                    v-if="
-                      (role === 5 && permissions.includes('patoks')) ||
-                      role === 1000 ||
-                      permissions.includes('seam accountant')
-                    "
-                    :to="{ name: 'SeamPatoks' }"
-                    custom
-                    v-slot="{ href, navigate, isExactActive }"
-                  >
-                    <li class="mb-1 last:mb-0">
-                      <a
-                        class="block transition duration-150 truncate"
-                        :class="
-                          isExactActive
-                            ? 'text-[#36d887]'
-                            : 'text-slate-400 hover:text-slate-200'
-                        "
-                        :href="href"
-                        @click="navigate"
-                      >
-                        <span
-                          class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
-                          >Patoklar</span
-                        >
-                      </a>
-                    </li>
-                  </router-link>
-
-                  <router-link
-                    v-if="
-                      (role === 5 && permissions.includes('packing')) ||
-                      role === 1000 ||
-                      permissions.includes('seam accountant')
-                    "
-                    :to="{ name: 'SeamPacking' }"
-                    custom
-                    v-slot="{ href, navigate, isExactActive }"
-                  >
-                    <li class="mb-1 last:mb-0">
-                      <a
-                        class="block transition duration-150 truncate"
-                        :class="
-                          isExactActive
-                            ? 'text-[#36d887]'
-                            : 'text-slate-400 hover:text-slate-200'
-                        "
-                        :href="href"
-                        @click="navigate"
-                      >
-                        <span
-                          class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
-                          >Upakovka</span
-                        >
-                      </a>
-                    </li>
-                  </router-link>
-                  <router-link
-                    v-if="
-                      (role === 5 &&
-                        permissions.includes('seam clothes warehouse')) ||
-                      role === 1000 ||
-                      permissions.includes('seam accountant')
-                    "
-                    :to="{ name: 'SeamClothesWarehouse' }"
-                    custom
-                    v-slot="{ href, navigate, isExactActive }"
-                  >
-                    <li class="mb-1 last:mb-0">
-                      <a
-                        class="block transition duration-150 truncate"
-                        :class="
-                          isExactActive
-                            ? 'text-[#36d887]'
-                            : 'text-slate-400 hover:text-slate-200'
-                        "
-                        :href="href"
-                        @click="navigate"
-                      >
-                        <span
-                          class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
-                          >Sklad (tayyor mahsulot)
-                        </span>
-                      </a>
-                    </li>
-                  </router-link>
-                </ul>
-              </div>
-            </SidebarLinkGroup>
-          </ul>
-
-          <ul v-if="role === 6 || role === 1000" class="mt-3">
-            <!-- Taminot bo'limi harakati  -->
-            <SidebarLinkGroup
-              v-slot="parentLink"
-              :activeCondition="currentRoute.fullPath.includes('ecommerce')"
-            >
-              <a
-                class="block text-slate-200 truncate transition duration-150"
-                :class="
-                  currentRoute.fullPath.includes('ecommerce')
-                    ? 'hover:text-slate-200'
-                    : 'hover:text-white'
-                "
-                href="#0"
-                @click.prevent="
-                  sidebarExpanded
-                    ? parentLink.handleClick()
-                    : (sidebarExpanded = true)
-                "
-              >
-                <div class="flex items-center justify-between">
-                  <div class="flex items-center">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                    >
-                      <rect
-                        width="7.33"
-                        height="7.33"
-                        x="1"
-                        y="1"
-                        fill="#24a8e5"
-                      >
-                        <animate
-                          id="svgSpinnersBlocksWave0"
-                          attributeName="x"
-                          begin="0;svgSpinnersBlocksWave1.end+0.2s"
-                          dur="0.6s"
-                          values="1;4;1"
-                        />
-                        <animate
-                          attributeName="y"
-                          begin="0;svgSpinnersBlocksWave1.end+0.2s"
-                          dur="0.6s"
-                          values="1;4;1"
-                        />
-                        <animate
-                          attributeName="width"
-                          begin="0;svgSpinnersBlocksWave1.end+0.2s"
-                          dur="0.6s"
-                          values="7.33;1.33;7.33"
-                        />
-                        <animate
-                          attributeName="height"
-                          begin="0;svgSpinnersBlocksWave1.end+0.2s"
-                          dur="0.6s"
-                          values="7.33;1.33;7.33"
-                        />
-                      </rect>
-                      <rect
-                        width="7.33"
-                        height="7.33"
-                        x="8.33"
-                        y="1"
-                        fill="#08c7f9"
-                      >
-                        <animate
-                          attributeName="x"
-                          begin="svgSpinnersBlocksWave0.begin+0.1s"
-                          dur="0.6s"
-                          values="8.33;11.33;8.33"
-                        />
-                        <animate
-                          attributeName="y"
-                          begin="svgSpinnersBlocksWave0.begin+0.1s"
-                          dur="0.6s"
-                          values="1;4;1"
-                        />
-                        <animate
-                          attributeName="width"
-                          begin="svgSpinnersBlocksWave0.begin+0.1s"
-                          dur="0.6s"
-                          values="7.33;1.33;7.33"
-                        />
-                        <animate
-                          attributeName="height"
-                          begin="svgSpinnersBlocksWave0.begin+0.1s"
-                          dur="0.6s"
-                          values="7.33;1.33;7.33"
-                        />
-                      </rect>
-                      <rect
-                        width="7.33"
-                        height="7.33"
-                        x="1"
-                        y="8.33"
-                        fill="#08c7f9"
-                      >
-                        <animate
-                          attributeName="x"
-                          begin="svgSpinnersBlocksWave0.begin+0.1s"
-                          dur="0.6s"
-                          values="1;4;1"
-                        />
-                        <animate
-                          attributeName="y"
-                          begin="svgSpinnersBlocksWave0.begin+0.1s"
-                          dur="0.6s"
-                          values="8.33;11.33;8.33"
-                        />
-                        <animate
-                          attributeName="width"
-                          begin="svgSpinnersBlocksWave0.begin+0.1s"
-                          dur="0.6s"
-                          values="7.33;1.33;7.33"
-                        />
-                        <animate
-                          attributeName="height"
-                          begin="svgSpinnersBlocksWave0.begin+0.1s"
-                          dur="0.6s"
-                          values="7.33;1.33;7.33"
-                        />
-                      </rect>
-                      <rect
-                        width="7.33"
-                        height="7.33"
-                        x="15.66"
-                        y="1"
-                        fill="#08c7f9"
-                      >
-                        <animate
-                          attributeName="x"
-                          begin="svgSpinnersBlocksWave0.begin+0.2s"
-                          dur="0.6s"
-                          values="15.66;18.66;15.66"
-                        />
-                        <animate
-                          attributeName="y"
-                          begin="svgSpinnersBlocksWave0.begin+0.2s"
-                          dur="0.6s"
-                          values="1;4;1"
-                        />
-                        <animate
-                          attributeName="width"
-                          begin="svgSpinnersBlocksWave0.begin+0.2s"
-                          dur="0.6s"
-                          values="7.33;1.33;7.33"
-                        />
-                        <animate
-                          attributeName="height"
-                          begin="svgSpinnersBlocksWave0.begin+0.2s"
-                          dur="0.6s"
-                          values="7.33;1.33;7.33"
-                        />
-                      </rect>
-                      <rect
-                        width="7.33"
-                        height="7.33"
-                        x="8.33"
-                        y="8.33"
-                        fill="#08c7f9"
-                      >
-                        <animate
-                          attributeName="x"
-                          begin="svgSpinnersBlocksWave0.begin+0.2s"
-                          dur="0.6s"
-                          values="8.33;11.33;8.33"
-                        />
-                        <animate
-                          attributeName="y"
-                          begin="svgSpinnersBlocksWave0.begin+0.2s"
-                          dur="0.6s"
-                          values="8.33;11.33;8.33"
-                        />
-                        <animate
-                          attributeName="width"
-                          begin="svgSpinnersBlocksWave0.begin+0.2s"
-                          dur="0.6s"
-                          values="7.33;1.33;7.33"
-                        />
-                        <animate
-                          attributeName="height"
-                          begin="svgSpinnersBlocksWave0.begin+0.2s"
-                          dur="0.6s"
-                          values="7.33;1.33;7.33"
-                        />
-                      </rect>
-                      <rect
-                        width="7.33"
-                        height="7.33"
-                        x="1"
-                        y="15.66"
-                        fill="#08c7f9"
-                      >
-                        <animate
-                          attributeName="x"
-                          begin="svgSpinnersBlocksWave0.begin+0.2s"
-                          dur="0.6s"
-                          values="1;4;1"
-                        />
-                        <animate
-                          attributeName="y"
-                          begin="svgSpinnersBlocksWave0.begin+0.2s"
-                          dur="0.6s"
-                          values="15.66;18.66;15.66"
-                        />
-                        <animate
-                          attributeName="width"
-                          begin="svgSpinnersBlocksWave0.begin+0.2s"
-                          dur="0.6s"
-                          values="7.33;1.33;7.33"
-                        />
-                        <animate
-                          attributeName="height"
-                          begin="svgSpinnersBlocksWave0.begin+0.2s"
-                          dur="0.6s"
-                          values="7.33;1.33;7.33"
-                        />
-                      </rect>
-                      <rect
-                        width="7.33"
-                        height="7.33"
-                        x="15.66"
-                        y="8.33"
-                        fill="#08c7f9"
-                      >
-                        <animate
-                          attributeName="x"
-                          begin="svgSpinnersBlocksWave0.begin+0.3s"
-                          dur="0.6s"
-                          values="15.66;18.66;15.66"
-                        />
-                        <animate
-                          attributeName="y"
-                          begin="svgSpinnersBlocksWave0.begin+0.3s"
-                          dur="0.6s"
-                          values="8.33;11.33;8.33"
-                        />
-                        <animate
-                          attributeName="width"
-                          begin="svgSpinnersBlocksWave0.begin+0.3s"
-                          dur="0.6s"
-                          values="7.33;1.33;7.33"
-                        />
-                        <animate
-                          attributeName="height"
-                          begin="svgSpinnersBlocksWave0.begin+0.3s"
-                          dur="0.6s"
-                          values="7.33;1.33;7.33"
-                        />
-                      </rect>
-                      <rect
-                        width="7.33"
-                        height="7.33"
-                        x="8.33"
-                        y="15.66"
-                        fill="#08c7f9"
-                      >
-                        <animate
-                          attributeName="x"
-                          begin="svgSpinnersBlocksWave0.begin+0.3s"
-                          dur="0.6s"
-                          values="8.33;11.33;8.33"
-                        />
-                        <animate
-                          attributeName="y"
-                          begin="svgSpinnersBlocksWave0.begin+0.3s"
-                          dur="0.6s"
-                          values="15.66;18.66;15.66"
-                        />
-                        <animate
-                          attributeName="width"
-                          begin="svgSpinnersBlocksWave0.begin+0.3s"
-                          dur="0.6s"
-                          values="7.33;1.33;7.33"
-                        />
-                        <animate
-                          attributeName="height"
-                          begin="svgSpinnersBlocksWave0.begin+0.3s"
-                          dur="0.6s"
-                          values="7.33;1.33;7.33"
-                        />
-                      </rect>
-                      <rect
-                        width="7.33"
-                        height="7.33"
-                        x="15.66"
-                        y="15.66"
-                        fill="#08c7f9"
-                      >
-                        <animate
-                          id="svgSpinnersBlocksWave1"
-                          attributeName="x"
-                          begin="svgSpinnersBlocksWave0.begin+0.4s"
-                          dur="0.6s"
-                          values="15.66;18.66;15.66"
-                        />
-                        <animate
-                          attributeName="y"
-                          begin="svgSpinnersBlocksWave0.begin+0.4s"
-                          dur="0.6s"
-                          values="15.66;18.66;15.66"
-                        />
-                        <animate
-                          attributeName="width"
-                          begin="svgSpinnersBlocksWave0.begin+0.4s"
-                          dur="0.6s"
-                          values="7.33;1.33;7.33"
-                        />
-                        <animate
-                          attributeName="height"
-                          begin="svgSpinnersBlocksWave0.begin+0.4s"
-                          dur="0.6s"
-                          values="7.33;1.33;7.33"
-                        />
-                      </rect>
-                    </svg>
-
-                    <span
-                      class="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
-                      >Taminot
-                    </span>
-                  </div>
-                  <!-- Icon -->
-                  <div class="flex shrink-0 ml-2">
-                    <svg
-                      class="w-3 h-3 shrink-0 ml-1 fill-current text-slate-400"
-                      :class="parentLink.expanded && 'rotate-180'"
-                      viewBox="0 0 12 12"
-                    >
-                      <path d="M5.9 11.4L.5 6l1.4-1.4 4 4 4-4L11.3 6z" />
-                    </svg>
-                  </div>
-                </div>
-              </a>
-              <div class="lg:hidden lg:sidebar-expanded:block 2xl:block">
-                <ul class="pl-9 mt-1" :class="!parentLink.expanded && 'hidden'">
-                  <router-link
-                    to="/explore/department/provide/working/plan"
-                    custom
-                    v-slot="{ href, navigate, isExactActive }"
-                  >
-                    <li class="mb-1 last:mb-0">
-                      <a
-                        class="block transition duration-150 truncate"
-                        :class="
-                          isExactActive
-                            ? 'text-[#36d887]'
-                            : 'text-slate-400 hover:text-slate-200'
-                        "
-                        :href="href"
-                        @click="navigate"
-                      >
-                        <span
-                          class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
-                          >Reja iqtisod</span
-                        >
-                      </a>
-                    </li>
-                  </router-link>
-                </ul>
-              </div>
-            </SidebarLinkGroup>
-          </ul>
-          <ul v-if="role === 7 || role === 1000" class="mt-3">
-            <!-- Kadrlar  -->
-            <SidebarLinkGroup
-              v-slot="parentLink"
-              :activeCondition="currentRoute.fullPath.includes('ecommerce')"
-            >
-              <a
-                class="block text-slate-200 truncate transition duration-150"
-                :class="
-                  currentRoute.fullPath.includes('ecommerce')
-                    ? 'hover:text-slate-200'
-                    : 'hover:text-white'
-                "
-                href="#0"
-                @click.prevent="
-                  sidebarExpanded
-                    ? parentLink.handleClick()
-                    : (sidebarExpanded = true)
-                "
-              >
-                <div class="flex items-center justify-between">
-                  <div class="flex items-center">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="25"
-                      height="25"
-                      viewBox="0 0 26 26"
-                    >
-                      <path
-                        fill="#24a8e5"
-                        d="M16.563 15.9c-.159-.052-1.164-.505-.536-2.414h-.009c1.637-1.686 2.888-4.399 2.888-7.07c0-4.107-2.731-6.26-5.905-6.26c-3.176 0-5.892 2.152-5.892 6.26c0 2.682 1.244 5.406 2.891 7.088c.642 1.684-.506 2.309-.746 2.396c-3.324 1.203-7.224 3.394-7.224 5.557v.811c0 2.947 5.714 3.617 11.002 3.617c5.296 0 10.938-.67 10.938-3.617v-.811c0-2.228-3.919-4.402-7.407-5.557m-5.516 8.709c0-2.549 1.623-5.99 1.623-5.99l-1.123-.881c0-.842 1.453-1.723 1.453-1.723s1.449.895 1.449 1.723l-1.119.881s1.623 3.428 1.623 6.018c0 .406-3.906.312-3.906-.028"
-                      />
-                    </svg>
-                    <span
-                      class="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
-                      >Kadrlar
-                    </span>
-                  </div>
-                  <!-- Icon -->
-                  <div class="flex shrink-0 ml-2">
-                    <svg
-                      class="w-3 h-3 shrink-0 ml-1 fill-current text-slate-400"
-                      :class="parentLink.expanded && 'rotate-180'"
-                      viewBox="0 0 12 12"
-                    >
-                      <path d="M5.9 11.4L.5 6l1.4-1.4 4 4 4-4L11.3 6z" />
-                    </svg>
-                  </div>
-                </div>
-              </a>
-              <div class="lg:hidden lg:sidebar-expanded:block 2xl:block">
-                <ul class="pl-9 mt-1" :class="!parentLink.expanded && 'hidden'">
-                  <router-link
-                    :to="{ name: 'HRAppeals' }"
-                    custom
-                    v-slot="{ href, navigate, isExactActive }"
-                  >
-                    <li class="mb-1 last:mb-0">
-                      <a
-                        class="block transition duration-150 truncate"
-                        :class="
-                          isExactActive
-                            ? 'text-[#36d887]'
-                            : 'text-slate-400 hover:text-slate-200'
-                        "
-                        :href="href"
-                        @click="navigate"
-                      >
-                        <span
-                          class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
-                          >Murojaatlar</span
-                        >
-                      </a>
-                    </li>
-                  </router-link>
-                </ul>
-              </div>
-            </SidebarLinkGroup>
-          </ul>
-        </div>
-
-        <!-- Hisobotlar group-->
-        <div
-          v-if="
-            role === 1 ||
-            role === 2 ||
-            role === 1000 ||
-            role === 2 ||
-            role === 3 ||
-            role === 4 ||
-            role === 5 ||
-            role === 6
-          "
-        >
-          <h3 class="text-xs uppercase text-slate-500 font-semibold pl-3">
-            <span
-              class="hidden lg:block lg:sidebar-expanded:hidden 2xl:hidden text-center w-6"
-              aria-hidden="true"
-              >•••</span
-            >
-            <span class="lg:hidden lg:sidebar-expanded:block 2xl:block"
-              >Hisobotlar</span
-            >
-          </h3>
-          <ul class="mt-3">
-            <!-- Sklad hisoboti -->
-            <SidebarLinkGroup
-              v-slot="parentLink"
-              :activeCondition="currentRoute.fullPath.includes('ecommerce')"
-            >
-              <a
-                class="block text-slate-200 truncate transition duration-150"
-                :class="
-                  currentRoute.fullPath.includes('ecommerce')
-                    ? 'hover:text-slate-200'
-                    : 'hover:text-white'
-                "
-                href="#0"
-                @click.prevent="
-                  sidebarExpanded
-                    ? parentLink.handleClick()
-                    : (sidebarExpanded = true)
-                "
-              >
-                <div class="flex items-center justify-between">
-                  <div class="flex items-center">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                    >
-                      <ellipse cx="12" cy="5" fill="#24a8e5" rx="4" ry="4">
-                        <animate
-                          id="svgSpinnersBouncingBall0"
-                          fill="freeze"
-                          attributeName="cy"
-                          begin="0;svgSpinnersBouncingBall2.end"
-                          calcMode="spline"
-                          dur="0.375s"
-                          keySplines=".33,0,.66,.33"
-                          values="5;20"
-                        />
-                        <animate
-                          attributeName="rx"
-                          begin="svgSpinnersBouncingBall0.end"
-                          calcMode="spline"
-                          dur="0.05s"
-                          keySplines=".33,0,.66,.33;.33,.66,.66,1"
-                          values="4;4.8;4"
-                        />
-                        <animate
-                          attributeName="ry"
-                          begin="svgSpinnersBouncingBall0.end"
-                          calcMode="spline"
-                          dur="0.05s"
-                          keySplines=".33,0,.66,.33;.33,.66,.66,1"
-                          values="4;3;4"
-                        />
-                        <animate
-                          id="svgSpinnersBouncingBall1"
-                          attributeName="cy"
-                          begin="svgSpinnersBouncingBall0.end"
-                          calcMode="spline"
-                          dur="0.025s"
-                          keySplines=".33,0,.66,.33"
-                          values="20;20.5"
-                        />
-                        <animate
-                          id="svgSpinnersBouncingBall2"
-                          attributeName="cy"
-                          begin="svgSpinnersBouncingBall1.end"
-                          calcMode="spline"
-                          dur="0.4s"
-                          keySplines=".33,.66,.66,1"
-                          values="20.5;5"
-                        />
-                      </ellipse>
-                    </svg>
-                    <span
-                      class="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
-                    >
-                      Sklad hisoboti
-                    </span>
-                  </div>
-                  <!-- Icon -->
-                  <div class="flex shrink-0 ml-2">
-                    <svg
-                      class="w-3 h-3 shrink-0 ml-1 fill-current text-slate-400"
-                      :class="parentLink.expanded && 'rotate-180'"
-                      viewBox="0 0 12 12"
-                    >
-                      <path d="M5.9 11.4L.5 6l1.4-1.4 4 4 4-4L11.3 6z" />
-                    </svg>
-                  </div>
-                </div>
-              </a>
-              <div class="lg:hidden lg:sidebar-expanded:block 2xl:block">
-                <ul class="pl-9 mt-1" :class="!parentLink.expanded && 'hidden'">
-                  <router-link
-                    to="/explore/products/list"
-                    custom
-                    v-slot="{ href, navigate, isExactActive }"
-                  >
-                    <li class="mb-1 last:mb-0">
-                      <a
-                        class="block transition duration-150 truncate"
-                        :class="
-                          isExactActive
-                            ? 'text-[#36d887]'
-                            : 'text-slate-400 hover:text-slate-200'
-                        "
-                        :href="href"
-                        @click="navigate"
-                      >
-                        <span
-                          class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
-                          >Kirimlar ro'yxati</span
-                        >
-                      </a>
-                    </li>
-                  </router-link>
-                  <router-link
-                    to="/explore/products/lab"
-                    custom
-                    v-slot="{ href, navigate, isExactActive }"
-                  >
-                    <li class="mb-1 last:mb-0">
-                      <a
-                        class="block transition duration-150 truncate"
-                        :class="
-                          isExactActive
-                            ? 'text-[#36d887]'
-                            : 'text-slate-400 hover:text-slate-200'
-                        "
-                        :href="href"
-                        @click="navigate"
-                      >
-                        <span
-                          class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
-                          >Kirim jarayoni</span
-                        >
-                      </a>
-                    </li>
-                  </router-link>
-                </ul>
-              </div>
-            </SidebarLinkGroup>
-          </ul>
-        </div>
-        <!-- Settings group-->
+        <!-- Dashboard group -->
         <div v-if="role === 1000">
-          <h3 class="text-xs uppercase text-slate-500 font-semibold pl-3">
+          <h3
+            @click="is_dashboard = !is_dashboard"
+            class="text-xs uppercase text-white font-semibold ml-[-9px] mr-[-9px]"
+          >
             <span
               class="hidden lg:block lg:sidebar-expanded:hidden 2xl:hidden text-center w-6"
               aria-hidden="true"
               >•••</span
             >
-            <span class="lg:hidden lg:sidebar-expanded:block 2xl:block"
-              >Sozlamalar</span
+            <div
+              class="flex justify-between cursor-pointer bg-slate-600 p-2 rounded w-full"
             >
+              <span class="lg:hidden lg:sidebar-expanded:block 2xl:block"
+                >Dashboard
+              </span>
+              <i
+                v-if="is_dashboard === true"
+                class="fa-solid fa-angle-up fa-sm mt-2"
+              ></i>
+              <i
+                v-if="is_dashboard === false"
+                class="fa-solid fa-angle-down fa-sm mt-2"
+              ></i>
+            </div>
           </h3>
-          <ul class="mt-3">
-            <!-- Admin  -->
-            <SidebarLinkGroup
-              v-slot="parentLink"
-              :activeCondition="currentRoute.fullPath.includes('ecommerce')"
-            >
-              <a
-                class="block text-slate-200 truncate transition duration-150"
-                :class="
-                  currentRoute.fullPath.includes('ecommerce')
-                    ? 'hover:text-slate-200'
-                    : 'hover:text-white'
-                "
-                href="#0"
-                @click.prevent="
-                  sidebarExpanded
-                    ? parentLink.handleClick()
-                    : (sidebarExpanded = true)
-                "
-              >
-                <div class="flex items-center justify-between">
-                  <div class="flex items-center">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="28"
-                      height="28"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        fill="#24a8e5"
-                        d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12c5.16-1.26 9-6.45 9-12V5Zm0 3.9a3 3 0 1 1-3 3a3 3 0 0 1 3-3m0 7.9c2 0 6 1.09 6 3.08a7.2 7.2 0 0 1-12 0c0-1.99 4-3.08 6-3.08"
-                      />
-                    </svg>
-                    <span
-                      class="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
-                      >Admin
-                    </span>
-                  </div>
-                  <!-- Icon -->
-                  <div class="flex shrink-0 ml-2">
-                    <svg
-                      class="w-3 h-3 shrink-0 ml-1 fill-current text-slate-400"
-                      :class="parentLink.expanded && 'rotate-180'"
-                      viewBox="0 0 12 12"
-                    >
-                      <path d="M5.9 11.4L.5 6l1.4-1.4 4 4 4-4L11.3 6z" />
-                    </svg>
-                  </div>
-                </div>
-              </a>
-              <div class="lg:hidden lg:sidebar-expanded:block 2xl:block">
-                <ul class="pl-9 mt-1" :class="!parentLink.expanded && 'hidden'">
-                  <router-link
-                    to="/explore/admin/users"
-                    custom
-                    v-slot="{ href, navigate, isExactActive }"
-                  >
-                    <li class="mb-1 last:mb-0">
-                      <a
-                        class="block transition duration-150 truncate"
-                        :class="
-                          isExactActive
-                            ? 'text-[#36d887]'
-                            : 'text-slate-400 hover:text-slate-200'
-                        "
-                        :href="href"
-                        @click="navigate"
-                      >
-                        <span
-                          class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
-                          >Foydalanuvchilar</span
-                        >
-                      </a>
-                    </li>
-                  </router-link>
-                </ul>
-
-                <ul class="pl-9 mt-1" :class="!parentLink.expanded && 'hidden'">
-                  <router-link
-                    to="/explore/admin/role"
-                    custom
-                    v-slot="{ href, navigate, isExactActive }"
-                  >
-                    <li class="mb-1 last:mb-0">
-                      <a
-                        class="block transition duration-150 truncate"
-                        :class="
-                          isExactActive
-                            ? 'text-[#36d887]'
-                            : 'text-slate-400 hover:text-slate-200'
-                        "
-                        :href="href"
-                        @click="navigate"
-                      >
-                        <span
-                          class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
-                          >Role</span
-                        >
-                      </a>
-                    </li>
-                  </router-link>
-                </ul>
-              </div>
-            </SidebarLinkGroup>
-          </ul>
-        </div>
-        <!-- More group -->
-        <div
-          v-if="
-            role === 1 ||
-            role === 2 ||
-            role === 1000 ||
-            role === 2 ||
-            role === 3 ||
-            role === 4 ||
-            role === 5 ||
-            role === 6
-          "
-        >
-          <h3 class="text-xs uppercase text-slate-500 font-semibold pl-3">
-            <span
-              class="hidden lg:block lg:sidebar-expanded:hidden 2xl:hidden text-center w-6"
-              aria-hidden="true"
-              >•••</span
-            >
-            <span class="lg:hidden lg:sidebar-expanded:block 2xl:block"
-              >Ko'proq</span
-            >
-          </h3>
-          <ul class="mt-3">
-            <!-- Authentication  -->
-            <SidebarLinkGroup v-slot="parentLink">
-              <a
-                class="block text-slate-200 truncate transition duration-150"
-                :class="
-                  parentLink.expanded
-                    ? 'hover:text-slate-200'
-                    : 'hover:text-white'
-                "
-                href="#0"
-                @click.prevent="
-                  sidebarExpanded
-                    ? parentLink.handleClick()
-                    : (sidebarExpanded = true)
-                "
-              >
-                <div class="flex items-center justify-between">
-                  <div class="flex items-center">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="25"
-                      height="25"
-                      viewBox="0 0 32 32"
-                    >
-                      <path
-                        fill="#24a8e5"
-                        d="m11 23.18l-2-2.001l-1.411 1.41L11 26l6-6l-1.41-1.41zM28 30h-4v-2h4V16h-4V8a4.005 4.005 0 0 0-4-4V2a6.007 6.007 0 0 1 6 6v6h2a2.002 2.002 0 0 1 2 2v12a2.002 2.002 0 0 1-2 2"
-                      />
-                      <path
-                        fill="#24a8e5"
-                        d="M20 14h-2V8A6 6 0 0 0 6 8v6H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V16a2 2 0 0 0-2-2M8 8a4 4 0 0 1 8 0v6H8Zm12 20H4V16h16Z"
-                      />
-                    </svg>
-                    <span
-                      class="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
-                      >Authentication</span
-                    >
-                  </div>
-                  <!-- Icon -->
-                  <div class="flex shrink-0 ml-2">
-                    <svg
-                      class="w-3 h-3 shrink-0 ml-1 fill-current text-slate-400"
-                      :class="parentLink.expanded && 'rotate-180'"
-                      viewBox="0 0 12 12"
-                    >
-                      <path d="M5.9 11.4L.5 6l1.4-1.4 4 4 4-4L11.3 6z" />
-                    </svg>
-                  </div>
-                </div>
-              </a>
-              <div class="lg:hidden lg:sidebar-expanded:block 2xl:block">
-                <ul class="pl-9 mt-1" :class="!parentLink.expanded && 'hidden'">
-                  <router-link to="/signin" custom v-slot="{ href, navigate }">
-                    <li class="mb-1 last:mb-0">
-                      <a
-                        class="block text-slate-400 hover:text-slate-200 transition duration-150 truncate"
-                        :href="href"
-                        @click="navigate"
-                      >
-                        <span
-                          class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
-                          >Sign in</span
-                        >
-                      </a>
-                    </li>
-                  </router-link>
-                  <router-link to="/signup" custom v-slot="{ href, navigate }">
-                    <li class="mb-1 last:mb-0">
-                      <a
-                        class="block text-slate-400 hover:text-slate-200 transition duration-150 truncate"
-                        :href="href"
-                        @click="navigate"
-                      >
-                        <span
-                          class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
-                          >Sign up</span
-                        >
-                      </a>
-                    </li>
-                  </router-link>
-                  <router-link
-                    to="/reset-password"
-                    custom
-                    v-slot="{ href, navigate }"
-                  >
-                    <li class="mb-1 last:mb-0">
-                      <a
-                        class="block text-slate-400 hover:text-slate-200 transition duration-150 truncate"
-                        :href="href"
-                        @click="navigate"
-                      >
-                        <span
-                          class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
-                          >Reset Password</span
-                        >
-                      </a>
-                    </li>
-                  </router-link>
-                </ul>
-              </div>
-            </SidebarLinkGroup>
-
-            <!-- Messages -->
-            <router-link
-              to="/messages"
-              custom
-              v-slot="{ href, navigate, isExactActive }"
-            >
-              <li
-                class="px-3 py-2 rounded-sm mb-0.5 last:mb-0"
-                :class="isExactActive && 'bg-slate-900'"
+          <div v-if="is_dashboard === true">
+            <!-- Dashboard statistik -->
+            <ul v-if="role === 1000" class="mt-3">
+              <SidebarLinkGroup
+                v-slot="parentLink"
+                :activeCondition="currentRoute.fullPath.includes('ecommerce')"
               >
                 <a
                   class="block text-slate-200 truncate transition duration-150"
                   :class="
-                    isExactActive ? 'hover:text-slate-200' : 'hover:text-white'
+                    currentRoute.fullPath.includes('ecommerce')
+                      ? 'hover:text-slate-200'
+                      : 'hover:text-white'
                   "
-                  :href="href"
-                  @click="navigate"
+                  href="#0"
+                  @click.prevent="
+                    sidebarExpanded
+                      ? parentLink.handleClick()
+                      : (sidebarExpanded = true)
+                  "
                 >
                   <div class="flex items-center justify-between">
-                    <div class="grow flex items-center">
+                    <div class="flex items-center">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
-                        width="27"
-                        height="27"
-                        viewBox="0 0 24 24"
+                        width="25"
+                        height="25"
+                        viewBox="0 0 36 36"
                       >
                         <path
                           fill="#24a8e5"
-                          fill-rule="evenodd"
-                          d="M3 5.983C3 4.888 3.895 4 5 4h14c1.105 0 2 .888 2 1.983v8.923a1.992 1.992 0 0 1-2 1.983h-6.6l-2.867 2.7c-.955.899-2.533.228-2.533-1.08v-1.62H5c-1.105 0-2-.888-2-1.983zm5.706 3.809a1 1 0 1 0-1.412 1.417a1 1 0 1 0 1.412-1.417m2.585.002a1 1 0 1 1 .003 1.414a1 1 0 0 1-.003-1.414m5.415-.002a1 1 0 1 0-1.412 1.417a1 1 0 1 0 1.412-1.417"
-                          clip-rule="evenodd"
+                          d="M29.43 26.34A1.47 1.47 0 0 1 28 25.22l-3.14-12.07l-3.12 12.07a1.49 1.49 0 0 1-1.45 1.12a1.49 1.49 0 0 1-1.46-1.12l-3.12-12.07l-3.11 12.07a1.51 1.51 0 0 1-2.91 0L6.57 13.15l-1.35 5.22H2a1 1 0 0 1 0-2h1.67l1.45-5.59a1.48 1.48 0 0 1 1.45-1.12A1.47 1.47 0 0 1 8 10.78l3.12 12.07l3.12-12.07a1.49 1.49 0 0 1 1.45-1.12a1.49 1.49 0 0 1 1.46 1.12l3.12 12.07l3.12-12.07a1.5 1.5 0 0 1 2.9 0l3.12 12.07l1.35-5.22H34a1 1 0 0 1 0 2h-1.67l-1.45 5.59a1.48 1.48 0 0 1-1.45 1.12"
+                          class="clr-i-outline clr-i-outline-path-1"
+                        />
+                        <path fill="none" d="M0 0h36v36H0z" />
+                      </svg>
+                      <span
+                        class="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                        >Statistika
+                      </span>
+                    </div>
+                    <div class="flex shrink-0 ml-2">
+                      <svg
+                        class="w-3 h-3 shrink-0 ml-1 fill-current text-slate-400"
+                        :class="parentLink.expanded && 'rotate-180'"
+                        viewBox="0 0 12 12"
+                      >
+                        <path d="M5.9 11.4L.5 6l1.4-1.4 4 4 4-4L11.3 6z" />
+                      </svg>
+                    </div>
+                  </div>
+                </a>
+                <div class="lg:hidden lg:sidebar-expanded:block 2xl:block">
+                  <ul
+                    class="pl-9 mt-1 ml-2"
+                    :class="!parentLink.expanded && 'hidden'"
+                  >
+                    <router-link
+                      :to="{name : 'StatisticSale'}"
+                      custom
+                      v-slot="{ href, navigate, isExactActive }"
+                    >
+                      <li class="mb-1 last:mb-0 text-[13px]">
+                        <a
+                          class="block transition duration-150 truncate"
+                          :class="
+                            isExactActive
+                              ? 'text-[#36d887]'
+                              : 'text-slate-400 hover:text-slate-200'
+                          "
+                          :href="href"
+                          @click="navigate"
+                        >
+                          <span
+                            class="font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                            >Sotuv statistikasi</span
+                          >
+                        </a>
+                      </li>
+                    </router-link>
+                    <router-link
+                      to="856"
+                      custom
+                      v-slot="{ href, navigate, isExactActive }"
+                    >
+                      <li class="mb-1 last:mb-0 text-[13px]">
+                        <a
+                          class="block transition duration-150 truncate"
+                          :class="
+                            isExactActive
+                              ? 'text-[#36d887]'
+                              : 'text-slate-400 hover:text-slate-200'
+                          "
+                          :href="href"
+                          @click="navigate"
+                        >
+                          <span
+                            class="font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                            >Ombor zaxirasi, xarajatlar va foyda</span
+                          >
+                        </a>
+                      </li>
+                    </router-link>
+                    <router-link
+                      to="8552"
+                      custom
+                      v-slot="{ href, navigate, isExactActive }"
+                    >
+                      <li class="mb-1 last:mb-0 text-[13px]">
+                        <a
+                          class="block transition duration-150 truncate"
+                          :class="
+                            isExactActive
+                              ? 'text-[#36d887]'
+                              : 'text-slate-400 hover:text-slate-200'
+                          "
+                          :href="href"
+                          @click="navigate"
+                        >
+                          <span
+                            class="font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                            >Ishlab chiqarilgan suv hajmi (kunlik, oylik)</span
+                          >
+                        </a>
+                      </li>
+                    </router-link>
+                    <router-link
+                      to="5693"
+                      custom
+                      v-slot="{ href, navigate, isExactActive }"
+                    >
+                      <li class="mb-1 last:mb-0 text-[13px]">
+                        <a
+                          class="block transition duration-150 truncate"
+                          :class="
+                            isExactActive
+                              ? 'text-[#36d887]'
+                              : 'text-slate-400 hover:text-slate-200'
+                          "
+                          :href="href"
+                          @click="navigate"
+                        >
+                          <span
+                            class="font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                            >Ishchilar samaradorligi</span
+                          >
+                        </a>
+                      </li>
+                    </router-link>
+                  </ul>
+                </div>
+              </SidebarLinkGroup>
+            </ul>
+          </div>
+        </div>
+        <!-- Ishlab chiqarish group -->
+        <div v-if="role === 1000">
+          <h3
+            @click="is_production = !is_production"
+            class="text-xs uppercase text-white font-semibold ml-[-9px] mr-[-9px]"
+          >
+            <span
+              class="hidden lg:block lg:sidebar-expanded:hidden 2xl:hidden text-center w-6"
+              aria-hidden="true"
+              >•••</span
+            >
+            <div
+              class="flex justify-between cursor-pointer bg-slate-600 p-2 rounded w-full"
+            >
+              <span class="lg:hidden lg:sidebar-expanded:block 2xl:block"
+                >Ishlab chiqarish
+              </span>
+              <i
+                v-if="is_production === true"
+                class="fa-solid fa-angle-up fa-sm mt-2"
+              ></i>
+              <i
+                v-if="is_production === false"
+                class="fa-solid fa-angle-down fa-sm mt-2"
+              ></i>
+            </div>
+          </h3>
+          <div v-if="is_production === true">
+            <!-- //suv tozalash// -->
+            <ul v-if="role === 1000" class="mt-3">
+              <SidebarLinkGroup
+                v-slot="parentLink"
+                :activeCondition="currentRoute.fullPath.includes('ecommerce')"
+              >
+                <a
+                  class="block text-slate-200 truncate transition duration-150"
+                  :class="
+                    currentRoute.fullPath.includes('ecommerce')
+                      ? 'hover:text-slate-200'
+                      : 'hover:text-white'
+                  "
+                  href="#0"
+                  @click.prevent="
+                    sidebarExpanded
+                      ? parentLink.handleClick()
+                      : (sidebarExpanded = true)
+                  "
+                >
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="25"
+                        height="25"
+                        viewBox="0 0 36 36"
+                      >
+                        <path
+                          fill="#24a8e5"
+                          d="M34 30H2a1 1 0 0 0 0 2h32a1 1 0 0 0 0-2"
+                          class="clr-i-outline clr-i-outline-path-1"
+                        />
+                        <path
+                          fill="#24a8e5"
+                          d="M16 5a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1v23h10Zm-2 21H8V6h6Z"
+                          class="clr-i-outline clr-i-outline-path-2"
+                        />
+                        <path
+                          fill="#24a8e5"
+                          d="M30 13a1 1 0 0 0-1-1h-8a1 1 0 0 0-1 1v15h10Zm-2 13h-6V14h6Z"
+                          class="clr-i-outline clr-i-outline-path-3"
+                        />
+                        <path fill="none" d="M0 0h36v36H0z" />
+                      </svg>
+                      <span
+                        class="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                        >Suv tozalash
+                      </span>
+                    </div>
+                    <div class="flex shrink-0 ml-2">
+                      <svg
+                        class="w-3 h-3 shrink-0 ml-1 fill-current text-slate-400"
+                        :class="parentLink.expanded && 'rotate-180'"
+                        viewBox="0 0 12 12"
+                      >
+                        <path d="M5.9 11.4L.5 6l1.4-1.4 4 4 4-4L11.3 6z" />
+                      </svg>
+                    </div>
+                  </div>
+                </a>
+                <div class="lg:hidden lg:sidebar-expanded:block 2xl:block">
+                  <ul
+                    class="pl-9 mt-1 ml-2"
+                    :class="!parentLink.expanded && 'hidden'"
+                  >
+                    <router-link
+                      :to="{ name: 'Employees' }"
+                      custom
+                      v-slot="{ href, navigate, isExactActive }"
+                    >
+                      <li class="mb-1 last:mb-0 text-[13px]">
+                        <a
+                          class="block transition duration-150 truncate"
+                          :class="
+                            isExactActive
+                              ? 'text-[#36d887]'
+                              : 'text-slate-400 hover:text-slate-200'
+                          "
+                          :href="href"
+                          @click="navigate"
+                        >
+                          <span
+                            class="font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                            >Xodimlar</span
+                          >
+                        </a>
+                      </li>
+                    </router-link>
+                  </ul>
+                </div>
+              </SidebarLinkGroup>
+            </ul>
+            <!-- // idish to‘ldirish// -->
+            <ul v-if="role === 1000" class="mt-3">
+              <SidebarLinkGroup
+                v-slot="parentLink"
+                :activeCondition="currentRoute.fullPath.includes('ecommerce')"
+              >
+                <a
+                  class="block text-slate-200 truncate transition duration-150"
+                  :class="
+                    currentRoute.fullPath.includes('ecommerce')
+                      ? 'hover:text-slate-200'
+                      : 'hover:text-white'
+                  "
+                  href="#0"
+                  @click.prevent="
+                    sidebarExpanded
+                      ? parentLink.handleClick()
+                      : (sidebarExpanded = true)
+                  "
+                >
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="25"
+                        height="25"
+                        viewBox="0 0 36 36"
+                      >
+                        <path
+                          fill="#24a8e5"
+                          d="M18.42 16.31a5.7 5.7 0 1 1 5.76-5.7a5.74 5.74 0 0 1-5.76 5.7m0-9.4a3.7 3.7 0 1 0 3.76 3.7a3.74 3.74 0 0 0-3.76-3.7"
+                        />
+                        <path
+                          fill="#24a8e5"
+                          d="M18.42 16.31a5.7 5.7 0 1 1 5.76-5.7a5.74 5.74 0 0 1-5.76 5.7m0-9.4a3.7 3.7 0 1 0 3.76 3.7a3.74 3.74 0 0 0-3.76-3.7m3.49 10.74a20.6 20.6 0 0 0-13 2a1.77 1.77 0 0 0-.91 1.6v3.56a1 1 0 0 0 2 0v-3.43a18.92 18.92 0 0 1 12-1.68Z"
+                        />
+                        <path
+                          fill="#24a8e5"
+                          d="M33 22h-6.7v-1.48a1 1 0 0 0-2 0V22H17a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1V23a1 1 0 0 0-1-1m-1 10H18v-8h6.3v.41a1 1 0 0 0 2 0V24H32Z"
+                        />
+                        <path
+                          fill="#24a8e5"
+                          d="M21.81 27.42h5.96v1.4h-5.96zM10.84 12.24a18 18 0 0 0-7.95 2A1.67 1.67 0 0 0 2 15.71v3.1a1 1 0 0 0 2 0v-2.9a16 16 0 0 1 7.58-1.67a7.28 7.28 0 0 1-.74-2m22.27 1.99a17.8 17.8 0 0 0-7.12-2a7.46 7.46 0 0 1-.73 2A15.89 15.89 0 0 1 32 15.91v2.9a1 1 0 1 0 2 0v-3.1a1.67 1.67 0 0 0-.89-1.48m-22.45-3.62v-.67a3.07 3.07 0 0 1 .54-6.11a3.15 3.15 0 0 1 2.2.89a8.16 8.16 0 0 1 1.7-1.08a5.13 5.13 0 0 0-9 3.27a5.1 5.1 0 0 0 4.7 5a7.42 7.42 0 0 1-.14-1.3m14.11-8.78a5.17 5.17 0 0 0-3.69 1.55a7.87 7.87 0 0 1 1.9 1a3.14 3.14 0 0 1 4.93 2.52a3.09 3.09 0 0 1-1.79 2.77a7.14 7.14 0 0 1 .06.93a7.88 7.88 0 0 1-.1 1.2a5.1 5.1 0 0 0 3.83-4.9a5.12 5.12 0 0 0-5.14-5.07"
                         />
                       </svg>
                       <span
                         class="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
-                        >Messages</span
                       >
+                        Idish to'ldirish
+                      </span>
                     </div>
-                    <!-- Badge -->
-                    <div class="flex flex-shrink-0 ml-2">
-                      <span
-                        class="inline-flex items-center justify-center h-5 text-xs font-medium text-white bg-[#36d887] px-2 rounded"
-                        >4</span
+                    <div class="flex shrink-0 ml-2">
+                      <svg
+                        class="w-3 h-3 shrink-0 ml-1 fill-current text-slate-400"
+                        :class="parentLink.expanded && 'rotate-180'"
+                        viewBox="0 0 12 12"
                       >
+                        <path d="M5.9 11.4L.5 6l1.4-1.4 4 4 4-4L11.3 6z" />
+                      </svg>
                     </div>
                   </div>
                 </a>
-              </li>
-            </router-link>
-          </ul>
+                <div class="lg:hidden lg:sidebar-expanded:block 2xl:block">
+                  <ul
+                    class="pl-9 mt-1 ml-2"
+                    :class="!parentLink.expanded && 'hidden'"
+                  >
+                    <router-link
+                      :to="{ name: 'Employees' }"
+                      custom
+                      v-slot="{ href, navigate, isExactActive }"
+                    >
+                      <li class="mb-1 last:mb-0 text-[13px]">
+                        <a
+                          class="block transition duration-150 truncate"
+                          :class="
+                            isExactActive
+                              ? 'text-[#36d887]'
+                              : 'text-slate-400 hover:text-slate-200'
+                          "
+                          :href="href"
+                          @click="navigate"
+                        >
+                          <span
+                            class="font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                            >Xodimlar</span
+                          >
+                        </a>
+                      </li>
+                    </router-link>
+                  </ul>
+                </div>
+              </SidebarLinkGroup>
+            </ul>
+            <!-- qadoqlash  -->
+            <ul v-if="role === 1000" class="mt-3">
+              <SidebarLinkGroup
+                v-slot="parentLink"
+                :activeCondition="currentRoute.fullPath.includes('ecommerce')"
+              >
+                <a
+                  class="block text-slate-200 truncate transition duration-150"
+                  :class="
+                    currentRoute.fullPath.includes('ecommerce')
+                      ? 'hover:text-slate-200'
+                      : 'hover:text-white'
+                  "
+                  href="#0"
+                  @click.prevent="
+                    sidebarExpanded
+                      ? parentLink.handleClick()
+                      : (sidebarExpanded = true)
+                  "
+                >
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 32 32"
+                      >
+                        <path
+                          fill="#24a8e5"
+                          d="M30 6V4h-3V2h-2v2h-1c-1.103 0-2 .898-2 2v2c0 1.103.897 2 2 2h4v2h-6v2h3v2h2v-2h1c1.103 0 2-.897 2-2v-2c0-1.102-.897-2-2-2h-4V6zm-6 14v2h2.586L23 25.586l-2.292-2.293a1 1 0 0 0-.706-.293H20a.997.997 0 0 0-.706.293L14 28.586L15.414 30l4.587-4.586l2.292 2.293a1 1 0 0 0 1.414 0L28 23.414V26h2v-6zM4 30H2v-5c0-3.86 3.14-7 7-7h6c1.989 0 3.89.85 5.217 2.333l-1.49 1.334A5.008 5.008 0 0 0 15 20H9c-2.757 0-5 2.243-5 5zm8-14a7 7 0 1 0 0-14a7 7 0 0 0 0 14m0-12a5 5 0 1 1 0 10a5 5 0 0 1 0-10"
+                        />
+                      </svg>
+                      <spttan
+                        class="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                        >Qadoqlash
+                      </spttan>
+                    </div>
+                    <!-- Icon -->
+                    <div class="flex shrink-0 ml-2">
+                      <svg
+                        class="w-3 h-3 shrink-0 ml-1 fill-current text-slate-400"
+                        :class="parentLink.expanded && 'rotate-180'"
+                        viewBox="0 0 12 12"
+                      >
+                        <path d="M5.9 11.4L.5 6l1.4-1.4 4 4 4-4L11.3 6z" />
+                      </svg>
+                    </div>
+                  </div>
+                </a>
+                <div class="lg:hidden lg:sidebar-expanded:block 2xl:block">
+                  <ul
+                    class="pl-9 mt-1 ml-2"
+                    :class="!parentLink.expanded && 'hidden'"
+                  >
+                    <router-link
+                      :to="{ name: 'Orders' }"
+                      custom
+                      v-slot="{ href, navigate, isExactActive }"
+                    >
+                      <li class="mb-1 last:mb-0 text-[13px]">
+                        <a
+                          class="block transition duration-150 truncate"
+                          :class="
+                            isExactActive
+                              ? 'text-[#36d887]'
+                              : 'text-slate-400 hover:text-slate-200'
+                          "
+                          :href="href"
+                          @click="navigate"
+                        >
+                          <span
+                            class="font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                            >Buyurtalar</span
+                          >
+                        </a>
+                      </li>
+                    </router-link>
+                  </ul>
+                </div>
+              </SidebarLinkGroup>
+            </ul>
+            <!-- Sifat nazorati  -->
+            <ul v-if="role === 1000" class="mt-3">
+              <SidebarLinkGroup
+                v-slot="parentLink"
+                :activeCondition="currentRoute.fullPath.includes('ecommerce')"
+              >
+                <a
+                  class="block text-slate-200 truncate transition duration-150"
+                  :class="
+                    currentRoute.fullPath.includes('ecommerce')
+                      ? 'hover:text-slate-200'
+                      : 'hover:text-white'
+                  "
+                  href="#0"
+                  @click.prevent="
+                    sidebarExpanded
+                      ? parentLink.handleClick()
+                      : (sidebarExpanded = true)
+                  "
+                >
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 32 32"
+                      >
+                        <path
+                          fill="#24a8e5"
+                          d="M30 6V4h-3V2h-2v2h-1c-1.103 0-2 .898-2 2v2c0 1.103.897 2 2 2h4v2h-6v2h3v2h2v-2h1c1.103 0 2-.897 2-2v-2c0-1.102-.897-2-2-2h-4V6zm-6 14v2h2.586L23 25.586l-2.292-2.293a1 1 0 0 0-.706-.293H20a.997.997 0 0 0-.706.293L14 28.586L15.414 30l4.587-4.586l2.292 2.293a1 1 0 0 0 1.414 0L28 23.414V26h2v-6zM4 30H2v-5c0-3.86 3.14-7 7-7h6c1.989 0 3.89.85 5.217 2.333l-1.49 1.334A5.008 5.008 0 0 0 15 20H9c-2.757 0-5 2.243-5 5zm8-14a7 7 0 1 0 0-14a7 7 0 0 0 0 14m0-12a5 5 0 1 1 0 10a5 5 0 0 1 0-10"
+                        />
+                      </svg>
+                      <spttan
+                        class="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                        >Sifat nazorati
+                      </spttan>
+                    </div>
+                    <!-- Icon -->
+                    <div class="flex shrink-0 ml-2">
+                      <svg
+                        class="w-3 h-3 shrink-0 ml-1 fill-current text-slate-400"
+                        :class="parentLink.expanded && 'rotate-180'"
+                        viewBox="0 0 12 12"
+                      >
+                        <path d="M5.9 11.4L.5 6l1.4-1.4 4 4 4-4L11.3 6z" />
+                      </svg>
+                    </div>
+                  </div>
+                </a>
+                <div class="lg:hidden lg:sidebar-expanded:block 2xl:block">
+                  <ul
+                    class="pl-9 mt-1 ml-2"
+                    :class="!parentLink.expanded && 'hidden'"
+                  >
+                    <router-link
+                      :to="{ name: 'Orders' }"
+                      custom
+                      v-slot="{ href, navigate, isExactActive }"
+                    >
+                      <li class="mb-1 last:mb-0 text-[13px]">
+                        <a
+                          class="block transition duration-150 truncate"
+                          :class="
+                            isExactActive
+                              ? 'text-[#36d887]'
+                              : 'text-slate-400 hover:text-slate-200'
+                          "
+                          :href="href"
+                          @click="navigate"
+                        >
+                          <span
+                            class="font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                            >Laboratoriya natijalari</span
+                          >
+                        </a>
+                      </li>
+                      <li class="mb-1 last:mb-0 text-[13px]">
+                        <a
+                          class="block transition duration-150 truncate"
+                          :class="
+                            isExactActive
+                              ? 'text-[#36d887]'
+                              : 'text-slate-400 hover:text-slate-200'
+                          "
+                          :href="href"
+                          @click="navigate"
+                        >
+                          <span
+                            class="font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                            >Qayta ishlashga yuborilganlari</span
+                          >
+                        </a>
+                      </li>
+                      <li class="mb-1 last:mb-0 text-[13px]">
+                        <a
+                          class="block transition duration-150 truncate"
+                          :class="
+                            isExactActive
+                              ? 'text-[#36d887]'
+                              : 'text-slate-400 hover:text-slate-200'
+                          "
+                          :href="href"
+                          @click="navigate"
+                        >
+                          <span
+                            class="font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                            >Rad etilgan partiyalar statistikasi</span
+                          >
+                        </a>
+                      </li>
+                    </router-link>
+                  </ul>
+                </div>
+              </SidebarLinkGroup>
+            </ul>
+            <!-- xom ashyo  ombori  -->
+            <ul v-if="role === 1000" class="mt-3">
+              <SidebarLinkGroup
+                v-slot="parentLink"
+                :activeCondition="currentRoute.fullPath.includes('ecommerce')"
+              >
+                <a
+                  class="block text-slate-200 truncate transition duration-150"
+                  :class="
+                    currentRoute.fullPath.includes('ecommerce')
+                      ? 'hover:text-slate-200'
+                      : 'hover:text-white'
+                  "
+                  href="#0"
+                  @click.prevent="
+                    sidebarExpanded
+                      ? parentLink.handleClick()
+                      : (sidebarExpanded = true)
+                  "
+                >
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 32 32"
+                      >
+                        <path
+                          fill="#24a8e5"
+                          d="M30 30h-2v-5a5.006 5.006 0 0 0-5-5v-2a7.008 7.008 0 0 1 7 7zm-8 0h-2v-5a5.006 5.006 0 0 0-5-5H9a5.006 5.006 0 0 0-5 5v5H2v-5a7.008 7.008 0 0 1 7-7h6a7.008 7.008 0 0 1 7 7zM20 2v2a5 5 0 0 1 0 10v2a7 7 0 0 0 0-14m-8 2a5 5 0 1 1-5 5a5 5 0 0 1 5-5m0-2a7 7 0 1 0 7 7a7 7 0 0 0-7-7"
+                        />
+                      </svg>
+                      <span
+                        class="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                        >Ombor(xom ashyo)
+                      </span>
+                    </div>
+                    <!-- Icon -->
+                    <div class="flex shrink-0 ml-2">
+                      <svg
+                        class="w-3 h-3 shrink-0 ml-1 fill-current text-slate-400"
+                        :class="parentLink.expanded && 'rotate-180'"
+                        viewBox="0 0 12 12"
+                      >
+                        <path d="M5.9 11.4L.5 6l1.4-1.4 4 4 4-4L11.3 6z" />
+                      </svg>
+                    </div>
+                  </div>
+                </a>
+                <div class="lg:hidden lg:sidebar-expanded:block 2xl:block">
+                  <ul
+                    class="pl-9 mt-1 ml-2"
+                    :class="!parentLink.expanded && 'hidden'"
+                  >
+                    <router-link
+                      to="#"
+                      custom
+                      v-slot="{ href, navigate, isExactActive }"
+                    >
+                      <li class="mb-1 last:mb-0 text-[13px]">
+                        <a
+                          class="block transition duration-150 truncate"
+                          :class="
+                            isExactActive
+                              ? 'text-[#36d887]'
+                              : 'text-slate-400 hover:text-slate-200'
+                          "
+                          :href="href"
+                          @click="navigate"
+                        >
+                          <span
+                            class="font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                            >Mijozlar
+                          </span>
+                        </a>
+                      </li>
+                    </router-link>
+                  </ul>
+                </div>
+              </SidebarLinkGroup>
+            </ul>
+            <!-- Tayyor mahsulot ombori  -->
+            <ul v-if="role === 1000" class="mt-3">
+              <SidebarLinkGroup
+                v-slot="parentLink"
+                :activeCondition="currentRoute.fullPath.includes('ecommerce')"
+              >
+                <a
+                  class="block text-slate-200 truncate transition duration-150"
+                  :class="
+                    currentRoute.fullPath.includes('ecommerce')
+                      ? 'hover:text-slate-200'
+                      : 'hover:text-white'
+                  "
+                  href="#0"
+                  @click.prevent="
+                    sidebarExpanded
+                      ? parentLink.handleClick()
+                      : (sidebarExpanded = true)
+                  "
+                >
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 32 32"
+                      >
+                        <path
+                          fill="#24a8e5"
+                          d="M30 30h-2v-5a5.006 5.006 0 0 0-5-5v-2a7.008 7.008 0 0 1 7 7zm-8 0h-2v-5a5.006 5.006 0 0 0-5-5H9a5.006 5.006 0 0 0-5 5v5H2v-5a7.008 7.008 0 0 1 7-7h6a7.008 7.008 0 0 1 7 7zM20 2v2a5 5 0 0 1 0 10v2a7 7 0 0 0 0-14m-8 2a5 5 0 1 1-5 5a5 5 0 0 1 5-5m0-2a7 7 0 1 0 7 7a7 7 0 0 0-7-7"
+                        />
+                      </svg>
+                      <span
+                        class="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                        >Ombor(tayyor mahsulot)
+                      </span>
+                    </div>
+                    <!-- Icon -->
+                    <div class="flex shrink-0 ml-2">
+                      <svg
+                        class="w-3 h-3 shrink-0 ml-1 fill-current text-slate-400"
+                        :class="parentLink.expanded && 'rotate-180'"
+                        viewBox="0 0 12 12"
+                      >
+                        <path d="M5.9 11.4L.5 6l1.4-1.4 4 4 4-4L11.3 6z" />
+                      </svg>
+                    </div>
+                  </div>
+                </a>
+                <div class="lg:hidden lg:sidebar-expanded:block 2xl:block">
+                  <ul
+                    class="pl-9 mt-1 ml-2"
+                    :class="!parentLink.expanded && 'hidden'"
+                  >
+                    <router-link
+                      :to="{name:'ReadyWarehouse' }"
+                      custom
+                      v-slot="{ href, navigate, isExactActive }"
+                    >
+                      <li class="mb-1 last:mb-0 text-[13px]">
+                        <a
+                          class="block transition duration-150 truncate"
+                          :class="
+                            isExactActive
+                              ? 'text-[#36d887]'
+                              : 'text-slate-400 hover:text-slate-200'
+                          "
+                          :href="href"
+                          @click="navigate"
+                        >
+                          <span
+                            class="font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                            >Mijozlar</span
+                          >
+                        </a>
+                      </li>
+                    </router-link>
+                  </ul>
+                </div>
+              </SidebarLinkGroup>
+            </ul>
+          </div>
         </div>
-      </div>
-      <!-- Expand / collapse button -->
-      <div class="pt-3 hidden lg:inline-flex justify-end mt-auto">
-        <div class="px-3 py-2">
-          <button @click.prevent="sidebarExpanded = !sidebarExpanded">
-            <span class="sr-only">Expand / collapse sidebar</span>
-            <svg
-              class="w-6 h-6 fill-current sidebar-expanded:rotate-180"
-              viewBox="0 0 24 24"
+        <!-- Bo'limlar group -->
+        <div v-if="role === 1000">
+          <h3
+            @click="is_departments = !is_departments"
+            class="text-xs uppercase text-white font-semibold ml-[-9px] mr-[-9px]"
+          >
+            <span
+              class="hidden lg:block lg:sidebar-expanded:hidden 2xl:hidden text-center w-6"
+              aria-hidden="true"
+              >•••</span
             >
-              <path
-                class="text-slate-400"
-                d="M19.586 11l-5-5L16 4.586 23.414 12 16 19.414 14.586 18l5-5H7v-2z"
-              />
-              <path class="text-slate-600" d="M3 23H1V1h2z" />
-            </svg>
-          </button>
+            <div
+              class="flex justify-between cursor-pointer bg-slate-600 p-2 rounded w-full"
+            >
+              <span class="lg:hidden lg:sidebar-expanded:block 2xl:block"
+                >Bo'limlar
+              </span>
+              <i
+                v-if="is_departments === true"
+                class="fa-solid fa-angle-up fa-sm mt-2"
+              ></i>
+              <i
+                v-if="is_departments === false"
+                class="fa-solid fa-angle-down fa-sm mt-2"
+              ></i>
+            </div>
+          </h3>
+          <div v-if="is_departments === true">
+            <!-- //Accountant// -->
+            <ul v-if="role === 1000" class="mt-3">
+              <SidebarLinkGroup
+                v-slot="parentLink"
+                :activeCondition="currentRoute.fullPath.includes('ecommerce')"
+              >
+                <a
+                  class="block text-slate-200 truncate transition duration-150"
+                  :class="
+                    currentRoute.fullPath.includes('ecommerce')
+                      ? 'hover:text-slate-200'
+                      : 'hover:text-white'
+                  "
+                  href="#0"
+                  @click.prevent="
+                    sidebarExpanded
+                      ? parentLink.handleClick()
+                      : (sidebarExpanded = true)
+                  "
+                >
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 36 36"
+                      >
+                        <path
+                          fill="#24a8e5"
+                          d="M28 2H8a2 2 0 0 0-2 2v28a2 2 0 0 0 2 2h20a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2M8 32V4h20v28Z"
+                          class="clr-i-outline clr-i-outline-path-1"
+                        />
+                        <path
+                          fill="#24a8e5"
+                          d="M12 8h13.67V6H11a1 1 0 0 0-1 1v4.67h2Z"
+                          class="clr-i-outline clr-i-outline-path-2"
+                        />
+                        <path
+                          fill="#24a8e5"
+                          d="M12 16h-2v2h4v-4h-2z"
+                          class="clr-i-outline clr-i-outline-path-3"
+                        />
+                        <path
+                          fill="#24a8e5"
+                          d="M24 16h-2v2h4v-4h-2z"
+                          class="clr-i-outline clr-i-outline-path-4"
+                        />
+                        <path
+                          fill="#24a8e5"
+                          d="M18 16h-2v2h4v-4h-2z"
+                          class="clr-i-outline clr-i-outline-path-5"
+                        />
+                        <path
+                          fill="#24a8e5"
+                          d="M12 22h-2v2h4v-4h-2z"
+                          class="clr-i-outline clr-i-outline-path-6"
+                        />
+                        <path
+                          fill="#24a8e5"
+                          d="M24 22h-2v2h4v-4h-2z"
+                          class="clr-i-outline clr-i-outline-path-7"
+                        />
+                        <path
+                          fill="#24a8e5"
+                          d="M18 22h-2v2h4v-4h-2z"
+                          class="clr-i-outline clr-i-outline-path-8"
+                        />
+                        <path
+                          fill="#24a8e5"
+                          d="M12 28h-2v2h4v-4h-2z"
+                          class="clr-i-outline clr-i-outline-path-9"
+                        />
+                        <path
+                          fill="#24a8e5"
+                          d="M24 28h-2v2h4v-4h-2z"
+                          class="clr-i-outline clr-i-outline-path-10"
+                        />
+                        <path
+                          fill="#24a8e5"
+                          d="M18 28h-2v2h4v-4h-2z"
+                          class="clr-i-outline clr-i-outline-path-11"
+                        />
+                        <path fill="none" d="M0 0h36v36H0z" />
+                      </svg>
+                      <span
+                        class="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                        >Buhgalterya
+                      </span>
+                    </div>
+                    <div class="flex shrink-0 ml-2">
+                      <svg
+                        class="w-3 h-3 shrink-0 ml-1 fill-current text-slate-400"
+                        :class="parentLink.expanded && 'rotate-180'"
+                        viewBox="0 0 12 12"
+                      >
+                        <path d="M5.9 11.4L.5 6l1.4-1.4 4 4 4-4L11.3 6z" />
+                      </svg>
+                    </div>
+                  </div>
+                </a>
+                <div class="lg:hidden lg:sidebar-expanded:block 2xl:block">
+                  <ul
+                    class="pl-9 mt-1 ml-2"
+                    :class="!parentLink.expanded && 'hidden'"
+                  >
+                    <router-link
+                      :to="{ name: 'Employees' }"
+                      custom
+                      v-slot="{ href, navigate, isExactActive }"
+                    >
+                      <li class="mb-1 last:mb-0 text-[13px]">
+                        <a
+                          class="block transition duration-150 truncate"
+                          :class="
+                            isExactActive
+                              ? 'text-[#36d887]'
+                              : 'text-slate-400 hover:text-slate-200'
+                          "
+                          :href="href"
+                          @click="navigate"
+                        >
+                          <span
+                            class="font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                            >Xodimlar</span
+                          >
+                        </a>
+                      </li>
+                    </router-link>
+                  </ul>
+                </div>
+              </SidebarLinkGroup>
+            </ul>
+            <!-- //HR// -->
+            <ul v-if="role === 1000" class="mt-3">
+              <SidebarLinkGroup
+                v-slot="parentLink"
+                :activeCondition="currentRoute.fullPath.includes('ecommerce')"
+              >
+                <a
+                  class="block text-slate-200 truncate transition duration-150"
+                  :class="
+                    currentRoute.fullPath.includes('ecommerce')
+                      ? 'hover:text-slate-200'
+                      : 'hover:text-white'
+                  "
+                  href="#0"
+                  @click.prevent="
+                    sidebarExpanded
+                      ? parentLink.handleClick()
+                      : (sidebarExpanded = true)
+                  "
+                >
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="25"
+                        height="25"
+                        viewBox="0 0 36 36"
+                      >
+                        <path
+                          fill="#24a8e5"
+                          d="M18.42 16.31a5.7 5.7 0 1 1 5.76-5.7a5.74 5.74 0 0 1-5.76 5.7m0-9.4a3.7 3.7 0 1 0 3.76 3.7a3.74 3.74 0 0 0-3.76-3.7"
+                        />
+                        <path
+                          fill="#24a8e5"
+                          d="M18.42 16.31a5.7 5.7 0 1 1 5.76-5.7a5.74 5.74 0 0 1-5.76 5.7m0-9.4a3.7 3.7 0 1 0 3.76 3.7a3.74 3.74 0 0 0-3.76-3.7m3.49 10.74a20.6 20.6 0 0 0-13 2a1.77 1.77 0 0 0-.91 1.6v3.56a1 1 0 0 0 2 0v-3.43a18.92 18.92 0 0 1 12-1.68Z"
+                        />
+                        <path
+                          fill="#24a8e5"
+                          d="M33 22h-6.7v-1.48a1 1 0 0 0-2 0V22H17a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1V23a1 1 0 0 0-1-1m-1 10H18v-8h6.3v.41a1 1 0 0 0 2 0V24H32Z"
+                        />
+                        <path
+                          fill="#24a8e5"
+                          d="M21.81 27.42h5.96v1.4h-5.96zM10.84 12.24a18 18 0 0 0-7.95 2A1.67 1.67 0 0 0 2 15.71v3.1a1 1 0 0 0 2 0v-2.9a16 16 0 0 1 7.58-1.67a7.28 7.28 0 0 1-.74-2m22.27 1.99a17.8 17.8 0 0 0-7.12-2a7.46 7.46 0 0 1-.73 2A15.89 15.89 0 0 1 32 15.91v2.9a1 1 0 1 0 2 0v-3.1a1.67 1.67 0 0 0-.89-1.48m-22.45-3.62v-.67a3.07 3.07 0 0 1 .54-6.11a3.15 3.15 0 0 1 2.2.89a8.16 8.16 0 0 1 1.7-1.08a5.13 5.13 0 0 0-9 3.27a5.1 5.1 0 0 0 4.7 5a7.42 7.42 0 0 1-.14-1.3m14.11-8.78a5.17 5.17 0 0 0-3.69 1.55a7.87 7.87 0 0 1 1.9 1a3.14 3.14 0 0 1 4.93 2.52a3.09 3.09 0 0 1-1.79 2.77a7.14 7.14 0 0 1 .06.93a7.88 7.88 0 0 1-.1 1.2a5.1 5.1 0 0 0 3.83-4.9a5.12 5.12 0 0 0-5.14-5.07"
+                        />
+                      </svg>
+                      <span
+                        class="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                        >Kadrlar
+                      </span>
+                    </div>
+                    <div class="flex shrink-0 ml-2">
+                      <svg
+                        class="w-3 h-3 shrink-0 ml-1 fill-current text-slate-400"
+                        :class="parentLink.expanded && 'rotate-180'"
+                        viewBox="0 0 12 12"
+                      >
+                        <path d="M5.9 11.4L.5 6l1.4-1.4 4 4 4-4L11.3 6z" />
+                      </svg>
+                    </div>
+                  </div>
+                </a>
+                <div class="lg:hidden lg:sidebar-expanded:block 2xl:block">
+                  <ul
+                    class="pl-9 mt-1 ml-2"
+                    :class="!parentLink.expanded && 'hidden'"
+                  >
+                    <router-link
+                      :to="{ name: 'Employees' }"
+                      custom
+                      v-slot="{ href, navigate, isExactActive }"
+                    >
+                      <li class="mb-1 last:mb-0 text-[13px]">
+                        <a
+                          class="block transition duration-150 truncate"
+                          :class="
+                            isExactActive
+                              ? 'text-[#36d887]'
+                              : 'text-slate-400 hover:text-slate-200'
+                          "
+                          :href="href"
+                          @click="navigate"
+                        >
+                          <span
+                            class="font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                            >Xodimlar boshqaruvi</span
+                          >
+                        </a>
+                      </li>
+                    </router-link>
+                  </ul>
+                </div>
+              </SidebarLinkGroup>
+            </ul>
+            <!-- Sale  -->
+            <ul v-if="role === 1000" class="mt-3">
+              <SidebarLinkGroup
+                v-slot="parentLink"
+                :activeCondition="currentRoute.fullPath.includes('ecommerce')"
+              >
+                <a
+                  class="block text-slate-200 truncate transition duration-150"
+                  :class="
+                    currentRoute.fullPath.includes('ecommerce')
+                      ? 'hover:text-slate-200'
+                      : 'hover:text-white'
+                  "
+                  href="#0"
+                  @click.prevent="
+                    sidebarExpanded
+                      ? parentLink.handleClick()
+                      : (sidebarExpanded = true)
+                  "
+                >
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 32 32"
+                      >
+                        <path
+                          fill="#24a8e5"
+                          d="M30 6V4h-3V2h-2v2h-1c-1.103 0-2 .898-2 2v2c0 1.103.897 2 2 2h4v2h-6v2h3v2h2v-2h1c1.103 0 2-.897 2-2v-2c0-1.102-.897-2-2-2h-4V6zm-6 14v2h2.586L23 25.586l-2.292-2.293a1 1 0 0 0-.706-.293H20a.997.997 0 0 0-.706.293L14 28.586L15.414 30l4.587-4.586l2.292 2.293a1 1 0 0 0 1.414 0L28 23.414V26h2v-6zM4 30H2v-5c0-3.86 3.14-7 7-7h6c1.989 0 3.89.85 5.217 2.333l-1.49 1.334A5.008 5.008 0 0 0 15 20H9c-2.757 0-5 2.243-5 5zm8-14a7 7 0 1 0 0-14a7 7 0 0 0 0 14m0-12a5 5 0 1 1 0 10a5 5 0 0 1 0-10"
+                        />
+                      </svg>
+                      <spttan
+                        class="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                        >Sotuv
+                      </spttan>
+                    </div>
+                    <!-- Icon -->
+                    <div class="flex shrink-0 ml-2">
+                      <svg
+                        class="w-3 h-3 shrink-0 ml-1 fill-current text-slate-400"
+                        :class="parentLink.expanded && 'rotate-180'"
+                        viewBox="0 0 12 12"
+                      >
+                        <path d="M5.9 11.4L.5 6l1.4-1.4 4 4 4-4L11.3 6z" />
+                      </svg>
+                    </div>
+                  </div>
+                </a>
+                <div class="lg:hidden lg:sidebar-expanded:block 2xl:block">
+                  <ul
+                    class="pl-9 mt-1 ml-2"
+                    :class="!parentLink.expanded && 'hidden'"
+                  >
+                     <router-link
+                      :to="{ name: 'Products' }"
+                      custom
+                      v-slot="{ href, navigate, isExactActive }"
+                    >
+                      <li class="mb-1 last:mb-0 text-[13px]">
+                        <a
+                          class="block transition duration-150 truncate"
+                          :class="
+                            isExactActive
+                              ? 'text-[#36d887]'
+                              : 'text-slate-400 hover:text-slate-200'
+                          "
+                          :href="href"
+                          @click="navigate"
+                        >
+                          <span
+                            class="font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                            >Mahsulotlar boshqaruvi</span
+                          >
+                        </a>
+                      </li>
+                    </router-link>
+                    <router-link
+                      :to="{ name: 'Orders' }"
+                      custom
+                      v-slot="{ href, navigate, isExactActive }"
+                    >
+                      <li class="mb-1 last:mb-0 text-[13px]">
+                        <a
+                          class="block transition duration-150 truncate"
+                          :class="
+                            isExactActive
+                              ? 'text-[#36d887]'
+                              : 'text-slate-400 hover:text-slate-200'
+                          "
+                          :href="href"
+                          @click="navigate"
+                        >
+                          <span
+                            class="font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                            >Buyurtmalar boshqaruvi</span
+                          >
+                        </a>
+                      </li>
+                    </router-link>
+                  </ul>
+                </div>
+              </SidebarLinkGroup>
+            </ul>
+            <!-- Customers  -->
+            <ul v-if="role === 1000" class="mt-3">
+              <SidebarLinkGroup
+                v-slot="parentLink"
+                :activeCondition="currentRoute.fullPath.includes('ecommerce')"
+              >
+                <a
+                  class="block text-slate-200 truncate transition duration-150"
+                  :class="
+                    currentRoute.fullPath.includes('ecommerce')
+                      ? 'hover:text-slate-200'
+                      : 'hover:text-white'
+                  "
+                  href="#0"
+                  @click.prevent="
+                    sidebarExpanded
+                      ? parentLink.handleClick()
+                      : (sidebarExpanded = true)
+                  "
+                >
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 32 32"
+                      >
+                        <path
+                          fill="#24a8e5"
+                          d="M30 30h-2v-5a5.006 5.006 0 0 0-5-5v-2a7.008 7.008 0 0 1 7 7zm-8 0h-2v-5a5.006 5.006 0 0 0-5-5H9a5.006 5.006 0 0 0-5 5v5H2v-5a7.008 7.008 0 0 1 7-7h6a7.008 7.008 0 0 1 7 7zM20 2v2a5 5 0 0 1 0 10v2a7 7 0 0 0 0-14m-8 2a5 5 0 1 1-5 5a5 5 0 0 1 5-5m0-2a7 7 0 1 0 7 7a7 7 0 0 0-7-7"
+                        />
+                      </svg>
+                      <span
+                        class="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                        >Mijozlar
+                      </span>
+                    </div>
+                    <!-- Icon -->
+                    <div class="flex shrink-0 ml-2">
+                      <svg
+                        class="w-3 h-3 shrink-0 ml-1 fill-current text-slate-400"
+                        :class="parentLink.expanded && 'rotate-180'"
+                        viewBox="0 0 12 12"
+                      >
+                        <path d="M5.9 11.4L.5 6l1.4-1.4 4 4 4-4L11.3 6z" />
+                      </svg>
+                    </div>
+                  </div>
+                </a>
+                <div class="lg:hidden lg:sidebar-expanded:block 2xl:block">
+                  <ul
+                    class="pl-9 mt-1 ml-2"
+                    :class="!parentLink.expanded && 'hidden'"
+                  >
+                    <router-link
+                      :to="{ name: `CustomersManagement` }"
+                      custom
+                      v-slot="{ href, navigate, isExactActive }"
+                    >
+                      <li class="mb-1 last:mb-0 text-[13px]">
+                        <a
+                          class="block transition duration-150 truncate"
+                          :class="
+                            isExactActive
+                              ? 'text-[#36d887]'
+                              : 'text-slate-400 hover:text-slate-200'
+                          "
+                          :href="href"
+                          @click="navigate"
+                        >
+                          <span
+                            class="font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                            >Mijozlar boshqaruvi</span
+                          >
+                        </a>
+                      </li>
+                    </router-link>
+                  </ul>
+                </div>
+              </SidebarLinkGroup>
+            </ul>
+            <!-- Drivers  -->
+            <ul v-if="role === 1000" class="mt-3">
+              <SidebarLinkGroup
+                v-slot="parentLink"
+                :activeCondition="currentRoute.fullPath.includes('ecommerce')"
+              >
+                <a
+                  class="block text-slate-200 truncate transition duration-150"
+                  :class="
+                    currentRoute.fullPath.includes('ecommerce')
+                      ? 'hover:text-slate-200'
+                      : 'hover:text-white'
+                  "
+                  href="#0"
+                  @click.prevent="
+                    sidebarExpanded
+                      ? parentLink.handleClick()
+                      : (sidebarExpanded = true)
+                  "
+                >
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="25"
+                        height="25"
+                        viewBox="0 0 36 36"
+                      >
+                        <path
+                          fill="#24a8e5"
+                          d="M15 17h3v2h-3z"
+                          class="clr-i-outline clr-i-outline-path-1"
+                        />
+                        <path
+                          fill="#24a8e5"
+                          d="M26.45 14.17A22.1 22.1 0 0 0 19.38 7a9.64 9.64 0 0 0-9-.7a8.6 8.6 0 0 0-4.82 6.4c-.08.47-.14.92-.2 1.36A4 4 0 0 0 2 18v6.13a2 2 0 0 0 2 2V18a2 2 0 0 1 2-2h18.73A7.28 7.28 0 0 1 32 23.27V24h-2a4.53 4.53 0 1 0 .33 2H32a2 2 0 0 0 2-2v-.73a9.28 9.28 0 0 0-7.55-9.1M11 14H6.93c0-.31.09-.63.15-1A6.52 6.52 0 0 1 11 8Zm2 0V7.58a8.17 8.17 0 0 1 5.36 1.16A19 19 0 0 1 23.9 14Zm12.8 14.38a2.5 2.5 0 1 1 2.5-2.5a2.5 2.5 0 0 1-2.5 2.5"
+                          class="clr-i-outline clr-i-outline-path-2"
+                        />
+                        <path
+                          fill="#24a8e5"
+                          d="M14.17 24a4.53 4.53 0 1 0 .33 2h5.3v-.25A6 6 0 0 1 20 24ZM10 28.38a2.5 2.5 0 1 1 2.5-2.5a2.5 2.5 0 0 1-2.5 2.5"
+                          class="clr-i-outline clr-i-outline-path-3"
+                        />
+                        <path fill="none" d="M0 0h36v36H0z" />
+                      </svg>
+                      <span
+                        class="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                        >Logistika
+                      </span>
+                    </div>
+                    <!-- Icon -->
+                    <div class="flex shrink-0 ml-2">
+                      <svg
+                        class="w-3 h-3 shrink-0 ml-1 fill-current text-slate-400"
+                        :class="parentLink.expanded && 'rotate-180'"
+                        viewBox="0 0 12 12"
+                      >
+                        <path d="M5.9 11.4L.5 6l1.4-1.4 4 4 4-4L11.3 6z" />
+                      </svg>
+                    </div>
+                  </div>
+                </a>
+                <div class="lg:hidden lg:sidebar-expanded:block 2xl:block">
+                  <ul
+                    class="pl-9 mt-1 ml-2"
+                    :class="!parentLink.expanded && 'hidden'"
+                  >
+                    <router-link
+                      :to="{ name: 'Monitoring' }"
+                      custom
+                      v-slot="{ href, navigate, isExactActive }"
+                    >
+                      <li class="mb-1 last:mb-0 text-[13px]">
+                        <a
+                          class="block transition duration-150 truncate"
+                          :class="
+                            isExactActive
+                              ? 'text-[#36d887]'
+                              : 'text-slate-400 hover:text-slate-200'
+                          "
+                          :href="href"
+                          @click="navigate"
+                        >
+                          <span
+                            class="font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                            >GPS nazorati</span
+                          >
+                        </a>
+                      </li>
+                    </router-link>
+                    <router-link
+                      to="25"
+                      custom
+                      v-slot="{ href, navigate, isExactActive }"
+                    >
+                      <li class="mb-1 last:mb-0 text-[13px]">
+                        <a
+                          class="block transition duration-150 truncate"
+                          :class="
+                            isExactActive
+                              ? 'text-[#36d887]'
+                              : 'text-slate-400 hover:text-slate-200'
+                          "
+                          :href="href"
+                          @click="navigate"
+                        >
+                          <span
+                            class="font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                            >Haydovchilar</span
+                          >
+                        </a>
+                      </li>
+                    </router-link>
+                    <router-link
+                      to="3"
+                      custom
+                      v-slot="{ href, navigate, isExactActive }"
+                    >
+                      <li class="mb-1 last:mb-0 text-[13px]">
+                        <a
+                          class="block transition duration-150 truncate"
+                          :class="
+                            isExactActive
+                              ? 'text-[#36d887]'
+                              : 'text-slate-400 hover:text-slate-200'
+                          "
+                          :href="href"
+                          @click="navigate"
+                        >
+                          <span
+                            class="font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                            >Mashinalar</span
+                          >
+                        </a>
+                      </li>
+                    </router-link>
+                  </ul>
+                </div>
+              </SidebarLinkGroup>
+            </ul>
+            <!-- Agents  -->
+            <ul v-if="role === 1000" class="mt-3">
+              <SidebarLinkGroup
+                v-slot="parentLink"
+                :activeCondition="currentRoute.fullPath.includes('ecommerce')"
+              >
+                <a
+                  class="block text-slate-200 truncate transition duration-150"
+                  :class="
+                    currentRoute.fullPath.includes('ecommerce')
+                      ? 'hover:text-slate-200'
+                      : 'hover:text-white'
+                  "
+                  href="#0"
+                  @click.prevent="
+                    sidebarExpanded
+                      ? parentLink.handleClick()
+                      : (sidebarExpanded = true)
+                  "
+                >
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="25"
+                        height="25"
+                        viewBox="0 0 36 36"
+                      >
+                        <path
+                          fill="#24a8e5"
+                          d="M11.09 14.57h.31a6.43 6.43 0 0 1 .09-2a2.09 2.09 0 1 1 1.47-3a6.58 6.58 0 0 1 1.55-1.31a4.09 4.09 0 1 0-3.42 6.33Z"
+                          class="clr-i-outline--alerted clr-i-outline-path-1--alerted"
+                        />
+                        <path
+                          fill="#24a8e5"
+                          d="M13 18.14a6.53 6.53 0 0 1-1.28-2.2h-.63a8.67 8.67 0 0 0-6.43 2.52l-.24.28v7h2v-6.23a7 7 0 0 1 4.67-1.6a8.09 8.09 0 0 1 1.91.23"
+                          class="clr-i-outline--alerted clr-i-outline-path-2--alerted"
+                        />
+                        <path
+                          fill="#24a8e5"
+                          d="M31.35 18.42A8.59 8.59 0 0 0 25 15.91c-.32 0-.6 0-.9.06a6.53 6.53 0 0 1-1.35 2.25a7.9 7.9 0 0 1 2.25-.31a6.94 6.94 0 0 1 4.64 1.58v6.27h2V18.7Z"
+                          class="clr-i-outline--alerted clr-i-outline-path-3--alerted"
+                        />
+                        <path
+                          fill="#24a8e5"
+                          d="M18.1 19.73a9.69 9.69 0 0 0-7.1 2.74l-.25.28v7.33a1.57 1.57 0 0 0 1.61 1.54h11.47a1.57 1.57 0 0 0 1.61-1.54v-7.35l-.25-.28a9.58 9.58 0 0 0-7.09-2.72m5.33 9.88h-10.7v-6.06a8.08 8.08 0 0 1 5.37-1.82a8 8 0 0 1 5.33 1.8Z"
+                          class="clr-i-outline--alerted clr-i-outline-path-4--alerted"
+                        />
+                        <path
+                          fill="#24a8e5"
+                          d="M20.28 14.27a2.46 2.46 0 1 1-2.42-2.89a2.44 2.44 0 0 1 1 .24a3.67 3.67 0 0 1 .43-2a4.41 4.41 0 0 0-1.48-.27A4.47 4.47 0 1 0 22.14 15a3.69 3.69 0 0 1-1.86-.73"
+                          class="clr-i-outline--alerted clr-i-outline-path-5--alerted"
+                        />
+                        <path
+                          fill="#24a8e5"
+                          d="m27.18.8l-5.72 9.91a1.28 1.28 0 0 0 1.1 1.91H34a1.28 1.28 0 0 0 1.1-1.91L29.39.8a1.28 1.28 0 0 0-2.21 0"
+                          class="clr-i-outline--alerted clr-i-outline-path-6--alerted clr-i-alert"
+                        />
+                        <path fill="none" d="M0 0h36v36H0z" />
+                      </svg>
+                      <span
+                        class="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                        >Agentlar
+                      </span>
+                    </div>
+                    <!-- Icon -->
+                    <div class="flex shrink-0 ml-2">
+                      <svg
+                        class="w-3 h-3 shrink-0 ml-1 fill-current text-slate-400"
+                        :class="parentLink.expanded && 'rotate-180'"
+                        viewBox="0 0 12 12"
+                      >
+                        <path d="M5.9 11.4L.5 6l1.4-1.4 4 4 4-4L11.3 6z" />
+                      </svg>
+                    </div>
+                  </div>
+                </a>
+                <div class="lg:hidden lg:sidebar-expanded:block 2xl:block">
+                  <ul
+                    class="pl-9 mt-1 ml-2"
+                    :class="!parentLink.expanded && 'hidden'"
+                  >
+                    <router-link
+                      :to="{ name: 'Monitoring' }"
+                      custom
+                      v-slot="{ href, navigate, isExactActive }"
+                    >
+                      <li class="mb-1 last:mb-0 text-[13px]">
+                        <a
+                          class="block transition duration-150 truncate"
+                          :class="
+                            isExactActive
+                              ? 'text-[#36d887]'
+                              : 'text-slate-400 hover:text-slate-200'
+                          "
+                          :href="href"
+                          @click="navigate"
+                        >
+                          <span
+                            class="font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                            >Monitoring</span
+                          >
+                        </a>
+                      </li>
+                    </router-link>
+                  </ul>
+                </div>
+              </SidebarLinkGroup>
+            </ul>
+            <!-- Omborlar  -->
+            <ul v-if="role === 1000" class="mt-3">
+              <SidebarLinkGroup
+                v-slot="parentLink"
+                :activeCondition="currentRoute.fullPath.includes('ecommerce')"
+              >
+                <a
+                  class="block text-slate-200 truncate transition duration-150"
+                  :class="
+                    currentRoute.fullPath.includes('ecommerce')
+                      ? 'hover:text-slate-200'
+                      : 'hover:text-white'
+                  "
+                  href="#0"
+                  @click.prevent="
+                    sidebarExpanded
+                      ? parentLink.handleClick()
+                      : (sidebarExpanded = true)
+                  "
+                >
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 36 36"
+                      >
+                        <path
+                          fill="#24a8e5"
+                          d="M7 7.76v2.09a43.53 43.53 0 0 0 11 1.27a54.82 54.82 0 0 0 6.2-.36a7.5 7.5 0 0 1-1.13-1.88c-1.5.15-3.2.24-5.07.24A37.6 37.6 0 0 1 7 7.76"
+                          class="clr-i-outline--badged clr-i-outline-path-1--badged"
+                        />
+                        <path
+                          fill="#24a8e5"
+                          d="M31 13.43v.82c-.33.86-5.06 2.45-13 2.45a37.45 37.45 0 0 1-11-1.36v2.08a43.33 43.33 0 0 0 11 1.28c4 0 9.93-.48 13-2v5.17c-.33.86-5.06 2.45-13 2.45a37.45 37.45 0 0 1-11-1.4V25a43.33 43.33 0 0 0 11 1.28c4 0 9.93-.48 13-2v5.1c-.35.86-5.08 2.45-13 2.45S5.3 30.2 5 29.37V6.82c.3-.82 5-2.46 13-2.46c1.7 0 3.25.08 4.64.2a7.44 7.44 0 0 1 .67-1.94c-1.88-.18-3.75-.26-5.31-.26c-5.57 0-15 .93-15 4.43v22.58c0 3.49 9.43 4.43 15 4.43s15-.93 15-4.43v-16.5a7.45 7.45 0 0 1-2 .56"
+                          class="clr-i-outline--badged clr-i-outline-path-2--badged"
+                        />
+                        <circle
+                          cx="30"
+                          cy="6"
+                          r="5"
+                          fill="#24a8e5"
+                          class="clr-i-outline--badged clr-i-outline-path-3--badged clr-i-badge"
+                        />
+                        <path fill="none" d="M0 0h36v36H0z" />
+                      </svg>
+                      <spttan
+                        class="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                        >Omborlar
+                      </spttan>
+                    </div>
+                    <!-- Icon -->
+                    <div class="flex shrink-0 ml-2">
+                      <svg
+                        class="w-3 h-3 shrink-0 ml-1 fill-current text-slate-400"
+                        :class="parentLink.expanded && 'rotate-180'"
+                        viewBox="0 0 12 12"
+                      >
+                        <path d="M5.9 11.4L.5 6l1.4-1.4 4 4 4-4L11.3 6z" />
+                      </svg>
+                    </div>
+                  </div>
+                </a>
+                <div class="lg:hidden lg:sidebar-expanded:block 2xl:block">
+                  <ul
+                    class="pl-9 mt-1 ml-2"
+                    :class="!parentLink.expanded && 'hidden'"
+                  >
+                    <router-link
+                      :to="{name : 'ReadyWarehouse' }"
+                      custom
+                      v-slot="{ href, navigate, isExactActive }"
+                    >
+                      <li class="mb-1 last:mb-0 text-[13px]">
+                        <a
+                          class="block transition duration-150 truncate"
+                          :class="
+                            isExactActive
+                              ? 'text-[#36d887]'
+                              : 'text-slate-400 hover:text-slate-200'
+                          "
+                          :href="href"
+                          @click="navigate"
+                        >
+                          <span
+                            class="font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                            >Tayyor mahsulot (ombori)</span
+                          >
+                        </a>
+                      </li>
+                     
+                    </router-link>
+                      <router-link
+                      to="577878"
+                      custom
+                      v-slot="{ href, navigate, isExactActive }"
+                    >
+                      <li class="mb-1 last:mb-0 text-[13px]">
+                        <a
+                          class="block transition duration-150 truncate"
+                          :class="
+                            isExactActive
+                              ? 'text-[#36d887]'
+                              : 'text-slate-400 hover:text-slate-200'
+                          "
+                          :href="href"
+                          @click="navigate"
+                        >
+                          <span
+                            class="font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                            >Xom ashyo (ombori)</span
+                          >
+                        </a>
+                      </li>
+                     
+                    </router-link>
+                  </ul>
+                </div>
+              </SidebarLinkGroup>
+            </ul>
+            <!-- Uskunalar va texnik xizmat  -->
+            <ul v-if="role === 1000" class="mt-3">
+              <SidebarLinkGroup
+                v-slot="parentLink"
+                :activeCondition="currentRoute.fullPath.includes('ecommerce')"
+              >
+                <a
+                  class="block text-slate-200 truncate transition duration-150"
+                  :class="
+                    currentRoute.fullPath.includes('ecommerce')
+                      ? 'hover:text-slate-200'
+                      : 'hover:text-white'
+                  "
+                  href="#0"
+                  @click.prevent="
+                    sidebarExpanded
+                      ? parentLink.handleClick()
+                      : (sidebarExpanded = true)
+                  "
+                >
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="25"
+                        height="25"
+                        viewBox="0 0 36 36"
+                      >
+                        <path
+                          fill="#24a8e5"
+                          d="M20 14h-4a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-6a1 1 0 0 0-1-1m-.4 6.6h-3.2v-5.2h3.2Z"
+                          class="clr-i-outline clr-i-outline-path-1"
+                        />
+                        <path
+                          fill="#24a8e5"
+                          d="m33.71 12.38l-4.09-4.09a1 1 0 0 0-.7-.29h-5V6.05A2 2 0 0 0 22 4h-8.16A1.92 1.92 0 0 0 12 6.05V8H7.08a1 1 0 0 0-.71.29l-4.08 4.09a1 1 0 0 0-.29.71V28a2 2 0 0 0 2 2h28a2 2 0 0 0 2-2V13.08a1 1 0 0 0-.29-.7M14 6h8v2h-8Zm18 11H22v1.93h10V28H4v-9.07h10V17H4v-3.5L7.5 10h21l3.5 3.5Z"
+                          class="clr-i-outline clr-i-outline-path-2"
+                        />
+                        <path fill="none" d="M0 0h36v36H0z" />
+                      </svg>
+                      <spttan
+                        class="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                        >Texnik xizmat
+                      </spttan>
+                    </div>
+                    <!-- Icon -->
+                    <div class="flex shrink-0 ml-2">
+                      <svg
+                        class="w-3 h-3 shrink-0 ml-1 fill-current text-slate-400"
+                        :class="parentLink.expanded && 'rotate-180'"
+                        viewBox="0 0 12 12"
+                      >
+                        <path d="M5.9 11.4L.5 6l1.4-1.4 4 4 4-4L11.3 6z" />
+                      </svg>
+                    </div>
+                  </div>
+                </a>
+                <div class="lg:hidden lg:sidebar-expanded:block 2xl:block">
+                  <ul
+                    class="pl-9 mt-1 ml-2"
+                    :class="!parentLink.expanded && 'hidden'"
+                  >
+                    <router-link
+                      :to="{ name: 'Orders' }"
+                      custom
+                      v-slot="{ href, navigate, isExactActive }"
+                    >
+                      <li class="mb-1 last:mb-0 text-[13px]">
+                        <a
+                          class="block transition duration-150 truncate"
+                          :class="
+                            isExactActive
+                              ? 'text-[#36d887]'
+                              : 'text-slate-400 hover:text-slate-200'
+                          "
+                          :href="href"
+                          @click="navigate"
+                        >
+                          <span
+                            class="font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                            >Uskunalar ro‘yxati</span
+                          >
+                        </a>
+                      </li>
+                      <li class="mb-1 last:mb-0 text-[13px]">
+                        <a
+                          class="block transition duration-150 truncate"
+                          :class="
+                            isExactActive
+                              ? 'text-[#36d887]'
+                              : 'text-slate-400 hover:text-slate-200'
+                          "
+                          :href="href"
+                          @click="navigate"
+                        >
+                          <span
+                            class="font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                            >Texnik xizmat jadvali</span
+                          >
+                        </a>
+                      </li>
+                      <li class="mb-1 last:mb-0 text-[13px]">
+                        <a
+                          class="block transition duration-150 truncate"
+                          :class="
+                            isExactActive
+                              ? 'text-[#36d887]'
+                              : 'text-slate-400 hover:text-slate-200'
+                          "
+                          :href="href"
+                          @click="navigate"
+                        >
+                          <span
+                            class="font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                            >Uskunalar holati (aktiv / nosoz)</span
+                          >
+                        </a>
+                      </li>
+                      <li class="mb-1 last:mb-0 text-[13px]">
+                        <a
+                          class="block transition duration-150 truncate"
+                          :class="
+                            isExactActive
+                              ? 'text-[#36d887]'
+                              : 'text-slate-400 hover:text-slate-200'
+                          "
+                          :href="href"
+                          @click="navigate"
+                        >
+                          <span
+                            class="font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                            >Nosozlik tarixi va ta’mirlar</span
+                          >
+                        </a>
+                      </li>
+                    </router-link>
+                  </ul>
+                </div>
+              </SidebarLinkGroup>
+            </ul>
+          </div>
+        </div>
+        <!-- Hisobotlar group -->
+        <div v-if="role === 1000">
+          <h3
+            @click="is_reports = !is_reports"
+            class="text-xs uppercase text-white font-semibold ml-[-9px] mr-[-9px]"
+          >
+            <span
+              class="hidden lg:block lg:sidebar-expanded:hidden 2xl:hidden text-center w-6"
+              aria-hidden="true"
+              >•••</span
+            >
+            <div
+              class="flex justify-between cursor-pointer bg-slate-600 p-2 rounded w-full"
+            >
+              <span class="lg:hidden lg:sidebar-expanded:block 2xl:block"
+                >Hisobotlar
+              </span>
+              <i
+                v-if="is_reports === true"
+                class="fa-solid fa-angle-up fa-sm mt-2"
+              ></i>
+              <i
+                v-if="is_reports === false"
+                class="fa-solid fa-angle-down fa-sm mt-2"
+              ></i>
+            </div>
+          </h3>
+          <div v-if="is_reports === true">
+            <!-- //Accountant// -->
+            <ul v-if="role === 1000" class="mt-3">
+              <SidebarLinkGroup
+                v-slot="parentLink"
+                :activeCondition="currentRoute.fullPath.includes('ecommerce')"
+              >
+                <a
+                  class="block text-slate-200 truncate transition duration-150"
+                  :class="
+                    currentRoute.fullPath.includes('ecommerce')
+                      ? 'hover:text-slate-200'
+                      : 'hover:text-white'
+                  "
+                  href="#0"
+                  @click.prevent="
+                    sidebarExpanded
+                      ? parentLink.handleClick()
+                      : (sidebarExpanded = true)
+                  "
+                >
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          d="M20 8l-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zM9 19H7v-9h2v9zm4 0h-2v-6h2v6zm4 0h-2v-3h2v3zM14 9h-1V4l5 5h-4z"
+                          fill="#24a8e5"
+                        />
+                      </svg>
+                      <span
+                        class="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                        >Buhgalterya hisoboti
+                      </span>
+                    </div>
+                    <div class="flex shrink-0 ml-2">
+                      <svg
+                        class="w-3 h-3 shrink-0 ml-1 fill-current text-slate-400"
+                        :class="parentLink.expanded && 'rotate-180'"
+                        viewBox="0 0 12 12"
+                      >
+                        <path d="M5.9 11.4L.5 6l1.4-1.4 4 4 4-4L11.3 6z" />
+                      </svg>
+                    </div>
+                  </div>
+                </a>
+                <div class="lg:hidden lg:sidebar-expanded:block 2xl:block">
+                  <ul
+                    class="pl-9 mt-1 ml-2"
+                    :class="!parentLink.expanded && 'hidden'"
+                  >
+                    <router-link
+                      :to="{ name: 'Employees' }"
+                      custom
+                      v-slot="{ href, navigate, isExactActive }"
+                    >
+                      <li class="mb-1 last:mb-0 text-[13px]">
+                        <a
+                          class="block transition duration-150 truncate"
+                          :class="
+                            isExactActive
+                              ? 'text-[#36d887]'
+                              : 'text-slate-400 hover:text-slate-200'
+                          "
+                          :href="href"
+                          @click="navigate"
+                        >
+                          <span
+                            class="font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                            >Xodimlar</span
+                          >
+                        </a>
+                      </li>
+                    </router-link>
+                  </ul>
+                </div>
+              </SidebarLinkGroup>
+            </ul>
+            <!-- //HR// -->
+            <ul v-if="role === 1000" class="mt-3">
+              <SidebarLinkGroup
+                v-slot="parentLink"
+                :activeCondition="currentRoute.fullPath.includes('ecommerce')"
+              >
+                <a
+                  class="block text-slate-200 truncate transition duration-150"
+                  :class="
+                    currentRoute.fullPath.includes('ecommerce')
+                      ? 'hover:text-slate-200'
+                      : 'hover:text-white'
+                  "
+                  href="#0"
+                  @click.prevent="
+                    sidebarExpanded
+                      ? parentLink.handleClick()
+                      : (sidebarExpanded = true)
+                  "
+                >
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          d="M20 8l-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zM9 19H7v-9h2v9zm4 0h-2v-6h2v6zm4 0h-2v-3h2v3zM14 9h-1V4l5 5h-4z"
+                          fill="#24a8e5"
+                        />
+                      </svg>
+                      <span
+                        class="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                        >Kadrlar hisoboti
+                      </span>
+                    </div>
+                    <div class="flex shrink-0 ml-2">
+                      <svg
+                        class="w-3 h-3 shrink-0 ml-1 fill-current text-slate-400"
+                        :class="parentLink.expanded && 'rotate-180'"
+                        viewBox="0 0 12 12"
+                      >
+                        <path d="M5.9 11.4L.5 6l1.4-1.4 4 4 4-4L11.3 6z" />
+                      </svg>
+                    </div>
+                  </div>
+                </a>
+                <div class="lg:hidden lg:sidebar-expanded:block 2xl:block">
+                  <ul
+                    class="pl-9 mt-1 ml-2"
+                    :class="!parentLink.expanded && 'hidden'"
+                  >
+                    <router-link
+                      :to="{ name: 'Employees' }"
+                      custom
+                      v-slot="{ href, navigate, isExactActive }"
+                    >
+                      <li class="mb-1 last:mb-0 text-[13px]">
+                        <a
+                          class="block transition duration-150 truncate"
+                          :class="
+                            isExactActive
+                              ? 'text-[#36d887]'
+                              : 'text-slate-400 hover:text-slate-200'
+                          "
+                          :href="href"
+                          @click="navigate"
+                        >
+                          <span
+                            class="font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                            >Xodimlar</span
+                          >
+                        </a>
+                      </li>
+                    </router-link>
+                  </ul>
+                </div>
+              </SidebarLinkGroup>
+            </ul>
+            <!-- Sale  -->
+            <ul v-if="role === 1000" class="mt-3">
+              <SidebarLinkGroup
+                v-slot="parentLink"
+                :activeCondition="currentRoute.fullPath.includes('ecommerce')"
+              >
+                <a
+                  class="block text-slate-200 truncate transition duration-150"
+                  :class="
+                    currentRoute.fullPath.includes('ecommerce')
+                      ? 'hover:text-slate-200'
+                      : 'hover:text-white'
+                  "
+                  href="#0"
+                  @click.prevent="
+                    sidebarExpanded
+                      ? parentLink.handleClick()
+                      : (sidebarExpanded = true)
+                  "
+                >
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          d="M20 8l-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zM9 19H7v-9h2v9zm4 0h-2v-6h2v6zm4 0h-2v-3h2v3zM14 9h-1V4l5 5h-4z"
+                          fill="#24a8e5"
+                        />
+                      </svg>
+                      <spttan
+                        class="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                        >Sotuv hisoboti
+                      </spttan>
+                    </div>
+                    <!-- Icon -->
+                    <div class="flex shrink-0 ml-2">
+                      <svg
+                        class="w-3 h-3 shrink-0 ml-1 fill-current text-slate-400"
+                        :class="parentLink.expanded && 'rotate-180'"
+                        viewBox="0 0 12 12"
+                      >
+                        <path d="M5.9 11.4L.5 6l1.4-1.4 4 4 4-4L11.3 6z" />
+                      </svg>
+                    </div>
+                  </div>
+                </a>
+                <div class="lg:hidden lg:sidebar-expanded:block 2xl:block">
+                  <ul
+                    class="pl-9 mt-1 ml-2"
+                    :class="!parentLink.expanded && 'hidden'"
+                  >
+                    <router-link
+                      to="#"
+                      v-slot="{ href, navigate, isExactActive }"
+                    >
+                      <li class="mb-1 last:mb-0 text-[13px]">
+                        <a
+                          class="block transition duration-150 truncate"
+                          :class="
+                            isExactActive
+                              ? 'text-[#36d887]'
+                              : 'text-slate-400 hover:text-slate-200'
+                          "
+                          :href="href"
+                          @click="navigate"
+                        >
+                          <span
+                            class="font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                            >Mahsulotlar</span
+                          >
+                        </a>
+                      </li>
+                    </router-link>
+                    <router-link
+                      :to="{ name: 'Orders' }"
+                      custom
+                      v-slot="{ href, navigate, isExactActive }"
+                    >
+                      <li class="mb-1 last:mb-0 text-[13px]">
+                        <a
+                          class="block transition duration-150 truncate"
+                          :class="
+                            isExactActive
+                              ? 'text-[#36d887]'
+                              : 'text-slate-400 hover:text-slate-200'
+                          "
+                          :href="href"
+                          @click="navigate"
+                        >
+                          <span
+                            class="font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                            >Buyurtmalar</span
+                          >
+                        </a>
+                      </li>
+                    </router-link>
+                  </ul>
+                </div>
+              </SidebarLinkGroup>
+            </ul>
+            <!-- Customers  -->
+            <ul v-if="role === 1000" class="mt-3">
+              <SidebarLinkGroup
+                v-slot="parentLink"
+                :activeCondition="currentRoute.fullPath.includes('ecommerce')"
+              >
+                <a
+                  class="block text-slate-200 truncate transition duration-150"
+                  :class="
+                    currentRoute.fullPath.includes('ecommerce')
+                      ? 'hover:text-slate-200'
+                      : 'hover:text-white'
+                  "
+                  href="#0"
+                  @click.prevent="
+                    sidebarExpanded
+                      ? parentLink.handleClick()
+                      : (sidebarExpanded = true)
+                  "
+                >
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          d="M20 8l-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zM9 19H7v-9h2v9zm4 0h-2v-6h2v6zm4 0h-2v-3h2v3zM14 9h-1V4l5 5h-4z"
+                          fill="#24a8e5"
+                        />
+                      </svg>
+                      <span
+                        class="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                        >Mijozlar hisoboti
+                      </span>
+                    </div>
+                    <!-- Icon -->
+                    <div class="flex shrink-0 ml-2">
+                      <svg
+                        class="w-3 h-3 shrink-0 ml-1 fill-current text-slate-400"
+                        :class="parentLink.expanded && 'rotate-180'"
+                        viewBox="0 0 12 12"
+                      >
+                        <path d="M5.9 11.4L.5 6l1.4-1.4 4 4 4-4L11.3 6z" />
+                      </svg>
+                    </div>
+                  </div>
+                </a>
+                <div class="lg:hidden lg:sidebar-expanded:block 2xl:block">
+                  <ul
+                    class="pl-9 mt-1 ml-2"
+                    :class="!parentLink.expanded && 'hidden'"
+                  >
+                    <router-link
+                      to="#"
+                      custom
+                      v-slot="{ href, navigate, isExactActive }"
+                    >
+                      <li class="mb-1 last:mb-0 text-[13px]">
+                        <a
+                          class="block transition duration-150 truncate"
+                          :class="
+                            isExactActive
+                              ? 'text-[#36d887]'
+                              : 'text-slate-400 hover:text-slate-200'
+                          "
+                          :href="href"
+                          @click="navigate"
+                        >
+                          <span
+                            class="font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                            >Mijozlar</span
+                          >
+                        </a>
+                      </li>
+                    </router-link>
+                  </ul>
+                </div>
+              </SidebarLinkGroup>
+            </ul>
+            <!-- Drivers  -->
+            <ul v-if="role === 1000" class="mt-3">
+              <SidebarLinkGroup
+                v-slot="parentLink"
+                :activeCondition="currentRoute.fullPath.includes('ecommerce')"
+              >
+                <a
+                  class="block text-slate-200 truncate transition duration-150"
+                  :class="
+                    currentRoute.fullPath.includes('ecommerce')
+                      ? 'hover:text-slate-200'
+                      : 'hover:text-white'
+                  "
+                  href="#0"
+                  @click.prevent="
+                    sidebarExpanded
+                      ? parentLink.handleClick()
+                      : (sidebarExpanded = true)
+                  "
+                >
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          d="M20 8l-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zM9 19H7v-9h2v9zm4 0h-2v-6h2v6zm4 0h-2v-3h2v3zM14 9h-1V4l5 5h-4z"
+                          fill="#24a8e5"
+                        />
+                      </svg>
+                      <span
+                        class="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                        >Haydovchilar hisoboti
+                      </span>
+                    </div>
+                    <!-- Icon -->
+                    <div class="flex shrink-0 ml-2">
+                      <svg
+                        class="w-3 h-3 shrink-0 ml-1 fill-current text-slate-400"
+                        :class="parentLink.expanded && 'rotate-180'"
+                        viewBox="0 0 12 12"
+                      >
+                        <path d="M5.9 11.4L.5 6l1.4-1.4 4 4 4-4L11.3 6z" />
+                      </svg>
+                    </div>
+                  </div>
+                </a>
+                <div class="lg:hidden lg:sidebar-expanded:block 2xl:block">
+                  <ul
+                    class="pl-9 mt-1 ml-2"
+                    :class="!parentLink.expanded && 'hidden'"
+                  >
+                    <router-link
+                      :to="{ name: 'Monitoring' }"
+                      custom
+                      v-slot="{ href, navigate, isExactActive }"
+                    >
+                      <li class="mb-1 last:mb-0 text-[13px]">
+                        <a
+                          class="block transition duration-150 truncate"
+                          :class="
+                            isExactActive
+                              ? 'text-[#36d887]'
+                              : 'text-slate-400 hover:text-slate-200'
+                          "
+                          :href="href"
+                          @click="navigate"
+                        >
+                          <span
+                            class="font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                            >Monitoring</span
+                          >
+                        </a>
+                      </li>
+                    </router-link>
+                  </ul>
+                </div>
+              </SidebarLinkGroup>
+            </ul>
+            <!-- Agents  -->
+            <ul v-if="role === 1000" class="mt-3">
+              <SidebarLinkGroup
+                v-slot="parentLink"
+                :activeCondition="currentRoute.fullPath.includes('ecommerce')"
+              >
+                <a
+                  class="block text-slate-200 truncate transition duration-150"
+                  :class="
+                    currentRoute.fullPath.includes('ecommerce')
+                      ? 'hover:text-slate-200'
+                      : 'hover:text-white'
+                  "
+                  href="#0"
+                  @click.prevent="
+                    sidebarExpanded
+                      ? parentLink.handleClick()
+                      : (sidebarExpanded = true)
+                  "
+                >
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          d="M20 8l-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zM9 19H7v-9h2v9zm4 0h-2v-6h2v6zm4 0h-2v-3h2v3zM14 9h-1V4l5 5h-4z"
+                          fill="#24a8e5"
+                        />
+                      </svg>
+                      <span
+                        class="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                        >Agentlar hisoboti
+                      </span>
+                    </div>
+                    <!-- Icon -->
+                    <div class="flex shrink-0 ml-2">
+                      <svg
+                        class="w-3 h-3 shrink-0 ml-1 fill-current text-slate-400"
+                        :class="parentLink.expanded && 'rotate-180'"
+                        viewBox="0 0 12 12"
+                      >
+                        <path d="M5.9 11.4L.5 6l1.4-1.4 4 4 4-4L11.3 6z" />
+                      </svg>
+                    </div>
+                  </div>
+                </a>
+                <div class="lg:hidden lg:sidebar-expanded:block 2xl:block">
+                  <ul
+                    class="pl-9 mt-1 ml-2"
+                    :class="!parentLink.expanded && 'hidden'"
+                  >
+                    <router-link
+                      :to="{ name: 'Monitoring' }"
+                      custom
+                      v-slot="{ href, navigate, isExactActive }"
+                    >
+                      <li class="mb-1 last:mb-0 text-[13px]">
+                        <a
+                          class="block transition duration-150 truncate"
+                          :class="
+                            isExactActive
+                              ? 'text-[#36d887]'
+                              : 'text-slate-400 hover:text-slate-200'
+                          "
+                          :href="href"
+                          @click="navigate"
+                        >
+                          <span
+                            class="font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                            >Monitoring</span
+                          >
+                        </a>
+                      </li>
+                    </router-link>
+                  </ul>
+                </div>
+              </SidebarLinkGroup>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Settings group-->
+        <div v-if="role === 1000">
+          <h3
+            @click="is_settings = !is_settings"
+            class="text-xs uppercase text-white font-semibold ml-[-9px] mr-[-9px]"
+          >
+            <span
+              class="hidden lg:block lg:sidebar-expanded:hidden 2xl:hidden text-center w-6"
+              aria-hidden="true"
+              >•••</span
+            >
+            <div
+              class="flex justify-between cursor-pointer bg-slate-600 p-2 rounded w-full"
+            >
+              <span class="lg:hidden lg:sidebar-expanded:block 2xl:block"
+                >Sozlamalar
+              </span>
+              <i
+                v-if="is_settings === true"
+                class="fa-solid fa-angle-up fa-sm mt-2"
+              ></i>
+              <i
+                v-if="is_settings === false"
+                class="fa-solid fa-angle-down fa-sm mt-2"
+              ></i>
+            </div>
+          </h3>
+          <div v-if="is_settings === true">
+            <ul class="mt-3">
+              <!-- Admin  -->
+              <SidebarLinkGroup
+                v-slot="parentLink"
+                :activeCondition="currentRoute.fullPath.includes('ecommerce')"
+              >
+                <a
+                  class="block text-slate-200 truncate transition duration-150"
+                  :class="
+                    currentRoute.fullPath.includes('ecommerce')
+                      ? 'hover:text-slate-200'
+                      : 'hover:text-white'
+                  "
+                  href="#0"
+                  @click.prevent="
+                    sidebarExpanded
+                      ? parentLink.handleClick()
+                      : (sidebarExpanded = true)
+                  "
+                >
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="28"
+                        height="28"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          fill="#24a8e5"
+                          d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12c5.16-1.26 9-6.45 9-12V5Zm0 3.9a3 3 0 1 1-3 3a3 3 0 0 1 3-3m0 7.9c2 0 6 1.09 6 3.08a7.2 7.2 0 0 1-12 0c0-1.99 4-3.08 6-3.08"
+                        />
+                      </svg>
+                      <span
+                        class="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                        >Tizm sozlamalari
+                      </span>
+                    </div>
+                    <!-- Icon -->
+                    <div class="flex shrink-0 ml-2">
+                      <svg
+                        class="w-3 h-3 shrink-0 ml-1 fill-current text-slate-400"
+                        :class="parentLink.expanded && 'rotate-180'"
+                        viewBox="0 0 12 12"
+                      >
+                        <path d="M5.9 11.4L.5 6l1.4-1.4 4 4 4-4L11.3 6z" />
+                      </svg>
+                    </div>
+                  </div>
+                </a>
+                <div class="lg:hidden lg:sidebar-expanded:block 2xl:block">
+                  <ul
+                    class="pl-9 mt-1"
+                    :class="!parentLink.expanded && 'hidden'"
+                  >
+                    <router-link
+                      to="$"
+                      custom
+                      v-slot="{ href, navigate, isExactActive }"
+                    >
+                      <li class="mb-1 last:mb-0">
+                        <a
+                          class="block transition duration-150 truncate"
+                          :class="
+                            isExactActive
+                              ? 'text-[#36d887]'
+                              : 'text-slate-400 hover:text-slate-200'
+                          "
+                          :href="href"
+                          @click="navigate"
+                        >
+                          <span
+                            class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                            >Foydalanuvchilar</span
+                          >
+                        </a>
+                      </li>
+                    </router-link>
+                  </ul>
+                  <ul
+                    class="pl-9 mt-1"
+                    :class="!parentLink.expanded && 'hidden'"
+                  >
+                    <router-link
+                      to="@"
+                      custom
+                      v-slot="{ href, navigate, isExactActive }"
+                    >
+                      <li class="mb-1 last:mb-0">
+                        <a
+                          class="block transition duration-150 truncate"
+                          :class="
+                            isExactActive
+                              ? 'text-[#36d887]'
+                              : 'text-slate-400 hover:text-slate-200'
+                          "
+                          :href="href"
+                          @click="navigate"
+                        >
+                          <span
+                            class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                            >Bo'limlar</span
+                          >
+                        </a>
+                      </li>
+                    </router-link>
+                  </ul>
+                  <ul
+                    class="pl-9 mt-1"
+                    :class="!parentLink.expanded && 'hidden'"
+                  >
+                    <router-link
+                      to="\"
+                      custom
+                      v-slot="{ href, navigate, isExactActive }"
+                    >
+                      <li class="mb-1 last:mb-0">
+                        <a
+                          class="block transition duration-150 truncate"
+                          :class="
+                            isExactActive
+                              ? 'text-[#36d887]'
+                              : 'text-slate-400 hover:text-slate-200'
+                          "
+                          :href="href"
+                          @click="navigate"
+                        >
+                          <span
+                            class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                            >Ruxsatlar boshqaruvi
+                          </span>
+                        </a>
+                      </li>
+                    </router-link>
+                    <router-link
+                      to="\"
+                      custom
+                      v-slot="{ href, navigate, isExactActive }"
+                    >
+                      <li class="mb-1 last:mb-0">
+                        <a
+                          class="block transition duration-150 truncate"
+                          :class="
+                            isExactActive
+                              ? 'text-[#36d887]'
+                              : 'text-slate-400 hover:text-slate-200'
+                          "
+                          :href="href"
+                          @click="navigate"
+                        >
+                          <span
+                            class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                            >Bildirishnomalar
+                          </span>
+                        </a>
+                      </li>
+                    </router-link>
+                    <router-link
+                      to="\"
+                      custom
+                      v-slot="{ href, navigate, isExactActive }"
+                    >
+                      <li class="mb-1 last:mb-0">
+                        <a
+                          class="block transition duration-150 truncate"
+                          :class="
+                            isExactActive
+                              ? 'text-[#36d887]'
+                              : 'text-slate-400 hover:text-slate-200'
+                          "
+                          :href="href"
+                          @click="navigate"
+                        >
+                          <span
+                            class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                            >Integratsiyalar
+                          </span>
+                        </a>
+                      </li>
+                      <li class="mb-1 last:mb-0">
+                        <a
+                          class="block transition duration-150 truncate"
+                          :class="
+                            isExactActive
+                              ? 'text-[#36d887]'
+                              : 'text-slate-400 hover:text-slate-200'
+                          "
+                          :href="href"
+                          @click="navigate"
+                        >
+                          <span
+                            class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                            >Xavfsizlik sozlamalari
+                          </span>
+                        </a>
+                      </li>
+                    </router-link>
+                  </ul>
+                </div>
+              </SidebarLinkGroup>
+            </ul>
+          </div>
+        </div>
+        <!-- More group -->
+        <div>
+          <h3
+            @click="is_mores = !is_mores"
+            class="text-xs uppercase text-white font-semibold ml-[-9px] mr-[-9px]"
+          >
+            <span
+              class="hidden lg:block lg:sidebar-expanded:hidden 2xl:hidden text-center w-6"
+              aria-hidden="true"
+              >•••</span
+            >
+            <div
+              class="flex justify-between cursor-pointer bg-slate-600 p-2 rounded w-full"
+            >
+              <span class="lg:hidden lg:sidebar-expanded:block 2xl:block"
+                >Boshqalar
+              </span>
+              <i
+                v-if="is_mores === true"
+                class="fa-solid fa-angle-up fa-sm mt-2"
+              ></i>
+              <i
+                v-if="is_mores === false"
+                class="fa-solid fa-angle-down fa-sm mt-2"
+              ></i>
+            </div>
+          </h3>
+          <div v-if="is_mores === true">
+            <ul class="mt-3">
+              <!-- Authentication  -->
+              <SidebarLinkGroup v-slot="parentLink">
+                <a
+                  class="block text-slate-200 truncate transition duration-150"
+                  :class="
+                    parentLink.expanded
+                      ? 'hover:text-slate-200'
+                      : 'hover:text-white'
+                  "
+                  href="#0"
+                  @click.prevent="
+                    sidebarExpanded
+                      ? parentLink.handleClick()
+                      : (sidebarExpanded = true)
+                  "
+                >
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="25"
+                        height="25"
+                        viewBox="0 0 32 32"
+                      >
+                        <path
+                          fill="#24a8e5"
+                          d="m11 23.18l-2-2.001l-1.411 1.41L11 26l6-6l-1.41-1.41zM28 30h-4v-2h4V16h-4V8a4.005 4.005 0 0 0-4-4V2a6.007 6.007 0 0 1 6 6v6h2a2.002 2.002 0 0 1 2 2v12a2.002 2.002 0 0 1-2 2"
+                        />
+                        <path
+                          fill="#24a8e5"
+                          d="M20 14h-2V8A6 6 0 0 0 6 8v6H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V16a2 2 0 0 0-2-2M8 8a4 4 0 0 1 8 0v6H8Zm12 20H4V16h16Z"
+                        />
+                      </svg>
+                      <span
+                        class="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                        >Authentication</span
+                      >
+                    </div>
+                    <!-- Icon -->
+                    <div class="flex shrink-0 ml-2">
+                      <svg
+                        class="w-3 h-3 shrink-0 ml-1 fill-current text-slate-400"
+                        :class="parentLink.expanded && 'rotate-180'"
+                        viewBox="0 0 12 12"
+                      >
+                        <path d="M5.9 11.4L.5 6l1.4-1.4 4 4 4-4L11.3 6z" />
+                      </svg>
+                    </div>
+                  </div>
+                </a>
+                <div class="lg:hidden lg:sidebar-expanded:block 2xl:block">
+                  <ul
+                    class="pl-9 mt-1"
+                    :class="!parentLink.expanded && 'hidden'"
+                  >
+                    <router-link
+                      to="/signin"
+                      custom
+                      v-slot="{ href, navigate }"
+                    >
+                      <li class="mb-1 last:mb-0">
+                        <a
+                          class="block text-slate-400 hover:text-slate-200 transition duration-150 truncate"
+                          :href="href"
+                          @click="navigate"
+                        >
+                          <span
+                            class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                            >Sign in</span
+                          >
+                        </a>
+                      </li>
+                    </router-link>
+                    <router-link
+                      to="/signup"
+                      custom
+                      v-slot="{ href, navigate }"
+                    >
+                      <li class="mb-1 last:mb-0">
+                        <a
+                          class="block text-slate-400 hover:text-slate-200 transition duration-150 truncate"
+                          :href="href"
+                          @click="navigate"
+                        >
+                          <span
+                            class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                            >Sign up</span
+                          >
+                        </a>
+                      </li>
+                    </router-link>
+                    <router-link
+                      to="/reset-password"
+                      custom
+                      v-slot="{ href, navigate }"
+                    >
+                      <li class="mb-1 last:mb-0">
+                        <a
+                          class="block text-slate-400 hover:text-slate-200 transition duration-150 truncate"
+                          :href="href"
+                          @click="navigate"
+                        >
+                          <span
+                            class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                            >Reset Password</span
+                          >
+                        </a>
+                      </li>
+                    </router-link>
+                  </ul>
+                </div>
+              </SidebarLinkGroup>
+              <SidebarLinkGroup
+                v-slot="parentLink"
+                :activeCondition="currentRoute.fullPath.includes('ecommerce')"
+              >
+                <a
+                  class="block text-slate-200 truncate transition duration-150"
+                  :class="
+                    currentRoute.fullPath.includes('ecommerce')
+                      ? 'hover:text-slate-200'
+                      : 'hover:text-white'
+                  "
+                  href="#0"
+                  @click.prevent="
+                    sidebarExpanded
+                      ? parentLink.handleClick()
+                      : (sidebarExpanded = true)
+                  "
+                >
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="28"
+                        height="28"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          fill="#24a8e5"
+                          d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12c5.16-1.26 9-6.45 9-12V5Zm0 3.9a3 3 0 1 1-3 3a3 3 0 0 1 3-3m0 7.9c2 0 6 1.09 6 3.08a7.2 7.2 0 0 1-12 0c0-1.99 4-3.08 6-3.08"
+                        />
+                      </svg>
+                      <span
+                        class="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                        >Tizm sozlamalari
+                      </span>
+                    </div>
+                    <!-- Icon -->
+                    <div class="flex shrink-0 ml-2">
+                      <svg
+                        class="w-3 h-3 shrink-0 ml-1 fill-current text-slate-400"
+                        :class="parentLink.expanded && 'rotate-180'"
+                        viewBox="0 0 12 12"
+                      >
+                        <path d="M5.9 11.4L.5 6l1.4-1.4 4 4 4-4L11.3 6z" />
+                      </svg>
+                    </div>
+                  </div>
+                </a>
+                <div class="lg:hidden lg:sidebar-expanded:block 2xl:block">
+                  <ul
+                    class="pl-9 mt-1"
+                    :class="!parentLink.expanded && 'hidden'"
+                  >
+                    <router-link
+                      to="$"
+                      custom
+                      v-slot="{ href, navigate, isExactActive }"
+                    >
+                      <li class="mb-1 last:mb-0">
+                        <a
+                          class="block transition duration-150 truncate"
+                          :class="
+                            isExactActive
+                              ? 'text-[#36d887]'
+                              : 'text-slate-400 hover:text-slate-200'
+                          "
+                          :href="href"
+                          @click="navigate"
+                        >
+                          <span
+                            class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                            >Hujjat shablonlari</span
+                          >
+                        </a>
+                      </li>
+                    </router-link>
+                  </ul>
+                  <ul
+                    class="pl-9 mt-1"
+                    :class="!parentLink.expanded && 'hidden'"
+                  >
+                    <router-link
+                      to="@"
+                      custom
+                      v-slot="{ href, navigate, isExactActive }"
+                    >
+                      <li class="mb-1 last:mb-0">
+                        <a
+                          class="block transition duration-150 truncate"
+                          :class="
+                            isExactActive
+                              ? 'text-[#36d887]'
+                              : 'text-slate-400 hover:text-slate-200'
+                          "
+                          :href="href"
+                          @click="navigate"
+                        >
+                          <span
+                            class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                            >Ish vaqti / Ish kunlari</span
+                          >
+                        </a>
+                      </li>
+                    </router-link>
+                  </ul>
+                  <ul
+                    class="pl-9 mt-1"
+                    :class="!parentLink.expanded && 'hidden'"
+                  >
+                    <router-link
+                      to="\"
+                      custom
+                      v-slot="{ href, navigate, isExactActive }"
+                    >
+                      <li class="mb-1 last:mb-0">
+                        <a
+                          class="block transition duration-150 truncate"
+                          :class="
+                            isExactActive
+                              ? 'text-[#36d887]'
+                              : 'text-slate-400 hover:text-slate-200'
+                          "
+                          :href="href"
+                          @click="navigate"
+                        >
+                          <span
+                            class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                            >Chop etish sozlamalari
+                          </span>
+                        </a>
+                      </li>
+                    </router-link>
+                    <router-link
+                      to="\"
+                      custom
+                      v-slot="{ href, navigate, isExactActive }"
+                    >
+                      <li class="mb-1 last:mb-0">
+                        <a
+                          class="block transition duration-150 truncate"
+                          :class="
+                            isExactActive
+                              ? 'text-[#36d887]'
+                              : 'text-slate-400 hover:text-slate-200'
+                          "
+                          :href="href"
+                          @click="navigate"
+                        >
+                          <span
+                            class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                            >DNS / domen / URL sozlamalari
+                          </span>
+                        </a>
+                      </li>
+                    </router-link>
+                    <router-link
+                      to="\"
+                      custom
+                      v-slot="{ href, navigate, isExactActive }"
+                    >
+                      <li class="mb-1 last:mb-0">
+                        <a
+                          class="block transition duration-150 truncate"
+                          :class="
+                            isExactActive
+                              ? 'text-[#36d887]'
+                              : 'text-slate-400 hover:text-slate-200'
+                          "
+                          :href="href"
+                          @click="navigate"
+                        >
+                          <span
+                            class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                            >Ko‘p tilli interfeys (Localization)
+                          </span>
+                        </a>
+                      </li>
+                      <li class="mb-1 last:mb-0">
+                        <a
+                          class="block transition duration-150 truncate"
+                          :class="
+                            isExactActive
+                              ? 'text-[#36d887]'
+                              : 'text-slate-400 hover:text-slate-200'
+                          "
+                          :href="href"
+                          @click="navigate"
+                        >
+                          <span
+                            class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                            >Modul sozlamalari
+                          </span>
+                        </a>
+                      </li>
+                      <li class="mb-1 last:mb-0">
+                        <a
+                          class="block transition duration-150 truncate"
+                          :class="
+                            isExactActive
+                              ? 'text-[#36d887]'
+                              : 'text-slate-400 hover:text-slate-200'
+                          "
+                          :href="href"
+                          @click="navigate"
+                        >
+                          <span
+                            class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                            >Hisobot sozlamalari
+                          </span>
+                        </a>
+                      </li>
+                      <li class="mb-1 last:mb-0">
+                        <a
+                          class="block transition duration-150 truncate"
+                          :class="
+                            isExactActive
+                              ? 'text-[#36d887]'
+                              : 'text-slate-400 hover:text-slate-200'
+                          "
+                          :href="href"
+                          @click="navigate"
+                        >
+                          <span
+                            class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                            >Log sozlamalari
+                          </span>
+                        </a>
+                      </li>
+                    </router-link>
+                  </ul>
+                </div>
+              </SidebarLinkGroup>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Expand / collapse button -->
+        <div class="pt-3 hidden lg:inline-flex justify-end mt-auto">
+          <div class="px-3 py-2">
+            <button
+              class="mt-[520px] ml-40"
+              @click.prevent="sidebarExpanded = !sidebarExpanded"
+            >
+              <span class="sr-only">Expand / collapse sidebar</span>
+              <svg
+                class="w-6 h-6 fill-current sidebar-expanded:rotate-180"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  class="text-slate-400"
+                  d="M19.586 11l-5-5L16 4.586 23.414 12 16 19.414 14.586 18l5-5H7v-2z"
+                />
+                <path class="text-slate-600" d="M3 23H1V1h2z" />
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -2607,8 +2959,14 @@ export default {
     const trigger = ref(null);
     const sidebar = ref(null);
     const role = ref(JSON.parse(Cookies.get("account")).role);
+    const is_dashboard = ref(false);
+    const is_production = ref(false);
+    const is_departments = ref(false);
+    const is_reports = ref(false);
+    const is_settings = ref(false);
+    const is_mores = ref(false);
 
-    const permissions = ref(JSON.parse(Cookies.get("account")).permissions);
+    // const permissions = ref(JSON.parse(Cookies.get("account")).permissions);
 
     const storedSidebarExpanded = localStorage.getItem("sidebar-expanded");
     const sidebarExpanded = ref(
@@ -2656,11 +3014,16 @@ export default {
 
     return {
       role,
-      permissions,
       trigger,
       sidebar,
       sidebarExpanded,
       currentRoute,
+      is_dashboard,
+      is_production,
+      is_departments,
+      is_reports,
+      is_settings,
+      is_mores,
     };
   },
 };

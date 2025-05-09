@@ -31,9 +31,8 @@ export const AuthStore = defineStore("Auth", {
                 if (res.data.result) {
                     Cookies.set("account", JSON.stringify(res.data.user));
                     Cookies.set("token", res.data.accessToken);
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 500);
+                    // Sahifani yangilash o‘rniga explore sahifasiga yo‘naltirish
+            window.location.href = "/explore/dashboard/statistic/sale";
                 } else {
                     this.is_alert = true
                     this.items = res.data

@@ -2,11 +2,12 @@
   <header
     class="sticky top-0 bg-white dark:bg-[#182235] border-b border-slate-200 dark:border-slate-700 z-30"
   >
-    <div class="px-4 sm:px-6 lg:px-8">
+    <div class="px-4 sm:px-6 lg:px-8 mb-[-4]">
       <div class="flex items-center justify-between h-16 -mb-px">
         <!-- Header: Left side -->
         <div class="flex">
           <!-- Hamburger button -->
+
           <button
             class="text-slate-500 hover:text-slate-600 lg:hidden"
             @click.stop="$emit('toggle-sidebar')"
@@ -28,6 +29,7 @@
 
         <!-- Header: Right side -->
         <div class="flex items-center space-x-3">
+         
           <!-- <router-link
             to=""
             @click="goBack"
@@ -86,6 +88,7 @@ import Notifications from "../components/DropdownNotifications.vue";
 import Help from "../components/DropdownHelp.vue";
 import ThemeToggle from "../components/ThemeToggle.vue";
 import UserMenu from "../components/DropdownProfile.vue";
+import { computed } from "vue";
 
 export default {
   name: "Header",
@@ -100,6 +103,13 @@ export default {
   setup() {
     const router = useRouter();
     const route = useRoute();
+    const breadcrumbs = computed(() => {
+      // const matchedRoutes = route.matched.filter((r) => r.name.breadcrumb);
+      return route.matched.map((r) => ({
+        path: r.path,
+        label: r.name,
+      }));
+    });
     const goBack = () => {
       router.go(-1);
     };
@@ -107,6 +117,7 @@ export default {
     return {
       searchModalOpen,
       goBack,
+      breadcrumbs,
     };
   },
 };
