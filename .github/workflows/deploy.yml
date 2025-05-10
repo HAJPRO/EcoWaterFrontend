@@ -1,4 +1,4 @@
-name: "CI/CD HAJ CLIENT APP"
+name: "CI/CD ECO CLIENT APP"
 
 on:
   push:
@@ -29,8 +29,14 @@ jobs:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.KEY_LS }}
+          port: 22
           script: |
+            # Add server's SSH key to known_hosts to avoid prompt
+            mkdir -p ~/.ssh
+            ssh-keyscan -H ${{ secrets.HOST }} >> ~/.ssh/known_hosts
+
+            # Deploy process
             cd /var/www/workers/EcoWaterFrontend/
-             git pull --no-rebase origin main
+            git pull --no-rebase origin main
             /usr/bin/npm install
             /usr/bin/npm run build
