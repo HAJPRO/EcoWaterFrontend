@@ -26,9 +26,9 @@ jobs:
       - name: "Deploy to local server"
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.HOST_LS }}
-          username: ${{ secrets.USERNAME_LS }}
-          key: ${{ secrets.KEY_LS }}
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.KEY }}
           script: |
             # Tizimga ulanish va reponi yangilash
             cd /var/www/workers/EcoWaterFrontend/
