@@ -28,7 +28,7 @@ jobs:
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.KEY }}
+          key: ${{ secrets.KEY_LS }}
           script: |
             # Tizimga ulanish va reponi yangilash
             cd /var/www/workers/EcoWaterFrontend/
@@ -37,3 +37,5 @@ jobs:
             /usr/bin/npm install
             # Loyiha qurilishi
             /usr/bin/npm run build
+            # Yangi qurilgan versiyani serverga joylashtirish
+            pm2 restart EcoWaterFrontend || pm2 start /var/www/workers/EcoWaterFrontend/dist
