@@ -2,10 +2,9 @@
   <div
     class="flex justify-center items-center min-h-screen bg-gray-100 bg-center bg-cover"
     style="
-      background: url('../../../public/eco_water.jpeg')
+      background: url('https://ecowater.company-erp.uz/eco_water.jpeg')
         no-repeat center center/cover;
     "
-    
   >
     <div class="bg-white p-6 rounded-lg shadow-lg w-96 bg-opacity-90">
       <h1
