@@ -28,7 +28,7 @@ jobs:
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.KEY_LS }}
+          key: ${{ secrets.KEY_LS_ECO }}
           port: 22
           script: |
             # Add server's SSH key to known_hosts to avoid prompt
