@@ -3,7 +3,7 @@ name: "CI/CD ECO CLIENT APP"
 on:
   push:
     branches:
-      - main
+      - eco-branch # Yangi kod 'eco-branch'ga push qilinishi kerak
 
 jobs:
   build:
@@ -37,6 +37,6 @@ jobs:
 
             # Deploy process
             cd /var/www/workers/EcoWaterFrontend/
-            git pull --no-rebase origin main
+            git pull --no-rebase origin eco-branch  # 'eco-branch'dan kodni olish
             /usr/bin/npm install
             /usr/bin/npm run build
