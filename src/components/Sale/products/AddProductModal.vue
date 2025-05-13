@@ -91,7 +91,9 @@ const PlusProduct = () => {
   if (
     model.value.packingType === "" ||
     model.value.cost_price === "" ||
-    model.value.buying_price === ""
+    model.value.buying_price === "" ||
+    model.value.block_buying_price === "" ||
+    model.value.block_cost_price === ""
   ) {
     ElMessage.error("Iltimos barcha maydonlarni to'ldiring !");
   } else {
@@ -100,6 +102,8 @@ const PlusProduct = () => {
       packingType: model.value.packingType,
       cost_price: Number(model.value.cost_price),
       buying_price: Number(model.value.buying_price),
+      block_cost_price: Number(model.value.block_cost_price),
+      block_buying_price: Number(model.value.block_buying_price),
     };
     Products.value.push(data);
   }
@@ -117,7 +121,7 @@ const PlusValidate = async (formRef) => {
         pro_image_url: model.value.pro_image_url,
         productionStarteddAt: new Date(),
       };
-      store_product.Create({...main, products :  Products.value});
+      store_product.Create({ ...main, products: Products.value });
     } else {
       ElMessage.error("Iltimos barcha maydonlarni to'ldiring !");
       return false;
@@ -163,7 +167,7 @@ onMounted(async () => {
         >
           <!-- //  Mahsulot ma'lumotlari -->
           <div
-            class="mb-1 col-span-7 bg-[#e8eded] p-2 rounded-md border-[1px] border-[#36d887]"
+            class="mb-1 col-span-5 bg-[#e8eded] p-2 rounded-md border-[1px] border-[#36d887]"
           >
             <h1
               class="bg-slate-100 font-semibold text-[13px] p-1 mt-1 align-center text-center rounded-md border-t-[1px] border-[#36d887]"
@@ -308,11 +312,7 @@ onMounted(async () => {
                 </el-form-item>
               </div>
               <div class="mb-1 col-span-4">
-                <el-form-item
-                  label="Sotuv turi"
-                  prop="sale_type"
-                  :rules="rules"
-                >
+                <el-form-item label="Sotuv turi" prop="sale_type">
                   <el-select
                     v-model="model.sale_type"
                     placeholder="..."
@@ -353,7 +353,7 @@ onMounted(async () => {
               </div>
               <div class="mb-1 col-span-4">
                 <el-form-item
-                  label="Ishlab chiqarish boshlangan"
+                  label="Ishlab chiqarish"
                   prop="productionStarteddAt"
                   :rules="rules"
                 >
@@ -402,7 +402,7 @@ onMounted(async () => {
           </div>
           <!-- //  Narx ma'lumotlari -->
           <div
-            class="mb-1 col-span-5 bg-[#e8eded] p-2 rounded-md border-[1px] border-[#36d887]"
+            class="mb-1 col-span-7 bg-[#e8eded] p-2 rounded-md border-[1px] border-[#36d887]"
           >
             <h1
               class="bg-slate-100 font-semibold text-[13px] p-1 mt-1 align-center text-center rounded-md border-t-[1px] border-[#36d887]"
@@ -412,7 +412,7 @@ onMounted(async () => {
             <div class="grid grid-cols-12 gap-1">
               <div class="mb-1 col-span-4">
                 <el-form-item
-                  label="Qadoq turlari"
+                  label="Qadoq turi"
                   prop="packingType"
                   :rules="rules"
                 >
@@ -456,7 +456,7 @@ onMounted(async () => {
               </div>
               <div class="mb-1 col-span-4">
                 <el-form-item
-                  label="Tan narxi (sum)"
+                  label="Tan narxi dona (sum)"
                   prop="cost_price"
                   :rules="rules"
                 >
@@ -474,7 +474,7 @@ onMounted(async () => {
               </div>
               <div class="mb-1 col-span-4">
                 <el-form-item
-                  label="Sotuv narxi (sum)"
+                  label="Sotuv narxi dona (sum)"
                   prop="buying_price"
                   :rules="rules"
                 >
@@ -484,7 +484,43 @@ onMounted(async () => {
                     clearable
                     class="w-[100%]"
                     size="smal"
-                   type="Number"
+                    type="Number"
+                    maxlength="9"
+                    placeholder="..."
+                  />
+                </el-form-item>
+              </div>
+              <div class="mb-1 col-span-6">
+                <el-form-item
+                  label="Tan narxi blokda (sum)"
+                  prop="block_cost_price"
+                  :rules="rules"
+                >
+                  <el-input
+                    required
+                    v-model="model.block_cost_price"
+                    clearable
+                    class="w-[100%]"
+                    size="smal"
+                    type="Number"
+                    maxlength="9"
+                    placeholder="..."
+                  />
+                </el-form-item>
+              </div>
+              <div class="mb-1 col-span-6">
+                <el-form-item
+                  label="Sotuv narxi blokda (sum)"
+                  prop="block_buying_price"
+                  :rules="rules"
+                >
+                  <el-input
+                    required
+                    v-model="model.block_buying_price"
+                    clearable
+                    class="w-[100%]"
+                    size="smal"
+                    type="Number"
                     maxlength="9"
                     placeholder="..."
                   />
@@ -515,7 +551,7 @@ onMounted(async () => {
               size="small"
               header-align="center"
               empty-text="Mahsulot qo'shilmagan... "
-              height="220"
+              height="180"
               :data="Products"
             >
               <el-table-column
@@ -528,7 +564,7 @@ onMounted(async () => {
                 width="60"
               />
               <el-table-column
-                prop="PackingType"
+                prop="packingType"
                 label="Turi"
                 :min-width="100"
                 :max-width="400"
@@ -537,13 +573,13 @@ onMounted(async () => {
               >
                 <template #default="{ row }"
                   ><div class="text-red-500">
-                    {{ row.PackingType }}
+                    {{ row.packingType }}
                   </div></template
                 ></el-table-column
               >
               <el-table-column
                 prop="cost_price"
-                label="Tan narxi (sum)"
+                label="Tan narxi dona (sum)"
                 :min-width="100"
                 :max-width="400"
                 header-align="center"
@@ -558,7 +594,7 @@ onMounted(async () => {
 
               <el-table-column
                 prop="buying_price"
-                label="Sotuv narxi (sum)"
+                label="Sotuv narxi dona (sum)"
                 :min-width="100"
                 :max-width="400"
                 header-align="center"
@@ -567,6 +603,43 @@ onMounted(async () => {
                 <template #default="{ row }"
                   ><div class="text-purple-600">
                     {{ row.buying_price ? formatPrice(row.buying_price) : 0 }}
+                  </div></template
+                ></el-table-column
+              >
+              <el-table-column
+                prop="block_cost_price"
+                label="Tan narxi blok (sum)"
+                :min-width="100"
+                :max-width="400"
+                header-align="center"
+                align="center"
+              >
+                <template #default="{ row }"
+                  ><div class="text-green-600">
+                    {{
+                      row.block_cost_price
+                        ? formatPrice(row.block_cost_price)
+                        : 0
+                    }}
+                  </div></template
+                ></el-table-column
+              >
+
+              <el-table-column
+                prop="block_buying_price"
+                label="Sotuv narxi blok (sum)"
+                :min-width="100"
+                :max-width="400"
+                header-align="center"
+                align="center"
+              >
+                <template #default="{ row }"
+                  ><div class="text-purple-600">
+                    {{
+                      row.block_buying_price
+                        ? formatPrice(row.block_buying_price)
+                        : 0
+                    }}
                   </div></template
                 ></el-table-column
               >
