@@ -3,7 +3,7 @@ name: "CI/CD ECO CLIENT APP"
 on:
   push:
     branches:
-      - main
+      - eco-branch
 
 jobs:
   build:
@@ -37,6 +37,6 @@ jobs:
 
             # Deploy process
             cd /var/www/workers/EcoWaterFrontend/
-            git pull --no-rebase origin main
+            git pull --no-rebase origin  eco-branch
             /usr/bin/npm install
             /usr/bin/npm run build
