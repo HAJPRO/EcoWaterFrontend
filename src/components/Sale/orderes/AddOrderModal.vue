@@ -1,5 +1,4 @@
 <script setup>
-import MapView from "../../Customers/customerManagment/MapView.vue";
 import AddCustomerModal from "../../Customers/customerManagment/AddCustomModal.vue";
 import { ElMessage } from "element-plus";
 import { onMounted, ref, computed } from "vue";
@@ -47,7 +46,6 @@ const formatPrice = (price) => {
   return new Intl.NumberFormat("uz-UZ").format(price);
 };
 
-
 const AddCustomeModal = () => {
   store_customers.AddCustomModal();
 };
@@ -68,13 +66,13 @@ const units = ref([
   { id: 3, name: "Blok" },
 ]);
 const productsName = ref([
-  { id: 1, type : "Gazli", name: "Kola 0.5 l" },
-  { id: 2, type : "Gazli",  name: "Chortoq 1.5 l" },
-  { id: 3, type : "Gazli", name: "Fanta 1 l" },
+  { id: 1, type: "Gazli", name: "Kola 0.5 l" },
+  { id: 2, type: "Gazli", name: "Chortoq 1.5 l" },
+  { id: 3, type: "Gazli", name: "Fanta 1 l" },
 ]);
 const productsType = ref([
   { id: 1, name: "Gazli" },
-  { id: 2,  name: "Gazsiz" },
+  { id: 2, name: "Gazsiz" },
   { id: 3, name: "Sharbatlar" },
 ]);
 
@@ -82,7 +80,11 @@ const formRef = ref();
 const PlusValidate = async (formRef) => {
   await formRef.validate((valid) => {
     if (valid === true) {
-      store_orders.Create({ products : products.value, customerId  : modal.value.model._id, totalAmount : pro_total_price.value });
+      store_orders.Create({
+        products: products.value,
+        customerId: modal.value.model._id,
+        totalAmount: pro_total_price.value,
+      });
     } else {
       ElMessage.error("Iltimos barcha maydonlarni to'ldiring !");
       return false;
@@ -103,7 +105,6 @@ const PlusProductValidate = async (formRef) => {
 };
 const products = ref([]);
 const PlusProduct = () => {
-  
   if (
     model.value.product.pro_quantity === "" ||
     model.value.product.pro_price === "" ||
@@ -195,7 +196,6 @@ onMounted(async () => {
                     placeholder="..."
                     size="smal"
                     style="width: 100%"
-                 
                     @change="ChangeCustomerFullname($event)"
                   >
                     <template #prefix>
@@ -224,11 +224,7 @@ onMounted(async () => {
                 </el-form-item>
               </div>
               <div class="mb-1 col-span-6">
-                <el-form-item
-                  label="Kategoryasi"
-                  prop="customer.category"
-                 
-                >
+                <el-form-item label="Kategoryasi" prop="customer.category">
                   <el-select
                     disabled
                     v-model="modal.model.category"
@@ -328,7 +324,6 @@ onMounted(async () => {
                 <el-form-item
                   label="Registratsiya vaqti"
                   prop="customer.registeredAt"
-                 
                 >
                   <el-date-picker
                     disabled
@@ -359,7 +354,6 @@ onMounted(async () => {
                 <el-form-item
                   label="Pasport serya"
                   prop="customer.passportNumber"
-                 
                 >
                   <el-input
                     disabled
@@ -391,11 +385,7 @@ onMounted(async () => {
                 </el-form-item>
               </div>
               <div class="mb-1 col-span-4">
-                <el-form-item
-                  label="Viloyat"
-                  prop="customer.address.region"
-                 
-                >
+                <el-form-item label="Viloyat" prop="customer.address.region">
                   <el-select
                     disabled
                     v-model="modal.model.address.region"
@@ -436,11 +426,7 @@ onMounted(async () => {
                 </el-form-item>
               </div>
               <div class="mb-1 col-span-3">
-                <el-form-item
-                  label="Tuman"
-                  prop="customer.address.district"
-                 
-                >
+                <el-form-item label="Tuman" prop="customer.address.district">
                   <el-select
                     disabled
                     v-model="modal.model.address.district"
@@ -484,7 +470,6 @@ onMounted(async () => {
                 <el-form-item
                   label="Mahalla"
                   prop="customer.address.neighborhood"
-                 
                 >
                   <el-select
                     disabled
@@ -526,11 +511,7 @@ onMounted(async () => {
                 </el-form-item>
               </div>
               <div class="mb-1 col-span-3">
-                <el-form-item
-                  label="Ko'cha"
-                  prop="customer.address.street"
-                 
-                >
+                <el-form-item label="Ko'cha" prop="customer.address.street">
                   <el-select
                     disabled
                     v-model="modal.model.address.street"
@@ -695,7 +676,11 @@ onMounted(async () => {
                 </el-form-item>
               </div>
               <div class="mb-1 col-span-4">
-                <el-form-item label="Birligi" prop="product.pro_unit" :rules="rules">
+                <el-form-item
+                  label="Birligi"
+                  prop="product.pro_unit"
+                  :rules="rules"
+                >
                   <el-select
                     v-model="model.product.pro_unit"
                     placeholder="..."
@@ -782,8 +767,8 @@ onMounted(async () => {
               }"
               border
               stripe
-               highlight-current-row
-               class="gradient-header-table rounded-none"
+              highlight-current-row
+              class="gradient-header-table rounded-none"
               load
               style="font-size: 12px"
               size="small"
@@ -948,7 +933,11 @@ onMounted(async () => {
   width: 100%;
 }
 .gradient-header-table ::v-deep .el-table__header {
-  background-image: linear-gradient(to right, #3b82f6, #6366f1); /* from-blue-500 to-indigo-500 */
+  background-image: linear-gradient(
+    to right,
+    #3b82f6,
+    #6366f1
+  ); /* from-blue-500 to-indigo-500 */
   color: white;
 }
 </style>

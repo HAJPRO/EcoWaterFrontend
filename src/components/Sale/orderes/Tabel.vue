@@ -18,38 +18,36 @@ const store_order = OrderManagmentStore();
 
 import { storeToRefs } from "pinia";
 
-  const { orders, all_length, customers, model, isActive } =
+const { orders, all_length, customers, model, isActive } =
   storeToRefs(store_order);
-  const {  } =
-  storeToRefs(store);
+const {} = storeToRefs(store);
 
-const AddCustomModal =  () => {
-  store_order.AddOrderModal()
-   store.GetAll({status : 0});
-}
-const detailOrderModal =  (id) => {
-  store_order.DetailOrderModal({id})
-}
+const AddCustomModal = () => {
+  store_order.AddOrderModal();
+  store.GetAll({ status: 0 });
+};
+const detailOrderModal = (id) => {
+  store_order.DetailOrderModal({ id });
+};
 const handleCurrentChange = (page) => {
-  
-  store_order.GetAll({status : isActive.value, page : page, limit:5});
+  store_order.GetAll({ status: isActive.value, page: page, limit: 5 });
 };
 const deleteById = (id) => {
-  store.DeleteById({id});
+  store.DeleteById({ id });
 };
 const UpdateById = (id) => {
-  store.GetById({id});
+  store.GetById({ id });
 };
 const formatPrice = (price) => {
   return new Intl.NumberFormat("uz-UZ").format(price);
 };
-onMounted(()=>{
+onMounted(() => {
   // GetAllCustomers()
-})
+});
 </script>
 <template>
-<OrderModal/>
-<DetailOrderModal/>
+  <OrderModal />
+  <DetailOrderModal />
   <div class="">
     <div class="">
       <div class="rounded-md text-[11px]">
@@ -77,14 +75,19 @@ onMounted(()=>{
             label="№"
             width="60"
           />
-           <el-table-column
+          <el-table-column
             prop="orderNumber"
             label="Buyurtma nomeri"
-            :min-width="100"
+            :min-width="150"
             :max-width="400"
             header-align="center"
             align="center"
-          ><template #default="{row}"><div class="text-red-500 font-semibold">{{row.orderNumber}}</div></template></el-table-column>
+            ><template #default="{ row }"
+              ><div class="text-red-500 font-semibold">
+                {{ row.orderNumber }}
+              </div></template
+            ></el-table-column
+          >
           <el-table-column
             prop="fullname"
             label="F.I.O"
@@ -92,7 +95,11 @@ onMounted(()=>{
             :max-width="400"
             header-align="center"
             align="center"
-          > <template #default="{row}">{{row.customerId.fullname}}</template></el-table-column>
+          >
+            <template #default="{ row }">{{
+              row.customerId.fullname
+            }}</template></el-table-column
+          >
           <el-table-column
             align="center"
             header-align="center"
@@ -101,17 +108,17 @@ onMounted(()=>{
             :min-width="100"
             :max-width="400"
           />
-            <el-table-column
+          <el-table-column
             label="Kategoriyasi"
-          :min-width="150"
-          :max-width="400"
+            :min-width="150"
+            :max-width="400"
             header-align="center"
             align="center"
             ><template #default="scope">{{
-             scope.row.customerId.category
+              scope.row.customerId.category
             }}</template></el-table-column
           >
-           <el-table-column
+          <el-table-column
             align="center"
             header-align="center"
             prop="customerId.address.region"
@@ -119,7 +126,7 @@ onMounted(()=>{
             :min-width="100"
             :max-width="400"
           />
-            <el-table-column
+          <el-table-column
             align="center"
             header-align="center"
             prop="customerId.address.district"
@@ -127,7 +134,7 @@ onMounted(()=>{
             :min-width="100"
             :max-width="400"
           />
-           <el-table-column
+          <el-table-column
             align="center"
             header-align="center"
             prop="customerId.address.neighborhood"
@@ -135,7 +142,7 @@ onMounted(()=>{
             :min-width="100"
             :max-width="400"
           />
-             <el-table-column
+          <el-table-column
             align="center"
             header-align="center"
             prop="customerId.address.street"
@@ -143,7 +150,7 @@ onMounted(()=>{
             :min-width="100"
             :max-width="400"
           />
-           <el-table-column
+          <el-table-column
             align="center"
             header-align="center"
             prop="customerId.phoneNumber"
@@ -152,135 +159,132 @@ onMounted(()=>{
             :max-width="400"
           />
 
-       
-        
-           <el-table-column
+          <el-table-column
             label="Bonus ball"
             :min-width="100"
             header-align="center"
             align="center"
-            ><template #default="scope">{{ 
-             0
-            }}</template></el-table-column
+            ><template #default="scope">{{ 0 }}</template></el-table-column
           >
-             <el-table-column
+          <el-table-column
             label="Jami (sum)"
             :min-width="100"
             header-align="center"
             align="center"
-            ><template #default="{row}">  <div class="text-red-500 font-semibold">{{ 
-        row.totalAmount ?  formatPrice(row.totalAmount) : 0
-            }} sum</div></template></el-table-column
+            ><template #default="{ row }">
+              <div class="text-red-500 font-semibold">
+                {{ row.totalAmount ? formatPrice(row.totalAmount) : 0 }} sum
+              </div></template
+            ></el-table-column
           >
-           <el-table-column  label="🕒 Vaqt maydoni"
-          :min-width="150"
-          :max-width="400"
-            header-align="center"
-            align="center">
-             <el-table-column
-            label="Yaratilgan"
-          :min-width="150"
-          :max-width="400"
+          <el-table-column
+            label="🕒 Vaqt maydoni"
+            :min-width="150"
+            :max-width="400"
             header-align="center"
             align="center"
-            ><template #default="scope">
+          >
+            <el-table-column
+              label="Yaratilgan"
+              :min-width="150"
+              :max-width="400"
+              header-align="center"
+              align="center"
+              ><template #default="scope">
                 <div class="text-gray-900 font-semibold">
-               {{
-                scope.row.createdAt
-                  ? moment
-                      .utc( scope.row.createdAt) // 🟢 UTC formatda olish
-                      .tz("Asia/Tashkent") // 🟢 UTC+5 ga aylantirish
-                      .format("DD.MM.YYYY HH:mm:ss") // 🟢 To‘g‘ri formatda chiqarish
-                  : "-"
-              }}
+                  {{
+                    scope.row.createdAt
+                      ? moment
+                          .utc(scope.row.createdAt) // 🟢 UTC formatda olish
+                          .tz("Asia/Tashkent") // 🟢 UTC+5 ga aylantirish
+                          .format("DD.MM.YYYY HH:mm:ss") // 🟢 To‘g‘ri formatda chiqarish
+                      : "-"
+                  }}
                 </div>
-            
-            </template></el-table-column
-          >
-              <el-table-column
-            label="Yetkazish muddati"
-          :min-width="150"
-          :max-width="400"
-            header-align="center"
-            align="center"
-            ><template #default="scope">
+              </template></el-table-column
+            >
+            <el-table-column
+              label="Yetkazish muddati"
+              :min-width="150"
+              :max-width="400"
+              header-align="center"
+              align="center"
+              ><template #default="scope">
                 <div class="text-blue-600 font-semibold">
-               {{
-                scope.row.deliveryTime
-                  ? moment
-                      .utc( scope.row.deliveryTime) // 🟢 UTC formatda olish
-                      .tz("Asia/Tashkent") // 🟢 UTC+5 ga aylantirish
-                      .format("DD.MM.YYYY HH:mm:ss") // 🟢 To‘g‘ri formatda chiqarish
-                  : "-"
-              }}
+                  {{
+                    scope.row.deliveryTime
+                      ? moment
+                          .utc(scope.row.deliveryTime) // 🟢 UTC formatda olish
+                          .tz("Asia/Tashkent") // 🟢 UTC+5 ga aylantirish
+                          .format("DD.MM.YYYY HH:mm:ss") // 🟢 To‘g‘ri formatda chiqarish
+                      : "-"
+                  }}
                 </div>
-            
-            </template></el-table-column
-          >
-              <el-table-column
-            label="Haydovchiga yuborildi"
-          :min-width="150"
-          :max-width="400"
-            header-align="center"
-            align="center"
-            ><template #default="scope">
+              </template></el-table-column
+            >
+            <el-table-column
+              label="Haydovchiga yuborildi"
+              :min-width="150"
+              :max-width="400"
+              header-align="center"
+              align="center"
+              ><template #default="scope">
                 <div class="text-yellow-600 font-semibold">
-               {{
-                scope.row.driverSentToTime
-                  ? moment
-                      .utc( scope.row.driverSentToTime) // 🟢 UTC formatda olish
-                      .tz("Asia/Tashkent") // 🟢 UTC+5 ga aylantirish
-                      .format("DD.MM.YYYY HH:mm:ss") // 🟢 To‘g‘ri formatda chiqarish
-                  : "-"
-              }}
+                  {{
+                    scope.row.driverSentToTime
+                      ? moment
+                          .utc(scope.row.driverSentToTime) // 🟢 UTC formatda olish
+                          .tz("Asia/Tashkent") // 🟢 UTC+5 ga aylantirish
+                          .format("DD.MM.YYYY HH:mm:ss") // 🟢 To‘g‘ri formatda chiqarish
+                      : "-"
+                  }}
                 </div>
-            </template></el-table-column
-          >
-               <el-table-column
-            label="Haydovchi qabul qildi "
-          :min-width="150"
-          :max-width="400"
-            header-align="center"
-            align="center"
-            ><template #default="scope">
-               <div class="text-purple-600 font-semibold">
-               {{
-                scope.row.driverAcceptedTime
-                  ? moment
-                      .utc( scope.row.driverAcceptedTime) // 🟢 UTC formatda olish
-                      .tz("Asia/Tashkent") // 🟢 UTC+5 ga aylantirish
-                      .format("DD.MM.YYYY HH:mm:ss") // 🟢 To‘g‘ri formatda chiqarish
-                  : "-"
-              }}
-               </div>
-            
-            </template></el-table-column
-          >
-                  <el-table-column
-            label="Yetkazib berildi"
-          :min-width="150"
-          :max-width="400"
-            header-align="center"
-            align="center"
-            ><template #default="scope">
-              <div class="text-green-600 font-semibold">
-               {{
-                scope.row.driverArrivedTime
-                  ? moment
-                      .utc( scope.row.driverArrivedTime) // 🟢 UTC formatda olish
-                      .tz("Asia/Tashkent") // 🟢 UTC+5 ga aylantirish
-                      .format("DD.MM.YYYY HH:mm:ss") // 🟢 To‘g‘ri formatda chiqarish
-                  : "-"
-              }}</div>
-            
-            </template></el-table-column
-          >
+              </template></el-table-column
+            >
+            <el-table-column
+              label="Haydovchi qabul qildi "
+              :min-width="150"
+              :max-width="400"
+              header-align="center"
+              align="center"
+              ><template #default="scope">
+                <div class="text-purple-600 font-semibold">
+                  {{
+                    scope.row.driverAcceptedTime
+                      ? moment
+                          .utc(scope.row.driverAcceptedTime) // 🟢 UTC formatda olish
+                          .tz("Asia/Tashkent") // 🟢 UTC+5 ga aylantirish
+                          .format("DD.MM.YYYY HH:mm:ss") // 🟢 To‘g‘ri formatda chiqarish
+                      : "-"
+                  }}
+                </div>
+              </template></el-table-column
+            >
+            <el-table-column
+              label="Yetkazib berildi"
+              :min-width="150"
+              :max-width="400"
+              header-align="center"
+              align="center"
+              ><template #default="scope">
+                <div class="text-green-600 font-semibold">
+                  {{
+                    scope.row.driverArrivedTime
+                      ? moment
+                          .utc(scope.row.driverArrivedTime) // 🟢 UTC formatda olish
+                          .tz("Asia/Tashkent") // 🟢 UTC+5 ga aylantirish
+                          .format("DD.MM.YYYY HH:mm:ss") // 🟢 To‘g‘ri formatda chiqarish
+                      : "-"
+                  }}
+                </div>
+              </template></el-table-column
+            >
           </el-table-column>
           <el-table-column
             fixed="right"
             label="Holati"
             :min-width="170"
-              :max-width="400"
+            :max-width="400"
             header-align="center"
             align="center"
           >
@@ -326,11 +330,10 @@ onMounted(()=>{
                       ><template #default=""
                         ><div>
                           <i class="text-black fa-solid fa-eye fa-sm mr-2"></i
-                          >Batafsil 
+                          >Batafsil
                         </div>
                       </template></el-dropdown-item
                     >
-                 
 
                     <el-dropdown-item
                       class="text-[13px] text-yellow-500"
@@ -344,16 +347,13 @@ onMounted(()=>{
                         </div>
                       </template></el-dropdown-item
                     >
-                     <el-dropdown-item
+                    <el-dropdown-item
                       class="text-[13px] text-indigo-600"
                       @click="UpdateById(row._id)"
-                      
                       ><template #default="{}"
                         ><div>
-                          <i
-                            class="text-black fa-solid fa-pen fa-sm mr-1"
-                          ></i>
-                         O'zgatirish
+                          <i class="text-black fa-solid fa-pen fa-sm mr-1"></i>
+                          O'zgatirish
                         </div>
                       </template></el-dropdown-item
                     >
