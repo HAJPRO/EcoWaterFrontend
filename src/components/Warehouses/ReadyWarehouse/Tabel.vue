@@ -7,19 +7,19 @@ const actions = ref(JSON.parse(Cookies.get("account")).actions);
 import { ref, onMounted } from "vue";
 import { ReadyWarehouseStore } from "../../../stores/Warehouses/r-warehouse/warehouse.store";
 import AddProductModal from "../../../components/Warehouses/ReadyWarehouse/AddProductModal.vue";
+import DetailModal from "../../../components/Warehouses/ReadyWarehouse/DetailModal.vue";
 import moment from "moment-timezone";
 const store_rw = ReadyWarehouseStore();
 import { storeToRefs } from "pinia";
 
-  const { orders, all_length, customers, model } =
-  storeToRefs(store_rw);
-  
+const { all_length, products } = storeToRefs(store_rw);
 
-const addProductModal =  () => {
-  store_rw.AddProductModal()
-}
-const detailOrderModal =  (id) => {
-}
+const addProductModal = () => {
+  store_rw.AddProductModal();
+};
+const detailModal = (id) => {
+  store_rw.DetailModal({ id });
+};
 // const handleCurrentChange = (page) => {
 //   store.GetAll({status : isActive.value, page : page, limit:5});
 // };
@@ -32,13 +32,13 @@ const detailOrderModal =  (id) => {
 const formatPrice = (price) => {
   return new Intl.NumberFormat("uz-UZ").format(price);
 };
-onMounted(()=>{
+onMounted(() => {
   // GetAllCustomers()
-})
+});
 </script>
 <template>
-<AddProductModal/>
-<DetailOrderModal/>
+  <AddProductModal />
+  <DetailModal />
   <div class="">
     <div class="">
       <div class="rounded-md text-[11px]">
@@ -54,7 +54,7 @@ onMounted(()=>{
           header-align="right"
           :max-height="600"
           empty-text="Mahsulot qo'shilmagan... "
-          :data="orders"
+          :data="products"
           border
         >
           <el-table-column
@@ -66,210 +66,125 @@ onMounted(()=>{
             label="№"
             width="60"
           />
-           <el-table-column
-            prop="orderNumber"
-            label="Buyurtma nomeri"
-            :min-width="100"
-            :max-width="400"
-            header-align="center"
-            align="center"
-          ><template #default="{row}"><div class="text-red-500 font-semibold">{{row.orderNumber}}</div></template></el-table-column>
           <el-table-column
-            prop="fullname"
-            label="F.I.O"
+            prop="partyNumber"
+            label="Partya nomeri"
             :min-width="100"
             :max-width="400"
             header-align="center"
             align="center"
-          > <template #default="{row}">{{row.customerId.fullname}}</template></el-table-column>
+            ><template #default="{ row }"
+              ><div class="text-red-500 font-semibold">
+                {{ row.partyNumber }}
+              </div></template
+            ></el-table-column
+          >
           <el-table-column
-            align="center"
-            header-align="center"
-            prop="customerId.artikul"
-            label="Artikul"
+            prop="manufacturer"
+            label="Ishlab chiqaruvchi"
             :min-width="100"
             :max-width="400"
-          />
-            <el-table-column
-            label="Kategoriyasi"
-          :min-width="150"
-          :max-width="400"
             header-align="center"
             align="center"
-            ><template #default="scope">{{
-             scope.row.customerId.category
+          >
+            <template #default="{ row }">{{
+              row.manufacturer
             }}</template></el-table-column
           >
-           <el-table-column
-            align="center"
-            header-align="center"
-            prop="customerId.address.region"
-            label="Viloyat"
+          <el-table-column
+            prop="manufacturer"
+            label="Yetkazib beruvchi"
             :min-width="100"
             :max-width="400"
-          />
-            <el-table-column
-            align="center"
             header-align="center"
-            prop="customerId.address.district"
-            label="Tuman"
-            :min-width="100"
-            :max-width="400"
-          />
-           <el-table-column
             align="center"
-            header-align="center"
-            prop="customerId.address.neighborhood"
-            label="Mahalla"
-            :min-width="100"
-            :max-width="400"
-          />
-             <el-table-column
-            align="center"
-            header-align="center"
-            prop="customerId.address.street"
-            label="Ko'cha"
-            :min-width="100"
-            :max-width="400"
-          />
-           <el-table-column
-            align="center"
-            header-align="center"
-            prop="customerId.phoneNumber"
-            label="Telefon"
-            :min-width="100"
-            :max-width="400"
-          />
+          >
+            <template #default="{ row }">{{
+              row.supplier
+            }}</template></el-table-column
+          >
 
-       
-        
-           <el-table-column
-            label="Bonus ball"
-            :min-width="100"
-            header-align="center"
-            align="center"
-            ><template #default="scope">{{ 
-             0
-            }}</template></el-table-column
-          >
-             <el-table-column
+          <el-table-column
             label="Jami (sum)"
             :min-width="100"
             header-align="center"
             align="center"
-            ><template #default="{row}">  <div class="text-red-500 font-semibold">{{ 
-        row.totalAmount ?  formatPrice(row.totalAmount) : 0
-            }} sum</div></template></el-table-column
+            ><template #default="{ row }">
+              <div class="text-red-500 font-semibold">
+                {{ row.totalAmount ? formatPrice(row.totalAmount) : 0 }} sum
+              </div></template
+            ></el-table-column
           >
-           <el-table-column  label="🕒 Vaqt maydoni"
-          :min-width="150"
-          :max-width="400"
-            header-align="center"
-            align="center">
-             <el-table-column
-            label="Yaratilgan"
-          :min-width="150"
-          :max-width="400"
+          <el-table-column
+            label="🕒 Vaqt maydoni"
+            :min-width="150"
+            :max-width="400"
             header-align="center"
             align="center"
-            ><template #default="scope">
+          >
+            <el-table-column
+              label="Tasdiqlangan"
+              :min-width="150"
+              :max-width="400"
+              header-align="center"
+              align="center"
+              ><template #default="scope">
                 <div class="text-gray-900 font-semibold">
-               {{
-                scope.row.createdAt
-                  ? moment
-                      .utc( scope.row.createdAt) // 🟢 UTC formatda olish
-                      .tz("Asia/Tashkent") // 🟢 UTC+5 ga aylantirish
-                      .format("DD.MM.YYYY HH:mm:ss") // 🟢 To‘g‘ri formatda chiqarish
-                  : "-"
-              }}
+                  {{
+                    scope.row.receivedDate
+                      ? moment
+                          .utc(scope.row.receivedDate) // 🟢 UTC formatda olish
+                          .tz("Asia/Tashkent") // 🟢 UTC+5 ga aylantirish
+                          .format("DD.MM.YYYY HH:mm:ss") // 🟢 To‘g‘ri formatda chiqarish
+                      : "-"
+                  }}
                 </div>
-            
-            </template></el-table-column
-          >
-              <el-table-column
-            label="Yetkazish muddati"
-          :min-width="150"
-          :max-width="400"
-            header-align="center"
-            align="center"
-            ><template #default="scope">
-                <div class="text-blue-600 font-semibold">
-               {{
-                scope.row.deliveryTime
-                  ? moment
-                      .utc( scope.row.deliveryTime) // 🟢 UTC formatda olish
-                      .tz("Asia/Tashkent") // 🟢 UTC+5 ga aylantirish
-                      .format("DD.MM.YYYY HH:mm:ss") // 🟢 To‘g‘ri formatda chiqarish
-                  : "-"
-              }}
+              </template></el-table-column
+            >
+            <el-table-column
+              label="Bekor qilingan"
+              :min-width="150"
+              :max-width="400"
+              header-align="center"
+              align="center"
+              ><template #default="scope">
+                <div class="text-gray-900 font-semibold">
+                  {{
+                    scope.row.cancelDate
+                      ? moment
+                          .utc(scope.row.cancelDate) // 🟢 UTC formatda olish
+                          .tz("Asia/Tashkent") // 🟢 UTC+5 ga aylantirish
+                          .format("DD.MM.YYYY HH:mm:ss") // 🟢 To‘g‘ri formatda chiqarish
+                      : "-"
+                  }}
                 </div>
-            
-            </template></el-table-column
-          >
-              <el-table-column
-            label="Haydovchiga yuborildi"
-          :min-width="150"
-          :max-width="400"
-            header-align="center"
-            align="center"
-            ><template #default="scope">
-                <div class="text-yellow-600 font-semibold">
-               {{
-                scope.row.driverSentToTime
-                  ? moment
-                      .utc( scope.row.driverSentToTime) // 🟢 UTC formatda olish
-                      .tz("Asia/Tashkent") // 🟢 UTC+5 ga aylantirish
-                      .format("DD.MM.YYYY HH:mm:ss") // 🟢 To‘g‘ri formatda chiqarish
-                  : "-"
-              }}
+              </template></el-table-column
+            >
+            <el-table-column
+              label="Yakunlangan"
+              :min-width="150"
+              :max-width="400"
+              header-align="center"
+              align="center"
+              ><template #default="scope">
+                <div class="text-green-600 font-semibold">
+                  {{
+                    scope.row.finalyTime
+                      ? moment
+                          .utc(scope.row.finalyTime) // 🟢 UTC formatda olish
+                          .tz("Asia/Tashkent") // 🟢 UTC+5 ga aylantirish
+                          .format("DD.MM.YYYY HH:mm:ss") // 🟢 To‘g‘ri formatda chiqarish
+                      : "-"
+                  }}
                 </div>
-            </template></el-table-column
-          >
-               <el-table-column
-            label="Haydovchi qabul qildi "
-          :min-width="150"
-          :max-width="400"
-            header-align="center"
-            align="center"
-            ><template #default="scope">
-               <div class="text-purple-600 font-semibold">
-               {{
-                scope.row.driverAcceptedTime
-                  ? moment
-                      .utc( scope.row.driverAcceptedTime) // 🟢 UTC formatda olish
-                      .tz("Asia/Tashkent") // 🟢 UTC+5 ga aylantirish
-                      .format("DD.MM.YYYY HH:mm:ss") // 🟢 To‘g‘ri formatda chiqarish
-                  : "-"
-              }}
-               </div>
-            
-            </template></el-table-column
-          >
-                  <el-table-column
-            label="Yetkazib berildi"
-          :min-width="150"
-          :max-width="400"
-            header-align="center"
-            align="center"
-            ><template #default="scope">
-              <div class="text-green-600 font-semibold">
-               {{
-                scope.row.driverArrivedTime
-                  ? moment
-                      .utc( scope.row.driverArrivedTime) // 🟢 UTC formatda olish
-                      .tz("Asia/Tashkent") // 🟢 UTC+5 ga aylantirish
-                      .format("DD.MM.YYYY HH:mm:ss") // 🟢 To‘g‘ri formatda chiqarish
-                  : "-"
-              }}</div>
-            
-            </template></el-table-column
-          >
+              </template></el-table-column
+            >
           </el-table-column>
           <el-table-column
             fixed="right"
             label="Holati"
             :min-width="170"
-              :max-width="400"
+            :max-width="400"
             header-align="center"
             align="center"
           >
@@ -311,11 +226,11 @@ onMounted(()=>{
                   <el-dropdown-menu slot="dropdown" append-to-body class="z-50">
                     <el-dropdown-item
                       class="text-[13px] text-green-600"
-                      @click="detailOrderModal(row._id)"
+                      @click="detailModal(row._id)"
                       ><template #default=""
                         ><div>
                           <i class="text-black fa-solid fa-eye fa-sm mr-2"></i
-                          >Batafsil 
+                          >Batafsil
                         </div>
                       </template></el-dropdown-item
                     >
@@ -344,16 +259,13 @@ onMounted(()=>{
                         </div>
                       </template></el-dropdown-item
                     >
-                     <el-dropdown-item
+                    <el-dropdown-item
                       class="text-[13px] text-indigo-600"
                       @click="UpdateById(row._id)"
-                      
                       ><template #default="{}"
                         ><div>
-                          <i
-                            class="text-black fa-solid fa-pen fa-sm mr-1"
-                          ></i>
-                         O'zgatirish
+                          <i class="text-black fa-solid fa-pen fa-sm mr-1"></i>
+                          O'zgatirish
                         </div>
                       </template></el-dropdown-item
                     >
@@ -390,7 +302,7 @@ onMounted(()=>{
                   clearable
                   size="smal"
                   type="String"
-                  placeholder="Arikul bo'yicha..."
+                  placeholder="Partya bo'yicha..."
                   style="width: 150px; font-size: 12px"
                 />
               </div>
@@ -444,7 +356,7 @@ onMounted(()=>{
                 @current-change="handleCurrentChange"
                 :page-size="5"
                 layout="prev, pager, next"
-                :total="100"
+                :total="all_length.all"
                 class="custom-pagination"
               >
               </el-pagination>

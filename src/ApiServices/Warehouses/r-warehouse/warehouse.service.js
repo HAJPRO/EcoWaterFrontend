@@ -11,15 +11,15 @@ export const ReadyWarehouseService = {
         return api.post(url, data);
     },
     GetAll(status) {
-        let url = "drivers/driver/all";
+        let url = "warehouses/r-warehouse/all";
         return api.post(url, status);
     },
     DeleteById(id) {
         let url = "customers/managment/deleted";
         return api.post(url, id);
     },
-    OrderGetById(id) {
-        let url = "sale/managment/getone";
+    GetOne(id) {
+        let url = "warehouses/r-warehouse/getone";
         return api.post(url, id);
     },
 };

@@ -1,12 +1,16 @@
 <script setup>
 import { ElMessage } from "element-plus";
-import { onMounted, ref, computed ,watch} from "vue";
+import { onMounted, ref, computed, watch } from "vue";
 import { v4 as uuidv4 } from "uuid";
 import moment from "moment-timezone";
 import { ReadyWarehouseStore } from "../../../stores/Warehouses/r-warehouse/warehouse.store";
+import { ProductsManagmentStore } from "../../../stores/Sale/products/product.store";
+
 const store_rw = ReadyWarehouseStore();
+const store_pro = ProductsManagmentStore();
 import { storeToRefs } from "pinia";
 const { product_modal, product, model } = storeToRefs(store_rw);
+const { product: pro, products } = storeToRefs(store_pro);
 
 const dialogWidth = ref("");
 window.addEventListener("devicemotion", () => {
@@ -41,44 +45,38 @@ const totalPrice = computed(() => {
   const salePrice = model.value?.salePrice ?? 0;
   return quantity * salePrice;
 });
-// totalAmount ni ref bilan aniqlash
-const totalAmount = ref(0);
-
-// Watcher uchun
-watch(
-  () => model.value.products, // Kuzatadigan massiv
-  (newProducts) => {
-    if (newProducts?.length > 0) {
-      totalAmount.value = newProducts.reduce(
-        (a, b) => a + Number(b.totalPrice),
-        0
-      );
-    } else {
-      totalAmount.value = 0;
-    }
-  },
-  { immediate: true } // Dastlabki qiymatni ham yangilash uchun
-);
-console.log(totalAmount.value);
-
-
-
+const totalAmount = computed(() => {
+  const products = model.value.products || [];
+  return products.reduce((sum, item) => {
+    const price =
+      typeof item.totalPrice === "object" && "value" in item.totalPrice
+        ? Number(item.totalPrice.value || 0)
+        : Number(item.totalPrice || 0);
+    return sum + price;
+  }, 0);
+});
 
 const PlusProduct = () => {
   // Yangi mahsulot yaratish
   const product = {
     id: uuidv4(),
-    product: model.value.product || "",                  // Agar mavjud bo‘lmasa, bo‘sh qiymat berish
-    category: model.value.category || "",                // Agar mavjud bo‘lmasa, bo‘sh qiymat berish
-    quantity: model.value.quantity || "",                // Agar mavjud bo‘lmasa, bo‘sh qiymat berish
-    packagingType: model.value.packagingType || "",      // Agar mavjud bo‘lmasa, bo‘sh qiymat berish
-    costPrice: model.value.costPrice || "",              // Agar mavjud bo‘lmasa, bo‘sh qiymat berish
-    salePrice: model.value.salePrice || "",              // Agar mavjud bo‘lmasa, bo‘sh qiymat berish
-    totalPrice: totalPrice || 0,            // Agar mavjud bo‘lmasa, bo‘sh qiymat berish
-    manufactureDate: model.value.manufactureDate || "",  // Agar mavjud bo‘lmasa, bo‘sh qiymat berish
-    expireDate: model.value.expireDate || ""             // Agar mavjud bo‘lmasa, bo‘sh qiymat berish
+    product: model.value.product || "", // Agar mavjud bo‘lmasa, bo‘sh qiymat berish
+    category: model.value.category || "", // Agar mavjud bo‘lmasa, bo‘sh qiymat berish
+    quantity: model.value.quantity || 0, // Agar mavjud bo‘lmasa, 0 qiymat berish
+    packagingType: model.value.packagingType || "", // Agar mavjud bo‘lmasa, bo‘sh qiymat berish
+    costPrice: model.value.costPrice || 0, // Agar mavjud bo‘lmasa, 0 qiymat berish
+    blockCostPrice: model.value.blockCostPrice || 0, // Agar mavjud bo‘lmasa, 0 qiymat berish
+    unit: model.value.unit || "", // Agar mavjud bo‘lmasa, bo‘sh qiymat berish
+    totalPrice: model.value.quantity
+      ? model.value.unit === "Blok"
+        ? model.value.quantity * model.value.blockCostPrice
+        : model.value.quantity * model.value.costPrice
+      : 0, // Formatlashdan oldin faqat raqamni hisoblash
+    manufactureDate: model.value.manufactureDate || "", // Agar mavjud bo‘lmasa, bo‘sh qiymat berish
+    expireDate: model.value.expireDate || "", // Agar mavjud bo‘lmasa, bo‘sh qiymat berish
   };
   model.value.products.push(product);
+  console.log(model.value.products);
 };
 
 const formRef = ref(null);
@@ -99,22 +97,52 @@ const DeleteById = (id) => {
   });
   model.value.products = filterLoad;
 };
+const pakings = ref();
+const SelectedProduct = ref();
+const ChangeName = (value) => {
+  const selectedProduct = products.value.find(
+    (item) => item.pro_name === value
+  );
+  if (selectedProduct) {
+    model.value.category = selectedProduct.pro_category;
+    model.value.code = selectedProduct.code;
+    pakings.value = selectedProduct.products;
+    SelectedProduct.value = selectedProduct;
+  }
+};
+const ChangePacking = (value) => {
+  const selectedProduct = products.value.find(
+    (item) => item.pro_name === value
+  );
+  if (SelectedProduct.value) {
+    const selectedPacking = SelectedProduct.value.products.find(
+      (item) => item.packingType === value
+    );
 
+    if (selectedPacking) {
+      model.value.packagingType = selectedPacking.packingType;
+      model.value.costPrice = selectedPacking.cost_price;
+      model.value.blockCostPrice = selectedPacking.block_cost_price;
+    }
+  }
+};
 
-const pakings = ref([
-  { id: 1, name: "Litr" },
-  { id: 2, name: "Dona" },
-  { id: 3, name: "Blok" },
-]);
-const products = ref([
-  { id: 1, type : "Gazli", name: "Kola 0.5 l" },
-  { id: 2, type : "Gazli",  name: "Chortoq 1.5 l" },
-  { id: 3, type : "Gazli", name: "Fanta 1 l" },
-]);
-const productsType = ref([
+const categoryes = ref([
   { id: 1, name: "Gazli" },
-  { id: 2,  name: "Gazsiz" },
+  { id: 2, name: "Gazsiz" },
   { id: 3, name: "Sharbatlar" },
+]);
+const suppliers = ref([{ id: 1, name: "Eco Water MCHJ" }]);
+const manufacturers = ref([{ id: 1, name: "Eco Water MCHJ" }]);
+const units = ref([
+  { id: 1, name: "Dona" },
+  { id: 2, name: "Blok" },
+  { id: 3, name: "Kg" },
+  { id: 4, name: "litr" },
+  { id: 5, name: "Metr" },
+  { id: 6, name: "Tona" },
+  { id: 7, name: "Quti" },
+  { id: 8, name: "Boshqa" },
 ]);
 const rules = ref({
   required: true,
@@ -122,6 +150,7 @@ const rules = ref({
   trigger: "blur",
 });
 onMounted(async () => {
+  store_pro.GetAll({ status: 0 });
   try {
   } catch (error) {
     console.log(error);
@@ -203,8 +232,8 @@ onMounted(async () => {
                       ></i>
                     </template>
                     <el-option
-                      v-for="item in products"
-                      :key="item._id"
+                      v-for="item in manufacturers"
+                      :key="item.id"
                       :label="item.name"
                       :value="item.name"
                     >
@@ -241,8 +270,8 @@ onMounted(async () => {
                       ></i>
                     </template>
                     <el-option
-                      v-for="item in products"
-                      :key="item._id"
+                      v-for="item in suppliers"
+                      :key="item.id"
                       :label="item.name"
                       :value="item.name"
                     >
@@ -263,7 +292,6 @@ onMounted(async () => {
                 <el-form-item
                   label="Mahsulotni jo'natgan xodim "
                   prop="senderEmployee"
-                  :rules="rules"
                 >
                   <el-select
                     v-model="model.senderEmployee"
@@ -285,8 +313,8 @@ onMounted(async () => {
                       ></i>
                     </template>
                     <el-option
-                      v-for="item in products"
-                      :key="item._id"
+                      v-for="item in manufacturers"
+                      :key="item.id"
                       :label="item.name"
                       :value="item.name"
                     >
@@ -295,7 +323,7 @@ onMounted(async () => {
                           <span>{{ item.name }}</span>
                           <i
                             class="fa-solid fa-trash text-red-500 cursor-pointer fa-xs ml-8"
-                            @click.stop="RemoveItem(item._id)"
+                            @click.stop="RemoveItem(item.id)"
                           ></i>
                         </div>
                       </template>
@@ -329,8 +357,8 @@ onMounted(async () => {
                       ></i>
                     </template>
                     <el-option
-                      v-for="item in products"
-                      :key="item._id"
+                      v-for="item in manufacturers"
+                      :key="item.id"
                       :label="item.name"
                       :value="item.name"
                     >
@@ -339,7 +367,7 @@ onMounted(async () => {
                           <span>{{ item.name }}</span>
                           <i
                             class="fa-solid fa-trash text-red-500 cursor-pointer fa-xs ml-8"
-                            @click.stop="RemoveItem(item._id)"
+                            @click.stop="RemoveItem(item.id)"
                           ></i>
                         </div>
                       </template>
@@ -347,8 +375,6 @@ onMounted(async () => {
                   </el-select>
                 </el-form-item>
               </div>
-
-            
             </div>
           </div>
           <!-- //   Mahsulot ma'lumotlari -->
@@ -358,22 +384,18 @@ onMounted(async () => {
             <h1
               class="bg-slate-100 font-semibold text-[13px] p-1 mt-1 align-center text-center rounded-md border-t-[1px] border-[#36d887]"
             >
-             Mahsulot ma'lumotlari
+              Mahsulot ma'lumotlari
             </h1>
             <div class="grid grid-cols-12 gap-1">
-              <div class="mb-1 col-span-3">
-                <el-form-item
-                  label="Nomi"
-                  prop="product"
-                  :rules="rules"
-                >
+              <div class="mb-1 col-span-2">
+                <el-form-item label="Nomi" prop="product" :rules="rules">
                   <el-select
                     v-model="model.product"
                     placeholder="..."
                     size="smal"
                     style="width: 100%"
                     @click="Type({ type: `product` })"
-                    @change="ChangePackingType($event)"
+                    @change="ChangeName($event)"
                   >
                     <template #prefix>
                       <i
@@ -388,13 +410,13 @@ onMounted(async () => {
                     </template>
                     <el-option
                       v-for="item in products"
-                      :key="item.id"
-                      :label="item.name"
-                      :value="item.name"
+                      :key="item._id"
+                      :label="item.pro_name"
+                      :value="item.pro_name"
                     >
                       <template #default>
                         <div class="flex justify-between items-center w-full">
-                          <span>{{ item.name }}</span>
+                          <span>{{ item.pro_name }}</span>
                           <i
                             class="fa-solid fa-trash text-red-500 cursor-pointer fa-xs ml-8"
                             @click.stop="RemoveItem(item._id)"
@@ -405,12 +427,23 @@ onMounted(async () => {
                   </el-select>
                 </el-form-item>
               </div>
-              <div class="mb-1 col-span-3">
-                <el-form-item
-                  label="Kategorya"
-                  prop="category"
-                  :rules="rules"
-                >
+              <div class="mb-1 col-span-2">
+                <el-form-item label="Kodi" prop="code" :rules="rules">
+                  <el-input
+                    disabled
+                    required
+                    v-model="model.code"
+                    clearable
+                    class="w-[100%]"
+                    size="smal"
+                    type="text"
+                    maxlength="9"
+                    placeholder="..."
+                  />
+                </el-form-item>
+              </div>
+              <div class="mb-1 col-span-2">
+                <el-form-item label="Kategorya" prop="category" :rules="rules">
                   <el-select
                     v-model="model.category"
                     placeholder="..."
@@ -431,7 +464,7 @@ onMounted(async () => {
                       ></i>
                     </template>
                     <el-option
-                      v-for="item in products"
+                      v-for="item in categoryes"
                       :key="item.id"
                       :label="item.name"
                       :value="item.name"
@@ -449,7 +482,7 @@ onMounted(async () => {
                   </el-select>
                 </el-form-item>
               </div>
-               <div class="mb-1 col-span-3">
+              <div class="mb-1 col-span-3">
                 <el-form-item
                   label="Ishlab chiqarilgan sana"
                   prop="manufactureDate"
@@ -466,7 +499,7 @@ onMounted(async () => {
                   />
                 </el-form-item>
               </div>
-               <div class="mb-1 col-span-3">
+              <div class="mb-1 col-span-3">
                 <el-form-item
                   label="Yaroqlilik muddati"
                   prop="expireDate"
@@ -483,7 +516,7 @@ onMounted(async () => {
                   />
                 </el-form-item>
               </div>
-               <div class="mb-1 col-span-3">
+              <div class="mb-1 col-span-2">
                 <el-form-item
                   label="Qadoq turi"
                   prop="packagingType"
@@ -495,7 +528,7 @@ onMounted(async () => {
                     size="smal"
                     style="width: 100%"
                     @click="Type({ type: `packagingType` })"
-                    @change="ChangePackingType($event)"
+                    @change="ChangePacking($event)"
                   >
                     <template #prefix>
                       <i
@@ -509,7 +542,61 @@ onMounted(async () => {
                       ></i>
                     </template>
                     <el-option
-                      v-for="item in products"
+                      v-for="item in pakings"
+                      :key="item.id"
+                      :label="item.packingType"
+                      :value="item.packingType"
+                    >
+                      <template #default>
+                        <div class="flex justify-between items-center w-full">
+                          <span>{{ item.packingType }}</span>
+                          <i
+                            class="fa-solid fa-trash text-red-500 cursor-pointer fa-xs ml-8"
+                            @click.stop="RemoveItem(item._id)"
+                          ></i>
+                        </div>
+                      </template>
+                    </el-option>
+                  </el-select>
+                </el-form-item>
+              </div>
+              <div class="mb-1 col-span-3">
+                <el-form-item label="Miqdori" prop="quantity" :rules="rules">
+                  <el-input
+                    required
+                    v-model="model.quantity"
+                    clearable
+                    class="w-[100%]"
+                    size="smal"
+                    type="Number"
+                    maxlength="9"
+                    placeholder="..."
+                  />
+                </el-form-item>
+              </div>
+              <div class="mb-1 col-span-2">
+                <el-form-item label="Birligi" prop="unit" :rules="rules">
+                  <el-select
+                    v-model="model.unit"
+                    placeholder="..."
+                    size="smal"
+                    style="width: 100%"
+                    @click="Type({ type: `unit` })"
+                    @change="ChangePacking($event)"
+                  >
+                    <template #prefix>
+                      <i
+                        @click.stop="
+                          Plus({
+                            title: `Buyurtmachi kategoryasini qo'shish`,
+                            state: `unit`,
+                          })
+                        "
+                        class="fa-solid fa-plus cursor-pointer"
+                      ></i>
+                    </template>
+                    <el-option
+                      v-for="item in units"
                       :key="item.id"
                       :label="item.name"
                       :value="item.name"
@@ -527,31 +614,14 @@ onMounted(async () => {
                   </el-select>
                 </el-form-item>
               </div>
-               <div class="mb-1 col-span-3">
+              <div class="mb-1 col-span-2">
                 <el-form-item
-                  label="Miqdori"
-                  prop="quantity"
-                  :rules="rules"
-                >
-                  <el-input
-                    required
-                    v-model="model.quantity"
-                    clearable
-                    class="w-[100%]"
-                    size="smal"
-                    type="Number"
-                    maxlength="9"
-                    placeholder="..."
-                  />
-                </el-form-item>
-              </div>
-              <div class="mb-1 col-span-3">
-                <el-form-item
-                  label="Tan narxi (sum)"
+                  label="Tan narxi dona (sum)"
                   prop="costPrice"
                   :rules="rules"
                 >
                   <el-input
+                    disabled
                     required
                     v-model="model.costPrice"
                     clearable
@@ -565,13 +635,14 @@ onMounted(async () => {
               </div>
               <div class="mb-1 col-span-3">
                 <el-form-item
-                  label="Sotuv narxi (sum)"
-                  prop="salePrice"
+                  label="Tan narxi blokda (sum)"
+                  prop="blockCostPrice"
                   :rules="rules"
                 >
                   <el-input
+                    disabled
                     required
-                    v-model="model.salePrice"
+                    v-model="model.blockCostPrice"
                     clearable
                     class="w-[100%]"
                     size="smal"
@@ -581,7 +652,6 @@ onMounted(async () => {
                   />
                 </el-form-item>
               </div>
-            
             </div>
             <div
               class="col-span-12 cursor-pointer flex justify-end text-[12px] font-semibold border-b-[1px] border-green-600"
@@ -620,7 +690,6 @@ onMounted(async () => {
                 width="60"
               />
               <el-table-column
-                prop="PackingType"
                 label="Nomi"
                 :min-width="100"
                 :max-width="400"
@@ -633,9 +702,9 @@ onMounted(async () => {
                   </div></template
                 ></el-table-column
               >
-                <el-table-column
+              <el-table-column
                 prop="category"
-                label="kategorya"
+                label="Kategorya"
                 :min-width="100"
                 :max-width="400"
                 header-align="center"
@@ -643,133 +712,145 @@ onMounted(async () => {
               >
                 <template #default="{ row }"
                   ><div class="text-red-500">
-                    {{ row.PackingType }}
+                    {{ row.category }}
                   </div></template
                 ></el-table-column
               >
-                  <el-table-column  label="🕒 Vaqt maydoni"
-          :min-width="150"
-          :max-width="400"
-            header-align="center"
-            align="center">
-             <el-table-column
-            label="Ishlab chiqarilgan sana"
-          :min-width="150"
-          :max-width="400"
-            header-align="center"
-            align="center"
-            ><template #default="scope">
-                <div class="text-gray-900 font-semibold">
-               {{
-                scope.row.manufactureDate
-                  ? moment
-                      .utc( scope.row.manufactureDate) // 🟢 UTC formatda olish
-                      .tz("Asia/Tashkent") // 🟢 UTC+5 ga aylantirish
-                      .format("DD.MM.YYYY HH:mm:ss") // 🟢 To‘g‘ri formatda chiqarish
-                  : "-"
-              }}
-                </div>
-            
-            </template></el-table-column
-          >
               <el-table-column
-            label="Yaroqlilik muddati"
-          :min-width="150"
-          :max-width="400"
-            header-align="center"
-            align="center"
-            ><template #default="scope">
-                <div class="text-blue-600 font-semibold">
-               {{
-                scope.row.expireDate
-                  ? moment
-                      .utc( scope.row.expireDate) // 🟢 UTC formatda olish
-                      .tz("Asia/Tashkent") // 🟢 UTC+5 ga aylantirish
-                      .format("DD.MM.YYYY HH:mm:ss") // 🟢 To‘g‘ri formatda chiqarish
-                  : "-"
-              }}
-                </div>
-            
-            </template></el-table-column
-          >
-               <el-table-column
-                prop="packagingType"
-                label="Qadoq turi"
-                :min-width="100"
+                label="🕒 Vaqt maydoni"
+                :min-width="150"
                 :max-width="400"
                 header-align="center"
                 align="center"
               >
-                <template #default="{ row }"
-                  ><div class="text-red-500">
-                    {{ row.packagingType }}
-                  </div></template
-                ></el-table-column
-              >
-          </el-table-column>
-           <el-table-column  label="💵 Narx maydoni"
-          :min-width="150"
-          :max-width="400"
-            header-align="center"
-            align="center">
+                <el-table-column
+                  label="Ishlab chiqarilgan sana"
+                  :min-width="150"
+                  :max-width="400"
+                  header-align="center"
+                  align="center"
+                  ><template #default="scope">
+                    <div class="text-gray-900 font-semibold">
+                      {{
+                        scope.row.manufactureDate
+                          ? moment
+                              .utc(scope.row.manufactureDate) // 🟢 UTC formatda olish
+                              .tz("Asia/Tashkent") // 🟢 UTC+5 ga aylantirish
+                              .format("DD.MM.YYYY HH:mm:ss") // 🟢 To‘g‘ri formatda chiqarish
+                          : "-"
+                      }}
+                    </div>
+                  </template></el-table-column
+                >
+                <el-table-column
+                  label="Yaroqlilik muddati"
+                  :min-width="150"
+                  :max-width="400"
+                  header-align="center"
+                  align="center"
+                  ><template #default="scope">
+                    <div class="text-blue-600 font-semibold">
+                      {{
+                        scope.row.expireDate
+                          ? moment
+                              .utc(scope.row.expireDate) // 🟢 UTC formatda olish
+                              .tz("Asia/Tashkent") // 🟢 UTC+5 ga aylantirish
+                              .format("DD.MM.YYYY HH:mm:ss") // 🟢 To‘g‘ri formatda chiqarish
+                          : "-"
+                      }}
+                    </div>
+                  </template></el-table-column
+                >
+                <el-table-column
+                  label="Qadoq turi"
+                  :min-width="100"
+                  :max-width="400"
+                  header-align="center"
+                  align="center"
+                >
+                  <template #default="{ row }"
+                    ><div class="text-red-500">
+                      {{ row.packagingType }}
+                    </div></template
+                  ></el-table-column
+                >
+              </el-table-column>
               <el-table-column
-                prop="costPrice"
-                label="Tan narxi (sum)"
-                :min-width="100"
+                label="💵 Narx maydoni"
+                :min-width="150"
                 :max-width="400"
                 header-align="center"
                 align="center"
               >
-                <template #default="{ row }"
-                  ><div class="text-green-600">
-                    {{ row.costPrice ? formatPrice(row.costPrice) : 0 }}
-                  </div></template
-                ></el-table-column
-              >
+                <el-table-column
+                  prop="costPrice"
+                  label="Tan narxi dona (sum)"
+                  :min-width="100"
+                  :max-width="400"
+                  header-align="center"
+                  align="center"
+                >
+                  <template #default="{ row }"
+                    ><div class="text-green-600">
+                      {{ row.costPrice ? formatPrice(row.costPrice) : 0 }}
+                    </div></template
+                  ></el-table-column
+                >
 
-              <el-table-column
-                prop="salePrice"
-                label="Sotuv narxi (sum)"
-                :min-width="100"
-                :max-width="400"
-                header-align="center"
-                align="center"
-              >
-                <template #default="{ row }"
-                  ><div class="text-purple-600">
-                    {{ row.salePrice ? formatPrice(row.salePrice) : 0 }}
-                  </div></template
-                ></el-table-column
-              >
                 <el-table-column
-                prop="quantity"
-                label="Miqdori"
-                :min-width="100"
-                :max-width="400"
-                header-align="center"
-                align="center"
-              >
-                <template #default="{ row }"
-                  ><div class="text-purple-600">
-                    {{ row.quantity ? formatPrice(row.quantity) : 0 }} {{row.packagingType}}
-                  </div></template
-                ></el-table-column
-              >
+                  prop="salePrice"
+                  label="Tan narxi blokda (sum)"
+                  :min-width="100"
+                  :max-width="400"
+                  header-align="center"
+                  align="center"
+                >
+                  <template #default="{ row }"
+                    ><div class="text-purple-600">
+                      {{
+                        row.blockCostPrice ? formatPrice(row.blockCostPrice) : 0
+                      }}
+                    </div></template
+                  ></el-table-column
+                >
                 <el-table-column
-                prop="totalPrice"
-                label="Jami (sum)"
-                :min-width="100"
-                :max-width="400"
-                header-align="center"
-                align="center"
-              >
-                <template #default="{ row }"
-                  ><div class="text-purple-600">
-                    {{ row.quantity ? formatPrice(row.quantity * row.salePrice) : 0 }} sum
-                  </div></template
-                ></el-table-column
-              >
-           </el-table-column>
+                  prop="quantity"
+                  label="Miqdori"
+                  :min-width="100"
+                  :max-width="400"
+                  header-align="center"
+                  align="center"
+                >
+                  <template #default="{ row }"
+                    ><div class="text-purple-600">
+                      {{ row.quantity ? formatPrice(row.quantity) : 0 }}
+                      {{ row.unit }}
+                    </div></template
+                  ></el-table-column
+                >
+
+                <el-table-column
+                  prop="totalPrice"
+                  label="Jami (sum)"
+                  :min-width="100"
+                  :max-width="400"
+                  header-align="center"
+                  align="center"
+                >
+                  <template #default="{ row }"
+                    ><div class="text-purple-600">
+                      {{
+                        row.quantity
+                          ? row.unit === "Blok"
+                            ? formatPrice(row.quantity * row.blockCostPrice)
+                            : formatPrice(row.quantity * row.costPrice)
+                          : 0
+                      }}
+                      sum
+                    </div></template
+                  ></el-table-column
+                >
+              </el-table-column>
               <el-table-column
                 fixed="right"
                 prop="id"
@@ -790,15 +871,15 @@ onMounted(async () => {
                 </template>
               </el-table-column>
             </el-table>
-           <div class="bg-white p-2 rounded-md flex justify-end">
-  <div
-    class="mb-1 col-span-12 w-full flex justify-end text-purple-600 font-semibold bg-purple-100 rounded-md p-2"
-  >
-    Jami :
-    {{model.totalAmount ?  formatPrice(model.totalAmount) : 0}} so'm
-  </div>
-</div>
-
+            <div class="bg-white p-2 rounded-md flex justify-end">
+              <div
+                class="mb-1 col-span-12 w-full flex justify-end text-purple-600 font-semibold bg-purple-100 rounded-md p-2"
+              >
+                Jami :
+                {{ formatPrice(model.totalAmount) }}
+                so'm
+              </div>
+            </div>
           </div>
         </el-form>
       </div>
