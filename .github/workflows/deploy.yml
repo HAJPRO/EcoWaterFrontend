@@ -3,11 +3,7 @@ name: "CI/CD ECO CLIENT APP"
 on:
   push:
     branches:
-<<<<<<< HEAD
       - eco-branch # Yangi kod 'eco-branch'ga push qilinishi kerak
-=======
-      - eco-branch
->>>>>>> d15f4ead7d2d93c73cc90657d1dc51cdf248361b
 
 jobs:
   build:
@@ -30,21 +26,18 @@ jobs:
       - name: "Deploy to local server"
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.KEY_LS_ECO }}
+          host: ${{ secrets.HOST_ECO }}
+          username: ${{ secrets.USERNAME_ECO }}
+          key: ${{ secrets.KEY_ECO }}
           port: 22
           script: |
             # Add server's SSH key to known_hosts to avoid prompt
             mkdir -p ~/.ssh
-            ssh-keyscan -H ${{ secrets.HOST }} >> ~/.ssh/known_hosts
+            ssh-keyscan -H ${{ secrets.HOST_ECO }} >> ~/.ssh/known_hosts
 
             # Deploy process
             cd /var/www/workers/EcoWaterFrontend/
-<<<<<<< HEAD
             git pull --no-rebase origin eco-branch  # 'eco-branch'dan kodni olish
-=======
             git pull --no-rebase origin  eco-branch
->>>>>>> d15f4ead7d2d93c73cc90657d1dc51cdf248361b
             /usr/bin/npm install
             /usr/bin/npm run build
