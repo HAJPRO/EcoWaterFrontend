@@ -1,44 +1,58 @@
 import { defineStore } from "pinia";
-import  socket  from "../../socket"; // Socket.io ulanishi
+import socket from "../../socket";
 
-export const UserSocketStore = defineStore("socket", {
+export const UserSocketStore = defineStore("UserSocketStore", {
     state: () => ({
         onlineUsers: [], // Tizimga kirgan foydalanuvchilar ro‘yxati
+        onlineDrivers: [], // Tizimga kirgan haydovchilar ro‘yxati
         isConnected: false, // Socket ulanish holati
     }),
 
     actions: {
         SocketConnect(user) {
-            console.log("🟢 Serverga foydalanuvchi ulandi", user);
-            this.onlineUsers.push(user); // Foydalanuvchilar ro‘yxatini tozalash
-            socket.emit("register", user); // 🟢 Serverga foydalanuvchini yuborish
+            // 🔄 Avvalgi tinglovchilarni o‘chirish
+            this.disconnect();
 
+            // 🧩 "connect" event — birinchi bo‘lishi kerak
             socket.on("connect", () => {
                 console.log("✅ Socket.io bog‘landi:", socket.id);
                 this.isConnected = true;
+
+                // 🔗 Serverga user va lokatsiyani yuborish
+                socket.emit("register", user);
+                socket.emit("driverLocation", user);
             });
 
+            // ❌ Ulanish uzildi
             socket.on("disconnect", () => {
                 console.log("❌ Socket.io uzildi");
                 this.isConnected = false;
             });
 
-            // 🔵 **"OnlineUsers" eventini tinglash** va foydalanuvchilarni yangilash
-            socket.on("OnlineUsers", (user) => {
-                console.log(user);
-                
-                // const exists = this.onlineUsers.some(user => user.id === newUser.id);
-                // if (!exists) {
-                //     this.onlineUsers.push(newUser);
-                //     console.log("🟢 Yangi foydalanuvchi qo‘shildi:", newUser);
-                // }
+            // 👥 Online foydalanuvchilar
+            socket.on("OnlineUsers", (users) => {
+                this.onlineUsers = users;
+                console.log("🟢 Online foydalanuvchilar:", users);
             });
+        },
+        DriverLocation(driverLocation) {
+
+            // 🔄 Faqatgina lokatsiyani yuborish
+            if (this.isConnected) {
+                this.onlineDrivers.push(driverLocation);
+                console.log("🟢 Online haydovchilar:", this.onlineDrivers);
+
+                socket.emit("driverLocation", driverLocation);
+            }
         },
 
         disconnect() {
+            // 🎯 Oldingi barcha eventlarni o‘chirish
             socket.off("connect");
             socket.off("disconnect");
             socket.off("OnlineUsers");
+            this.isConnected = false;
         },
-    },
+    }
+
 });

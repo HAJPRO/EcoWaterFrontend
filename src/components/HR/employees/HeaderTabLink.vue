@@ -1,36 +1,36 @@
 <script setup>
-// import { ref, onMounted } from "vue";
-// import { loading } from "../../../utils/Loader";
-// import { HREmployeesStore } from "../../../stores/HR/Employees/employees.store";
-// const store_employees = HREmployeesStore();
-// import { storeToRefs } from "pinia";
-// const { all_length } = storeToRefs(store_employees);
-// const IsActive = (is_active) => {
-//   store_employees.GetIsActive(is_active);
-// };
+import { ref, onMounted } from "vue";
+import { loading } from "../../../utils/Loader";
+import { EmployeeManagmentStore } from "../../../stores/HR/employee/employee.store";
+const store_employees = EmployeeManagmentStore();
+import { storeToRefs } from "pinia";
+const { all_length } = storeToRefs(store_employees);
+const IsActive = (is_active) => {
+  store_employees.GetIsActive(is_active);
+};
 
-// const getAll = async () => {
-//   IsActive(isActive.value);
-//   store_employees.getAll(1);
-// };
-// const isActive = ref(1);
-// const ActiveTabLink = (num) => {
-//   if (num === 1) {
-//     isActive.value = 1;
-//     return getAll();
-//   }
-//   if (num === 2) {
-//     isActive.value = 2;
-//     return getAll();
-//   }
-// };
-// onMounted(async () => {
-//   try {
-//     await getAll();
-//   } catch (err) {
-//     console.log(err);
-//   }
-// });
+const getAll = async () => {
+  IsActive(isActive.value);
+  store_employees.GetAll(1);
+};
+const isActive = ref(1);
+const ActiveTabLink = (num) => {
+  if (num === 1) {
+    isActive.value = 1;
+    return getAll();
+  }
+  if (num === 2) {
+    isActive.value = 2;
+    return getAll();
+  }
+};
+onMounted(async () => {
+  try {
+    await getAll();
+  } catch (err) {
+    console.log(err);
+  }
+});
 </script>
 <template>
   <div
@@ -69,7 +69,7 @@
           >
         </div>
       </router-link>
-        <router-link
+      <router-link
         @click="ActiveTabLink(2)"
         to=""
         :class="{ activeTab: isActive === 2 }"
@@ -85,7 +85,7 @@
           >
         </div>
       </router-link>
-          <router-link
+      <router-link
         @click="ActiveTabLink(2)"
         to=""
         :class="{ activeTab: isActive === 2 }"

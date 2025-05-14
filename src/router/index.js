@@ -83,12 +83,12 @@ const routes = [
       },
       //Profile
       {
-        path: "/profile",
+        path: "profile",
         name: "profile_card",
         component: () => import("../pages/Explore/Profile/profile.vue"),
       },
       {
-        path: "/profile_settings",
+        path: "profile_settings",
         name: "profile_settings",
         component: () => import("../pages/Explore/Profile/Settings.vue"),
       },
