@@ -15,10 +15,14 @@ export const EmployeeManagmentStore = defineStore("EmployeeManagmentStore", {
             all_length: {},
             modal: {
                 model: {
+                    username: "",
+                    password: "",
                     fullname: "",
-                    category: "",
-                    artikul: "",
+                    department: "",
+                    gender: "",
                     position: "",
+                    permission: "",
+                    action: "",
                     registeredAt: "",
                     imageUrl: "",
                     discription: "",
@@ -38,6 +42,13 @@ export const EmployeeManagmentStore = defineStore("EmployeeManagmentStore", {
                         lat: "",
                         long: "",
                     },
+
+                    carNumber: "",
+                    carColor: "",
+                    carType: "",
+                    driverLicenseNumber: "",
+                    driverLicenseDate: "",
+
                 },
             },
         };

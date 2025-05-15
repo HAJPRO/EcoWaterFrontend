@@ -2,11 +2,13 @@
 import MapView from "../../Customers/customerManagment/MapView.vue";
 import { ElMessage } from "element-plus";
 import { onMounted, ref, computed } from "vue";
-import { v4 as uuidv4 } from "uuid";
 import { EmployeeManagmentStore } from "../../../stores/HR/employee/employee.store";
 import { AddressStore } from "../../../stores/Helpers/address/address.store";
+import { AuthStore } from "../../../stores/Auth/auth.js";
+
 const store_address = AddressStore();
 const store_employee = EmployeeManagmentStore();
+const store_auth = AuthStore();
 
 import { storeToRefs } from "pinia";
 const { regions, districts, neighborhoods } = storeToRefs(store_address);
@@ -59,23 +61,83 @@ const categoryes = ref([
   { id: 10, name: "Yopiq aksiyadorlik jamiyati (YoAJ)" },
   { id: 11, name: "Ochiq aksiyadorlik jamiyati (OAJ)" },
 ]);
-
-const positions = ref([
-  { _id: 1, name: "Bronza" },
-  { _id: 2, name: "Kumush" },
-  { _id: 3, name: "Tilla" },
+const departments = ref([
+  { _id: 1, name: "Adminstratsiya" },
+  { _id: 2, name: "Sotuv" },
+  { _id: 3, name: "Buhgalterya" },
+  { _id: 4, name: "Kadrlar" },
+  { _id: 5, name: "Ombor" },
+  { _id: 6, name: "Lagistika" },
+  { _id: 7, name: "Ishlab chiqarish" },
+  { _id: 8, name: "Mijozlar" },
+  { _id: 9, name: "Agentlar" },
+  { _id: 10, name: "Ishchi xodimlar" },
 ]);
 
+const positions = ref([
+  { _id: 1, name: "Direktor" },
+  { _id: 2, name: "Buhgalter" },
+  { _id: 3, name: "Menejer" },
+  { _id: 4, name: "Sotuvchi" },
+  { _id: 5, name: "Xodim" },
+  { _id: 6, name: "Omborchi" },
+  { _id: 7, name: "Sotuv bo'yicha menejer" },
+  { _id: 8, name: "Marketing bo'yicha menejer" },
+  { _id: 9, name: "IT mutaxassisi" },
+  { _id: 10, name: "SMM mutaxassisi" },
+  { _id: 11, name: "Xavfsizlik xodimi" },
+  { _id: 12, name: "Haydovchi" },
+  { _id: 13, name: "Admin" },
+]);
+const permissions = ref([
+  { _id: 1, name: "O'qish" },
+  { _id: 2, name: "Yozish" },
+  { _id: 3, name: "O'chirish" },
+  { _id: 4, name: "Tahrirlash" },
+  { _id: 5, name: "Ko'rish" },
+  { _id: 6, name: "Yuklash" },
+  { _id: 7, name: "Xodim qo'shish" },
+  { _id: 8, name: "Buyurtma chiqarish" },
+  { _id: 9, name: "Buyurtma qabul qilish" },
+  { _id: 10, name: "Buyurtmalarni ko'rish" },
+  { _id: 11, name: "Buyurtmalarni tahrirlash" },
+  { _id: 12, name: "Buyurtmalarni o'chirish" },
+  { _id: 13, name: "Buyurtmalarni yuklash" },
+  { _id: 14, name: "Xodimlarni ko'rish" },
+  { _id: 11, name: "Xodimlarni tahrirlash" },
+  { _id: 12, name: "Xodimlarni o'chirish" },
+  { _id: 13, name: "Xodimlarni yuklash" },
+]);
 const genders = ref([
   { _id: 1, name: "Erkak" },
   { _id: 2, name: "Ayol" },
+]);
+
+const carTypes = ref([
+  { _id: 1, name: "Damas" },
+  { _id: 2, name: "Labo" },
+  { _id: 3, name: "Matiz" },
+  { _id: 4, name: "Spark" },
+  { _id: 5, name: "Cobalt" },
+  { _id: 6, name: "Nexia 2" },
+  { _id: 6, name: "Nexia 3" },
+  { _id: 6, name: "Boshqa" },
+]);
+const carColors = ref([
+  { _id: 1, name: "Qora" },
+  { _id: 2, name: "Oq" },
+  { _id: 3, name: "Qizil" },
+  { _id: 4, name: "Yashil" },
+  { _id: 5, name: "Moviy" },
+  { _id: 6, name: "Sariq" },
+  { _id: 7, name: "Boshqa" },
 ]);
 
 const formRef = ref();
 const PlusValidate = async (formRef) => {
   await formRef.validate((valid) => {
     if (valid === true) {
-      store_customers.Create(modal.value.model);
+      store_auth.register(modal.value.model);
     } else {
       ElMessage.error("Iltimos barcha maydonlarni to'ldiring !");
       return false;
@@ -102,10 +164,15 @@ const rules = ref({
   trigger: "blur",
 });
 const ChangeRegion = async (e) => {
-  const districts = await store_address.Districts(e);
+  modal.value.model.address.region = e.name;
+  const districts = await store_address.Districts(e.id);
 };
 const ChangeNeighborhood = async (e) => {
-  const neighborhoods = await store_address.Neighborhoods(e);
+  modal.value.model.address.district = e.name;
+  const neighborhoods = await store_address.Neighborhoods(e.id);
+};
+const ChangeStreet = async (e) => {
+  modal.value.model.address.neighborhood = e.name;
 };
 const is_map = ref(false);
 let map = ref(null);
@@ -200,13 +267,18 @@ onMounted(async () => {
                 </el-form-item>
               </div>
               <div class="mb-1 col-span-6">
-                <el-form-item label="Ruxsatlar" prop="category" :rules="rules">
+                <el-form-item
+                  label="Ruxsatlar"
+                  prop="permission"
+                  :rules="rules"
+                >
                   <el-select
-                    v-model="modal.model.category"
+                    multiple
+                    v-model="modal.model.permission"
                     placeholder="..."
                     size="smal"
                     style="width: 100%"
-                    @click="Type({ type: `category` })"
+                    @click="Type({ type: `permission` })"
                     @change="ChangeOrderDirection($event)"
                   >
                     <template #prefix>
@@ -214,14 +286,14 @@ onMounted(async () => {
                         @click.stop="
                           Plus({
                             title: `Buyurtmachi kategoryasini qo'shish`,
-                            state: `category`,
+                            state: `permission`,
                           })
                         "
                         class="fa-solid fa-plus cursor-pointer"
                       ></i>
                     </template>
                     <el-option
-                      v-for="item in categoryes"
+                      v-for="item in permissions"
                       :key="item._id"
                       :label="item.name"
                       :value="item.name"
@@ -239,41 +311,15 @@ onMounted(async () => {
                   </el-select>
                 </el-form-item>
               </div>
-
               <div class="mb-1 col-span-6">
-                <el-form-item label="Login " prop="username" :rules="rules">
-                  <el-input
-                    required
-                    v-model="modal.model.fullname"
-                    clearable
-                    class="w-[100%]"
-                    size="smal"
-                    type="String"
-                    placeholder="..."
-                  />
-                </el-form-item>
-              </div>
-              <div class="mb-1 col-span-6">
-                <el-form-item label="Parol" prop="artikul" :rules="rules">
-                  <el-input
-                    required
-                    v-model="modal.model.artikul"
-                    clearable
-                    class="w-[100%]"
-                    size="smal"
-                    type="String"
-                    placeholder="..."
-                  />
-                </el-form-item>
-              </div>
-              <div class="mb-1 col-span-6">
-                <el-form-item label="Harakatlar" prop="position" :rules="rules">
+                <el-form-item label="Bo'lim" prop="department" :rules="rules">
                   <el-select
-                    v-model="modal.model.position"
+                    v-model="modal.model.department"
                     placeholder="..."
                     size="smal"
                     style="width: 100%"
-                    @click="Type({ type: `position` })"
+                    clearable
+                    @click="Type({ type: `department` })"
                     @change="ChangeCustomerPosition($event)"
                   >
                     <template #prefix>
@@ -281,14 +327,14 @@ onMounted(async () => {
                         @click.stop="
                           Plus({
                             title: `Buyurtmachi darajasini qo'shish`,
-                            state: `position`,
+                            state: `department`,
                           })
                         "
                         class="fa-solid fa-plus cursor-pointer"
                       ></i>
                     </template>
                     <el-option
-                      v-for="item in positions"
+                      v-for="item in departments"
                       :key="item._id"
                       :label="item.name"
                       :value="item.name"
@@ -323,6 +369,33 @@ onMounted(async () => {
                   />
                 </el-form-item>
               </div>
+              <div class="mb-1 col-span-6">
+                <el-form-item label="Login " prop="username" :rules="rules">
+                  <el-input
+                    required
+                    v-model="modal.model.username"
+                    clearable
+                    class="w-[100%]"
+                    size="smal"
+                    type="String"
+                    placeholder="..."
+                  />
+                </el-form-item>
+              </div>
+              <div class="mb-1 col-span-6">
+                <el-form-item label="Parol" prop="password" :rules="rules">
+                  <el-input
+                    required
+                    v-model="modal.model.password"
+                    clearable
+                    class="w-[100%]"
+                    size="smal"
+                    type="String"
+                    placeholder="..."
+                  />
+                </el-form-item>
+              </div>
+
               <div class="col-span-3 p-1 rounded-md">
                 <el-form-item label="Rasm" prop="imageUrl">
                   <el-upload
@@ -465,7 +538,7 @@ onMounted(async () => {
                       v-for="item in regions"
                       :key="item.id"
                       :label="item.name"
-                      :value="item.id"
+                      :value="item"
                     >
                       <template #default>
                         <div class="flex justify-between items-center w-full">
@@ -509,7 +582,7 @@ onMounted(async () => {
                       v-for="item in districts"
                       :key="item._id"
                       :label="item.name"
-                      :value="item.id"
+                      :value="item"
                     >
                       <template #default>
                         <div class="flex justify-between items-center w-full">
@@ -536,7 +609,7 @@ onMounted(async () => {
                     size="smal"
                     style="width: 100%"
                     @click="Type({ type: `color` })"
-                    @change="ChangeNeighborhood($event)"
+                    @change="ChangeStreet($event)"
                   >
                     <template #prefix>
                       <i
@@ -553,7 +626,7 @@ onMounted(async () => {
                       v-for="item in neighborhoods"
                       :key="item.districtId"
                       :label="item.name"
-                      :value="item.districtId"
+                      :value="item"
                     >
                       <template #default>
                         <div class="flex justify-between items-center w-full">
@@ -574,42 +647,15 @@ onMounted(async () => {
                   prop="address.street"
                   :rules="rules"
                 >
-                  <el-select
+                  <el-input
+                    required
                     v-model="modal.model.address.street"
-                    placeholder="..."
+                    clearable
+                    class="w-[100%]"
                     size="smal"
-                    style="width: 100%"
-                    @click="Type({ type: `color` })"
-                    @change="ChangeRegion($event)"
-                  >
-                    <template #prefix>
-                      <i
-                        @click.stop="
-                          Plus({
-                            title: `Mato rangi qo'shish`,
-                            state: `doc_type`,
-                          })
-                        "
-                        class="fa-solid fa-plus cursor-pointer"
-                      ></i>
-                    </template>
-                    <el-option
-                      v-for="item in neighborhoods"
-                      :key="item.name"
-                      :label="item.name"
-                      :value="item.name"
-                    >
-                      <template #default>
-                        <div class="flex justify-between items-center w-full">
-                          <span>{{ item.name }}</span>
-                          <i
-                            class="fa-solid fa-trash text-red-500 cursor-pointer fa-xs ml-8"
-                            @click.stop="RemoveItem(item._id)"
-                          ></i>
-                        </div>
-                      </template>
-                    </el-option>
-                  </el-select>
+                    type="text"
+                    placeholder="..."
+                  />
                 </el-form-item>
               </div>
 
@@ -670,25 +716,13 @@ onMounted(async () => {
                   ></el-input>
                 </el-form-item>
               </div>
-              <div class="mb-1 col-span-12">
-                <el-form-item label="Qo'shimcha ma'lumot" prop="discription">
-                  <el-input
-                    type="textarea"
-                    v-model="modal.model.discription"
-                    placeholder="Bu yerga yozing..."
-                    :rows="4"
-                    clearable
-                  />
-                </el-form-item>
-              </div>
+
               <div class="col-span-12 p-1 rounded-md">
                 <el-form-item
                   label="Manzilni xaritadan belgila"
                   prop="location"
                   :rules="rules"
                 >
-                  <!-- <div v-if="is_map === false" >  <MapView  @locationSelected="handleLocation" /></div> -->
-
                   <el-dialog
                     class="mt-10"
                     v-model="is_map"
@@ -728,6 +762,147 @@ onMounted(async () => {
                     </div>
                   </div>
                 </el-form-item>
+              </div>
+            </div>
+            <!-- //Qo'shimcha malumotlar -->
+            <div
+              v-if="modal.model.position === `Haydovchi`"
+              class="mb-1 col-span-4 p-2 rounded-md"
+            >
+              <h1
+                class="font-semibold bg-slate-100 text-[13px] p-1 mt-1 align-center text-center rounded-md border-t-[1px] border-[#36d887]"
+              >
+                Qo'shimcha malumotlar
+              </h1>
+              <div class="grid grid-cols-12 gap-1">
+                <div class="mb-1 col-span-4">
+                  <el-form-item label="Mashina rusumi" prop="carType" action>
+                    <el-select
+                      v-model="modal.model.carType"
+                      placeholder="..."
+                      size="smal"
+                      style="width: 100%"
+                      @click="Type({ type: `carType` })"
+                      @change="ChangeCustomerPosition($event)"
+                    >
+                      <template #prefix>
+                        <i
+                          @click.stop="
+                            Plus({
+                              title: `Buyurtmachi darajasini qo'shish`,
+                              state: `carType`,
+                            })
+                          "
+                          class="fa-solid fa-plus cursor-pointer"
+                        ></i>
+                      </template>
+                      <el-option
+                        v-for="item in carTypes"
+                        :key="item._id"
+                        :label="item.name"
+                        :value="item.name"
+                      >
+                        <template #default>
+                          <div class="flex justify-between items-center w-full">
+                            <span>{{ item.name }}</span>
+                            <i
+                              class="fa-solid fa-trash text-red-500 cursor-pointer fa-xs ml-8"
+                              @click.stop="RemoveItem(item._id)"
+                            ></i>
+                          </div>
+                        </template>
+                      </el-option>
+                    </el-select>
+                  </el-form-item>
+                </div>
+                <div class="mb-1 col-span-4">
+                  <el-form-item label="Mashina raqami " prop="carNumber" action>
+                    <el-input
+                      required
+                      v-model="modal.model.carNumber"
+                      clearable
+                      class="w-[100%]"
+                      size="smal"
+                      type="String"
+                      placeholder="..."
+                    />
+                  </el-form-item>
+                </div>
+                <div class="mb-1 col-span-4">
+                  <el-form-item label="Mashina rangi" prop="carColor" action>
+                    <el-select
+                      v-model="modal.model.carColor"
+                      placeholder="..."
+                      size="smal"
+                      style="width: 100%"
+                      @click="Type({ type: `carColor` })"
+                      @change="ChangeOrderDirection($event)"
+                    >
+                      <template #prefix>
+                        <i
+                          @click.stop="
+                            Plus({
+                              title: `Buyurtmachi kategoryasini qo'shish`,
+                              state: `carColor`,
+                            })
+                          "
+                          class="fa-solid fa-plus cursor-pointer"
+                        ></i>
+                      </template>
+                      <el-option
+                        v-for="item in carColors"
+                        :key="item._id"
+                        :label="item.name"
+                        :value="item.name"
+                      >
+                        <template #default>
+                          <div class="flex justify-between items-center w-full">
+                            <span>{{ item.name }}</span>
+                            <i
+                              class="fa-solid fa-trash text-red-500 cursor-pointer fa-xs ml-8"
+                              @click.stop="RemoveItem(item._id)"
+                            ></i>
+                          </div>
+                        </template>
+                      </el-option>
+                    </el-select>
+                  </el-form-item>
+                </div>
+
+                <div class="mb-1 col-span-6">
+                  <el-form-item
+                    label="Haydovchilik guvohnoamsi seryasi"
+                    prop="driverLicenseNumber"
+                    action
+                  >
+                    <el-input
+                      required
+                      v-model="modal.model.driverLicenseNumber"
+                      clearable
+                      class="w-[100%]"
+                      size="smal"
+                      type="String"
+                      placeholder="..."
+                    />
+                  </el-form-item>
+                </div>
+                <div class="mb-1 col-span-6">
+                  <el-form-item
+                    label="Haydovchilik guvohnomasi berilgan sana"
+                    prop="driverLicenseDate"
+                    action
+                  >
+                    <el-date-picker
+                      required
+                      v-model="modal.model.driverLicenseDate"
+                      style="width: 100%"
+                      clearable
+                      type="date"
+                      placeholder="..."
+                      size="smal"
+                    />
+                  </el-form-item>
+                </div>
               </div>
             </div>
           </div>

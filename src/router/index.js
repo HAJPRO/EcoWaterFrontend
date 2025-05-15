@@ -47,7 +47,7 @@ const routes = [
         component: () => import("../pages/Explore/Dashboard/statistic/sale/index.vue"),
         beforeEnter(to, from, next) {
           const account = Cookies.get("account") ? JSON.parse(Cookies.get("account")) : null;
-          if (account && account.role === 1000) {
+          if (account) {
             next();
           } else {
             next("/explore");
@@ -61,7 +61,7 @@ const routes = [
         component: () => import("../pages/Explore/Admin/users.vue"),
         beforeEnter(to, from, next) {
           const account = Cookies.get("account") ? JSON.parse(Cookies.get("account")) : null;
-          if (account && account.role === 1000) {
+          if (account) {
             next();
           } else {
             next("/explore");
@@ -74,7 +74,7 @@ const routes = [
         component: () => import("../pages/Explore/Admin/role.vue"),
         beforeEnter(to, from, next) {
           const account = Cookies.get("account") ? JSON.parse(Cookies.get("account")) : null;
-          if (account && account.role === 1000) {
+          if (account) {
             next();
           } else {
             next("/explore");
