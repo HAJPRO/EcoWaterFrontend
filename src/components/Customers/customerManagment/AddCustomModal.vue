@@ -43,9 +43,7 @@ const handleLocation = (coords) => {
 const SelectRegion = () => {
   store_address.Regions();
 };
-const SelectNeighborhood = () => {
-  store_address.Neighborhoods();
-};
+
 const categoryes = ref([
   { id: 1, name: "Jismoniy shaxs" },
   { id: 2, name: "Davlat tashkiloti" },
@@ -82,30 +80,23 @@ const PlusValidate = async (formRef) => {
     }
   });
 };
-// const Save = async () => {
-//   try {
-//     if (
-//       order.value.products.length <= 0 &&
-//       order.value.accessorys.length <= 0
-//     ) {
-//       return ToastifyService.ToastError({ msg: "Mahsulot qo'shilmagan !" });
-//     } else {
-//       store_orders.Create({ ...order.value, create: true });
-//     }
-//   } catch (error) {
-//     return ToastifyService.ToastError({ msg: error.message });
-//   }
-// };
+
 const rules = ref({
   required: true,
   message: `Maydon to'ldirilishi zarur !`,
   trigger: "blur",
 });
 const ChangeRegion = async (e) => {
-  const districts = await store_address.Districts(e);
+  modal.value.model.address.region = e.name;
+  await store_address.Districts(e.id);
+};
+const ChangeDistrict = async (e) => {
+  modal.value.model.address.district = e.name;
+  await store_address.Neighborhoods(e.id);
 };
 const ChangeNeighborhood = async (e) => {
-  const neighborhoods = await store_address.Neighborhoods(e);
+  modal.value.model.address.neighborhood = e.name;
+  await store_address.Neighborhoods(e.id);
 };
 const is_map = ref(false);
 let map = ref(null);
@@ -305,7 +296,6 @@ onMounted(async () => {
                   </el-dialog>
                 </el-form-item>
               </div>
-          
             </div>
           </div>
           <!-- //  Identifikatsiya ma’lumotlari -->
@@ -416,9 +406,9 @@ onMounted(async () => {
                     </template>
                     <el-option
                       v-for="item in regions"
-                      :key="item.id"
+                      :key="item._id"
                       :label="item.name"
-                      :value="item.id"
+                      :value="item"
                     >
                       <template #default>
                         <div class="flex justify-between items-center w-full">
@@ -445,7 +435,7 @@ onMounted(async () => {
                     size="smal"
                     style="width: 100%"
                     @click="Type({ type: `color` })"
-                    @change="ChangeNeighborhood($event)"
+                    @change="ChangeDistrict($event)"
                   >
                     <template #prefix>
                       <i
@@ -462,7 +452,7 @@ onMounted(async () => {
                       v-for="item in districts"
                       :key="item._id"
                       :label="item.name"
-                      :value="item.id"
+                      :value="item"
                     >
                       <template #default>
                         <div class="flex justify-between items-center w-full">
@@ -506,7 +496,7 @@ onMounted(async () => {
                       v-for="item in neighborhoods"
                       :key="item.districtId"
                       :label="item.name"
-                      :value="item.districtId"
+                      :value="item"
                     >
                       <template #default>
                         <div class="flex justify-between items-center w-full">
@@ -527,42 +517,15 @@ onMounted(async () => {
                   prop="address.street"
                   :rules="rules"
                 >
-                  <el-select
+                  <el-input
+                    required
                     v-model="modal.model.address.street"
-                    placeholder="..."
+                    clearable
+                    class="w-[100%]"
                     size="smal"
-                    style="width: 100%"
-                    @click="Type({ type: `color` })"
-                    @change="ChangeRegion($event)"
-                  >
-                    <template #prefix>
-                      <i
-                        @click.stop="
-                          Plus({
-                            title: `Mato rangi qo'shish`,
-                            state: `doc_type`,
-                          })
-                        "
-                        class="fa-solid fa-plus cursor-pointer"
-                      ></i>
-                    </template>
-                    <el-option
-                      v-for="item in neighborhoods"
-                      :key="item.name"
-                      :label="item.name"
-                      :value="item.name"
-                    >
-                      <template #default>
-                        <div class="flex justify-between items-center w-full">
-                          <span>{{ item.name }}</span>
-                          <i
-                            class="fa-solid fa-trash text-red-500 cursor-pointer fa-xs ml-8"
-                            @click.stop="RemoveItem(item._id)"
-                          ></i>
-                        </div>
-                      </template>
-                    </el-option>
-                  </el-select>
+                    type="text"
+                    placeholder="..."
+                  />
                 </el-form-item>
               </div>
 
@@ -623,7 +586,7 @@ onMounted(async () => {
                   ></el-input>
                 </el-form-item>
               </div>
-    <div class="mb-1 col-span-12">
+              <div class="mb-1 col-span-12">
                 <el-form-item label="Qo'shimcha ma'lumot" prop="discription">
                   <el-input
                     type="textarea"
@@ -640,8 +603,8 @@ onMounted(async () => {
                   prop="location"
                   :rules="rules"
                 >
-                <!-- <div v-if="is_map === false" >  <MapView  @locationSelected="handleLocation" /></div> -->
-                
+                  <!-- <div v-if="is_map === false" >  <MapView  @locationSelected="handleLocation" /></div> -->
+
                   <el-dialog
                     class="mt-10"
                     v-model="is_map"
@@ -658,8 +621,24 @@ onMounted(async () => {
                     <i class="fa-solid fa-map mr-2 fa-md"></i> Xaritani ochish
                   </div>
                   <div class="flex justify-end gap-2">
-                <div class="bg-green-200 p-[5px] text-[12px] font-semibold rounded-[4px]">Kordinata (lat): {{  modal.model.location.lat ? modal.model.location.lat : 0}}</div>
-                  <div class="bg-red-200 p-[5px] text-[12px] font-semibold rounded-[4px]">Kordinata (long): {{modal.model.location.long ? modal.model.location.long  : 0}}</div>
+                    <div
+                      class="bg-green-200 p-[5px] text-[12px] font-semibold rounded-[4px]"
+                    >
+                      Kordinata (lat):
+                      {{
+                        modal.model.location.lat ? modal.model.location.lat : 0
+                      }}
+                    </div>
+                    <div
+                      class="bg-red-200 p-[5px] text-[12px] font-semibold rounded-[4px]"
+                    >
+                      Kordinata (long):
+                      {{
+                        modal.model.location.long
+                          ? modal.model.location.long
+                          : 0
+                      }}
+                    </div>
                   </div>
                 </el-form-item>
               </div>

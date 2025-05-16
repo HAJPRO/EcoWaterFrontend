@@ -2447,7 +2447,7 @@
                     :class="!parentLink.expanded && 'hidden'"
                   >
                     <router-link
-                      to="\"
+                      :to="{ name: 'RoleManagment' }"
                       custom
                       v-slot="{ href, navigate, isExactActive }"
                     >

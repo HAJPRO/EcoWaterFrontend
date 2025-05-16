@@ -12,7 +12,7 @@ import moment from "moment-timezone";
 
 const store = EmployeeManagmentStore();
 import { storeToRefs } from "pinia";
-const { custom_modal, modal, customers, all_length, isActive } =
+const { custom_modal, modal, employees, all_length, isActive } =
   storeToRefs(store);
 const AddEmployeeModal = () => {
   store.AddEmployeeModal();
@@ -44,7 +44,7 @@ const UpdateById = (id) => {
           header-align="right"
           :max-height="600"
           empty-text="Mahsulot qo'shilmagan... "
-          :data="customers"
+          :data="employees"
           border
         >
           <el-table-column
@@ -59,29 +59,34 @@ const UpdateById = (id) => {
           <el-table-column
             prop="fullname"
             label="F.I.O"
-            :min-width="100"
+            :min-width="150"
             :max-width="400"
             header-align="center"
-            align="center"
-          />
-          <el-table-column
-            align="center"
-            header-align="center"
-            prop="artikul"
-            label="Artikul"
-            :min-width="100"
-            :max-width="400"
-          />
-          <el-table-column
-            label="Kategoriyasi"
-            :min-width="100"
-            :max-width="400"
-            header-align="center"
-            align="center"
-            ><template #default="scope">{{
-              scope.row.category
-            }}</template></el-table-column
+            align="left"
+            ><template #default="{ row }"
+              ><div class="text-red-500">
+                <i class="fas fa-user text-gray-500 fa-sm mr-2"></i>
+                {{ row.fullname }}
+              </div></template
+            ></el-table-column
           >
+          <el-table-column
+            align="center"
+            header-align="center"
+            prop="department"
+            label="Bo'lim"
+            :min-width="100"
+            :max-width="400"
+          />
+          <el-table-column
+            align="center"
+            header-align="center"
+            prop="position"
+            label="Lavozim"
+            :min-width="100"
+            :max-width="400"
+          />
+
           <el-table-column
             align="center"
             header-align="center"
@@ -121,7 +126,13 @@ const UpdateById = (id) => {
             label="Telefon"
             :min-width="100"
             :max-width="400"
-          />
+            ><template #default="{ row }"
+              ><div class="font-semibold text-blue-600">
+                <i class="fas fa-phone text-gray-500 fa-sm mr-2"></i>
+                {{ row.phoneNumber }}
+              </div></template
+            ></el-table-column
+          >
 
           <el-table-column
             label="Bonus ball"
@@ -131,8 +142,8 @@ const UpdateById = (id) => {
             ><template #default="scope">{{ 0 }}</template></el-table-column
           >
           <el-table-column
-            label="Registratsiya vaqti"
-            :min-width="100"
+            label="Ishga qabul qilingan sana"
+            :min-width="150"
             :max-width="400"
             header-align="center"
             align="center"
@@ -149,7 +160,7 @@ const UpdateById = (id) => {
           >
           <el-table-column
             fixed="right"
-            label="Status"
+            label="Holati"
             :min-width="100"
             :max-width="400"
             header-align="center"
@@ -269,7 +280,7 @@ const UpdateById = (id) => {
                   clearable
                   size="smal"
                   type="String"
-                  placeholder="Arikul bo'yicha..."
+                  placeholder="F.I.O bo'yicha..."
                   style="width: 150px; font-size: 12px"
                 />
               </div>
@@ -281,7 +292,7 @@ const UpdateById = (id) => {
                   clearable
                   size="smal"
                   type="String"
-                  placeholder="Yil bo'yicha..."
+                  placeholder="Bo'lim bo'yicha..."
                   style="width: 150px; font-size: 12px"
                 />
               </div>

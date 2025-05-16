@@ -69,9 +69,9 @@ const routes = [
         },
       },
       {
-        path: "/admin/role",
-        name: "Role",
-        component: () => import("../pages/Explore/Admin/role.vue"),
+        path: "admin/system/role",
+        name: "RoleManagment",
+        component: () => import("../pages/Explore/Admin/system/index.vue"),
         beforeEnter(to, from, next) {
           const account = Cookies.get("account") ? JSON.parse(Cookies.get("account")) : null;
           if (account) {

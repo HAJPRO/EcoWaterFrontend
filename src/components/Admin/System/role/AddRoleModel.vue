@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import { RoleStore } from "../../../stores/Admin/role.store";
+import { RoleStore } from "../../../../stores/Admin/role.store";
 const store_role = RoleStore();
 import { storeToRefs } from "pinia";
 const { is_modal_role, model } = storeToRefs(store_role);

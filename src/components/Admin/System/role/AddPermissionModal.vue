@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import { PermissionStore } from "../../../stores/Admin/permission.store";
+import { PermissionStore } from "../../../../stores/Admin/permission.store";
 const store_permission = PermissionStore();
 import { storeToRefs } from "pinia";
 const { is_modal, model, options } = storeToRefs(store_permission);

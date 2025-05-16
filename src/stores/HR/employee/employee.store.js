@@ -11,7 +11,7 @@ export const EmployeeManagmentStore = defineStore("EmployeeManagmentStore", {
             page: null,
             action: 1,
             employee_modal: false,
-            customers: [],
+            employees: [],
             all_length: {},
             modal: {
                 model: {
@@ -72,9 +72,8 @@ export const EmployeeManagmentStore = defineStore("EmployeeManagmentStore", {
         async GetAll(payload) {
             const loader = loading.show()
             const data = await EmployeeManagmentService.GetAll(payload)
-
             this.page = payload?.page ? payload?.page : 1
-            this.customers = data.data.customers
+            this.employees = data.data.employees
             this.all_length = data.data.all_length
 
 
