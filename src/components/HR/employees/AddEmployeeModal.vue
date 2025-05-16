@@ -3,16 +3,20 @@ import MapView from "../../Customers/customerManagment/MapView.vue";
 import { ElMessage } from "element-plus";
 import { onMounted, ref, computed } from "vue";
 import { EmployeeManagmentStore } from "../../../stores/HR/employee/employee.store";
+import { RoleStore } from "../../../stores/Admin/role.store.js";
+
 import { AddressStore } from "../../../stores/Helpers/address/address.store";
 import { AuthStore } from "../../../stores/Auth/auth.js";
 
 const store_address = AddressStore();
 const store_employee = EmployeeManagmentStore();
 const store_auth = AuthStore();
+const store_role = RoleStore();
 
 import { storeToRefs } from "pinia";
 const { regions, districts, neighborhoods } = storeToRefs(store_address);
 const { employee_modal, modal, action } = storeToRefs(store_employee);
+const { roles } = storeToRefs(store_role);
 const dialogWidth = ref("");
 window.addEventListener("devicemotion", () => {
   dialogWidth.value =
@@ -177,6 +181,7 @@ const ChangeStreet = async (e) => {
 const is_map = ref(false);
 let map = ref(null);
 onMounted(async () => {
+  store_role.GetAll();
   try {
     SelectRegion();
   } catch (error) {
@@ -227,91 +232,6 @@ onMounted(async () => {
                 </el-form-item>
               </div>
               <div class="mb-1 col-span-6">
-                <el-form-item label="Lavozim" prop="position" :rules="rules">
-                  <el-select
-                    v-model="modal.model.position"
-                    placeholder="..."
-                    size="smal"
-                    style="width: 100%"
-                    @click="Type({ type: `position` })"
-                    @change="ChangeCustomerPosition($event)"
-                  >
-                    <template #prefix>
-                      <i
-                        @click.stop="
-                          Plus({
-                            title: `Buyurtmachi darajasini qo'shish`,
-                            state: `position`,
-                          })
-                        "
-                        class="fa-solid fa-plus cursor-pointer"
-                      ></i>
-                    </template>
-                    <el-option
-                      v-for="item in positions"
-                      :key="item._id"
-                      :label="item.name"
-                      :value="item.name"
-                    >
-                      <template #default>
-                        <div class="flex justify-between items-center w-full">
-                          <span>{{ item.name }}</span>
-                          <i
-                            class="fa-solid fa-trash text-red-500 cursor-pointer fa-xs ml-8"
-                            @click.stop="RemoveItem(item._id)"
-                          ></i>
-                        </div>
-                      </template>
-                    </el-option>
-                  </el-select>
-                </el-form-item>
-              </div>
-              <div class="mb-1 col-span-6">
-                <el-form-item
-                  label="Ruxsatlar"
-                  prop="permission"
-                  :rules="rules"
-                >
-                  <el-select
-                    multiple
-                    v-model="modal.model.permission"
-                    placeholder="..."
-                    size="smal"
-                    style="width: 100%"
-                    @click="Type({ type: `permission` })"
-                    @change="ChangeOrderDirection($event)"
-                  >
-                    <template #prefix>
-                      <i
-                        @click.stop="
-                          Plus({
-                            title: `Buyurtmachi kategoryasini qo'shish`,
-                            state: `permission`,
-                          })
-                        "
-                        class="fa-solid fa-plus cursor-pointer"
-                      ></i>
-                    </template>
-                    <el-option
-                      v-for="item in permissions"
-                      :key="item._id"
-                      :label="item.name"
-                      :value="item.name"
-                    >
-                      <template #default>
-                        <div class="flex justify-between items-center w-full">
-                          <span>{{ item.name }}</span>
-                          <i
-                            class="fa-solid fa-trash text-red-500 cursor-pointer fa-xs ml-8"
-                            @click.stop="RemoveItem(item._id)"
-                          ></i>
-                        </div>
-                      </template>
-                    </el-option>
-                  </el-select>
-                </el-form-item>
-              </div>
-              <div class="mb-1 col-span-6">
                 <el-form-item label="Bo'lim" prop="department" :rules="rules">
                   <el-select
                     v-model="modal.model.department"
@@ -352,6 +272,88 @@ onMounted(async () => {
                   </el-select>
                 </el-form-item>
               </div>
+              <div class="mb-1 col-span-6">
+                <el-form-item label="Lavozim" prop="position" :rules="rules">
+                  <el-select
+                    v-model="modal.model.position"
+                    placeholder="..."
+                    size="smal"
+                    style="width: 100%"
+                    @click="Type({ type: `position` })"
+                    @change="ChangeCustomerPosition($event)"
+                  >
+                    <template #prefix>
+                      <i
+                        @click.stop="
+                          Plus({
+                            title: `Buyurtmachi darajasini qo'shish`,
+                            state: `position`,
+                          })
+                        "
+                        class="fa-solid fa-plus cursor-pointer"
+                      ></i>
+                    </template>
+                    <el-option
+                      v-for="item in positions"
+                      :key="item._id"
+                      :label="item.name"
+                      :value="item.name"
+                    >
+                      <template #default>
+                        <div class="flex justify-between items-center w-full">
+                          <span>{{ item.name }}</span>
+                          <i
+                            class="fa-solid fa-trash text-red-500 cursor-pointer fa-xs ml-8"
+                            @click.stop="RemoveItem(item._id)"
+                          ></i>
+                        </div>
+                      </template>
+                    </el-option>
+                  </el-select>
+                </el-form-item>
+              </div>
+              <div class="mb-1 col-span-6">
+                <el-form-item label="Rol" prop="roles" :rules="rules">
+                  <el-select
+                    multiple
+                    v-model="modal.model.roles"
+                    placeholder="..."
+                    size="smal"
+                    style="width: 100%"
+                    @click="Type({ type: `permission` })"
+                    @change="ChangeOrderDirection($event)"
+                  >
+                    <template #prefix>
+                      <i
+                        @click.stop="
+                          Plus({
+                            title: `Buyurtmachi kategoryasini qo'shish`,
+                            state: `permission`,
+                          })
+                        "
+                        class="fa-solid fa-plus cursor-pointer"
+                      ></i>
+                    </template>
+                    <el-option
+                      v-for="item in roles"
+                      :key="item._id"
+                      :label="item.name"
+                      :value="item._id"
+                    >
+                      <template #default>
+                        <div class="flex justify-between items-center w-full">
+                          <span>{{ item.name }}</span>
+                          <i
+                            class="fa-solid fa-trash text-red-500 cursor-pointer fa-xs ml-8"
+                            @click.stop="RemoveItem(item._id)"
+                          ></i>
+                        </div>
+                      </template>
+                    </el-option>
+                  </el-select>
+                </el-form-item>
+              </div>
+
               <div class="mb-1 col-span-6">
                 <el-form-item
                   label="Ishga qabul qilingan sana"

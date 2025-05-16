@@ -3,17 +3,15 @@ import socket from "../../socket";
 
 export const UserSocketStore = defineStore("UserSocketStore", {
     state: () => ({
-        onlineUsers: [], // Tizimga kirgan foydalanuvchilar ro‘yxati
-        onlineDrivers: [], // Tizimga kirgan haydovchilar ro‘yxati
-        isConnected: false, // Socket ulanish holati
+        onlineUsers: [],     // Tizimga kirgan foydalanuvchilar ro‘yxati
+        drivers: [],   // Tizimga kirgan haydovchilar ro‘yxati
+        isConnected: false,  // Socket ulanish holati
     }),
 
     actions: {
         SocketConnect(user) {
-            // 🔄 Avvalgi tinglovchilarni o‘chirish
-            this.disconnect();
+            this.disconnect(); // 🔄 Avvalgi tinglovchilarni o‘chirish
 
-            // 🧩 "connect" event — birinchi bo‘lishi kerak
             socket.on("connect", () => {
                 console.log("✅ Socket.io bog‘landi:", socket.id);
                 this.isConnected = true;
@@ -23,36 +21,55 @@ export const UserSocketStore = defineStore("UserSocketStore", {
                 socket.emit("driverLocation", user);
             });
 
-            // ❌ Ulanish uzildi
             socket.on("disconnect", () => {
                 console.log("❌ Socket.io uzildi");
                 this.isConnected = false;
             });
 
-            // 👥 Online foydalanuvchilar
             socket.on("OnlineUsers", (users) => {
                 this.onlineUsers = users;
                 console.log("🟢 Online foydalanuvchilar:", users);
             });
+
+            // 🔊 Haydovchilarni tinglash
+            this.listenEvents();
         },
-        DriverLocation(driverLocation) {
 
-            // 🔄 Faqatgina lokatsiyani yuborish
-            if (this.isConnected) {
-                this.onlineDrivers.push(driverLocation);
-                console.log("🟢 Online haydovchilar:", this.onlineDrivers);
+        // 📡 Haydovchi lokatsiyasi yangilanishini tinglash
+        listenEvents() {
+            socket.on("driverLocationUpdate", (driverData) => {
+                this.updateDriver(driverData);
+            });
+        },
 
-                socket.emit("driverLocation", driverLocation);
+        // 📥 Haydovchini qo‘shish yoki yangilash
+        updateDriver(driverData) {
+            const index = this.drivers.findIndex(d => d.id === driverData.id);
+
+            if (index !== -1) {
+                // Mavjud haydovchi - koordinatalarni yangilash
+                const driver = this.drivers[index];
+                driver.lat = driverData.lat;
+                driver.lng = driverData.lng;
+                driver.trajectory.push([driverData.lat, driverData.lng]);
+            } else {
+                // Yangi haydovchi
+                this.drivers.push({
+                    ...driverData,
+                    trajectory: [[driverData.lat, driverData.lng]],
+                });
             }
+            console.log(this.drivers);
+
         },
 
         disconnect() {
-            // 🎯 Oldingi barcha eventlarni o‘chirish
+            // 🎯 Oldingi eventlarni tozalash
             socket.off("connect");
             socket.off("disconnect");
             socket.off("OnlineUsers");
+            socket.off("driverLocationUpdate");
             this.isConnected = false;
         },
     }
-
 });

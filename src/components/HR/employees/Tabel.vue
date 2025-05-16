@@ -59,7 +59,7 @@ const UpdateById = (id) => {
           <el-table-column
             prop="fullname"
             label="F.I.O"
-            :min-width="150"
+            :min-width="200"
             :max-width="400"
             header-align="center"
             align="left"
@@ -86,14 +86,55 @@ const UpdateById = (id) => {
             :min-width="100"
             :max-width="400"
           />
-           <el-table-column
+          <el-table-column
             align="center"
             header-align="center"
             prop="role"
             label="Rol"
             :min-width="100"
             :max-width="400"
-          />
+          >
+            <template #default="{ row }">
+              <el-tooltip placement="left" effect="blue">
+                <template #content>
+                  <div
+                    class="bg-[#e8eded] text-white p-4 rounded text-left space-y-3"
+                    style="width: 300px; max-height: 1200px; overflow-y: auto"
+                  >
+                    <div v-if="row.roles && row.roles.length">
+                      <div
+                        class="bg-white p-2 rounded mb-2"
+                        v-for="(role, index) in row.roles"
+                        :key="index"
+                      >
+                        <div
+                          class="text-center font-semibold text-[16px] text-white p-2 bg-purple-500 rounded mb-1"
+                        >
+                          {{ role.name }}
+                        </div>
+                        <ul class="ml-4 list-disc mb-3 text-purple-600">
+                          <div
+                            class=""
+                            v-for="(permission, pIndex) in role.permissions"
+                            :key="pIndex"
+                          >
+                            {{ permission }}
+                          </div>
+                        </ul>
+                      </div>
+                    </div>
+                    <div class="text-center font-semibold text-gray-800" v-else>
+                      Rol topilmadi
+                    </div>
+                  </div>
+                </template>
+
+                <div class="text-purple-500 cursor-pointer hover:underline">
+                  Ko'rish
+                </div>
+              </el-tooltip>
+            </template>
+          </el-table-column>
 
           <el-table-column
             align="center"

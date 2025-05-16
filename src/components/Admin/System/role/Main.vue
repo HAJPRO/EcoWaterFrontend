@@ -5,14 +5,14 @@
     </template>
   </Title>
   <HeaderTabLink />
-  <Tabel />
+  <MainTable />
 </template>
 
 <script setup>
 import { onMounted, ref } from "vue";
 import Title from "../../../../components/Title.vue";
 import HeaderTabLink from "../../../../components/Admin/System/role/HeaderTabLink.vue";
-import Tabel from "../../../../components/Admin/System/role/Table.vue";
+import MainTable from "./Table.vue";
 </script>
 
 <style scoped></style>

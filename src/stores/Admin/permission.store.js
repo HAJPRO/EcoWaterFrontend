@@ -8,35 +8,36 @@ import { defineStore } from "pinia";
 export const PermissionStore = defineStore("PermissionStore", {
     state: () => {
         return {
-
+            status: "",
             permission_modal: false,
             model: {
-                permission_name: "",
-                actions: []
+                name: "",
+                value: "",
+                description: "",
             },
-            options: [
-                { id: 1, name: "Create" },
-                { id: 2, name: "Read" },
-                { id: 3, name: "Update" },
-                { id: 4, name: "Delete" },
-
-            ]
+            permissions: []
 
         };
     },
     actions: {
+        IsActive(payload) {
+            this.status = payload
+            console.log(this.status);
+
+        },
         AddPermissionModal() {
             this.permission_modal = true
         },
-        async GetPermissions() {
-            const data = await PermissionService.GetPermissions()
+        async GetAll() {
+            const data = await PermissionService.GetAll()
+            this.permissions = data.data.permissions
+
         },
         async CreatePermission(payload) {
             const loader = loading.show();
             const data = await PermissionService.CreatePermission(payload)
-            this.model.permission_name = "",
-                this.model.actions = [],
-                this.is_modal = false
+            console.log(data);
+
             ToastifyService.ToastSuccess({
                 msg: data.data.msg,
             });

@@ -21,7 +21,7 @@ export const EmployeeManagmentStore = defineStore("EmployeeManagmentStore", {
                     department: "",
                     gender: "",
                     position: "",
-                    permission: "",
+                    roles: [],
                     action: "",
                     registeredAt: "",
                     imageUrl: "",

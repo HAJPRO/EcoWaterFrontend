@@ -4,6 +4,31 @@ import { PermissionStore } from "../../../../stores/Admin/permission.store";
 const store_permission = PermissionStore();
 import { storeToRefs } from "pinia";
 const { permission_modal, model, options } = storeToRefs(store_permission);
+const dialogWidth = ref("");
+window.addEventListener("devicemotion", () => {
+  dialogWidth.value =
+    window.innerWidth > 1400
+      ? "1300"
+      : window.innerWidth > 1000
+      ? "1000"
+      : window.innerWidth > 800
+      ? "800"
+      : window.innerWidth > 600
+      ? "600"
+      : "450";
+});
+window.addEventListener("resize", () => {
+  dialogWidth.value =
+    window.innerWidth > 1400
+      ? "1500"
+      : window.innerWidth > 1000
+      ? "1000"
+      : window.innerWidth > 800
+      ? "800"
+      : window.innerWidth > 600
+      ? "600"
+      : "450";
+});
 const formRef = ref();
 const Save = async (formRef) => {
   await formRef.validate((valid) => {
@@ -21,8 +46,13 @@ const rules = ref({
 });
 </script>
 <template>
-  <el-dialog v-model="permission_modal" title="Add permission modal" width="600">
+  <el-dialog v-model="permission_modal" :width="dialogWidth">
     <span>
+      <div
+        class="bg-slate-100 font-semibold text-[15px] p-1 mt-1 align-center text-center shadow rounded border-t-[1px] border-[#36d887]"
+      >
+        <i class="fa-solid fa-unlock fa-md mr-3"></i> Ruxsat qo'shish
+      </div>
       <el-form
         :model="model"
         ref="formRef"
@@ -32,14 +62,10 @@ const rules = ref({
         class="filter-box md:grid md:grid-cols-12 gap-2 sm:flex sm:flex-wrap rounded shadow-md bg-white p-2 mt-1 mb-1 text-[12px]"
       >
         <div class="mb-1 col-span-6">
-          <el-form-item
-            label="Permission name"
-            prop="permission_name"
-            :rules="rules"
-          >
+          <el-form-item label="Ruxsat nomi" prop="name" :rules="rules">
             <el-input
               required
-              v-model="model.permission_name"
+              v-model="model.name"
               clearable
               class="w-[100%]"
               size="smal"
@@ -49,43 +75,45 @@ const rules = ref({
           </el-form-item>
         </div>
         <div class="mb-1 col-span-6">
-          <el-form-item label="Actions" prop="actions" :rules="rules">
-            <el-select
-              v-model="model.actions"
-              multiple
-              collapse-tags
-              placeholder="..."
+          <el-form-item label="Value" prop="value" :rules="rules">
+            <el-input
+              required
+              v-model="model.value"
+              clearable
+              class="w-[100%]"
               size="smal"
-            >
-              <el-option
-                v-for="item in options"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id"
-              >
-              </el-option>
-            </el-select>
+              type="String"
+              placeholder="..."
+            />
+          </el-form-item>
+        </div>
+        <div class="mb-1 col-span-12">
+          <el-form-item label="Qo'shimcha ma'lumot" prop="discription">
+            <el-input
+              type="textarea"
+              v-model="model.description"
+              placeholder="Bu yerga yozing..."
+              :rows="4"
+              clearable
+            />
           </el-form-item>
         </div>
       </el-form>
-    </span>
-    <el-dialog
-      v-model="innerVisible"
-      width="600"
-      title="Inner Dialog"
-      append-to-body
-    >
-    </el-dialog>
-    <template #footer>
-      <div class="dialog-footer">
-        <router-link
-          to=""
+      <div class="flex justify-end bg-[#e8eded] p-2 rounded">
+        <el-button
           @click="Save(formRef)"
-          class="inline-flex text-[12px] items-center ml-2 px-3 py-1 mb-1 mt-2 text-sm font-medium text-center text-white bg-[#36d887] text-bold rounded"
+          style="
+            width: 190px;
+            background-color: #36d887;
+            color: white;
+            border: none;
+            cursor: pointer;
+            padding: 15px;
+          "
         >
-          <i class="mr-2 fa-solid fa-check fa-sm"></i>Yuborish</router-link
-        >
+          <i class="fa-solid fa-check mr-2 fa-md"></i>Saqlash
+        </el-button>
       </div>
-    </template>
+    </span>
   </el-dialog>
 </template>
