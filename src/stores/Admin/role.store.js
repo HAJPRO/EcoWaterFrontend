@@ -8,7 +8,7 @@ export const RoleStore = defineStore("RoleStore", {
     state: () => {
         return {
 
-            is_modal_role: false,
+            role_modal: false,
             model: {
                 role_name: "",
                 value: ""
@@ -19,7 +19,7 @@ export const RoleStore = defineStore("RoleStore", {
     },
     actions: {
         AddRoleModal() {
-            this.is_modal_role = true
+            this.role_modal = true
         },
         async CreateRole(payload) {
             const loader = loading.show();

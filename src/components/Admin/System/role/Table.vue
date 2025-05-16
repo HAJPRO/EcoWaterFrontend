@@ -3,32 +3,42 @@ import Cookies from "js-cookie";
 const role = ref(JSON.parse(Cookies.get("account")).role);
 const permissions = ref(JSON.parse(Cookies.get("account")).permissions);
 const actions = ref(JSON.parse(Cookies.get("account")).actions);
-
+import PermissionModal from "../../../../components/Admin/System/role/AddPermissionModal.vue"
+import RoleModal from "../../../../components/Admin/System/role/AddRoleModel.vue"
 import { ref, onMounted } from "vue";
-import { EmployeeManagmentStore } from "../../../stores/HR/employee/employee.store";
-
-import EmployeeModal from "../../../components/HR/employees/AddEmployeeModal.vue";
+import { PermissionStore } from "../../../../stores/Admin/permission.store";
+import { RoleStore } from "../../../../stores/Admin/role.store";
 import moment from "moment-timezone";
 
-const store = EmployeeManagmentStore();
+const store_role = RoleStore();
+const store_permission = PermissionStore();
+
 import { storeToRefs } from "pinia";
-const { custom_modal, modal, employees, all_length, isActive } =
-  storeToRefs(store);
-const AddEmployeeModal = () => {
-  store.AddEmployeeModal();
-};
-const handleCurrentChange = (page) => {
-  store.GetAll({ status: isActive.value, page: page, limit: 5 });
-};
-const deleteById = (id) => {
-  store.DeleteById({ id });
-};
-const UpdateById = (id) => {
-  store.GetById({ id });
-};
+const { custom_modal, modal, customers,all_length, isActive } =
+  storeToRefs(store_role);
+  const {  } =
+  storeToRefs(store_permission);
+const AddPermissionModal =  () => {
+  store_permission.AddPermissionModal()
+}
+const AddRoleModal =  () => {
+  store_role.AddRoleModal()
+}
+// const handleCurrentChange = (page) => {
+//   store.GetAll({status : isActive.value, page : page, limit:5});
+// };
+// const deleteById = (id) => {
+//   store.DeleteById({id});
+// };
+// const UpdateById = (id) => {
+//   store.GetById({id});
+// };
+
 </script>
 <template>
-  <EmployeeModal />
+<RoleModal/>
+<PermissionModal/>
+
   <div class="">
     <div class="">
       <div class="rounded-md text-[11px]">
@@ -44,7 +54,7 @@ const UpdateById = (id) => {
           header-align="right"
           :max-height="600"
           empty-text="Mahsulot qo'shilmagan... "
-          :data="employees"
+          :data="customers"
           border
         >
           <el-table-column
@@ -59,43 +69,30 @@ const UpdateById = (id) => {
           <el-table-column
             prop="fullname"
             label="F.I.O"
-            :min-width="150"
+            :min-width="100"
             :max-width="400"
             header-align="center"
-            align="left"
-            ><template #default="{ row }"
-              ><div class="text-red-500">
-                <i class="fas fa-user text-gray-500 fa-sm mr-2"></i>
-                {{ row.fullname }}
-              </div></template
-            ></el-table-column
+            align="center"
+          />
+          <el-table-column
+            align="center"
+            header-align="center"
+            prop="artikul"
+            label="Artikul"
+            :min-width="100"
+            :max-width="400"
+          />
+            <el-table-column
+            label="Kategoriyasi"
+          :min-width="100"
+          :max-width="400"
+            header-align="center"
+            align="center"
+            ><template #default="scope">{{
+             scope.row.category
+            }}</template></el-table-column
           >
-          <el-table-column
-            align="center"
-            header-align="center"
-            prop="department"
-            label="Bo'lim"
-            :min-width="100"
-            :max-width="400"
-          />
-          <el-table-column
-            align="center"
-            header-align="center"
-            prop="position"
-            label="Lavozim"
-            :min-width="100"
-            :max-width="400"
-          />
            <el-table-column
-            align="center"
-            header-align="center"
-            prop="role"
-            label="Rol"
-            :min-width="100"
-            :max-width="400"
-          />
-
-          <el-table-column
             align="center"
             header-align="center"
             prop="address.region"
@@ -103,7 +100,7 @@ const UpdateById = (id) => {
             :min-width="100"
             :max-width="400"
           />
-          <el-table-column
+            <el-table-column
             align="center"
             header-align="center"
             prop="address.district"
@@ -111,7 +108,7 @@ const UpdateById = (id) => {
             :min-width="100"
             :max-width="400"
           />
-          <el-table-column
+           <el-table-column
             align="center"
             header-align="center"
             prop="address.neighborhood"
@@ -119,7 +116,7 @@ const UpdateById = (id) => {
             :min-width="100"
             :max-width="400"
           />
-          <el-table-column
+             <el-table-column
             align="center"
             header-align="center"
             prop="address.street"
@@ -127,50 +124,49 @@ const UpdateById = (id) => {
             :min-width="100"
             :max-width="400"
           />
-          <el-table-column
+           <el-table-column
             align="center"
             header-align="center"
             prop="phoneNumber"
             label="Telefon"
             :min-width="100"
             :max-width="400"
-            ><template #default="{ row }"
-              ><div class="font-semibold text-blue-600">
-                <i class="fas fa-phone text-gray-500 fa-sm mr-2"></i>
-                {{ row.phoneNumber }}
-              </div></template
-            ></el-table-column
-          >
+          />
 
-          <el-table-column
+       
+        
+           <el-table-column
             label="Bonus ball"
             :min-width="100"
             header-align="center"
             align="center"
-            ><template #default="scope">{{ 0 }}</template></el-table-column
+            ><template #default="scope">{{ 
+             0
+            }}</template></el-table-column
           >
-          <el-table-column
-            label="Ishga qabul qilingan sana"
-            :min-width="150"
-            :max-width="400"
+             <el-table-column
+            label="Registratsiya vaqti"
+          :min-width="100"
+          :max-width="400"
             header-align="center"
             align="center"
             ><template #default="scope">
-              {{
+               {{
                 scope.row.registeredAt
                   ? moment
-                      .utc(scope.row.registeredAt) // 🟢 UTC formatda olish
+                      .utc( scope.row.registeredAt) // 🟢 UTC formatda olish
                       .tz("Asia/Tashkent") // 🟢 UTC+5 ga aylantirish
                       .format("DD.MM.YYYY HH:mm:ss") // 🟢 To‘g‘ri formatda chiqarish
                   : "-"
               }}
+            
             </template></el-table-column
           >
           <el-table-column
             fixed="right"
-            label="Holati"
+            label="Status"
             :min-width="100"
-            :max-width="400"
+              :max-width="400"
             header-align="center"
             align="center"
           >
@@ -216,7 +212,7 @@ const UpdateById = (id) => {
                       ><template #default=""
                         ><div>
                           <i class="text-black fa-solid fa-eye fa-sm mr-2"></i
-                          >Batafsil
+                          >Batafsil 
                         </div>
                       </template></el-dropdown-item
                     >
@@ -245,13 +241,16 @@ const UpdateById = (id) => {
                         </div>
                       </template></el-dropdown-item
                     >
-                    <el-dropdown-item
+                     <el-dropdown-item
                       class="text-[13px] text-indigo-600"
                       @click="UpdateById(row._id)"
+                      
                       ><template #default="{}"
                         ><div>
-                          <i class="text-black fa-solid fa-pen fa-sm mr-1"></i>
-                          O'zgatirish
+                          <i
+                            class="text-black fa-solid fa-pen fa-sm mr-1"
+                          ></i>
+                         O'zgatirish
                         </div>
                       </template></el-dropdown-item
                     >
@@ -288,22 +287,12 @@ const UpdateById = (id) => {
                   clearable
                   size="smal"
                   type="String"
-                  placeholder="F.I.O bo'yicha..."
+                  placeholder="Nomi bo'yicha..."
                   style="width: 150px; font-size: 12px"
                 />
               </div>
 
-              <div
-                class="my-2 text-[11px] items-center font-medium text-center text-white"
-              >
-                <el-input
-                  clearable
-                  size="smal"
-                  type="String"
-                  placeholder="Bo'lim bo'yicha..."
-                  style="width: 150px; font-size: 12px"
-                />
-              </div>
+             
 
               <el-select placeholder="Excel" class="w-32 my-2">
                 <el-option @click="ExportExcel()" label="Excel" value="excel">
@@ -320,7 +309,7 @@ const UpdateById = (id) => {
               </el-select>
               <div class="mt-2.5">
                 <el-button
-                  @click="AddEmployeeModal()"
+                  @click="AddRoleModal()"
                   size="small"
                   style="
                     background-color: #36d887;
@@ -329,7 +318,21 @@ const UpdateById = (id) => {
                     padding: 15px;
                   "
                 >
-                  <i class="mr-2 fa-solid fa-plus fa-sm"></i>Xodim
+                  <i class="mr-2 fa-solid fa-plus fa-sm"></i>Rol
+                  qo'shish</el-button
+                >
+                  <el-button
+                  @click="AddPermissionModal()"
+                  size="small"
+                  style="
+                    background-color: #7C3AED
+;
+                    color: white;
+                    border: none;
+                    padding: 15px;
+                  "
+                >
+                  <i class="mr-2 fa-solid fa-plus fa-sm"></i>Ruxsat
                   qo'shish</el-button
                 >
               </div>
@@ -342,7 +345,7 @@ const UpdateById = (id) => {
                 @current-change="handleCurrentChange"
                 :page-size="5"
                 layout="prev, pager, next"
-                :total="all_length.all"
+                :total="15"
                 class="custom-pagination"
               >
               </el-pagination>

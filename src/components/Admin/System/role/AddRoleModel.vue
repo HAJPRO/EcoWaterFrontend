@@ -3,7 +3,7 @@ import { ref, onMounted } from "vue";
 import { RoleStore } from "../../../../stores/Admin/role.store";
 const store_role = RoleStore();
 import { storeToRefs } from "pinia";
-const { is_modal_role, model } = storeToRefs(store_role);
+const { role_modal, model } = storeToRefs(store_role);
 const formRef = ref();
 const Save = async (formRef) => {
   await formRef.validate((valid) => {
@@ -21,7 +21,7 @@ const rules = ref({
 });
 </script>
 <template>
-  <el-dialog v-model="is_modal_role" title="Add role modal" width="600">
+  <el-dialog v-model="role_modal" title="Add role modal" width="600">
     <span>
       <el-form
         :model="model"

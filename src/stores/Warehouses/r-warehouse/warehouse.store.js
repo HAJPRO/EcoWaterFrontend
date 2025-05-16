@@ -6,6 +6,7 @@ import { th } from "element-plus/es/locale/index.mjs";
 export const ReadyWarehouseStore = defineStore("ReadyWarehouseStore", {
   state: () => ({
     detail_modal: false,
+    transfer_modal : false,
     isActive: "",
     product_modal: false,
     model: {},
@@ -22,6 +23,9 @@ export const ReadyWarehouseStore = defineStore("ReadyWarehouseStore", {
     DetailModal(id) {
       this.GetOne(id);
       this.detail_modal = true;
+    },
+    TransferModal(id) {
+      this.transfer_modal = true;
     },
     async AddProductModal() {
       this.GetModel();

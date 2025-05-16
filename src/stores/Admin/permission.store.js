@@ -9,7 +9,7 @@ export const PermissionStore = defineStore("PermissionStore", {
     state: () => {
         return {
 
-            is_modal: false,
+            permission_modal: false,
             model: {
                 permission_name: "",
                 actions: []
@@ -26,7 +26,7 @@ export const PermissionStore = defineStore("PermissionStore", {
     },
     actions: {
         AddPermissionModal() {
-            this.is_modal = true
+            this.permission_modal = true
         },
         async GetPermissions() {
             const data = await PermissionService.GetPermissions()

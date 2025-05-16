@@ -117,25 +117,7 @@ const isActive = ref(1);
         </div>
       </router-link>
     </div>
-    <div class="row-span-1 flex justify-end flex-wrap col-span-3 grid-flow-col">
-      <div class="col-span-2"></div>
-      <div class="col-span-1">
-        <router-link
-          @click="AddRoleModal()"
-          to=""
-          class="inline-flex items-center px-3 py-1 mb-1 text-[13px] font-medium text-center text-white bg-yellow-500 text-bold rounded"
-        >
-          <i class="fa-solid fa-plus mr-2 fa-sm"></i> Role
-        </router-link>
-        <router-link
-          @click="AddPermissionModal()"
-          to=""
-          class="inline-flex ml-2 items-center px-3 py-1 mb-1 text-[13px] font-medium text-center text-white bg-[#36d887] text-bold rounded"
-        >
-          <i class="fa-solid fa-plus mr-2 fa-sm"></i> Permission
-        </router-link>
-      </div>
-    </div>
+   
   </div>
 </template>
 <style scoped>

@@ -3,7 +3,7 @@ import { ref, onMounted } from "vue";
 import { PermissionStore } from "../../../../stores/Admin/permission.store";
 const store_permission = PermissionStore();
 import { storeToRefs } from "pinia";
-const { is_modal, model, options } = storeToRefs(store_permission);
+const { permission_modal, model, options } = storeToRefs(store_permission);
 const formRef = ref();
 const Save = async (formRef) => {
   await formRef.validate((valid) => {
@@ -21,7 +21,7 @@ const rules = ref({
 });
 </script>
 <template>
-  <el-dialog v-model="is_modal" title="Add permission modal" width="600">
+  <el-dialog v-model="permission_modal" title="Add permission modal" width="600">
     <span>
       <el-form
         :model="model"

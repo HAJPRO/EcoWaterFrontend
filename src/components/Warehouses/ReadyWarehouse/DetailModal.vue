@@ -3,6 +3,8 @@ import { ElMessage } from "element-plus";
 import { onMounted, ref, computed } from "vue";
 import { v4 as uuidv4 } from "uuid";
 import moment from "moment-timezone";
+import TransferModal from "./TransferModal.vue";
+
 import { ReadyWarehouseStore } from "../../../stores/Warehouses/r-warehouse/warehouse.store";
 const store_rw = ReadyWarehouseStore();
 import { storeToRefs } from "pinia";
@@ -48,6 +50,9 @@ const ActiveTabLink = (num) => {
     isActive.value = 2;
   }
 };
+const transferModal = (id) => {
+  store_rw.TransferModal(id);
+};
 onMounted(async () => {
   try {
   } catch (error) {
@@ -69,6 +74,7 @@ const data = ref({
 });
 </script>
 <template>
+<TransferModal/>
   <div>
     <el-dialog
       v-model="detail_modal"
@@ -374,7 +380,7 @@ const data = ref({
                     >
                       <el-dropdown-item
                         class="text-[13px] text-green-600"
-                        @click="detailModal(row._id)"
+                        @click="transferModal(row._id)"
                         ><template #default=""
                           ><div>
                             <i
