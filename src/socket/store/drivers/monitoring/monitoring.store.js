@@ -1,5 +1,5 @@
-import { defineStore } from 'pinia'
-import socket from '../../../socket.js'
+import { defineStore } from 'pinia';
+import socket from '../../../socket.js';
 
 export const MonitoringSocketStore = defineStore('MonitoringSocketStore', {
   state: () => ({
@@ -7,61 +7,43 @@ export const MonitoringSocketStore = defineStore('MonitoringSocketStore', {
   }),
 
   actions: {
-    // 🔌 Soketga ulanadi
     connectSocket(driverData) {
-      console.log(driverData);
+      if (!socket.connected) socket.connect();
 
-      if (!socket.connected) {
-        socket.connect();
-        console.log("🔌 Soketga ulanildi");
-      }
-      // 🟢 O‘zingizni backendga ro‘yxatdan o‘tkazing
-      socket.emit("register", driverData);
-      socket.on("OnlineDrivers", (drivers) => {
-        drivers.forEach((driver) => this.updateDriver(driver));
+      // Haydovchi tizimga kirgani haqida serverga ma'lumot yuborish
+      socket.emit("driver:connected", driverData);
+
+      // Eski 'drivers:online' listenerni olib tashlash
+      socket.off("drivers:online");
+
+      // Barcha haydovchilar ro'yxatini olish va yangilash
+      socket.on("drivers:online", (allDrivers) => {
+        this.drivers = allDrivers;
+        console.log("📦 Barcha haydovchilar:", this.drivers);
       });
 
-      this.listenEvents(); // 🔁 Real-time yangilanishlar
-      // 🔍 Konsolga chiqaramiz
-      console.log("📦 Haydovchilar (boshlang‘ich):", this.drivers);
+      // Qo'shimcha hodisalarni tinglash (agar kerak bo'lsa)
+      this.listenEvents();
     },
-
 
     listenEvents() {
-      socket.off('driverLocationUpdate'); // takroriy ulanishni oldini olish
-      socket.on('driverLocationUpdate', (driverData) => {
-        this.updateDriver(driverData);
+      // Masalan, haydovchi koordinatasi yangilansa
+      socket.off('driver:location:update');
+      socket.on('driver:location:update', (updatedDriver) => {
+        const index = this.drivers.findIndex(d => d.id === updatedDriver.id);
+        if (index !== -1) {
+          this.drivers[index] = updatedDriver;
+        } else {
+          this.drivers.push(updatedDriver);
+        }
       });
     },
-    // 📥 Haydovchi ma'lumotlarini yangilash yoki qo‘shish
-    updateDriver(driverData) {
-      const index = this.drivers.findIndex(d => d.id === driverData.id);
 
-      if (index !== -1) {
-        const driver = this.drivers[index];
-        driver.lat = driverData.lat;
-        driver.lng = driverData.lng;
-
-        if (!driver.trajectory) {
-          driver.trajectory = [];
-        }
-
-        driver.trajectory.push([driverData.lat, driverData.lng]);
-      } else {
-        this.drivers.push({
-          ...driverData,
-          trajectory: [[driverData.lat, driverData.lng]]
-        });
+    // Haydovchi joylashuvini serverga yuborish (agar kerak bo'lsa)
+    sendDriverLocation(locationData) {
+      if (socket.connected) {
+        socket.emit('driver:location', locationData);
       }
     },
-
-    // 📤 Haydovchi lokatsiyasini serverga yuborish
-    driverLocation(driverData) {
-      if (socket && socket.connected) {
-        socket.emit('driver:location', driverData);
-      } else {
-        console.warn('⚠️ Socket ulanmagan');
-      }
-    }
-  }
-})
+  },
+});
