@@ -16,6 +16,8 @@ const socket = io(URL, {
     reconnectionAttempts: Infinity,
     pingInterval: 25000,
     pingTimeout: 300000,
+    transports: ["polling", "websocket"],
+    withCredentials: true,
 });
 
 // Qo'lda ulanish
