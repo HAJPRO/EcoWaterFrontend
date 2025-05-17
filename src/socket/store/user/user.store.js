@@ -4,7 +4,6 @@ import socket from "../../socket";
 export const UserSocketStore = defineStore("UserSocketStore", {
     state: () => ({
         onlineUsers: [],     // Tizimga kirgan foydalanuvchilar ro‘yxati
-        drivers: [],   // Tizimga kirgan haydovchilar ro‘yxati
         isConnected: false,  // Socket ulanish holati
     }),
 
@@ -17,8 +16,7 @@ export const UserSocketStore = defineStore("UserSocketStore", {
                 this.isConnected = true;
 
                 // 🔗 Serverga user va lokatsiyani yuborish
-                socket.emit("register", user);
-                socket.emit("driverLocation", user);
+                socket.emit("user:register", user);
             });
 
             socket.on("disconnect", () => {
