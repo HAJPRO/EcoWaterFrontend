@@ -1,6 +1,6 @@
 import { io } from "socket.io-client";
 
-// Agar token kerak bo'lsa, uni avtomatik qo'shamiz
+// Agar token kerak bo'lsa, uni avtomatik qo'shamiz ///
 const token = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*\=\s*([^;]*).*$)|^.*$/, "$1");
 
 // URL manzilingiz
