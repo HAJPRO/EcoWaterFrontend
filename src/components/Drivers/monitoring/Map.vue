@@ -131,16 +131,16 @@ onMounted(() => {
         }).addTo(map);
       });
       // Xarita hududini barcha haydovchilar joylashgan joyga markazlashtirish
-      if (newDrivers.length > 0) {
-        const latitudes = newDrivers.map((d) => d.lat);
-        const longitudes = newDrivers.map((d) => d.lng);
+      // if (newDrivers.length > 0) {
+      //   const latitudes = newDrivers.map((d) => d.lat);
+      //   const longitudes = newDrivers.map((d) => d.lng);
 
-        const southWest = [Math.min(...latitudes), Math.min(...longitudes)];
-        const northEast = [Math.max(...latitudes), Math.max(...longitudes)];
-        const bounds = L.latLngBounds(southWest, northEast);
+      //   const southWest = [Math.min(...latitudes), Math.min(...longitudes)];
+      //   const northEast = [Math.max(...latitudes), Math.max(...longitudes)];
+      //   const bounds = L.latLngBounds(southWest, northEast);
 
-        map.fitBounds(bounds.pad(0.1));
-      }
+      //   map.fitBounds(bounds.pad(0.1));
+      // }
     },
     { immediate: true, deep: true }
   );
