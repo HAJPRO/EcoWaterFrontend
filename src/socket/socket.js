@@ -11,9 +11,11 @@ const URL = "https://eco.company-erp.uz";
 const socket = io(URL, {
     autoConnect: false, // Ulanishni avtomatik boshlamaslik
     reconnection: true, // Uzilganidan keyin qayta ulanish
-    reconnectionAttempts: 5, // 5 marta qayta urinish
-    reconnectionDelay: 2000, // Har bir urinish orasidagi kechikish
+    reconnectionDelay: 1000, // Har bir urinish orasidagi kechikish
     auth: { token }, // JWT token bilan autentifikatsiya
+    reconnectionAttempts: Infinity,
+    pingInterval: 25000,
+    pingTimeout: 300000,
 });
 
 // Qo'lda ulanish
