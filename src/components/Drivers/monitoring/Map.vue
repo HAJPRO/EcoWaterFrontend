@@ -107,14 +107,24 @@ onMounted(() => {
         marker.bindPopup(
           `
         <div class="custom-popup">
-          <img src="${driver.avatar}" alt="Avatar" style="width: 100%; height: 200px; border-radius: 10%; object-fit: cover; margin-bottom: 10px;">
-          <p class="text-center font-semibold text-[16px]">${driver.fullname}</p>
-          <p class="text-[12px]">Yoshi: ${driver.age} | Jinsi: ${driver.gender} | Zakazlar: ${driver.orders}</p>
+          <img src="${
+            driver.avatar
+              ? driver.avatar
+              : "https://img.freepik.com/free-vector/blue-circle-with-white-user_78370-4707.jpg?semt=ais_hybrid&w=740"
+          }" alt="Avatar" style="width: 100%; height: 220px; border-radius: 10%; object-fit: cover; margin-bottom: 10px;">
+          <p class="text-center font-semibold text-[16px]">${
+            driver.fullname
+          }</p>
+          <p class="text-[12px]">Yoshi: ${
+            driver.age ? driver.age : 0
+          } | Jinsi: ${driver.gender ? driver.gender : "-"} | Zakazlar: ${
+            driver.orders ? driver.orders : "0"
+          }</p>
           <hr />
-          <p>Mashina: ${driver.car_name}</p>
-          <p>Raqami: ${driver.car_number}</p>
-          <p>Rangi: ${driver.car_color}</p>
-          <p>Manzili: ${driver.address}</p>
+          <p>Mashina: ${driver.car_name ? driver.car_name : "-"}</p>
+          <p>Raqami: ${driver.car_number ? driver.car_number : "-"}</p>
+          <p>Rangi: ${driver.car_color ? driver.car_color : "-"}</p>
+          <p>Manzili: ${driver.address.region},  ${driver.address.district}</p>
           <p>Koordinatalar: ${driver.lat}, ${driver.lng}</p>
         </div>`,
           {
