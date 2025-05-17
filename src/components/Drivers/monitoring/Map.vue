@@ -63,13 +63,11 @@ onMounted(() => {
     (position) => {
       const lat = position.coords.latitude;
       const lng = position.coords.longitude;
-      console.log("Geolocation coords:", lat, lng);
-      console.log("Foydalanuvchi joylashuvi:", lat, lng);
 
-      // Xarita markazini foydalanuvchi joylashuviga o'rnatish
-      if (map) {
-        map.setView([lat, lng], 13);
-      }
+      // // Xarita markazini foydalanuvchi joylashuviga o'rnatish
+      // if (map) {
+      //   map.setView([lat, lng], 13);
+      // }
 
       socket_driver.connectSocket({ ...user, lat, lng });
     },
