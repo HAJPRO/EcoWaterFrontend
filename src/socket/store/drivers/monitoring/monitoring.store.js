@@ -9,28 +9,30 @@ export const MonitoringSocketStore = defineStore('MonitoringSocketStore', {
   actions: {
     // 🔌 Soketga ulanadi
     connectSocket(driverData) {
+      console.log(driverData);
+
       if (!socket.connected) {
         socket.connect();
         console.log("🔌 Soketga ulanildi");
       }
-      // 🔧 Avval haydovchini qo‘shamiz
-      this.updateDriver(driverData);
+      // 🟢 O‘zingizni backendga ro‘yxatdan o‘tkazing
+      socket.emit("register", driverData);
+      socket.on("OnlineDrivers", (drivers) => {
+        drivers.forEach((driver) => this.updateDriver(driver));
+      });
 
-      // 📡 Tinglovchilarni ulaymiz
-      this.listenEvents();
-
+      this.listenEvents(); // 🔁 Real-time yangilanishlar
       // 🔍 Konsolga chiqaramiz
       console.log("📦 Haydovchilar (boshlang‘ich):", this.drivers);
     },
 
-    // 📡 Haydovchi ma'lumotlarini tinglash
+
     listenEvents() {
-      socket.off('driverLocationUpdate'); // oldingi listenerni olib tashlash
+      socket.off('driverLocationUpdate'); // takroriy ulanishni oldini olish
       socket.on('driverLocationUpdate', (driverData) => {
         this.updateDriver(driverData);
       });
     },
-
     // 📥 Haydovchi ma'lumotlarini yangilash yoki qo‘shish
     updateDriver(driverData) {
       const index = this.drivers.findIndex(d => d.id === driverData.id);
