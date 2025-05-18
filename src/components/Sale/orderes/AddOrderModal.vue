@@ -5,18 +5,19 @@ import { onMounted, ref, computed } from "vue";
 import { v4 as uuidv4 } from "uuid";
 import { CustomerManagmentStore } from "../../../stores/Customers/c-managment/customer.store";
 import { OrderManagmentStore } from "../../../stores/Sale/orders/orders.store";
+import { ProductsManagmentStore } from "../../../stores/Sale/products/product.store";
 
 import { AddressStore } from "../../../stores/Helpers/address/address.store";
 const store_address = AddressStore();
 const store_customers = CustomerManagmentStore();
 const store_orders = OrderManagmentStore();
+const store_products = ProductsManagmentStore();
 
 import { storeToRefs } from "pinia";
 const { regions, districts, neighborhoods } = storeToRefs(store_address);
 const { custom_modal, modal, action, customers } = storeToRefs(store_customers);
 const { order_modal, model } = storeToRefs(store_orders);
-console.log(customers.value);
-
+const { products: productsOptions } = storeToRefs(store_products);
 const dialogWidth = ref("");
 window.addEventListener("devicemotion", () => {
   dialogWidth.value =
@@ -65,11 +66,7 @@ const units = ref([
   { id: 2, name: "Dona" },
   { id: 3, name: "Blok" },
 ]);
-const productsName = ref([
-  { id: 1, type: "Gazli", name: "Kola 0.5 l" },
-  { id: 2, type: "Gazli", name: "Chortoq 1.5 l" },
-  { id: 3, type: "Gazli", name: "Fanta 1 l" },
-]);
+
 const productsType = ref([
   { id: 1, name: "Gazli" },
   { id: 2, name: "Gazsiz" },
@@ -149,6 +146,7 @@ const rules = ref({
 
 let map = ref(null);
 onMounted(async () => {
+  store_products.GetAll({ status: 0 });
   try {
   } catch (error) {
     console.log(error);
@@ -638,14 +636,14 @@ onMounted(async () => {
                       ></i>
                     </template>
                     <el-option
-                      v-for="item in productsName"
-                      :key="item.id"
-                      :label="item.name"
-                      :value="item.name"
+                      v-for="item in productsOptions"
+                      :key="item._id"
+                      :label="item.pro_name"
+                      :value="item.pro_name"
                     >
                       <template #default>
                         <div class="flex justify-between items-center w-full">
-                          <span>{{ item.name }}</span>
+                          <span>{{ item.pro_name }}</span>
                           <i
                             class="fa-solid fa-trash text-red-500 cursor-pointer fa-xs ml-8"
                             @click.stop="RemoveItem(item.id)"

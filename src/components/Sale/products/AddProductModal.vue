@@ -190,36 +190,15 @@ onMounted(async () => {
               </div>
               <div class="mb-1 col-span-4">
                 <el-form-item label="Nomi" prop="pro_name" :rules="rules">
-                  <el-select
+                  <el-input
+                    required
                     v-model="model.pro_name"
-                    placeholder="..."
+                    clearable
+                    class="w-[100%]"
                     size="smal"
-                    style="width: 100%"
-                    @change="ChangeProductName($event)"
-                  >
-                    <template #prefix>
-                      <i
-                        @click.stop="AddProductNameModal()"
-                        class="fa-solid fa-plus cursor-pointer"
-                      ></i>
-                    </template>
-                    <el-option
-                      v-for="item in products"
-                      :key="item._id"
-                      :label="item.name"
-                      :value="item.name"
-                    >
-                      <template #default>
-                        <div class="flex justify-between items-center w-full">
-                          <span>{{ item.name }}</span>
-                          <i
-                            class="fa-solid fa-trash text-red-500 cursor-pointer fa-xs ml-8"
-                            @click.stop="RemoveItem(item._id)"
-                          ></i>
-                        </div>
-                      </template>
-                    </el-option>
-                  </el-select>
+                    type="String"
+                    placeholder="..."
+                  />
                 </el-form-item>
               </div>
 
