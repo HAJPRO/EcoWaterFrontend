@@ -13,7 +13,8 @@ const store_orders = OrderManagmentStore();
 
 import { storeToRefs } from "pinia";
 const { custom_modal, modal, action, customers } = storeToRefs(store_customers);
-const { order_modal, drivers, driver_binding_modal } = storeToRefs(store_orders);
+const { order_modal, drivers, driver_binding_modal } =
+  storeToRefs(store_orders);
 
 const dialogWidth = ref("");
 window.addEventListener("devicemotion", () => {
@@ -45,8 +46,8 @@ const formatPrice = (price) => {
 };
 const model = ref({
   fullname: "",
-  deliveryTime : ""
-})
+  deliveryTime: "",
+});
 const AddCustomeModal = () => {
   store_customers.AddCustomModal();
 };
@@ -54,13 +55,11 @@ const ChangeCustomerFullname = async (id) => {
   model.value.fullname = id;
 };
 
-
 const formRef = ref();
 const PlusValidate = async (formRef) => {
   await formRef.validate((valid) => {
     if (valid === true) {
-    store_orders.UpdateById(model.value)
-     
+      store_orders.UpdateById(model.value);
     } else {
       ElMessage.error("Iltimos barcha maydonlarni to'ldiring !");
       return false;
@@ -100,62 +99,63 @@ onMounted(async () => {
           size="small"
           label-position="top"
         >
-         
-            <div  class="mb-1 col-span-6">
-              <el-form-item
-                label="Haydovchi tanlang"
-                prop="fullname"
-                :rules="rules"
+          <div class="mb-1 col-span-6">
+            <el-form-item
+              label="Haydovchi tanlang"
+              prop="fullname"
+              :rules="rules"
+            >
+              <el-select
+                v-model="model.fullname"
+                placeholder="..."
+                size="smal"
+                style="width: 100%"
+                @change="ChangeCustomerFullname($event)"
               >
-                <el-select
-                  v-model="model.fullname"
-                  placeholder="..."
-                  size="smal"
-                  style="width: 100%"
-                  @change="ChangeCustomerFullname($event)"
+                <template #prefix>
+                  <i
+                    @click.stop="AddCustomeModal()"
+                    class="fa-solid fa-plus cursor-pointer"
+                  ></i>
+                </template>
+                <el-option
+                  v-for="item in drivers"
+                  :key="item._id"
+                  :label="item.fullname"
+                  :value="item._id"
                 >
-                  <template #prefix>
-                    <i
-                      @click.stop="AddCustomeModal()"
-                      class="fa-solid fa-plus cursor-pointer"
-                    ></i>
+                  <template #default>
+                    <div class="flex justify-between items-center w-full">
+                      <span>{{ item.fullname }}</span
+                      ><span class="ml-4 text-red-500 font-semibold">{{
+                        item.carNumber
+                      }}</span>
+                      <i
+                        class="fa-solid fa-trash text-red-500 cursor-pointer fa-xs ml-8"
+                        @click.stop="RemoveItem(item._id)"
+                      ></i>
+                    </div>
                   </template>
-                  <el-option
-                    v-for="item in drivers"
-                    :key="item._id"
-                    :label="item.fullname"
-                    :value="item._id"
-                  >
-                    <template #default>
-                      <div class="flex justify-between items-center w-full">
-                        <span>{{ item.fullname }}</span><span class="ml-4 text-red-500 font-semibold">{{item.carNumber}}</span>
-                        <i
-                          class="fa-solid fa-trash text-red-500 cursor-pointer fa-xs ml-8"
-                          @click.stop="RemoveItem(item._id)"
-                        ></i>
-                      </div>
-                    </template>
-                  </el-option>
-                </el-select>
-              </el-form-item>
-            </div>
+                </el-option>
+              </el-select>
+            </el-form-item>
+          </div>
 
-            <div class="mb-1 col-span-6">
-              <el-form-item
-                label="Yetkazib berish muddati"
-                prop="deliveryTime"
-                :rules="rules"
-              >
-                <el-date-picker
-                  v-model="model.deliveryTime"
-                  type="date"
-                  placeholder="..."
-                  size="smal"
-                  class="w-full"
-                />
-              </el-form-item>
-            </div>
-      
+          <div class="mb-1 col-span-6">
+            <el-form-item
+              label="Yetkazib berish muddati"
+              prop="deliveryTime"
+              :rules="rules"
+            >
+              <el-date-picker
+                v-model="model.deliveryTime"
+                type="date"
+                placeholder="..."
+                size="smal"
+                class="w-full"
+              />
+            </el-form-item>
+          </div>
         </el-form>
 
         <div class="flex justify-end bg-[#e8eded] p-2 rounded">

@@ -47,7 +47,7 @@ export const OrderManagmentStore = defineStore("OrderManagmentStore", {
       this.OrderGetById(id)
     },
     async DriverBindingModal(id) {
-      const drivers = await DriverManagmentService.GetAll({ status: 0 })
+      const drivers = await OrderManagmentService.GetAllDrivers({ status: 0 })
       this.drivers = drivers.data.drivers
       this.driver_binding_modal = true
 

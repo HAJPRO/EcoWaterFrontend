@@ -9,16 +9,14 @@ import { v4 as uuidv4 } from "uuid";
 import moment from "moment-timezone";
 import { CustomerManagmentStore } from "../../../stores/Customers/c-managment/customer.store";
 import { OrderManagmentStore } from "../../../stores/Sale/orders/orders.store";
-import { ProductsManagmentStore } from "../../../stores/Sale/products/product.store";
 
 import { AddressStore } from "../../../stores/Helpers/address/address.store";
 const store_address = AddressStore();
 const store_customers = CustomerManagmentStore();
 const store_orders = OrderManagmentStore();
-const store_products = ProductsManagmentStore();
 
 import { storeToRefs } from "pinia";
-const { products } = storeToRefs(store_products);
+
 const { order_modal, order, model, order_detail_modal } =
   storeToRefs(store_orders);
 
