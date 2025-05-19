@@ -24,7 +24,7 @@ const deleteById = (id) => {
   store.DeleteById({ id });
 };
 const UpdateById = (id) => {
-  store.GetById({ id });
+  store.GetById({ id, status: "update" });
 };
 </script>
 <template>

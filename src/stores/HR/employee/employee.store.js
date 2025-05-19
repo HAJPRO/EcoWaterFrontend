@@ -11,7 +11,12 @@ export const EmployeeManagmentStore = defineStore("EmployeeManagmentStore", {
             page: null,
             action: 1,
             employee_modal: false,
+            cardId: "",
             employees: [],
+            modal_action: {
+                action: "",
+                title: ""
+            },
             all_length: {},
             modal: {
                 model: {
@@ -59,6 +64,10 @@ export const EmployeeManagmentStore = defineStore("EmployeeManagmentStore", {
         },
         async AddEmployeeModal() {
             this.employee_modal = true;
+            this.modal_action = {
+                title: `Xodim kartasini shakillantirish`,
+                action: "create"
+            }
         },
         async Create(payload) {
             const loader = loading.show()
@@ -79,6 +88,15 @@ export const EmployeeManagmentStore = defineStore("EmployeeManagmentStore", {
 
             loader.hide()
         },
+        async UpdateByIds(id) {
+            const loader = loading.show()
+            const data = await EmployeeManagmentService.DeleteById(id)
+            this.GetAll({ status: this.isActive, page: this.page, limit: 5 })
+            loader.hide()
+            ToastifyService.ToastSuccess({
+                msg: data.data.msg,
+            });
+        },
 
         async DeleteById(id) {
             const loader = loading.show()
@@ -94,10 +112,21 @@ export const EmployeeManagmentStore = defineStore("EmployeeManagmentStore", {
             const data = await EmployeeManagmentService.GetById(id)
             if (id.status == "order") {
                 this.modal.model = data.data.customer
-            } else {
+            } if (id.status === 'undefind') {
                 this.modal.model = data.data.customer
                 this.action = 3
                 this.custom_modal = true;
+            }
+            if (id.status === 'update') {
+                this.employee_modal = true
+                this.modal.model = data.data.customer
+                this.cardId = id.id
+                this.modal_action = {
+                    title: `Xodim kartasini o'zgartirish`,
+                    action: "update"
+                }
+                console.log(this.modal.model);
+
             }
             loader.hide()
 

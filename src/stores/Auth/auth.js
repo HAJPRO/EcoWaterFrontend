@@ -14,7 +14,6 @@ export const AuthStore = defineStore("AuthStore", {
     },
     actions: {
         async register(payload) {
-
             try {
                 const loader = loading.show()
                 const res = await RegisterService.Register(payload);
@@ -22,14 +21,7 @@ export const AuthStore = defineStore("AuthStore", {
                 ToastifyService.ToastSuccess({
                     msg: res.data.msg,
                 });
-                // if (res.data) {
-                //     Cookies.set("account", JSON.stringify(res.data.user));
-                //     Cookies.set("token", res.data.accessToken);
-                //     setTimeout(() => {
-                //         window.location.reload();
-                //     }, 500);
 
-                // }
                 loader.hide()
             } catch (err) {
                 console.log(err.message);
@@ -53,6 +45,21 @@ export const AuthStore = defineStore("AuthStore", {
             } catch (err) {
                 console.log(err.message);
             }
+        },
+        async update(payload) {
+            try {
+                const loader = loading.show()
+                const res = await RegisterService.Update(payload);
+                loader.hide()
+                ToastifyService.ToastSuccess({
+                    msg: res.data.msg,
+                });
+
+                loader.hide()
+            } catch (err) {
+                console.log(err.message);
+            }
+
         },
     },
 

@@ -15,7 +15,8 @@ const store_role = RoleStore();
 
 import { storeToRefs } from "pinia";
 const { regions, districts, neighborhoods } = storeToRefs(store_address);
-const { employee_modal, modal, action } = storeToRefs(store_employee);
+const { employee_modal, modal_action, cardId, modal, action } =
+  storeToRefs(store_employee);
 const { roles } = storeToRefs(store_role);
 const dialogWidth = ref("");
 window.addEventListener("devicemotion", () => {
@@ -139,9 +140,16 @@ const carColors = ref([
 
 const formRef = ref();
 const PlusValidate = async (formRef) => {
+  console.log(modal_action.value);
+
   await formRef.validate((valid) => {
     if (valid === true) {
-      store_auth.register(modal.value.model);
+      if (modal_action.value.action === "create") {
+        store_auth.register(modal.value.model);
+      }
+      if (modal_action.value.action === "update") {
+        store_auth.update({ id: cardId.value, model: modal.value.model });
+      }
     } else {
       ElMessage.error("Iltimos barcha maydonlarni to'ldiring !");
       return false;
@@ -197,8 +205,8 @@ onMounted(async () => {
         <div
           class="bg-slate-100 font-semibold text-[15px] p-1 mt-1 align-center text-center shadow rounded border-t-[1px] border-[#36d887]"
         >
-          <i class="fa-solid fa-user-plus fa-md mr-3"></i> Xodim kartasini
-          shakillantirish
+          <i class="fa-solid fa-user-plus fa-md mr-3"></i>
+          {{ modal_action.title }}
         </div>
         <el-form
           ref="formRef"
@@ -748,19 +756,13 @@ onMounted(async () => {
                       class="bg-green-200 p-[5px] text-[12px] font-semibold rounded-[4px]"
                     >
                       Kordinata (lat) :
-                      {{
-                        modal.model.location.lat ? modal.model.location.lat : 0
-                      }}
+                      {{ modal.model ? modal.model.location.lat : 0 }}
                     </div>
                     <div
                       class="bg-red-200 p-[5px] text-[12px] font-semibold rounded-[4px]"
                     >
                       Kordinata (long):
-                      {{
-                        modal.model.location.long
-                          ? modal.model.location.long
-                          : 0
-                      }}
+                      {{ modal.model ? modal.model.location.long : 0 }}
                     </div>
                   </div>
                 </el-form-item>
@@ -768,7 +770,10 @@ onMounted(async () => {
             </div>
             <!-- //Qo'shimcha malumotlar -->
             <div
-              v-if="modal.model.position === `Haydovchi`"
+              v-if="
+                modal.model.position === `Haydovchi` ||
+                modal.model.position === `Yosh haydovchi`
+              "
               class="mb-1 col-span-4 p-2 rounded-md"
             >
               <h1
@@ -921,7 +926,8 @@ onMounted(async () => {
               padding: 15px;
             "
           >
-            <i class="fa-solid fa-check mr-2 fa-md"></i>Saqlash
+            <i class="fa-solid fa-check mr-2 fa-md"></i
+            >{{ modal_action.action === "create" ? "Saqlash" : "O'zgartirish" }}
           </el-button>
         </div>
       </span>
