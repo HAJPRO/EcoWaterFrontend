@@ -5,7 +5,7 @@ import { defineStore } from "pinia";
 
 export const SaleStatisticsStore = defineStore('SaleStatisticsStore', {
     state: () => ({
-        statistics: {}, // real-time haydovchilar ro'yxati
+        barSeries: [],
         metrics: [],
 
     }),
@@ -13,7 +13,8 @@ export const SaleStatisticsStore = defineStore('SaleStatisticsStore', {
         async GetSaleStatistics() {
             const loader = loading.show()
             const data = await SaleStatisticsService.GetAllDayStatistics()
-            this.metrics = data.data.statistics
+            this.metrics = data.data.statistics.metrics
+            this.barSeries = data.data.statistics.charBartOptions
             loader.hide()
         },
 

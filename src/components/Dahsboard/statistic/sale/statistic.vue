@@ -4,7 +4,7 @@ import Title from "../../../../components/Title.vue";
 import { SaleStatisticsStore } from "../../../../stores/Dashboard/statistics/saleStatistic.store";
 const store_sale_statistics = SaleStatisticsStore();
 import { storeToRefs } from "pinia";
-const { metrics } = storeToRefs(store_sale_statistics);
+const { metrics, barSeries } = storeToRefs(store_sale_statistics);
 import { ElCard, ElTable, ElTableColumn, ElAvatar } from "element-plus";
 import "element-plus/dist/index.css";
 
@@ -56,23 +56,7 @@ const chartOptions = ref({
     ],
   },
   yAxis: {},
-  series: [
-    {
-      name: "Gazli",
-      type: "bar",
-      data: [120, 200, 150, 80, 70, 110, 120, 25, 63, 458, 125, 12], // 7 ta qiymat
-    },
-    {
-      name: "Gazsiz",
-      type: "bar",
-      data: [60, 100, 90, 130, 180, 140, 160], // 7 ta qiymat
-    },
-    {
-      name: "Sharbatli",
-      type: "bar",
-      data: [30, 50, 45, 65, 90, 75, 85], // 7 ta qiymat
-    },
-  ],
+  series: barSeries.value,
 });
 
 const lineChartOptions = ref({
