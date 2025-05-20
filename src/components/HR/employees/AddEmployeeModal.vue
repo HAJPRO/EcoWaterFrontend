@@ -449,9 +449,8 @@ onMounted(async () => {
             </h1>
             <div class="grid grid-cols-12 gap-1">
               <div class="mb-1 col-span-3">
-                <el-form-item label="INN" prop="inn" :rules="rules">
+                <el-form-item label="INN" prop="inn">
                   <el-input
-                    required
                     v-model="modal.model.inn"
                     clearable
                     class="w-[100%]"
@@ -463,11 +462,7 @@ onMounted(async () => {
                 </el-form-item>
               </div>
               <div class="mb-1 col-span-3">
-                <el-form-item
-                  label="Pasport serya"
-                  prop="passportNumber"
-                  :rules="rules"
-                >
+                <el-form-item label="Pasport serya" prop="passportNumber">
                   <el-input
                     required
                     v-model="modal.model.passportNumber"
@@ -731,7 +726,6 @@ onMounted(async () => {
                 <el-form-item
                   label="Manzilni xaritadan belgila"
                   prop="location"
-                  :rules="rules"
                 >
                   <el-dialog
                     class="mt-10"

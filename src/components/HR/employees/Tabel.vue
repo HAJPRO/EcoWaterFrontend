@@ -256,24 +256,26 @@ const UpdateById = (id) => {
                       @click="GetOne(row._id)"
                       ><template #default=""
                         ><div>
-                          <i class="text-black fa-solid fa-eye fa-sm mr-2"></i
+                          <i
+                            class="text-black fa-solid fa-magnifying-glass fa-sm mr-2"
+                          ></i
                           >Batafsil
                         </div>
                       </template></el-dropdown-item
                     >
-                    <!-- <el-dropdown-item
-                      class="text-[13px]"
-                      @click="updateById(row._id)"
+
+                    <el-dropdown-item
+                      class="text-[13px] text-indigo-600"
+                      @click="UpdateById(row._id)"
                       ><template #default="{}"
                         ><div>
                           <i
-                            class="text-black fa-solid fa-xmark fa-sm mr-1"
+                            class="text-black fa-solid fa-pen-to-square fa-pen-to-square fa-sm mr-1"
                           ></i>
-                          Bekor qilish
+                          O'zgatirish
                         </div>
                       </template></el-dropdown-item
-                    > -->
-
+                    >
                     <el-dropdown-item
                       class="text-[13px] text-yellow-500"
                       @click="ExportExcel(row._id)"
@@ -287,15 +289,19 @@ const UpdateById = (id) => {
                       </template></el-dropdown-item
                     >
                     <el-dropdown-item
-                      class="text-[13px] text-indigo-600"
-                      @click="UpdateById(row._id)"
-                      ><template #default="{}"
-                        ><div>
-                          <i class="text-black fa-solid fa-pen fa-sm mr-1"></i>
-                          O'zgatirish
-                        </div>
-                      </template></el-dropdown-item
+                      class="text-[13px]"
+                      @click="updateById(row._id)"
                     >
+                      <template #default>
+                        <div>
+                          <i
+                            class="text-black fa-solid fa-box-archive fa-sm mr-1"
+                          ></i>
+                          Arxivlash
+                        </div>
+                      </template>
+                    </el-dropdown-item>
+
                     <el-dropdown-item
                       @click="deleteById(row._id)"
                       class="text-red-500 text-[13px]"
