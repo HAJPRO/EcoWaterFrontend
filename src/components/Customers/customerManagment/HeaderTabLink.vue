@@ -9,8 +9,8 @@ const IsActive = (is_active) => {
   store_managment.GetIsActive(is_active);
 };
 
-const getAll =  () => {
-   store_managment.GetAll({status : isActive.value, page : 1, limit : 5});
+const getAll = () => {
+  store_managment.GetAll({ status: isActive.value, page: 1, limit: 10 });
   IsActive(isActive.value);
 };
 const isActive = ref(1);
@@ -35,10 +35,11 @@ const ActiveTabLink = (num) => {
     isActive.value = 5;
     return getAll();
   }
-   if (num === 6) {
+  if (num === 6) {
     isActive.value = 6;
     return getAll();
-  } if (num === 7) {
+  }
+  if (num === 7) {
     isActive.value = 7;
     return getAll();
   }
@@ -123,7 +124,7 @@ onMounted(async () => {
           >
         </div>
       </router-link>
-       <router-link
+      <router-link
         @click="ActiveTabLink(5)"
         to=""
         :class="{ activeTab: isActive === 5 }"
@@ -155,7 +156,7 @@ onMounted(async () => {
           >
         </div>
       </router-link>
-       <router-link
+      <router-link
         @click="ActiveTabLink(7)"
         to=""
         :class="{ activeTab: isActive === 7 }"

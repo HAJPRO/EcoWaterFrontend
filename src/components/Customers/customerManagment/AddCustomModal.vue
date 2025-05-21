@@ -86,6 +86,11 @@ const rules = ref({
   message: `Maydon to'ldirilishi zarur !`,
   trigger: "blur",
 });
+const onInput = (value) => {
+  // faqat raqamlarni qoldiramiz
+  modal.model.artikul = value.replace(/[^0-9]/g, "").slice(0, 4);
+  modal.model.inn = value.replace(/[^0-9]/g, "").slice(0, 9);
+};
 const ChangeRegion = async (e) => {
   modal.value.model.address.region = e.name;
   await store_address.Districts(e.id);
@@ -199,15 +204,37 @@ onMounted(async () => {
                 </el-form-item>
               </div>
               <div class="mb-1 col-span-6">
-                <el-form-item label="Artikul" prop="artikul" :rules="rules">
+                <el-form-item
+                  label="Artikul"
+                  prop="artikul"
+                  :rules="[
+                    {
+                      required: true,
+                      message: 'Artikul kiritilishi shart',
+                      trigger: 'blur',
+                    },
+                    {
+                      pattern: /^[0-9]*$/,
+                      message: 'Faqat raqam kiriting',
+                      trigger: 'blur',
+                    },
+                    {
+                      min: 4,
+                      max: 4,
+                      message: 'Artikul 4 xonali bo‘lishi kerak',
+                      trigger: 'blur',
+                    },
+                  ]"
+                >
                   <el-input
-                    required
                     v-model="modal.model.artikul"
                     clearable
                     class="w-[100%]"
                     size="smal"
-                    type="String"
+                    type="text"
+                    maxlength="4"
                     placeholder="..."
+                    @input="onInput"
                   />
                 </el-form-item>
               </div>
@@ -309,7 +336,7 @@ onMounted(async () => {
             </h1>
             <div class="grid grid-cols-12 gap-1">
               <div class="mb-1 col-span-3">
-                <el-form-item label="INN" prop="inn" :rules="rules">
+                <el-form-item label="INN" prop="inn">
                   <el-input
                     required
                     v-model="modal.model.inn"
@@ -319,23 +346,32 @@ onMounted(async () => {
                     type="text"
                     maxlength="9"
                     placeholder="546789878"
+                    @input="onInput"
                   />
                 </el-form-item>
               </div>
               <div class="mb-1 col-span-3">
                 <el-form-item
-                  label="Pasport serya"
+                  label="Pasport seriyasi"
                   prop="passportNumber"
-                  :rules="rules"
+                  :rules="[
+                    {
+                      required: true,
+                      message: 'Pasport seriyasi kiritilishi shart',
+                      trigger: 'blur',
+                    },
+                    {
+                      pattern: /^[A-Za-z]{2}[0-9]{7}$/,
+                      message: 'Format: 2 harf + 7 raqam (masalan: AA1234567)',
+                      trigger: 'blur',
+                    },
+                  ]"
                 >
                   <el-input
-                    required
                     v-model="modal.model.passportNumber"
-                    clearable
-                    class="w-[100%]"
+                    maxlength="9"
+                    placeholder="AA1234567"
                     size="smal"
-                    type="String"
-                    placeholder="AB4567898"
                   />
                 </el-form-item>
               </div>
@@ -551,6 +587,7 @@ onMounted(async () => {
                     size="smal"
                     placeholder="93 _____ __ __"
                     maxlength="17"
+                    type="Number"
                   >
                     <template #prefix>
                       <span>+998</span>
@@ -614,30 +651,42 @@ onMounted(async () => {
                     <MapView @locationSelected="handleLocation" />
                   </el-dialog>
                   <!-- Xarita -->
-                  <div
-                    class="mb-1 mt-2 col-span-3 w-auto text-center text-white font-semibold bg-purple-600 rounded-[4px] px-4 py-[5px] hover:bg-purple-700 mr-2 cursor-pointer"
-                    @click="is_map = !is_map"
-                  >
-                    <i class="fa-solid fa-map mr-2 fa-md"></i> Xaritani ochish
-                  </div>
-                  <div class="flex justify-end gap-2">
+                  <div class="grid grid-cols-12 gap-2 items-center">
                     <div
-                      class="bg-green-200 p-[5px] text-[12px] font-semibold rounded-[4px]"
+                      class="mb-1 mt-2 col-span-3 w-auto text-white font-semibold bg-purple-600 rounded-[4px] items-center text-center px-4 py-[5px] hover:bg-purple-700 mr-2 cursor-pointer"
+                      @click="is_map = !is_map"
                     >
-                      Kordinata (lat):
-                      {{
-                        modal.model.location.lat ? modal.model.location.lat : 0
-                      }}
+                      <i class="fa-solid fa-map mr-2 fa-md"></i> Xaritani ochish
                     </div>
-                    <div
-                      class="bg-red-200 p-[5px] text-[12px] font-semibold rounded-[4px]"
-                    >
-                      Kordinata (long):
-                      {{
-                        modal.model.location.long
-                          ? modal.model.location.long
-                          : 0
-                      }}
+                    <div class="grid grid-cols-2 col-span-9 gap-2">
+                      <div
+                        class="bg-green-200 col-span-1 p-[5px] text-[12px] font-semibold rounded-[4px]"
+                      >
+                        Kordinata (lat)
+
+                        <el-input
+                          v-model="modal.model.location.lat"
+                          clearable
+                          class="w-[100%]"
+                          size="smal"
+                          type="Number"
+                          placeholder="..."
+                        />
+                      </div>
+                      <div
+                        class="bg-red-200 col-span-1 p-[5px] text-[12px] font-semibold rounded-[4px]"
+                      >
+                        Kordinata (long)
+
+                        <el-input
+                          v-model="modal.model.location.long"
+                          clearable
+                          class="w-[100%]"
+                          size="smal"
+                          type="Number"
+                          placeholder="..."
+                        />
+                      </div>
                     </div>
                   </div>
                 </el-form-item>

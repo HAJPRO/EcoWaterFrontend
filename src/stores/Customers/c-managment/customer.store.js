@@ -8,11 +8,13 @@ export const CustomerManagmentStore = defineStore("CustomerManagmentStore", {
     return {
       ImagesList: [],
       isActive: "",
-      page : null,
-      action : 1,
+      page: null,
+      action: 1,
       custom_modal: false,
-      customers : [],
-      all_length : {},
+      detail_modal: false,
+      customers: [],
+      all_length: {},
+      orders: [],
       modal: {
         model: {
           fullname: "",
@@ -49,8 +51,12 @@ export const CustomerManagmentStore = defineStore("CustomerManagmentStore", {
     async AddCustomModal() {
       this.custom_modal = true;
     },
+    async AddDetailModal(id) {
+      this.GetOrdersByCustomerId(id)
+      this.detail_modal = true;
+    },
     async Create(payload) {
-      const loader = loading.show()  
+      const loader = loading.show()
       const data = await CustomerManagmentService.Create(payload);
       this.custom_modal = false;
       loader.hide()
@@ -59,38 +65,46 @@ export const CustomerManagmentStore = defineStore("CustomerManagmentStore", {
       });
     },
     async GetAll(payload) {
-      const loader = loading.show()  
+      const loader = loading.show()
       const data = await CustomerManagmentService.GetAll(payload)
-      
-        this.page = payload?.page ? payload?.page : 1 
-        this.customers = data.data.customers
-        this.all_length = data.data.all_length
-    
-    
+
+      this.page = payload?.page ? payload?.page : 1
+      this.customers = data.data.customers
+      this.all_length = data.data.all_length
+
+
       loader.hide()
     },
-    
+
     async DeleteById(id) {
-      const loader = loading.show()  
+      const loader = loading.show()
       const data = await CustomerManagmentService.DeleteById(id)
-      this.GetAll({status: this.isActive, page : this.page, limit :5})
+      this.GetAll({ status: this.isActive, page: this.page, limit: 10 })
       loader.hide()
       ToastifyService.ToastSuccess({
         msg: data.data.msg,
       });
     },
     async GetById(id) {
-      const loader = loading.show()  
+      const loader = loading.show()
       const data = await CustomerManagmentService.GetById(id)
-      if(id.status == "order"){
-        this.modal.model = data.data.customer 
-      }else{
+      if (id.status == "order") {
+        this.modal.model = data.data.customer
+      } else {
         this.modal.model = data.data.customer
         this.action = 3
         this.custom_modal = true;
       }
       loader.hide()
-     
+
+    },
+    async GetOrdersByCustomerId(id) {
+      const loader = loading.show()
+      const data = await CustomerManagmentService.GetOrdersByCustomerId(id)
+      this.orders = data.data.orders
+
+      loader.hide()
+
     },
   },
 });

@@ -56,6 +56,8 @@ onMounted(() => {
             background: '#e8eded',
             border: '0.2px solid #e1e1e3',
           }"
+          stripe
+          highlight-current-row
           load
           style="font-size: 12px"
           size="small"

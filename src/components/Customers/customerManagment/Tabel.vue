@@ -7,28 +7,32 @@ const actions = ref(JSON.parse(Cookies.get("account")).actions);
 import { ref, onMounted } from "vue";
 import { CustomerManagmentStore } from "../../../stores/Customers/c-managment/customer.store";
 import CustomModal from "../../../components/Customers/customerManagment/AddCustomModal.vue";
+import DetailInfoModal from "./DetailInfoModal.vue";
 import moment from "moment-timezone";
 
 const store = CustomerManagmentStore();
 import { storeToRefs } from "pinia";
-const { custom_modal, modal, customers,all_length, isActive } =
+const { custom_modal, modal, customers, all_length, isActive } =
   storeToRefs(store);
-const AddCustomModal =  () => {
-  store.AddCustomModal()
-}
+const AddCustomModal = () => {
+  store.AddCustomModal();
+};
+const AddDetailModal = (id) => {
+  store.AddDetailModal({ id });
+};
 const handleCurrentChange = (page) => {
-  store.GetAll({status : isActive.value, page : page, limit:5});
+  store.GetAll({ status: isActive.value, page: page, limit: 10 });
 };
 const deleteById = (id) => {
-  store.DeleteById({id});
+  store.DeleteById({ id });
 };
 const UpdateById = (id) => {
-  store.GetById({id});
+  store.GetById({ id });
 };
-
 </script>
 <template>
-<Custom-Modal/>
+  <Custom-Modal />
+  <DetailInfoModal />
   <div class="">
     <div class="">
       <div class="rounded-md text-[11px]">
@@ -37,6 +41,8 @@ const UpdateById = (id) => {
             background: '#e8eded',
             border: '0.2px solid #e1e1e3',
           }"
+          stripe
+          highlight-current-row
           load
           style="font-size: 12px"
           size="small"
@@ -57,13 +63,17 @@ const UpdateById = (id) => {
             width="60"
           />
           <el-table-column
-            prop="fullname"
             label="F.I.O"
-            :min-width="100"
+            :min-width="250"
             :max-width="400"
             header-align="center"
-            align="center"
-          />
+            ><template #default="{ row }"
+              ><div class="text-red-500">
+                <i class="fas fa-user text-gray-500 fa-sm mr-2"></i>
+                {{ row.fullname }}
+              </div></template
+            ></el-table-column
+          >
           <el-table-column
             align="center"
             header-align="center"
@@ -72,17 +82,16 @@ const UpdateById = (id) => {
             :min-width="100"
             :max-width="400"
           />
-            <el-table-column
+          <el-table-column
             label="Kategoriyasi"
-          :min-width="100"
-          :max-width="400"
+            :min-width="200"
+            :max-width="400"
             header-align="center"
-            align="center"
             ><template #default="scope">{{
-             scope.row.category
+              scope.row.category
             }}</template></el-table-column
           >
-           <el-table-column
+          <el-table-column
             align="center"
             header-align="center"
             prop="address.region"
@@ -90,7 +99,7 @@ const UpdateById = (id) => {
             :min-width="100"
             :max-width="400"
           />
-            <el-table-column
+          <el-table-column
             align="center"
             header-align="center"
             prop="address.district"
@@ -98,7 +107,7 @@ const UpdateById = (id) => {
             :min-width="100"
             :max-width="400"
           />
-           <el-table-column
+          <el-table-column
             align="center"
             header-align="center"
             prop="address.neighborhood"
@@ -106,7 +115,7 @@ const UpdateById = (id) => {
             :min-width="100"
             :max-width="400"
           />
-             <el-table-column
+          <el-table-column
             align="center"
             header-align="center"
             prop="address.street"
@@ -114,49 +123,49 @@ const UpdateById = (id) => {
             :min-width="100"
             :max-width="400"
           />
-           <el-table-column
-            align="center"
+          <el-table-column
             header-align="center"
             prop="phoneNumber"
             label="Telefon"
-            :min-width="100"
+            :min-width="150"
             :max-width="400"
-          />
+            ><template #default="{ row }"
+              ><div class="font-semibold text-blue-600">
+                <i class="fas fa-phone text-gray-500 fa-sm mr-2"></i>
+                {{ row.phoneNumber }}
+              </div></template
+            ></el-table-column
+          >
 
-       
-        
-           <el-table-column
+          <el-table-column
             label="Bonus ball"
             :min-width="100"
             header-align="center"
             align="center"
-            ><template #default="scope">{{ 
-             0
-            }}</template></el-table-column
+            ><template #default="scope">{{ 0 }}</template></el-table-column
           >
-             <el-table-column
+          <el-table-column
             label="Registratsiya vaqti"
-          :min-width="100"
-          :max-width="400"
+            :min-width="150"
+            :max-width="400"
             header-align="center"
             align="center"
             ><template #default="scope">
-               {{
+              {{
                 scope.row.registeredAt
                   ? moment
-                      .utc( scope.row.registeredAt) // 🟢 UTC formatda olish
+                      .utc(scope.row.registeredAt) // 🟢 UTC formatda olish
                       .tz("Asia/Tashkent") // 🟢 UTC+5 ga aylantirish
                       .format("DD.MM.YYYY HH:mm:ss") // 🟢 To‘g‘ri formatda chiqarish
                   : "-"
               }}
-            
             </template></el-table-column
           >
           <el-table-column
             fixed="right"
             label="Status"
             :min-width="100"
-              :max-width="400"
+            :max-width="400"
             header-align="center"
             align="center"
           >
@@ -198,11 +207,11 @@ const UpdateById = (id) => {
                   <el-dropdown-menu slot="dropdown" append-to-body class="z-50">
                     <el-dropdown-item
                       class="text-[13px] text-green-600"
-                      @click="GetOne(row._id)"
+                      @click="AddDetailModal(row._id)"
                       ><template #default=""
                         ><div>
                           <i class="text-black fa-solid fa-eye fa-sm mr-2"></i
-                          >Batafsil 
+                          >Batafsil
                         </div>
                       </template></el-dropdown-item
                     >
@@ -231,16 +240,13 @@ const UpdateById = (id) => {
                         </div>
                       </template></el-dropdown-item
                     >
-                     <el-dropdown-item
+                    <el-dropdown-item
                       class="text-[13px] text-indigo-600"
                       @click="UpdateById(row._id)"
-                      
                       ><template #default="{}"
                         ><div>
-                          <i
-                            class="text-black fa-solid fa-pen fa-sm mr-1"
-                          ></i>
-                         O'zgatirish
+                          <i class="text-black fa-solid fa-pen fa-sm mr-1"></i>
+                          O'zgatirish
                         </div>
                       </template></el-dropdown-item
                     >

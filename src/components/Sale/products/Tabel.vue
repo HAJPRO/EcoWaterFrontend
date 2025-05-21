@@ -11,31 +11,28 @@ import DetailProductModal from "../../../components/Sale/products/DetailProductM
 import { ProductsManagmentStore } from "../../../stores/Sale/products/product.store";
 const store_products = ProductsManagmentStore();
 import { storeToRefs } from "pinia";
-  const { products, all_length  } =
-  storeToRefs(store_products);
-  
+const { products, all_length } = storeToRefs(store_products);
 
-const addProductModal =  () => {
-  
-  store_products.AddProductModal()
-}
-const detailOrderModal =  (id) => {
-  store_products.DetailOrderModal({id})
-}
-const deleteById =  (id) => {
-  store_products.DeleteById({id})
-}
+const addProductModal = () => {
+  store_products.AddProductModal();
+};
+const detailOrderModal = (id) => {
+  store_products.DetailOrderModal({ id });
+};
+const deleteById = (id) => {
+  store_products.DeleteById({ id });
+};
 
 const formatPrice = (price) => {
   return new Intl.NumberFormat("uz-UZ").format(price);
 };
-onMounted(()=>{
+onMounted(() => {
   // GetAllCustomers()
-})
+});
 </script>
 <template>
-<AddProductModal/>
-<DetailProductModal/>
+  <AddProductModal />
+  <DetailProductModal />
   <div class="">
     <div class="">
       <div class="rounded-md text-[11px]">
@@ -44,6 +41,8 @@ onMounted(()=>{
             background: '#e8eded',
             border: '0.2px solid #e1e1e3',
           }"
+          stripe
+          highlight-current-row
           load
           style="font-size: 12px"
           size="small"
@@ -63,14 +62,19 @@ onMounted(()=>{
             label="№"
             width="60"
           />
-           <el-table-column
+          <el-table-column
             prop="code"
             label="Kodi"
             :min-width="100"
             :max-width="400"
             header-align="center"
             align="center"
-          ><template #default="{row}"><div class="text-red-500 font-semibold">{{row.code}}</div></template></el-table-column>
+            ><template #default="{ row }"
+              ><div class="text-red-500 font-semibold">
+                {{ row.code }}
+              </div></template
+            ></el-table-column
+          >
           <el-table-column
             prop="pro_name"
             label="Nomi"
@@ -78,7 +82,11 @@ onMounted(()=>{
             :max-width="400"
             header-align="center"
             align="center"
-          > <template #default="{row}">{{row.pro_name}}</template></el-table-column>
+          >
+            <template #default="{ row }">{{
+              row.pro_name
+            }}</template></el-table-column
+          >
           <el-table-column
             align="center"
             header-align="center"
@@ -89,16 +97,16 @@ onMounted(()=>{
           />
           <el-table-column
             label="Qadoq"
-          :min-width="150"
-          :max-width="400"
+            :min-width="150"
+            :max-width="400"
             header-align="center"
             align="center"
-            ><template #default="{row}">{{
-             row.packaging
+            ><template #default="{ row }">{{
+              row.packaging
             }}</template></el-table-column
           >
-         
-            <el-table-column
+
+          <el-table-column
             align="center"
             header-align="center"
             prop="packingType"
@@ -106,69 +114,69 @@ onMounted(()=>{
             :min-width="100"
             :max-width="400"
           />
-           
-            
-             <el-table-column
+
+          <el-table-column
             label="Narxi (sum)"
             :min-width="100"
             header-align="center"
             align="center"
-            ><template #default="{row}">  <div class="text-red-500 font-semibold">{{ 
-        row.pro_price ?  formatPrice(row.pro_price) : 0
-            }} sum</div></template></el-table-column
+            ><template #default="{ row }">
+              <div class="text-red-500 font-semibold">
+                {{ row.pro_price ? formatPrice(row.pro_price) : 0 }} sum
+              </div></template
+            ></el-table-column
           >
-           <el-table-column  label="🕒 Vaqt maydoni"
-          :min-width="150"
-          :max-width="400"
-            header-align="center"
-            align="center">
-             <el-table-column
-            label="Ishlab chiqarish boshlangan"
-          :min-width="150"
-          :max-width="400"
+          <el-table-column
+            label="🕒 Vaqt maydoni"
+            :min-width="150"
+            :max-width="400"
             header-align="center"
             align="center"
-            ><template #default="{row}">
+          >
+            <el-table-column
+              label="Ishlab chiqarish boshlangan"
+              :min-width="150"
+              :max-width="400"
+              header-align="center"
+              align="center"
+              ><template #default="{ row }">
                 <div class="text-gray-900 font-semibold">
-               {{
-               row.productionStarteddAt
-                  ? moment
-                      .utc(row.productionStarteddAt) // 🟢 UTC formatda olish
-                      .tz("Asia/Tashkent") // 🟢 UTC+5 ga aylantirish
-                      .format("DD.MM.YYYY HH:mm:ss") // 🟢 To‘g‘ri formatda chiqarish
-                  : "-"
-              }}
+                  {{
+                    row.productionStarteddAt
+                      ? moment
+                          .utc(row.productionStarteddAt) // 🟢 UTC formatda olish
+                          .tz("Asia/Tashkent") // 🟢 UTC+5 ga aylantirish
+                          .format("DD.MM.YYYY HH:mm:ss") // 🟢 To‘g‘ri formatda chiqarish
+                      : "-"
+                  }}
                 </div>
-            
-            </template></el-table-column
-          >
-              <el-table-column
-            label="Ishlab chiqarish to'xtatilgan"
-          :min-width="150"
-          :max-width="400"
-            header-align="center"
-            align="center"
-            ><template #default="{row}">
+              </template></el-table-column
+            >
+            <el-table-column
+              label="Ishlab chiqarish to'xtatilgan"
+              :min-width="150"
+              :max-width="400"
+              header-align="center"
+              align="center"
+              ><template #default="{ row }">
                 <div class="text-blue-600 font-semibold">
-               {{
-                row.productionStoppedAt
-                  ? moment
-                      .utc( row.productionStoppedAt) // 🟢 UTC formatda olish
-                      .tz("Asia/Tashkent") // 🟢 UTC+5 ga aylantirish
-                      .format("DD.MM.YYYY HH:mm:ss") // 🟢 To‘g‘ri formatda chiqarish
-                  : "-"
-              }}
+                  {{
+                    row.productionStoppedAt
+                      ? moment
+                          .utc(row.productionStoppedAt) // 🟢 UTC formatda olish
+                          .tz("Asia/Tashkent") // 🟢 UTC+5 ga aylantirish
+                          .format("DD.MM.YYYY HH:mm:ss") // 🟢 To‘g‘ri formatda chiqarish
+                      : "-"
+                  }}
                 </div>
-            
-            </template></el-table-column
-          >
-           
+              </template></el-table-column
+            >
           </el-table-column>
           <el-table-column
             fixed="right"
             label="Holati"
             :min-width="170"
-              :max-width="400"
+            :max-width="400"
             header-align="center"
             align="center"
           >
@@ -214,7 +222,7 @@ onMounted(()=>{
                       ><template #default=""
                         ><div>
                           <i class="text-black fa-solid fa-eye fa-sm mr-2"></i
-                          >Batafsil 
+                          >Batafsil
                         </div>
                       </template></el-dropdown-item
                     >
@@ -243,16 +251,13 @@ onMounted(()=>{
                         </div>
                       </template></el-dropdown-item
                     >
-                     <el-dropdown-item
+                    <el-dropdown-item
                       class="text-[13px] text-indigo-600"
                       @click="UpdateById(row._id)"
-                      
                       ><template #default="{}"
                         ><div>
-                          <i
-                            class="text-black fa-solid fa-pen fa-sm mr-1"
-                          ></i>
-                         O'zgatirish
+                          <i class="text-black fa-solid fa-pen fa-sm mr-1"></i>
+                          O'zgatirish
                         </div>
                       </template></el-dropdown-item
                     >
