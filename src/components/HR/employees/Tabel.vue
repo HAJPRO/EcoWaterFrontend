@@ -18,7 +18,7 @@ const AddEmployeeModal = () => {
   store.AddEmployeeModal();
 };
 const handleCurrentChange = (page) => {
-  store.GetAll({ status: isActive.value, page: page, limit: 5 });
+  store.GetAll({ status: isActive.value, page: page, limit: 10 });
 };
 const deleteById = (id) => {
   store.DeleteById({ id });

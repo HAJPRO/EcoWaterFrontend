@@ -8,7 +8,8 @@ export const SaleStatisticsStore = defineStore('SaleStatisticsStore', {
         barSeries: [],
         lineSeries: [],
         metrics: [],
-        TopDrivers: []
+        TopDrivers: [],
+        TopCustomers: [],
 
     }),
     actions: {
@@ -19,6 +20,7 @@ export const SaleStatisticsStore = defineStore('SaleStatisticsStore', {
             this.barSeries = data.data.statistics.charBarOptions
             this.lineSeries = data.data.statistics.charLineOptions
             this.TopDrivers = data.data.statistics.TopDriversWithFullInfo
+            this.TopCustomers = data.data.statistics.TopCustomersWithFullInfo
 
 
             loader.hide()

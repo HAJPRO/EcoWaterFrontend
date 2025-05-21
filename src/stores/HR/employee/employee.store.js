@@ -91,7 +91,7 @@ export const EmployeeManagmentStore = defineStore("EmployeeManagmentStore", {
         async UpdateByIds(id) {
             const loader = loading.show()
             const data = await EmployeeManagmentService.DeleteById(id)
-            this.GetAll({ status: this.isActive, page: this.page, limit: 5 })
+            this.GetAll({ status: this.isActive, page: this.page, limit: 10 })
             loader.hide()
             ToastifyService.ToastSuccess({
                 msg: data.data.msg,
@@ -101,7 +101,7 @@ export const EmployeeManagmentStore = defineStore("EmployeeManagmentStore", {
         async DeleteById(id) {
             const loader = loading.show()
             const data = await EmployeeManagmentService.DeleteById(id)
-            this.GetAll({ status: this.isActive, page: this.page, limit: 5 })
+            this.GetAll({ status: this.isActive, page: this.page, limit: 10 })
             loader.hide()
             ToastifyService.ToastSuccess({
                 msg: data.data.msg,

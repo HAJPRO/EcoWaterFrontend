@@ -56,7 +56,7 @@ export const OrderManagmentStore = defineStore("OrderManagmentStore", {
       const loader = loading.show()
       const data = await OrderManagmentService.Create(payload);
       this.custom_modal = false;
-      this.GetAll({ status: this.isActive, page: this.page, limit: 5 })
+      this.GetAll({ status: this.isActive, page: this.page, limit: 10 })
       loader.hide()
       ToastifyService.ToastSuccess({
         msg: data.data.msg,
@@ -65,7 +65,7 @@ export const OrderManagmentStore = defineStore("OrderManagmentStore", {
     async UpdateById(payload) {
       const loader = loading.show()
       const data = await OrderManagmentService.UpdateById({ ...payload, orderId: this.order._id });
-      this.GetAll({ status: this.isActive, page: this.page, limit: 5 })
+      this.GetAll({ status: this.isActive, page: this.page, limit: 10 })
       this.driver_binding_modal = false
       this.order_detail_modal = false
 
@@ -91,7 +91,7 @@ export const OrderManagmentStore = defineStore("OrderManagmentStore", {
     async DeleteById(id) {
       const loader = loading.show()
       const data = await CustomerManagmentService.DeleteById(id)
-      this.GetAll({ status: this.isActive, page: this.page, limit: 5 })
+      this.GetAll({ status: this.isActive, page: this.page, limit: 10 })
       loader.hide()
       ToastifyService.ToastSuccess({
         msg: data.data.msg,

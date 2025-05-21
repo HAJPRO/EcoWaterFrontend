@@ -30,7 +30,7 @@ const detailOrderModal = (id) => {
   store_order.DetailOrderModal({ id });
 };
 const handleCurrentChange = (page) => {
-  store_order.GetAll({ status: isActive.value, page: page, limit: 5 });
+  store_order.GetAll({ status: isActive.value, page: page, limit: 10 });
 };
 const deleteById = (id) => {
   store.DeleteById({ id });

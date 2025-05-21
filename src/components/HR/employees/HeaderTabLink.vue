@@ -11,7 +11,7 @@ const IsActive = (is_active) => {
 
 const getAll = async () => {
   IsActive(isActive.value);
-  store_employees.GetAll({ status: isActive.value, page: 1, limit: 5 });
+  store_employees.GetAll({ status: isActive.value, page: 1, limit: 10 });
 };
 const isActive = ref(1);
 const ActiveTabLink = (num) => {
