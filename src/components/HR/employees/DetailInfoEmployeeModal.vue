@@ -4,10 +4,10 @@ import { onMounted, ref, computed } from "vue";
 import { v4 as uuidv4 } from "uuid";
 import moment from "moment-timezone";
 
-import { CustomerManagmentStore } from "../../../stores/Customers/c-managment/customer.store";
-const store_customer = CustomerManagmentStore();
+import { EmployeeManagmentStore } from "../../../stores/HR/employee/employee.store";
+const store_employee = EmployeeManagmentStore();
 import { storeToRefs } from "pinia";
-const { detail_modal, orders } = storeToRefs(store_customer);
+const { detail_employee_modal, orders } = storeToRefs(store_employee);
 
 const dialogWidth = ref("");
 window.addEventListener("devicemotion", () => {
@@ -89,7 +89,7 @@ const getSummaries = ({ columns, data }) => {
 <template>
   <div>
     <el-dialog
-      v-model="detail_modal"
+      v-model="detail_employee_modal"
       :width="dialogWidth"
       :before-close="handleClose"
       class="rounded-md p-4 shadow-lg custom-modal mt-2"
@@ -99,7 +99,7 @@ const getSummaries = ({ columns, data }) => {
           <div class="flex items-center gap-2">
             <i class="fa-solid fa-box text-lg text-blue-500"></i>
             <h3 class="text-xl font-semibold text-gray-500">
-              {{ orders[0] ? orders[0].customerId.fullname : "Mijoz" }}
+              {{ orders[0] ? orders[0].driverId.fullname : "Xodim" }}
             </h3>
           </div>
           <div>
@@ -141,77 +141,6 @@ const getSummaries = ({ columns, data }) => {
       </template>
 
       <div class="grid 2xl:grid-cols-12 xs:grid-cols-6 gap-2 mt-1 text-sm">
-        <!-- Tafsilotlar -->
-        <!-- <div
-          class="grid grid-cols-12 gap-2 col-span-6 text-gray-700 bg-gray-50 p-4 rounded-lg border border-gray-200"
-        >
-          <div class="col-span-6 p-1 bg-slate-200 rounded-md">
-            <strong><i class="fa-solid fa-barcode mr-1"></i> Kodi:</strong>
-            {{ 0 }}
-          </div>
-          <div class="col-span-6 p-1 bg-slate-200 rounded-md">
-            <strong
-              ><i class="fa-solid fa-layer-group mr-1"></i> Kategoriya:</strong
-            >
-            {{ 0 }}
-          </div>
-          <div class="col-span-6 p-1 bg-slate-200 rounded-md">
-            <strong
-              ><i class="fa-solid fa-star mr-1"></i> Sifat darajasi:</strong
-            >
-            {{ 0 }}
-          </div>
-          <div class="col-span-6 p-1 bg-slate-200 rounded-md">
-            <strong><i class="fa-solid fa-tags mr-1"></i> Sotuv turi:</strong>
-            {{ product?.sale_type }}
-          </div>
-          <div class="col-span-6 p-1 bg-slate-200 rounded-md">
-            <strong
-              ><i class="fa-solid fa-calendar-check mr-1"></i> Ishlab chiqarish
-              boshlangan:</strong
-            >
-            {{ 0 }}
-          </div>
-          <div class="col-span-6 p-1 bg-slate-200 rounded-md">
-            <strong
-              ><i class="fa-solid fa-calendar-xmark mr-1"></i> Ishlab chiqarish
-              to'xtatilgan:</strong
-            >
-            {{ 0 }}
-          </div>
-          <div class="col-span-6 p-1 bg-slate-200 rounded-md">
-            <strong
-              ><i class="fa-solid fa-boxes-stacked mr-1"></i> Umumiy
-              sotilgan:</strong
-            >
-            {{ 0 }} dona
-          </div>
-          <div class="col-span-6 p-1 bg-slate-200 rounded-md">
-            <strong
-              ><i class="fa-solid fa-money-bill-wave mr-1"></i> Umumiy
-              tushum:</strong
-            >
-            {{ formatPrice(0) }}
-          </div>
-          <div class="col-span-6 p-1 bg-slate-200 rounded-md">
-            <strong><i class="fa-solid fa-building mr-1"></i> Filial:</strong>
-            {{ 0 }}
-          </div>
-          <div
-            class="col-span-6 flex items-center gap-2 p-1 bg-slate-200 rounded-md"
-          >
-            <strong
-              ><i class="fa-solid fa-circle-info mr-1"></i> Holati:</strong
-            >
-            <el-tag
-              :type="data?.status === 'Aktive' ? 'success' : 'info'"
-              size="small"
-            >
-              {{ 0 }}
-            </el-tag>
-          </div>
-        </div> -->
-
         <!--  mahsulotlar jadvali-->
         <div
           class="col-span-12 bg-white border rounded-lg shadow-sm overflow-hidden"
@@ -219,8 +148,8 @@ const getSummaries = ({ columns, data }) => {
           <div
             class="bg-gradient-to-r from-green-500 to-indigo-500 text-white px-4 py-1 text-center"
           >
-            <i class="fa-solid fa-calendar-days mr-2"></i>Mijoz
-            {{ orders[0] ? orders[0].customerId.fullname : "Mijoz" }} ning
+            <i class="fa-solid fa-calendar-days mr-2"></i>Xodim
+            {{ orders[0] ? orders[0].driverId.fullname : "Xodim" }} ning
             buyurtmalar jadvali
           </div>
           <el-table
@@ -273,7 +202,7 @@ const getSummaries = ({ columns, data }) => {
                 >
                   <template #content>
                     <div
-                      class="bg-[#e8eded] text-white p-4 rounded text-left space-y-3"
+                      class="bg-[#e8eded] text-white p-4 rounded-md text-left space-y-3"
                       style="width: auto; max-height: 1200px; overflow-y: auto"
                     >
                       <div v-if="row.driverId.fullname">
@@ -633,7 +562,7 @@ const getSummaries = ({ columns, data }) => {
                 >
                   <template #content>
                     <div
-                      class="bg-[#e8eded] text-white p-4 rounded text-left space-y-3"
+                      class="bg-[#e8eded] p-3 rounded text-left space-y-3"
                       style="width: 300px; max-height: 1200px; overflow-y: auto"
                     >
                       <div v-if="row.driverId.fullname">
@@ -841,5 +770,10 @@ const getSummaries = ({ columns, data }) => {
   background-color: #f0f9eb;
   font-weight: 600;
   color: #67c23a; /* yashil rang */
+}
+.custom-tooltip {
+  padding: 0; /* tooltip ichidagi bo‘sh joylarni olib tashlash */
+  background: transparent; /* fonni shaffof qilish */
+  box-shadow: none; /* soyani olib tashlash */
 }
 </style>

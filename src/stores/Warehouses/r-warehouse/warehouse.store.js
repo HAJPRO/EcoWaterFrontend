@@ -5,13 +5,14 @@ import { loading } from "../../../utils/Loader";
 import { th } from "element-plus/es/locale/index.mjs";
 export const ReadyWarehouseStore = defineStore("ReadyWarehouseStore", {
   state: () => ({
+    partyId: "",
     detail_modal: false,
-    transfer_modal : false,
+    transfer_modal: false,
     isActive: "",
     product_modal: false,
     model: {},
     products: [],
-    product: null,
+    product: {},
     page: null,
     action: 1,
     all_length: {},
@@ -21,6 +22,7 @@ export const ReadyWarehouseStore = defineStore("ReadyWarehouseStore", {
       this.isActive = payload;
     },
     DetailModal(id) {
+      this.partyId = id
       this.GetOne(id);
       this.detail_modal = true;
     },
@@ -57,6 +59,7 @@ export const ReadyWarehouseStore = defineStore("ReadyWarehouseStore", {
       const loader = loading.show();
       const data = await ReadyWarehouseService.GetOne(id);
       this.product = data.data.product;
+      this.model = data.data.product;
       loader.hide();
 
     },

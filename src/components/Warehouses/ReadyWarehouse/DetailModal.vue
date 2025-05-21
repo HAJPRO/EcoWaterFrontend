@@ -46,12 +46,18 @@ const ActiveTabLink = (num) => {
     isActive.value = 1;
   }
   if (num === 2) {
-    Title.value = "Chiqarlilgan";
+    Title.value = "Chiqarilgan";
     isActive.value = 2;
   }
 };
-const transferModal = (id) => {
-  store_rw.TransferModal(id);
+const ProductOutputModal = (id) => {
+  store_rw.TransferModal({ id, action: "output" });
+};
+const ProductInputModal = (id) => {
+  store_rw.TransferModal({ id, action: "input" });
+};
+const ReturnProduct = (id) => {
+  console.log("vazvirat id : ", id);
 };
 onMounted(async () => {
   try {
@@ -59,22 +65,9 @@ onMounted(async () => {
     console.log(error);
   }
 });
-const data = ref({
-  productName: "Sharbat Mango",
-  productCode: "PRD-2024",
-  quantity: 1200,
-  totalAmount: 24000000,
-  branch: "G'ijduvon tumani filiali",
-  source: "Online",
-  salesByDate: [
-    { date: "2025-05-01", quantity: 300, amount: 6000000 },
-    { date: "2025-05-02", quantity: 400, amount: 8000000 },
-    { date: "2025-05-03", quantity: 500, amount: 10000000 },
-  ],
-});
 </script>
 <template>
-<TransferModal/>
+  <TransferModal />
   <div>
     <el-dialog
       v-model="detail_modal"
@@ -206,7 +199,7 @@ const data = ref({
           <div
             class="bg-gradient-to-r from-green-500 to-indigo-500 text-white px-4 py-1 text-center"
           >
-            <i class="fa-solid fa-calendar-days mr-2"></i> {{ Title }}
+            <i class="fa-solid fa-boxes-stacked mr-3 fa-md"></i> {{ Title }}
             mahsulotlar jadvali
           </div>
           <el-table
@@ -379,42 +372,45 @@ const data = ref({
                       class="z-50"
                     >
                       <el-dropdown-item
+                        v-if="Title === `Kiritilgan`"
                         class="text-[13px] text-green-600"
-                        @click="transferModal(row._id)"
+                        @click="ProductOutputModal(row._id)"
                         ><template #default=""
                           ><div>
                             <i
                               class="text-black fa-solid fa-angles-left fa-sm mr-2"
                             ></i
-                            >Ko'chirish
+                            >Mahsulot chiqarish
                           </div>
                         </template></el-dropdown-item
                       >
-                      <!-- <el-dropdown-item
-                      class="text-[13px]"
-                      @click="updateById(row._id)"
-                      ><template #default="{}"
-                        ><div>
-                          <i
-                            class="text-black fa-solid fa-xmark fa-sm mr-1"
-                          ></i>
-                          Bekor qilish
-                        </div>
-                      </template></el-dropdown-item
-                    > -->
-
                       <el-dropdown-item
-                        class="text-[13px] text-yellow-500"
-                        @click="ExportExcel(row._id)"
+                        v-if="Title === `Chiqarilgan`"
+                        class="text-[13px] text-green-600"
+                        @click="ReturnProduct(row._id)"
+                        ><template #default=""
+                          ><div>
+                            <i
+                              class="text-black fa-solid fa-angles-down fa-sm mr-2"
+                            ></i
+                            >Mahsulotni qaytarish (возврат)
+                          </div>
+                        </template></el-dropdown-item
+                      >
+                      <el-dropdown-item
+                        v-if="Title === `Kiritilgan`"
+                        class="text-[13px]"
+                        @click="ProductInputModal(row._id)"
                         ><template #default="{}"
                           ><div>
                             <i
-                              class="text-black fa-solid fa-file-excel fa-sm mr-1"
+                              class="text-black fa-solid fa-angles-right fa-sm mr-2"
                             ></i>
-                            Excel
+                            Mahsulot kiritish
                           </div>
                         </template></el-dropdown-item
                       >
+
                       <el-dropdown-item
                         class="text-[13px] text-indigo-600"
                         @click="UpdateById(row._id)"
@@ -424,6 +420,18 @@ const data = ref({
                               class="text-black fa-solid fa-pen fa-sm mr-1"
                             ></i>
                             O'zgatirish
+                          </div>
+                        </template></el-dropdown-item
+                      >
+                      <el-dropdown-item
+                        class="text-[13px] text-yellow-500"
+                        @click="ExportExcel(row._id)"
+                        ><template #default="{}"
+                          ><div>
+                            <i
+                              class="text-black fa-solid fa-file-excel fa-sm mr-1"
+                            ></i>
+                            Excel
                           </div>
                         </template></el-dropdown-item
                       >

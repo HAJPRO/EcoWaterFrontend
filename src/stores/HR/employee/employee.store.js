@@ -11,8 +11,10 @@ export const EmployeeManagmentStore = defineStore("EmployeeManagmentStore", {
             page: null,
             action: 1,
             employee_modal: false,
+            detail_employee_modal: false,
             cardId: "",
             employees: [],
+            orders: [],
             modal_action: {
                 action: "",
                 title: ""
@@ -68,6 +70,11 @@ export const EmployeeManagmentStore = defineStore("EmployeeManagmentStore", {
                 title: `Xodim kartasini shakillantirish`,
                 action: "create"
             }
+        },
+        async DetailInfoEmployeeModal(id) {
+            this.GetOrdersByDriverId(id)
+            this.detail_employee_modal = true;
+
         },
         async Create(payload) {
             const loader = loading.show()
@@ -128,6 +135,14 @@ export const EmployeeManagmentStore = defineStore("EmployeeManagmentStore", {
                 console.log(this.modal.model);
 
             }
+            loader.hide()
+
+        },
+        async GetOrdersByDriverId(id) {
+            const loader = loading.show()
+            const data = await EmployeeManagmentService.GetOrdersByDriverId(id)
+            this.orders = data.data.orders
+
             loader.hide()
 
         },

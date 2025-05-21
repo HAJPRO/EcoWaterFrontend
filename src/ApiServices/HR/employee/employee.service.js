@@ -19,4 +19,8 @@ export const EmployeeManagmentService = {
         let url = "hr/employees/managment/getone";
         return api.post(url, id);
     },
+    GetOrdersByDriverId(id) {
+        let url = "hr/employees/managment/driverId/orders";
+        return api.post(url, id);
+    },
 };

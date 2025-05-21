@@ -210,7 +210,9 @@ const UpdateById = (id) => {
                       @click="AddDetailModal(row._id)"
                       ><template #default=""
                         ><div>
-                          <i class="text-black fa-solid fa-eye fa-sm mr-2"></i
+                          <i
+                            class="text-black fa-solid fa-magnifying-glass fa-sm mr-2"
+                          ></i
                           >Batafsil
                         </div>
                       </template></el-dropdown-item

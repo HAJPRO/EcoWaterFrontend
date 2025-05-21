@@ -55,7 +55,7 @@ onMounted(async () => {
         :class="{ activeTab: isActive === 1 }"
         class="inline-flex text-[13px] items-center mr-2 px-4 py-1 mb-1 text-sm font-medium text-center text-red hover:border-b-2 border-solid border-[#36d887] bg-[#e4e9e9] text-bold rounded"
       >
-        <i class="fa-solid fa-car mr-2 fa-xm"></i> Barchasi
+        <i class="fa-solid fa-list-ul mr-2 fa-md"></i> Barchasi
         <div class="flex flex-shrink-0 ml-2">
           <span
             :class="{ activeTabIcon: isActive === 1 }"

@@ -8,6 +8,7 @@ import { ref, onMounted } from "vue";
 import { EmployeeManagmentStore } from "../../../stores/HR/employee/employee.store";
 
 import EmployeeModal from "../../../components/HR/employees/AddEmployeeModal.vue";
+import DetailInfoEmployeeModal from "../../../components/HR/employees/DetailInfoEmployeeModal.vue";
 import moment from "moment-timezone";
 
 const store = EmployeeManagmentStore();
@@ -16,6 +17,9 @@ const { custom_modal, modal, employees, all_length, isActive } =
   storeToRefs(store);
 const AddEmployeeModal = () => {
   store.AddEmployeeModal();
+};
+const detailInfoEmployeeModal = (id) => {
+  store.DetailInfoEmployeeModal({ id });
 };
 const handleCurrentChange = (page) => {
   store.GetAll({ status: isActive.value, page: page, limit: 10 });
@@ -29,6 +33,7 @@ const UpdateById = (id) => {
 </script>
 <template>
   <EmployeeModal />
+  <DetailInfoEmployeeModal />
   <div class="">
     <div class="">
       <div class="rounded-md text-[11px]">
@@ -255,7 +260,7 @@ const UpdateById = (id) => {
                   <el-dropdown-menu slot="dropdown" append-to-body class="z-50">
                     <el-dropdown-item
                       class="text-[13px] text-green-600"
-                      @click="GetOne(row._id)"
+                      @click="detailInfoEmployeeModal(row._id)"
                       ><template #default=""
                         ><div>
                           <i
