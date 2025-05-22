@@ -76,7 +76,7 @@ const suburb = ref("");
 const street = ref("");
 const houseNumber = ref("");
 const osmLayer = L.tileLayer(
-  "https://www.freeiconspng.com/uploads/red-location-icon-map-png-4.png",
+  "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
   {
     attribution: "© OpenStreetMap contributors",
   }
@@ -93,6 +93,8 @@ onMounted(() => {
   // map = L.map("map").setView([40.1006, 64.6834], 13);
 
   map = L.map("map", {
+    iconUrl:
+      "https://www.freeiconspng.com/uploads/red-location-icon-map-png-4.png", // yoki public papkada bo‘lsa: '/marker-icon.png'
     center: [40.1006, 64.6834],
     zoom: 13,
     layers: [osmLayer],
@@ -138,24 +140,6 @@ onMounted(() => {
   });
 });
 
-function updateDriverPositions() {
-  drivers.value.forEach((driver) => {
-    // Har bir driver uchun tasodifiy ozgarish kiritamiz
-    const deltaLat = (Math.random() - 0.5) * 0.001;
-    const deltaLng = (Math.random() - 0.5) * 0.001;
-
-    driver.lat += deltaLat;
-    driver.lng += deltaLng;
-
-    // Marker pozitsiyasini update qilamiz
-    const marker = driverMarkers[driver.id];
-    marker.setLatLng([driver.lat, driver.lng]);
-
-    // Trayektoriyaga yangi nuqta qo‘shamiz
-    const trajectory = driverTrajectories[driver.id];
-    trajectory.addLatLng([driver.lat, driver.lng]);
-  });
-}
 // Joy nomini olish funksiyasi
 async function getAddressFromCoords(lat, lng) {
   const res = await fetch(
