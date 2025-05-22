@@ -99,7 +99,13 @@ onMounted(() => {
     zoom: 13,
     layers: [osmLayer],
   });
-
+  const customIcon = L.icon({
+    iconUrl:
+      "https://www.freeiconspng.com/uploads/red-location-icon-map-png-4.png",
+    iconSize: [38, 38],
+    iconAnchor: [19, 38],
+    popupAnchor: [0, -38],
+  });
   map.on("click", async (e) => {
     const lat = e.latlng.lat.toFixed(6);
     const lng = e.latlng.lng.toFixed(6);
