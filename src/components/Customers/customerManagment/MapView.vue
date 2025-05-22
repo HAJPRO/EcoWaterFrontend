@@ -101,11 +101,12 @@ onMounted(() => {
   });
   const customIcon = L.icon({
     iconUrl:
-      "https://www.freeiconspng.com/uploads/red-location-icon-map-png-4.png",
-    iconSize: [38, 38],
-    iconAnchor: [19, 38],
-    popupAnchor: [0, -38],
+      "https://www.citypng.com/public/uploads/preview/red-gps-location-symbol-icon-hd-png-701751695035446zkphf8tfr3.png",
+    iconSize: [80, 80],
+    iconAnchor: [40, 80],
+    popupAnchor: [0, -80],
   });
+
   map.on("click", async (e) => {
     const lat = e.latlng.lat.toFixed(6);
     const lng = e.latlng.lng.toFixed(6);
