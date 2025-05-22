@@ -1,6 +1,7 @@
 <script setup>
 import { ElMessage } from "element-plus";
-import { onMounted, ref, computed } from "vue";
+
+import { onMounted, ref, computed, watch } from "vue";
 import { v4 as uuidv4 } from "uuid";
 import moment from "moment-timezone";
 import TransferModal from "./TransferModal.vue";
@@ -38,6 +39,7 @@ window.addEventListener("resize", () => {
 const formatPrice = (price) => {
   return new Intl.NumberFormat("uz-UZ").format(price);
 };
+
 const isActive = ref(1);
 const Title = ref("Kiritilgan");
 const ActiveTabLink = (num) => {
@@ -50,9 +52,41 @@ const ActiveTabLink = (num) => {
     isActive.value = 2;
   }
 };
+const transfer = ref(false);
+const outputQuantity = ref();
 const ProductOutputModal = (id) => {
-  store_rw.TransferModal({ id, action: "output" });
+  transfer.value = true;
+
+  // store_rw.TransferModal({ id, action: "output" });
 };
+const OutputSave = (data) => {
+  // 1. Chiqarilayotgan qiymat mavjudligini tekshirish
+  if (
+    data.outputQuantity === undefined ||
+    data.outputQuantity === null ||
+    data.outputQuantity === "" ||
+    isNaN(data.outputQuantity)
+  ) {
+    ElMessage.error("Iltimos, chiqarilayotgan miqdorni kiriting");
+    return false;
+  }
+
+  // 2. Qiymat manfiy bo'lmasligi kerak
+  if (Number(data.outputQuantity) < 0 || Number(data.outputQuantity) === 0) {
+    ElMessage.error("Qiymat manfiy yoki nol bo'lishi mumkin emas");
+    return false;
+  }
+
+  // 3. Chiqarilayotgan miqdor mavjud miqdordan oshmasligi kerak
+  if (Number(data.outputQuantity) > Number(data.quantity)) {
+    ElMessage.error("Chiqarilayotgan miqdor mavjud miqdordan oshib ketdi");
+    return false;
+  }
+
+  // ✅ Hammasi yaxshi bo‘lsa
+  store_rw.OutputProduct(data);
+};
+
 const ProductInputModal = (id) => {
   store_rw.TransferModal({ id, action: "input" });
 };
@@ -90,13 +124,15 @@ onMounted(async () => {
               :class="{ activeTab: isActive === 1 }"
               class="inline-flex text-[12px] items-center mr-2 px-4 py-1 mb-1 font-medium bg-[#e4e9e9] text-bold rounded"
             >
-              <i class="fa-solid fa-boxes-stacked mr-2"></i> Kiritilganlar
+              <i class="fa-solid fa-boxes-stacked mr-2"></i> Qolgan mahsulotlar
               <div class="flex flex-shrink-0 ml-2">
                 <span
                   :class="{ activeTabIcon: isActive === 1 }"
                   class="inline-flex items-center justify-center h-5 text-[11px] font-medium text-white bg-[#36d887] px-3 py-2 rounded"
                 >
-                  {{ (all_length ? all_length.all : 0) || 0 }}</span
+                  {{
+                    (product.products ? product.products.length : 0) || 0
+                  }}</span
                 >
               </div>
             </router-link>
@@ -106,13 +142,14 @@ onMounted(async () => {
               :class="{ activeTab: isActive === 2 }"
               class="inline-flex text-[12px] items-center mr-2 px-4 py-1 mb-1 font-medium bg-[#e4e9e9] text-bold rounded"
             >
-              <i class="fa-solid fa-boxes-stacked mr-2"></i> Chiqarilganlar
+              <i class="fa-solid fa-boxes-stacked mr-2"></i> Chiqarilgan
+              mahsulotlar
               <div class="flex flex-shrink-0 ml-2">
                 <span
                   :class="{ activeTabIcon: isActive === 2 }"
                   class="inline-flex items-center justify-center h-5 text-[11px] font-medium text-white bg-red-500 px-3 py-2 rounded"
                 >
-                  {{ (all_length ? all_length.all : 0) || 0 }}</span
+                  {{ (product.output ? product.output.length : 0) || 0 }}</span
                 >
               </div>
             </router-link>
@@ -121,77 +158,6 @@ onMounted(async () => {
       </template>
 
       <div class="grid 2xl:grid-cols-12 xs:grid-cols-6 gap-2 mt-1 text-sm">
-        <!-- Tafsilotlar -->
-        <!-- <div
-          class="grid grid-cols-12 gap-2 col-span-6 text-gray-700 bg-gray-50 p-4 rounded-lg border border-gray-200"
-        >
-          <div class="col-span-6 p-1 bg-slate-200 rounded-md">
-            <strong><i class="fa-solid fa-barcode mr-1"></i> Kodi:</strong>
-            {{ 0 }}
-          </div>
-          <div class="col-span-6 p-1 bg-slate-200 rounded-md">
-            <strong
-              ><i class="fa-solid fa-layer-group mr-1"></i> Kategoriya:</strong
-            >
-            {{ 0 }}
-          </div>
-          <div class="col-span-6 p-1 bg-slate-200 rounded-md">
-            <strong
-              ><i class="fa-solid fa-star mr-1"></i> Sifat darajasi:</strong
-            >
-            {{ 0 }}
-          </div>
-          <div class="col-span-6 p-1 bg-slate-200 rounded-md">
-            <strong><i class="fa-solid fa-tags mr-1"></i> Sotuv turi:</strong>
-            {{ product?.sale_type }}
-          </div>
-          <div class="col-span-6 p-1 bg-slate-200 rounded-md">
-            <strong
-              ><i class="fa-solid fa-calendar-check mr-1"></i> Ishlab chiqarish
-              boshlangan:</strong
-            >
-            {{ 0 }}
-          </div>
-          <div class="col-span-6 p-1 bg-slate-200 rounded-md">
-            <strong
-              ><i class="fa-solid fa-calendar-xmark mr-1"></i> Ishlab chiqarish
-              to'xtatilgan:</strong
-            >
-            {{ 0 }}
-          </div>
-          <div class="col-span-6 p-1 bg-slate-200 rounded-md">
-            <strong
-              ><i class="fa-solid fa-boxes-stacked mr-1"></i> Umumiy
-              sotilgan:</strong
-            >
-            {{ 0 }} dona
-          </div>
-          <div class="col-span-6 p-1 bg-slate-200 rounded-md">
-            <strong
-              ><i class="fa-solid fa-money-bill-wave mr-1"></i> Umumiy
-              tushum:</strong
-            >
-            {{ formatPrice(0) }}
-          </div>
-          <div class="col-span-6 p-1 bg-slate-200 rounded-md">
-            <strong><i class="fa-solid fa-building mr-1"></i> Filial:</strong>
-            {{ 0 }}
-          </div>
-          <div
-            class="col-span-6 flex items-center gap-2 p-1 bg-slate-200 rounded-md"
-          >
-            <strong
-              ><i class="fa-solid fa-circle-info mr-1"></i> Holati:</strong
-            >
-            <el-tag
-              :type="data?.status === 'Aktive' ? 'success' : 'info'"
-              size="small"
-            >
-              {{ 0 }}
-            </el-tag>
-          </div>
-        </div> -->
-
         <!--  mahsulotlar jadvali-->
         <div
           class="col-span-12 bg-white border rounded-lg shadow-sm overflow-hidden"
@@ -203,7 +169,7 @@ onMounted(async () => {
             mahsulotlar jadvali
           </div>
           <el-table
-            :data="product?.products"
+            :data="Title === 'Kiritilgan' ? product?.products : product?.output"
             :header-cell-style="{
               background: '#e8eded',
               border: '0.2px solid #e1e1e3',
@@ -216,7 +182,7 @@ onMounted(async () => {
             border
             stripe
             highlight-current-row
-            height="200"
+            height="300"
           >
             <el-table-column
               header-align="center"
@@ -326,7 +292,12 @@ onMounted(async () => {
               :max-width="400"
               header-align="center"
               align="center"
-            />
+              ><template #default="{ row }"
+                ><div class="text-yellow-600">
+                  {{ row.quantity }} {{ row.unit ? row.unit : "" }}
+                </div></template
+              ></el-table-column
+            >
             <el-table-column
               label="Jami (sum)"
               prop="totalPrice"
@@ -336,10 +307,37 @@ onMounted(async () => {
               align="center"
               ><template #default="{ row }"
                 ><div class="text-center text-red-500 font-semibold">
-                  {{ row.totalPrice ? row.totalPrice : 0 }} sum
+                  {{ row.totalPrice ? formatPrice(row.totalPrice) : 0 }} sum
                 </div></template
               ></el-table-column
             >
+
+            <el-table-column
+              fixed="right"
+              v-if="transfer"
+              :min-width="300"
+              :max-width="400"
+              header-align="center"
+              prop="outputQuantity"
+              align="center"
+              label="Chiqarilayotgan miqdor"
+            >
+              <template #default="{ row }">
+                <div class="flex gap-2 items-center text-center">
+                  <el-input
+                    v-model="row.outputQuantity"
+                    type="number"
+                    placeholder="Miqdor kiriting"
+                  />
+                  <div
+                    class="mb-1 col-span-3 w-auto text-center text-white text-[12px] font-semibold bg-purple-500 rounded-[4px] px-3 py-[4px] hover:bg-purple-600 cursor-pointer"
+                    @click="OutputSave(row)"
+                  >
+                    Saqlash
+                  </div>
+                </div>
+              </template>
+            </el-table-column>
             <el-table-column
               fixed="right"
               prop="id"
@@ -457,8 +455,24 @@ onMounted(async () => {
           <div
             class="bg-white text-gray-600 text-[12px] font-semibold px-4 py-1 text-center flex items-center justify-between"
           >
-            <div>Kiritilgan: 0</div>
-            <div>Skladda qoldi: 0</div>
+            <div>
+              Qolgan:
+              {{
+                product.totalRemainderPrice
+                  ? formatPrice(product.totalRemainderPrice)
+                  : 0
+              }}
+              so'm
+            </div>
+            <div>
+              Chiqarilgan:
+              {{
+                product.totalOutputPrice
+                  ? formatPrice(product.totalOutputPrice)
+                  : 0
+              }}
+              so'm
+            </div>
           </div>
         </div>
       </div>

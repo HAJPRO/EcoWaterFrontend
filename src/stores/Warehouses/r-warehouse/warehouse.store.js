@@ -63,5 +63,20 @@ export const ReadyWarehouseStore = defineStore("ReadyWarehouseStore", {
       loader.hide();
 
     },
+    async OutputProduct(payload) {
+      // const loader = loading.show();
+      const data = await ReadyWarehouseService.OutputProduct({ ...payload, partyId: this.partyId });
+      this.GetOne(this.partyId)
+      // loader.hide();
+      if (data.data.status === 404)
+        ToastifyService.ToastError({
+          msg: data.data.msg,
+        });
+      if (data.data.status === 200)
+        ToastifyService.ToastSuccess({
+          msg: data.data.msg,
+        });
+
+    },
   },
 });

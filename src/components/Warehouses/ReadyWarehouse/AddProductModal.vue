@@ -55,6 +55,14 @@ const totalAmount = computed(() => {
     return sum + price;
   }, 0);
 });
+// Watch qilish
+watch(totalAmount, (newVal) => {
+  model.value.totalAmount = newVal;
+  model.value.totalRemainderPrice = newVal;
+});
+// watch(totalPrice, (newVal) => {
+//   model.value.totalAmount = newVal;
+// });
 
 const PlusProduct = () => {
   // Yangi mahsulot yaratish
@@ -76,7 +84,6 @@ const PlusProduct = () => {
     expireDate: model.value.expireDate || "", // Agar mavjud bo‘lmasa, bo‘sh qiymat berish
   };
   model.value.products.push(product);
-  console.log(model.value.products);
 };
 
 const formRef = ref(null);
@@ -125,6 +132,9 @@ const ChangePacking = (value) => {
       model.value.blockCostPrice = selectedPacking.block_cost_price;
     }
   }
+};
+const ChangeUnit = (value) => {
+  model.value.unit = value;
 };
 
 const categoryes = ref([
@@ -582,7 +592,7 @@ onMounted(async () => {
                     size="smal"
                     style="width: 100%"
                     @click="Type({ type: `unit` })"
-                    @change="ChangePacking($event)"
+                    @change="ChangeUnit($event)"
                   >
                     <template #prefix>
                       <i

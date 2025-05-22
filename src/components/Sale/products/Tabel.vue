@@ -346,7 +346,7 @@ onMounted(() => {
               <el-pagination
                 small
                 @current-change="handleCurrentChange"
-                :page-size="5"
+                :page-size="10"
                 layout="prev, pager, next"
                 :total="all_length.all"
                 class="custom-pagination"

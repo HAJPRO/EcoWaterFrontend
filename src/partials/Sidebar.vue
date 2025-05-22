@@ -965,8 +965,170 @@
                         >
                           <span
                             class="font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
-                            >Xodimlar</span
+                            >Xodimlar boshqaruvi</span
                           >
+                        </a>
+                      </li>
+                    </router-link>
+                    <router-link
+                      to="8596"
+                      custom
+                      v-slot="{ href, navigate, isExactActive }"
+                    >
+                      <li class="mb-1 last:mb-0 text-[13px]">
+                        <a
+                          class="block transition duration-150 truncate"
+                          :class="
+                            isExactActive
+                              ? 'text-[#36d887]'
+                              : 'text-slate-400 hover:text-slate-200'
+                          "
+                          :href="href"
+                          @click="navigate"
+                        >
+                          <span
+                            class="font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                            >Asosiy vositalarni ro'yxatga olish</span
+                          >
+                        </a>
+                      </li>
+                    </router-link>
+                    <router-link
+                      to="8569"
+                      custom
+                      v-slot="{ href, navigate, isExactActive }"
+                    >
+                      <li class="mb-1 last:mb-0 text-[13px]">
+                        <a
+                          class="block transition duration-150 truncate"
+                          :class="
+                            isExactActive
+                              ? 'text-[#36d887]'
+                              : 'text-slate-400 hover:text-slate-200'
+                          "
+                          :href="href"
+                          @click="navigate"
+                        >
+                          <span
+                            class="font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                            >Ish haqi, bonuslar, jarimalar</span
+                          >
+                        </a>
+                      </li>
+                    </router-link>
+                    <router-link
+                      to="79"
+                      custom
+                      v-slot="{ href, navigate, isExactActive }"
+                    >
+                      <li class="mb-1 last:mb-0 text-[13px]">
+                        <a
+                          class="block transition duration-150 truncate"
+                          :class="
+                            isExactActive
+                              ? 'text-[#36d887]'
+                              : 'text-slate-400 hover:text-slate-200'
+                          "
+                          :href="href"
+                          @click="navigate"
+                        >
+                          <span
+                            class="font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                            >Hisobvaraqlar reestri
+                          </span>
+                        </a>
+                      </li>
+                    </router-link>
+
+                    <router-link
+                      to="78"
+                      custom
+                      v-slot="{ href, navigate, isExactActive }"
+                    >
+                      <li class="mb-1 last:mb-0 text-[13px]">
+                        <a
+                          class="block transition duration-150 truncate"
+                          :class="
+                            isExactActive
+                              ? 'text-[#36d887]'
+                              : 'text-slate-400 hover:text-slate-200'
+                          "
+                          :href="href"
+                          @click="navigate"
+                        >
+                          <span
+                            class="font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                            >Kassa kirim-chiqim hujjatlari
+                          </span>
+                        </a>
+                      </li>
+                    </router-link>
+                    <router-link
+                      to="70"
+                      custom
+                      v-slot="{ href, navigate, isExactActive }"
+                    >
+                      <li class="mb-1 last:mb-0 text-[13px]">
+                        <a
+                          class="block transition duration-150 truncate"
+                          :class="
+                            isExactActive
+                              ? 'text-[#36d887]'
+                              : 'text-slate-400 hover:text-slate-200'
+                          "
+                          :href="href"
+                          @click="navigate"
+                        >
+                          <span
+                            class="font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                            >Debit/Kredit
+                          </span>
+                        </a>
+                      </li>
+                    </router-link>
+                    <router-link
+                      to="88"
+                      custom
+                      v-slot="{ href, navigate, isExactActive }"
+                    >
+                      <li class="mb-1 last:mb-0 text-[13px]">
+                        <a
+                          class="block transition duration-150 truncate"
+                          :class="
+                            isExactActive
+                              ? 'text-[#36d887]'
+                              : 'text-slate-400 hover:text-slate-200'
+                          "
+                          :href="href"
+                          @click="navigate"
+                        >
+                          <span
+                            class="font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                            >Bank to‘lovlari va kirimlar
+                          </span>
+                        </a>
+                      </li>
+                    </router-link>
+                    <router-link
+                      to="81"
+                      custom
+                      v-slot="{ href, navigate, isExactActive }"
+                    >
+                      <li class="mb-1 last:mb-0 text-[13px]">
+                        <a
+                          class="block transition duration-150 truncate"
+                          :class="
+                            isExactActive
+                              ? 'text-[#36d887]'
+                              : 'text-slate-400 hover:text-slate-200'
+                          "
+                          :href="href"
+                          @click="navigate"
+                        >
+                          <span
+                            class="font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                            >Mijozlardan qarzdorlik (Debitor) nazorati
+                          </span>
                         </a>
                       </li>
                     </router-link>

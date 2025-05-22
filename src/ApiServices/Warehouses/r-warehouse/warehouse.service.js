@@ -22,4 +22,8 @@ export const ReadyWarehouseService = {
         let url = "warehouses/r-warehouse/getone";
         return api.post(url, id);
     },
+    OutputProduct(data) {
+        let url = "warehouses/r-warehouse/output";
+        return api.post(url, data);
+    },
 };
