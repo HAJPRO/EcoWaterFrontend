@@ -35,14 +35,19 @@
   </div>
   <div id="map" class="h-[700px] w-full rounded-2xl shadow-xl"></div>
   <div
-    class="mb-1 mt-2 col-span-3 w-64  text-center text-white font-semibold  rounded-[4px] px-4 py-[5px]  cursor-pointer"
+    class="mb-1 mt-2 col-span-3 w-64 text-center text-white font-semibold rounded-[4px] px-4 py-[5px] cursor-pointer"
     @click="toggleSatellite"
-   :class="{
+    :class="{
       'bg-green-500 hover:bg-green-600': !isSatellite,
-      'bg-purple-500 hover:bg-purple-600-600': isSatellite
+      'bg-purple-500 hover:bg-purple-600-600': isSatellite,
     }"
   >
-    <i v-if="isSatellite === false" class="fa-solid fa-earth-africa mr-2 fa-lg"></i>   <i v-if="isSatellite === true"  class="fa-solid fa-map mr-2 fa-lg"></i>{{isSatellite ? `Xaritada ko'rish`    : `Sputnik ko'rinishi` }} 
+    <i
+      v-if="isSatellite === false"
+      class="fa-solid fa-earth-africa mr-2 fa-lg"
+    ></i>
+    <i v-if="isSatellite === true" class="fa-solid fa-map mr-2 fa-lg"></i
+    >{{ isSatellite ? `Xaritada ko'rish` : `Sputnik ko'rinishi` }}
   </div>
 </template>
 
@@ -71,7 +76,7 @@ const suburb = ref("");
 const street = ref("");
 const houseNumber = ref("");
 const osmLayer = L.tileLayer(
-  "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+  "https://www.freeiconspng.com/uploads/red-location-icon-map-png-4.png",
   {
     attribution: "© OpenStreetMap contributors",
   }
@@ -87,7 +92,6 @@ const satelliteLayer = L.tileLayer(
 onMounted(() => {
   // map = L.map("map").setView([40.1006, 64.6834], 13);
 
-  
   map = L.map("map", {
     center: [40.1006, 64.6834],
     zoom: 13,
