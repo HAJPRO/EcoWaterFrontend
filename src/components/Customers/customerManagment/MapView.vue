@@ -94,7 +94,7 @@ onMounted(() => {
 
   map = L.map("map", {
     iconUrl:
-      "https://www.freeiconspng.com/uploads/red-location-icon-map-png-4.png", // yoki public papkada bo‘lsa: '/marker-icon.png'
+      "https://www.freeiconspng.com/uploads/red-location-icon-map-png-4.png",
     center: [40.1006, 64.6834],
     zoom: 13,
     layers: [osmLayer],
@@ -130,7 +130,9 @@ onMounted(() => {
     if (selectedMarker.value) {
       selectedMarker.value.setLatLng([lat, lng]);
     } else {
-      selectedMarker.value = L.marker([lat, lng]).addTo(map);
+      selectedMarker.value = L.marker([lat, lng], { icon: customIcon }).addTo(
+        map
+      );
     }
     emit("locationSelected", { lat, long: lng }); // parentga yuborish
     selectedMarker.value.bindPopup(popupText).openPopup();
