@@ -101,7 +101,7 @@ onMounted(() => {
   });
   const customIcon = L.icon({
     iconUrl:
-      "https://www.citypng.com/public/uploads/preview/red-gps-location-symbol-icon-hd-png-701751695035446zkphf8tfr3.png",
+      "https://png.pngtree.com/png-vector/20230413/ourmid/pngtree-3d-location-icon-clipart-in-transparent-background-vector-png-image_6704161.png",
     iconSize: [80, 80],
     iconAnchor: [40, 80],
     popupAnchor: [0, -80],
