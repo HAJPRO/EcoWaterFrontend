@@ -31,6 +31,8 @@ export const OrderManagmentStore = defineStore("OrderManagmentStore", {
           pro_unit: "",
           pro_price: "",
           pro_total_price: "",
+          packingType: "",
+
         }
       },
 

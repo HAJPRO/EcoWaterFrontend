@@ -46,7 +46,15 @@ window.addEventListener("resize", () => {
 const formatPrice = (price) => {
   return new Intl.NumberFormat("uz-UZ").format(price);
 };
-
+const packingTypes = ref([
+  { id: 1, name: "0.5 l" },
+  { id: 2, name: "1 l" },
+  { id: 3, name: "1.5 l" },
+  { id: 4, name: "2 l" },
+  { id: 6, name: "5 l" },
+  { id: 7, name: "10 l" },
+  { id: 8, name: "20 l" },
+]);
 const AddCustomeModal = () => {
   store_customers.AddCustomModal();
 };
@@ -57,9 +65,9 @@ const ChangeCustomerFullname = async (id) => {
 const ChangeProductType = async (e) => {
   model.value.product.pro_type = e;
 };
-const ChangeProductName = async (e) => {
-  model.value.product.pro_name = e;
-};
+// const ChangeProductName = async (e) => {
+//   model.value.product.pro_name = e;
+// };
 
 const units = ref([
   { id: 1, name: "Litr" },
@@ -107,7 +115,8 @@ const PlusProduct = () => {
     model.value.product.pro_price === "" ||
     model.value.product.pro_name === "" ||
     model.value.product.pro_type === "" ||
-    model.value.product.pro_unit === ""
+    model.value.product.pro_unit === "" ||
+    model.value.product.packingType === ""
   ) {
     ElMessage.error("Iltimos barcha maydonlarni to'ldiring !");
     return (products.value = []);
@@ -144,7 +153,40 @@ const rules = ref({
   trigger: "blur",
 });
 
-let map = ref(null);
+const pakings = ref();
+const SelectedProduct = ref();
+const ChangeProductName = (value) => {
+  const selectedProduct = productsOptions.value.find(
+    (item) => item.pro_name === value
+  );
+  if (selectedProduct) {
+    model.value.category = selectedProduct.pro_category;
+    // model.value.code = selectedProduct.code;
+    pakings.value = selectedProduct.products;
+    SelectedProduct.value = selectedProduct;
+
+    model.value.product.pro_name = value;
+  }
+};
+const changedProduct = ref();
+const ChangePackingType = (value) => {
+  if (SelectedProduct.value) {
+    const selectedPacking = SelectedProduct.value.products.find(
+      (item) => item.packingType === value
+    );
+    changedProduct.value = selectedPacking;
+  }
+};
+const ChangeUnitType = (value) => {
+  if (changedProduct.value) {
+    if (value === "Blok") {
+      model.value.product.pro_price = changedProduct.value.block_cost_price;
+    }
+    if (value === "Dona") {
+      model.value.product.pro_price = changedProduct.value.cost_price;
+    }
+  }
+};
 onMounted(async () => {
   store_products.GetAll({ status: 0 });
   try {
@@ -578,45 +620,6 @@ onMounted(async () => {
             <div class="grid grid-cols-12 gap-1">
               <div class="mb-1 col-span-4">
                 <el-form-item
-                  label="Mahsulot turi"
-                  prop="product.pro_type"
-                  :rules="rules"
-                >
-                  <el-select
-                    v-model="model.product.pro_type"
-                    placeholder="..."
-                    size="smal"
-                    style="width: 100%"
-                    @click="Type({ type: `color` })"
-                    @change="ChangeProductType($event)"
-                  >
-                    <template #prefix>
-                      <i
-                        @click.stop="AddCustomeModall()"
-                        class="fa-solid fa-plus cursor-pointer"
-                      ></i>
-                    </template>
-                    <el-option
-                      v-for="item in productsType"
-                      :key="item.id"
-                      :label="item.name"
-                      :value="item.name"
-                    >
-                      <template #default>
-                        <div class="flex justify-between items-center w-full">
-                          <span>{{ item.name }}</span>
-                          <i
-                            class="fa-solid fa-trash text-red-500 cursor-pointer fa-xs ml-8"
-                            @click.stop="RemoveItem(item.id)"
-                          ></i>
-                        </div>
-                      </template>
-                    </el-option>
-                  </el-select>
-                </el-form-item>
-              </div>
-              <div class="mb-1 col-span-4">
-                <el-form-item
                   label="Mahsulot nomi"
                   prop="product.pro_name"
                   :rules="rules"
@@ -654,26 +657,91 @@ onMounted(async () => {
                   </el-select>
                 </el-form-item>
               </div>
-
               <div class="mb-1 col-span-4">
                 <el-form-item
-                  label="Miqdori"
-                  prop="product.pro_quantity"
+                  label="Mahsulot turi"
+                  prop="product.pro_type"
                   :rules="rules"
                 >
-                  <el-input
-                    required
-                    v-model="model.product.pro_quantity"
-                    clearable
-                    class="w-[100%]"
-                    size="smal"
-                    type="number"
-                    maxlength="9"
+                  <el-select
+                    v-model="model.product.pro_type"
                     placeholder="..."
-                  />
+                    size="smal"
+                    style="width: 100%"
+                    @click="Type({ type: `color` })"
+                    @change="ChangeProductType($event)"
+                  >
+                    <template #prefix>
+                      <i
+                        @click.stop="AddCustomeModall()"
+                        class="fa-solid fa-plus cursor-pointer"
+                      ></i>
+                    </template>
+                    <el-option
+                      v-for="item in productsType"
+                      :key="item.id"
+                      :label="item.name"
+                      :value="item.name"
+                    >
+                      <template #default>
+                        <div class="flex justify-between items-center w-full">
+                          <span>{{ item.name }}</span>
+                          <i
+                            class="fa-solid fa-trash text-red-500 cursor-pointer fa-xs ml-8"
+                            @click.stop="RemoveItem(item.id)"
+                          ></i>
+                        </div>
+                      </template>
+                    </el-option>
+                  </el-select>
                 </el-form-item>
               </div>
-              <div class="mb-1 col-span-4">
+
+              <div class="mb-1 col-span-2">
+                <el-form-item
+                  label="Qadoq turi"
+                  prop="product.packingType"
+                  :rules="rules"
+                >
+                  <el-select
+                    v-model="model.product.packingType"
+                    placeholder="..."
+                    size="smal"
+                    style="width: 100%"
+                    @click="Type({ type: `packingType` })"
+                    @change="ChangePackingType($event)"
+                  >
+                    <template #prefix>
+                      <i
+                        @click.stop="
+                          Plus({
+                            title: `Buyurtmachi kategoryasini qo'shish`,
+                            state: `packingType`,
+                          })
+                        "
+                        class="fa-solid fa-plus cursor-pointer"
+                      ></i>
+                    </template>
+                    <el-option
+                      v-for="item in pakings"
+                      :key="item.id"
+                      :label="item.packingType"
+                      :value="item.packingType"
+                    >
+                      <template #default>
+                        <div class="flex justify-between items-center w-full">
+                          <span>{{ item.packingType }}</span>
+                          <i
+                            class="fa-solid fa-trash text-red-500 cursor-pointer fa-xs ml-8"
+                            @click.stop="RemoveItem(item._id)"
+                          ></i>
+                        </div>
+                      </template>
+                    </el-option>
+                  </el-select>
+                </el-form-item>
+              </div>
+              <div class="mb-1 col-span-2">
                 <el-form-item
                   label="Birligi"
                   prop="product.pro_unit"
@@ -685,6 +753,7 @@ onMounted(async () => {
                     size="smal"
                     style="width: 100%"
                     @click="Type({ type: `color` })"
+                    @change="ChangeUnitType($event)"
                   >
                     <template #prefix>
                       <i
@@ -711,6 +780,25 @@ onMounted(async () => {
                   </el-select>
                 </el-form-item>
               </div>
+              <div class="mb-1 col-span-4">
+                <el-form-item
+                  label="Miqdori"
+                  prop="product.pro_quantity"
+                  :rules="rules"
+                >
+                  <el-input
+                    required
+                    v-model="model.product.pro_quantity"
+                    clearable
+                    class="w-[100%]"
+                    size="smal"
+                    type="number"
+                    maxlength="9"
+                    placeholder="..."
+                  />
+                </el-form-item>
+              </div>
+
               <div class="mb-1 col-span-4">
                 <el-form-item
                   label="Narxi (sum)"
@@ -801,6 +889,14 @@ onMounted(async () => {
               <el-table-column
                 prop="pro_name"
                 label="Nomi"
+                :min-width="100"
+                :max-width="400"
+                header-align="center"
+                align="center"
+              />
+              <el-table-column
+                prop="packingType"
+                label="Qadoq"
                 :min-width="100"
                 :max-width="400"
                 header-align="center"

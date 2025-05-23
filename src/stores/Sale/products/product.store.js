@@ -23,6 +23,7 @@ export const ProductsManagmentStore = defineStore("ProductsManagmentStore", {
         pro_name: "", // Mahsulot nomi
         pro_category: "", // Kategoriya
         pro_quality: "", // Sifat darajasi
+        packingType: "", // Sifat darajasi
         sale_type: "", // Sotuv turi
         packingType: "", // Qadoq turi
         pro_image_url: "", // Rasm URL (upload qilinadi)

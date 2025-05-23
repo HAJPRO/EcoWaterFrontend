@@ -9,7 +9,7 @@ import { ProductsManagmentStore } from "../../../stores/Sale/products/product.st
 const store_rw = ReadyWarehouseStore();
 const store_pro = ProductsManagmentStore();
 import { storeToRefs } from "pinia";
-const { product_modal, product, model } = storeToRefs(store_rw);
+const { product_modal, product, model, ModalAction } = storeToRefs(store_rw);
 const { product: pro, products } = storeToRefs(store_pro);
 
 const dialogWidth = ref("");
@@ -82,6 +82,10 @@ const PlusProduct = () => {
       : 0, // Formatlashdan oldin faqat raqamni hisoblash
     manufactureDate: model.value.manufactureDate || "", // Agar mavjud bo‘lmasa, bo‘sh qiymat berish
     expireDate: model.value.expireDate || "", // Agar mavjud bo‘lmasa, bo‘sh qiymat berish
+    status:
+      ModalAction.value.action === "update"
+        ? "Yangi qo'shilgan"
+        : "Dastlab qo'shilgan",
   };
   model.value.products.push(product);
 };
@@ -91,7 +95,9 @@ const SaveValidate = async () => {
   if (!formRef.value) return;
   await formRef.value.validate((valid) => {
     if (valid === true) {
-      store_rw.Create(model.value);
+      console.log(model.value);
+
+      store_rw.Create({ model: model.value, action: ModalAction.value.action });
     } else {
       ElMessage.error("Iltimos barcha maydonlarni to'ldiring !");
       return false;
@@ -180,7 +186,7 @@ onMounted(async () => {
           <div class="flex items-center gap-2">
             <i class="fa-solid fa-box text-lg text-green-600"></i>
             <h3 class="text-xl font-semibold text-gray-500">
-              Mahsulot qo'shish
+              {{ ModalAction.title }}
             </h3>
           </div>
         </div>
@@ -919,7 +925,8 @@ onMounted(async () => {
               class="mb-1 col-span-3 w-auto text-center text-white text-[13px] font-semibold bg-green-500 rounded-[4px] px-4 py-[5px] hover:bg-green-600 cursor-pointer"
               @click="SaveValidate()"
             >
-              <i class="fa-solid fa-check mr-2 fa-md"></i> Saqlah
+              <i class="fa-solid fa-check mr-2 fa-md"></i>
+              {{ ModalAction.action === "create" ? "Saqlah" : "O'zgartirish" }}
             </div>
           </div>
         </div>

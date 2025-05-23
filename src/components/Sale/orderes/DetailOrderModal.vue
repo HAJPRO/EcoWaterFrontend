@@ -468,6 +468,20 @@ onMounted(async () => {
                 header-align="center"
                 align="center"
               />
+              <el-table-column
+                prop="packingType"
+                label="Qadoq"
+                :min-width="100"
+                :max-width="400"
+                header-align="center"
+                align="center"
+              >
+                <template #default="{ row }"
+                  ><div class="text-green-600">
+                    {{ row.packingType }}
+                  </div></template
+                ></el-table-column
+              >
 
               <el-table-column
                 prop="pro_quantity"

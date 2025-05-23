@@ -5,6 +5,10 @@ import { loading } from "../../../utils/Loader";
 import { th } from "element-plus/es/locale/index.mjs";
 export const ReadyWarehouseStore = defineStore("ReadyWarehouseStore", {
   state: () => ({
+    ModalAction: {
+      title: "",
+      action: ""
+    },
     partyId: "",
     detail_modal: false,
     transfer_modal: false,
@@ -26,12 +30,26 @@ export const ReadyWarehouseStore = defineStore("ReadyWarehouseStore", {
       this.GetOne(id);
       this.detail_modal = true;
     },
+    UpdateModal(id) {
+      this.partyId = id
+      this.GetOne(id);
+      this.product_modal = true;
+      this.ModalAction = {
+        title: `Partyani o'zgartirish`,
+        action: 'update'
+      }
+
+    },
     TransferModal(id) {
       this.transfer_modal = true;
     },
     async AddProductModal() {
       this.GetModel();
       this.product_modal = true;
+      this.ModalAction = {
+        title: `Mahsulot qo'shish`,
+        action: 'create'
+      }
     },
     async GetModel() {
       const data = await ReadyWarehouseService.GetModel();
@@ -50,6 +68,8 @@ export const ReadyWarehouseStore = defineStore("ReadyWarehouseStore", {
       const loader = loading.show();
       const data = await ReadyWarehouseService.GetAll(payload);
       this.products = data.data.products;
+      console.log(data.data);
+
       this.all_length = data.data.all_length;
 
       loader.hide();
@@ -63,9 +83,9 @@ export const ReadyWarehouseStore = defineStore("ReadyWarehouseStore", {
       loader.hide();
 
     },
-    async OutputProduct(payload) {
+    async OutputProduct(output) {
       // const loader = loading.show();
-      const data = await ReadyWarehouseService.OutputProduct({ ...payload, partyId: this.partyId });
+      const data = await ReadyWarehouseService.OutputProduct({ output, partyId: this.partyId });
       this.GetOne(this.partyId)
       // loader.hide();
       if (data.data.status === 404)

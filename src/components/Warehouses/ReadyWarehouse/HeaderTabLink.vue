@@ -10,7 +10,7 @@ const IsActive = (is_active) => {
 };
 
 const getAll = () => {
-  store_rw.GetAll({ status: isActive.value, page: 1, limit: 5 });
+  store_rw.GetAll({ status: isActive.value, page: 1, limit: 10 });
   IsActive(isActive.value);
 };
 const isActive = ref(1);

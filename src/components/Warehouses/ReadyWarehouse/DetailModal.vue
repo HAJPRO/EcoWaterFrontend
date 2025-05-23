@@ -1,6 +1,6 @@
 <script setup>
 import { ElMessage } from "element-plus";
-
+import { Check } from "@element-plus/icons-vue";
 import { onMounted, ref, computed, watch } from "vue";
 import { v4 as uuidv4 } from "uuid";
 import moment from "moment-timezone";
@@ -59,6 +59,9 @@ const ProductOutputModal = (id) => {
 
   // store_rw.TransferModal({ id, action: "output" });
 };
+const onDialogClose = () => {
+  transfer.value = false;
+};
 const OutputSave = (data) => {
   // 1. Chiqarilayotgan qiymat mavjudligini tekshirish
   if (
@@ -86,6 +89,46 @@ const OutputSave = (data) => {
   // ✅ Hammasi yaxshi bo‘lsa
   store_rw.OutputProduct(data);
 };
+const OutputSaveAll = () => {
+  const validRows = [];
+
+  for (const row of product.value.products) {
+    if (
+      row.outputQuantity === undefined ||
+      row.outputQuantity === null ||
+      row.outputQuantity === "" ||
+      isNaN(row.outputQuantity)
+    ) {
+      continue; // qiymat yo'q — tashlab ketamiz
+    }
+
+    if (Number(row.outputQuantity) <= 0) {
+      ElMessage.error(
+        `Qiymat 0 yoki manfiy bo'lishi mumkin emas (Mahsulot: ${row.product})`
+      );
+      return;
+    }
+
+    if (Number(row.outputQuantity) > Number(row.quantity)) {
+      ElMessage.error(
+        `Mahsulot: ${row.product} — chiqarilayotgan miqdor mavjudidan oshib ketdi`
+      );
+      return;
+    }
+
+    validRows.push(row);
+  }
+
+  if (validRows.length === 0) {
+    ElMessage.warning("Hech qanday to'g'ri kiritilgan qator yo‘q");
+    return;
+  }
+
+  // Barchasini backendga yuborish (yoki store orqali)
+  store_rw.OutputProduct(validRows); // bu siz yaratadigan massiv saqlovchi funksiya
+
+  ElMessage.success("Barcha to‘g‘ri kiritilgan miqdorlar saqlandi");
+};
 
 const ProductInputModal = (id) => {
   store_rw.TransferModal({ id, action: "input" });
@@ -93,6 +136,7 @@ const ProductInputModal = (id) => {
 const ReturnProduct = (id) => {
   console.log("vazvirat id : ", id);
 };
+const recipientes = ref([{ id: 1, name: "Sklad 2" }]);
 onMounted(async () => {
   try {
   } catch (error) {
@@ -108,6 +152,7 @@ onMounted(async () => {
       :width="dialogWidth"
       :before-close="handleClose"
       class="rounded-md p-4 shadow-lg custom-modal"
+      @close="onDialogClose"
     >
       <template #header>
         <div class="flex items-center justify-between border-b pb-1">
@@ -311,16 +356,44 @@ onMounted(async () => {
                 </div></template
               ></el-table-column
             >
-
             <el-table-column
               fixed="right"
-              v-if="transfer"
-              :min-width="300"
+              label="Holati"
+              :min-width="170"
               :max-width="400"
               header-align="center"
-              prop="outputQuantity"
               align="center"
-              label="Chiqarilayotgan miqdor"
+            >
+              <template #default="{ row }">
+                <router-link
+                  to=""
+                  :class="[
+                    'cursor-pointer inline-flex items-center gap-1 hover:bg-opacity-90 font-medium rounded-md text-[12px] w-full p-[5px] sm:w-auto text-center',
+                    row.status
+                      ? 'bg-green-200 text-green-900'
+                      : 'bg-red-200 text-red-900',
+                  ]"
+                >
+                  <i
+                    :class="
+                      row.status
+                        ? 'fa-solid fa-circle-check text-green-700'
+                        : 'fa-solid fa-hourglass-start text-red-700'
+                    "
+                  ></i>
+                  {{ row.status ? row.status : "Dastlab kiritilgan" }}
+                </router-link>
+              </template>
+            </el-table-column>
+            <el-table-column
+              fixed="right"
+              v-if="transfer && Title === `Kiritilgan`"
+              :min-width="600"
+              :max-width="800"
+              header-align="center"
+              prop="outputInfo"
+              align="center"
+              label="Mahsulot chiqarish malumotlari"
             >
               <template #default="{ row }">
                 <div class="flex gap-2 items-center text-center">
@@ -328,9 +401,76 @@ onMounted(async () => {
                     v-model="row.outputQuantity"
                     type="number"
                     placeholder="Miqdor kiriting"
+                    :rules="[
+                      {
+                        required: true,
+                        message: 'Miqdorni kiriting',
+                        trigger: 'blur',
+                      },
+                    ]"
                   />
+                  <el-select
+                    v-model="row.outputRecipient"
+                    placeholder="Qayerga chiqarilyapti"
+                    size="smal"
+                    style="width: 100%"
+                    @change="ChangeProductName($event)"
+                  >
+                    <template #prefix>
+                      <i
+                        @click.stop="AddProductNameModal()"
+                        class="fa-solid fa-plus cursor-pointer"
+                      ></i>
+                    </template>
+                    <el-option
+                      v-for="item in recipientes"
+                      :key="item.id"
+                      :label="item.name"
+                      :value="item.name"
+                    >
+                      <template #default>
+                        <div class="flex justify-between items-center w-full">
+                          <span>{{ item.name }}</span>
+                          <i
+                            class="fa-solid fa-trash text-red-500 cursor-pointer fa-xs ml-8"
+                            @click.stop="RemoveItem(item.id)"
+                          ></i>
+                        </div>
+                      </template>
+                    </el-option>
+                  </el-select>
+                  <el-select
+                    v-model="row.outputResponsible"
+                    placeholder="Masul xodim"
+                    size="smal"
+                    style="width: 100%"
+                    @change="ChangeProductName($event)"
+                  >
+                    <template #prefix>
+                      <i
+                        @click.stop="AddProductNameModal()"
+                        class="fa-solid fa-plus cursor-pointer"
+                      ></i>
+                    </template>
+                    <el-option
+                      v-for="item in recipientes"
+                      :key="item.id"
+                      :label="item.name"
+                      :value="item.name"
+                    >
+                      <template #default>
+                        <div class="flex justify-between items-center w-full">
+                          <span>{{ item.name }}</span>
+                          <i
+                            class="fa-solid fa-trash text-red-500 cursor-pointer fa-xs ml-8"
+                            @click.stop="RemoveItem(item.id)"
+                          ></i>
+                        </div>
+                      </template>
+                    </el-option>
+                  </el-select>
                   <div
-                    class="mb-1 col-span-3 w-auto text-center text-white text-[12px] font-semibold bg-purple-500 rounded-[4px] px-3 py-[4px] hover:bg-purple-600 cursor-pointer"
+                    class="mb-1 col-span-3 w-auto text-center text-white text-[12px] font-semibold bg-indigo-500 rounded-[4px] px-3 py-[4px] hover:bg-indigo-600 cursor-pointer"
                     @click="OutputSave(row)"
                   >
                     Saqlash
@@ -338,6 +478,7 @@ onMounted(async () => {
                 </div>
               </template>
             </el-table-column>
+
             <el-table-column
               fixed="right"
               prop="id"
@@ -452,6 +593,7 @@ onMounted(async () => {
               </template>
             </el-table-column>
           </el-table>
+
           <div
             class="bg-white text-gray-600 text-[12px] font-semibold px-4 py-1 text-center flex items-center justify-between"
           >
@@ -498,6 +640,14 @@ onMounted(async () => {
             >
               <i class="fa-solid fa-xmark mr-2 fa-md"></i> Bekor qilish
             </div> -->
+
+            <div
+              v-if="transfer && Title === 'Kiritilgan'"
+              class="mb-1 col-span-3 w-auto text-center text-white text-[13px] font-semibold bg-purple-500 rounded-[4px] px-4 py-[5px] hover:bg-purple-600 cursor-pointer"
+              @click="OutputSaveAll()"
+            >
+              <i class="fa-solid fa-check mr-2 fa-md"></i> Barchasini saqlash
+            </div>
             <div
               class="mb-1 col-span-3 w-auto text-center text-white text-[13px] font-semibold bg-green-500 rounded-[4px] px-4 py-[5px] hover:bg-green-600"
               @click="printData()"

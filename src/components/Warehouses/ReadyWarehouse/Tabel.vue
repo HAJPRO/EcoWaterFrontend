@@ -12,7 +12,7 @@ import moment from "moment-timezone";
 const store_rw = ReadyWarehouseStore();
 import { storeToRefs } from "pinia";
 
-const { all_length, products } = storeToRefs(store_rw);
+const { all_length, products, isActive } = storeToRefs(store_rw);
 
 const addProductModal = () => {
   store_rw.AddProductModal();
@@ -20,15 +20,15 @@ const addProductModal = () => {
 const detailModal = (id) => {
   store_rw.DetailModal({ id });
 };
-// const handleCurrentChange = (page) => {
-//   store.GetAll({status : isActive.value, page : page, limit:5});
-// };
-// const deleteById = (id) => {
-//   store.DeleteById({id});
-// };
-// const UpdateById = (id) => {
-//   store.GetById({id});
-// };
+const handleCurrentChange = (page) => {
+  store_rw.GetAll({ status: isActive.value, page: page, limit: 10 });
+};
+const deleteById = (id) => {
+  store_rw.DeleteById({ id });
+};
+const UpdateById = (id) => {
+  store_rw.UpdateModal({ id });
+};
 const formatPrice = (price) => {
   return new Intl.NumberFormat("uz-UZ").format(price);
 };
@@ -75,9 +75,14 @@ onMounted(() => {
             :max-width="400"
             header-align="center"
             align="center"
-            ><template #default="{ row }"
-              ><div class="text-red-500 font-semibold">
-                {{ row.partyNumber }}
+            ><template #default="{ row }">
+              <div class="text-red-500 cursor-pointer hover:underline">
+                <router-link
+                  to=""
+                  class="cursor-pointer inline-flex items-center text-red bg-[#e4e9e9] hover:bg-[#d7ebeb] font-medium rounded-md text-[12px] w-ful p-[5px] sm:w-auto text-center"
+                >
+                  {{ row.partyNumber }}
+                </router-link>
               </div></template
             ></el-table-column
           >
@@ -190,12 +195,28 @@ onMounted(() => {
             header-align="center"
             align="center"
           >
-            <template #default="scope">
+            <template #default="{ row }">
               <router-link
                 to=""
-                class="cursor-pointer inline-flex items-center text-red bg-[#e4e9e9] hover:bg-[#d7ebeb] font-medium rounded-md text-[12px] w-ful p-[5px] sm:w-auto text-center"
+                :class="[
+                  'cursor-pointer inline-flex items-center gap-1 hover:bg-opacity-90 font-medium rounded-md text-[12px] w-full p-[5px] sm:w-auto text-center',
+                  row.totalRemainderPrice === 0
+                    ? 'bg-red-200 text-red-900'
+                    : 'bg-green-200 text-green-900',
+                ]"
               >
-                {{ scope.row.status }}
+                <i
+                  :class="
+                    row.totalRemainderPrice === 0
+                      ? 'fa-solid fa-hourglass-start text-red-700'
+                      : 'fa-solid fa-circle-check text-green-700'
+                  "
+                ></i>
+                {{
+                  row.totalRemainderPrice === 0
+                    ? "Mahsulot qolmagan"
+                    : row.status
+                }}
               </router-link>
             </template>
           </el-table-column>
@@ -231,7 +252,9 @@ onMounted(() => {
                       @click="detailModal(row._id)"
                       ><template #default=""
                         ><div>
-                          <i class="text-black fa-solid fa-eye fa-sm mr-2"></i
+                          <i
+                            class="text-black fa-solid fa-magnifying-glass fa-sm mr-2"
+                          ></i
                           >Batafsil
                         </div>
                       </template></el-dropdown-item
@@ -248,7 +271,16 @@ onMounted(() => {
                         </div>
                       </template></el-dropdown-item
                     > -->
-
+                    <el-dropdown-item
+                      class="text-[13px] text-indigo-600"
+                      @click="UpdateById(row._id)"
+                      ><template #default="{}"
+                        ><div>
+                          <i class="text-black fa-solid fa-pen fa-sm mr-1"></i>
+                          O'zgatirish
+                        </div>
+                      </template></el-dropdown-item
+                    >
                     <el-dropdown-item
                       class="text-[13px] text-yellow-500"
                       @click="ExportExcel(row._id)"
@@ -261,16 +293,7 @@ onMounted(() => {
                         </div>
                       </template></el-dropdown-item
                     >
-                    <el-dropdown-item
-                      class="text-[13px] text-indigo-600"
-                      @click="UpdateById(row._id)"
-                      ><template #default="{}"
-                        ><div>
-                          <i class="text-black fa-solid fa-pen fa-sm mr-1"></i>
-                          O'zgatirish
-                        </div>
-                      </template></el-dropdown-item
-                    >
+
                     <el-dropdown-item
                       @click="deleteById(row._id)"
                       class="text-red-500 text-[13px]"
