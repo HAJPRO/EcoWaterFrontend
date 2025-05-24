@@ -2,7 +2,7 @@ import api from "@/helpers/api";
 // import $api from "../../helpers/$api";
 
 export const DriverManagmentService = {
-   
+
     Create(state) {
         let url = "sale/managment/create";
         return api.post(url, state);

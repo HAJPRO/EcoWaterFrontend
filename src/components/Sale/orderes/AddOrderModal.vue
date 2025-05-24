@@ -1,23 +1,23 @@
 <script setup>
-import MapView from "../../Customers/customerManagment/MapView.vue";
 import AddCustomerModal from "../../Customers/customerManagment/AddCustomModal.vue";
 import { ElMessage } from "element-plus";
 import { onMounted, ref, computed } from "vue";
 import { v4 as uuidv4 } from "uuid";
 import { CustomerManagmentStore } from "../../../stores/Customers/c-managment/customer.store";
 import { OrderManagmentStore } from "../../../stores/Sale/orders/orders.store";
+import { ProductsManagmentStore } from "../../../stores/Sale/products/product.store";
 
 import { AddressStore } from "../../../stores/Helpers/address/address.store";
 const store_address = AddressStore();
 const store_customers = CustomerManagmentStore();
 const store_orders = OrderManagmentStore();
+const store_products = ProductsManagmentStore();
 
 import { storeToRefs } from "pinia";
 const { regions, districts, neighborhoods } = storeToRefs(store_address);
 const { custom_modal, modal, action, customers } = storeToRefs(store_customers);
 const { order_modal, model } = storeToRefs(store_orders);
-console.log(customers.value);
-
+const { products: productsOptions } = storeToRefs(store_products);
 const dialogWidth = ref("");
 window.addEventListener("devicemotion", () => {
   dialogWidth.value =
@@ -46,8 +46,15 @@ window.addEventListener("resize", () => {
 const formatPrice = (price) => {
   return new Intl.NumberFormat("uz-UZ").format(price);
 };
-
-
+const packingTypes = ref([
+  { id: 1, name: "0.5 l" },
+  { id: 2, name: "1 l" },
+  { id: 3, name: "1.5 l" },
+  { id: 4, name: "2 l" },
+  { id: 6, name: "5 l" },
+  { id: 7, name: "10 l" },
+  { id: 8, name: "20 l" },
+]);
 const AddCustomeModal = () => {
   store_customers.AddCustomModal();
 };
@@ -58,23 +65,19 @@ const ChangeCustomerFullname = async (id) => {
 const ChangeProductType = async (e) => {
   model.value.product.pro_type = e;
 };
-const ChangeProductName = async (e) => {
-  model.value.product.pro_name = e;
-};
+// const ChangeProductName = async (e) => {
+//   model.value.product.pro_name = e;
+// };
 
 const units = ref([
   { id: 1, name: "Litr" },
   { id: 2, name: "Dona" },
   { id: 3, name: "Blok" },
 ]);
-const productsName = ref([
-  { id: 1, type : "Gazli", name: "Kola 0.5 l" },
-  { id: 2, type : "Gazli",  name: "Chortoq 1.5 l" },
-  { id: 3, type : "Gazli", name: "Fanta 1 l" },
-]);
+
 const productsType = ref([
   { id: 1, name: "Gazli" },
-  { id: 2,  name: "Gazsiz" },
+  { id: 2, name: "Gazsiz" },
   { id: 3, name: "Sharbatlar" },
 ]);
 
@@ -82,7 +85,11 @@ const formRef = ref();
 const PlusValidate = async (formRef) => {
   await formRef.validate((valid) => {
     if (valid === true) {
-      store_orders.Create({ products : products.value, customerId  : modal.value.model._id, totalAmount : pro_total_price.value });
+      store_orders.Create({
+        products: products.value,
+        customerId: modal.value.model._id,
+        totalAmount: pro_total_price.value,
+      });
     } else {
       ElMessage.error("Iltimos barcha maydonlarni to'ldiring !");
       return false;
@@ -103,13 +110,13 @@ const PlusProductValidate = async (formRef) => {
 };
 const products = ref([]);
 const PlusProduct = () => {
-  
   if (
     model.value.product.pro_quantity === "" ||
     model.value.product.pro_price === "" ||
     model.value.product.pro_name === "" ||
     model.value.product.pro_type === "" ||
-    model.value.product.pro_unit === ""
+    model.value.product.pro_unit === "" ||
+    model.value.product.packingType === ""
   ) {
     ElMessage.error("Iltimos barcha maydonlarni to'ldiring !");
     return (products.value = []);
@@ -146,8 +153,42 @@ const rules = ref({
   trigger: "blur",
 });
 
-let map = ref(null);
+const pakings = ref();
+const SelectedProduct = ref();
+const ChangeProductName = (value) => {
+  const selectedProduct = productsOptions.value.find(
+    (item) => item.pro_name === value
+  );
+  if (selectedProduct) {
+    model.value.category = selectedProduct.pro_category;
+    // model.value.code = selectedProduct.code;
+    pakings.value = selectedProduct.products;
+    SelectedProduct.value = selectedProduct;
+
+    model.value.product.pro_name = value;
+  }
+};
+const changedProduct = ref();
+const ChangePackingType = (value) => {
+  if (SelectedProduct.value) {
+    const selectedPacking = SelectedProduct.value.products.find(
+      (item) => item.packingType === value
+    );
+    changedProduct.value = selectedPacking;
+  }
+};
+const ChangeUnitType = (value) => {
+  if (changedProduct.value) {
+    if (value === "Blok") {
+      model.value.product.pro_price = changedProduct.value.block_buying_price;
+    }
+    if (value === "Dona") {
+      model.value.product.pro_price = changedProduct.value.buying_price;
+    }
+  }
+};
 onMounted(async () => {
+  store_products.GetAll({ status: 0 });
   try {
   } catch (error) {
     console.log(error);
@@ -195,7 +236,6 @@ onMounted(async () => {
                     placeholder="..."
                     size="smal"
                     style="width: 100%"
-                 
                     @change="ChangeCustomerFullname($event)"
                   >
                     <template #prefix>
@@ -223,12 +263,8 @@ onMounted(async () => {
                   </el-select>
                 </el-form-item>
               </div>
-              <div class="mb-1 col-span-6">
-                <el-form-item
-                  label="Kategoryasi"
-                  prop="customer.category"
-                 
-                >
+              <!-- <div class="mb-1 col-span-6">
+                <el-form-item label="Kategoryasi" prop="customer.category">
                   <el-select
                     disabled
                     v-model="modal.model.category"
@@ -328,7 +364,6 @@ onMounted(async () => {
                 <el-form-item
                   label="Registratsiya vaqti"
                   prop="customer.registeredAt"
-                 
                 >
                   <el-date-picker
                     disabled
@@ -359,7 +394,6 @@ onMounted(async () => {
                 <el-form-item
                   label="Pasport serya"
                   prop="customer.passportNumber"
-                 
                 >
                   <el-input
                     disabled
@@ -372,7 +406,7 @@ onMounted(async () => {
                     placeholder="AB4567898"
                   />
                 </el-form-item>
-              </div>
+              </div> -->
               <div class="mb-1 col-span-4">
                 <el-form-item label="Telefon" prop="customer.phoneNumber">
                   <el-input
@@ -391,11 +425,7 @@ onMounted(async () => {
                 </el-form-item>
               </div>
               <div class="mb-1 col-span-4">
-                <el-form-item
-                  label="Viloyat"
-                  prop="customer.address.region"
-                 
-                >
+                <el-form-item label="Viloyat" prop="customer.address.region">
                   <el-select
                     disabled
                     v-model="modal.model.address.region"
@@ -435,12 +465,8 @@ onMounted(async () => {
                   </el-select>
                 </el-form-item>
               </div>
-              <div class="mb-1 col-span-3">
-                <el-form-item
-                  label="Tuman"
-                  prop="customer.address.district"
-                 
-                >
+              <div class="mb-1 col-span-4">
+                <el-form-item label="Tuman" prop="customer.address.district">
                   <el-select
                     disabled
                     v-model="modal.model.address.district"
@@ -480,11 +506,10 @@ onMounted(async () => {
                   </el-select>
                 </el-form-item>
               </div>
-              <div class="mb-1 col-span-3">
+              <div class="mb-1 col-span-4">
                 <el-form-item
                   label="Mahalla"
                   prop="customer.address.neighborhood"
-                 
                 >
                   <el-select
                     disabled
@@ -525,12 +550,8 @@ onMounted(async () => {
                   </el-select>
                 </el-form-item>
               </div>
-              <div class="mb-1 col-span-3">
-                <el-form-item
-                  label="Ko'cha"
-                  prop="customer.address.street"
-                 
-                >
+              <div class="mb-1 col-span-4">
+                <el-form-item label="Ko'cha" prop="customer.address.street">
                   <el-select
                     disabled
                     v-model="modal.model.address.street"
@@ -571,7 +592,7 @@ onMounted(async () => {
                 </el-form-item>
               </div>
 
-              <div class="mb-1 col-span-3">
+              <div class="mb-1 col-span-4">
                 <el-form-item label="Uy" prop="customer.address.house">
                   <el-input
                     required
@@ -582,6 +603,18 @@ onMounted(async () => {
                     size="smal"
                     type="Number"
                     placeholder="..."
+                  />
+                </el-form-item>
+              </div>
+              <div class="mb-1 col-span-12">
+                <el-form-item label="Qo'shimcha ma'lumot" prop="discription">
+                  <el-input
+                    disabled
+                    type="textarea"
+                    v-model="modal.model.discription"
+                    placeholder="Bu yerga yozing..."
+                    :rows="4"
+                    clearable
                   />
                 </el-form-item>
               </div>
@@ -597,6 +630,45 @@ onMounted(async () => {
               Buyurtma ma'lumotlari
             </h1>
             <div class="grid grid-cols-12 gap-1">
+              <div class="mb-1 col-span-4">
+                <el-form-item
+                  label="Mahsulot nomi"
+                  prop="product.pro_name"
+                  :rules="rules"
+                >
+                  <el-select
+                    v-model="model.product.pro_name"
+                    placeholder="..."
+                    size="smal"
+                    style="width: 100%"
+                    @click="Type({ type: `color` })"
+                    @change="ChangeProductName($event)"
+                  >
+                    <template #prefix>
+                      <i
+                        @click.stop="AddCustomeModall()"
+                        class="fa-solid fa-plus cursor-pointer"
+                      ></i>
+                    </template>
+                    <el-option
+                      v-for="item in productsOptions"
+                      :key="item._id"
+                      :label="item.pro_name"
+                      :value="item.pro_name"
+                    >
+                      <template #default>
+                        <div class="flex justify-between items-center w-full">
+                          <span>{{ item.pro_name }}</span>
+                          <i
+                            class="fa-solid fa-trash text-red-500 cursor-pointer fa-xs ml-8"
+                            @click.stop="RemoveItem(item.id)"
+                          ></i>
+                        </div>
+                      </template>
+                    </el-option>
+                  </el-select>
+                </el-form-item>
+              </div>
               <div class="mb-1 col-span-4">
                 <el-form-item
                   label="Mahsulot turi"
@@ -636,38 +708,44 @@ onMounted(async () => {
                   </el-select>
                 </el-form-item>
               </div>
-              <div class="mb-1 col-span-4">
+
+              <div class="mb-1 col-span-2">
                 <el-form-item
-                  label="Mahsulot nomi"
-                  prop="product.pro_name"
+                  label="Qadoq turi"
+                  prop="product.packingType"
                   :rules="rules"
                 >
                   <el-select
-                    v-model="model.product.pro_name"
+                    v-model="model.product.packingType"
                     placeholder="..."
                     size="smal"
                     style="width: 100%"
-                    @click="Type({ type: `color` })"
-                    @change="ChangeProductName($event)"
+                    @click="Type({ type: `packingType` })"
+                    @change="ChangePackingType($event)"
                   >
                     <template #prefix>
                       <i
-                        @click.stop="AddCustomeModall()"
+                        @click.stop="
+                          Plus({
+                            title: `Buyurtmachi kategoryasini qo'shish`,
+                            state: `packingType`,
+                          })
+                        "
                         class="fa-solid fa-plus cursor-pointer"
                       ></i>
                     </template>
                     <el-option
-                      v-for="item in productsName"
+                      v-for="item in pakings"
                       :key="item.id"
-                      :label="item.name"
-                      :value="item.name"
+                      :label="item.packingType"
+                      :value="item.packingType"
                     >
                       <template #default>
                         <div class="flex justify-between items-center w-full">
-                          <span>{{ item.name }}</span>
+                          <span>{{ item.packingType }}</span>
                           <i
                             class="fa-solid fa-trash text-red-500 cursor-pointer fa-xs ml-8"
-                            @click.stop="RemoveItem(item.id)"
+                            @click.stop="RemoveItem(item._id)"
                           ></i>
                         </div>
                       </template>
@@ -675,33 +753,19 @@ onMounted(async () => {
                   </el-select>
                 </el-form-item>
               </div>
-
-              <div class="mb-1 col-span-4">
+              <div class="mb-1 col-span-2">
                 <el-form-item
-                  label="Miqdori"
-                  prop="product.pro_quantity"
+                  label="Birligi"
+                  prop="product.pro_unit"
                   :rules="rules"
                 >
-                  <el-input
-                    required
-                    v-model="model.product.pro_quantity"
-                    clearable
-                    class="w-[100%]"
-                    size="smal"
-                    type="number"
-                    maxlength="9"
-                    placeholder="..."
-                  />
-                </el-form-item>
-              </div>
-              <div class="mb-1 col-span-4">
-                <el-form-item label="Birligi" prop="product.pro_unit" :rules="rules">
                   <el-select
                     v-model="model.product.pro_unit"
                     placeholder="..."
                     size="smal"
                     style="width: 100%"
                     @click="Type({ type: `color` })"
+                    @change="ChangeUnitType($event)"
                   >
                     <template #prefix>
                       <i
@@ -728,6 +792,25 @@ onMounted(async () => {
                   </el-select>
                 </el-form-item>
               </div>
+              <div class="mb-1 col-span-4">
+                <el-form-item
+                  label="Miqdori"
+                  prop="product.pro_quantity"
+                  :rules="rules"
+                >
+                  <el-input
+                    required
+                    v-model="model.product.pro_quantity"
+                    clearable
+                    class="w-[100%]"
+                    size="smal"
+                    type="number"
+                    maxlength="9"
+                    placeholder="..."
+                  />
+                </el-form-item>
+              </div>
+
               <div class="mb-1 col-span-4">
                 <el-form-item
                   label="Narxi (sum)"
@@ -782,8 +865,8 @@ onMounted(async () => {
               }"
               border
               stripe
-               highlight-current-row
-               class="gradient-header-table rounded-none"
+              highlight-current-row
+              class="gradient-header-table rounded-none"
               load
               style="font-size: 12px"
               size="small"
@@ -818,6 +901,14 @@ onMounted(async () => {
               <el-table-column
                 prop="pro_name"
                 label="Nomi"
+                :min-width="100"
+                :max-width="400"
+                header-align="center"
+                align="center"
+              />
+              <el-table-column
+                prop="packingType"
+                label="Qadoq"
                 :min-width="100"
                 :max-width="400"
                 header-align="center"
@@ -948,7 +1039,11 @@ onMounted(async () => {
   width: 100%;
 }
 .gradient-header-table ::v-deep .el-table__header {
-  background-image: linear-gradient(to right, #3b82f6, #6366f1); /* from-blue-500 to-indigo-500 */
+  background-image: linear-gradient(
+    to right,
+    #3b82f6,
+    #6366f1
+  ); /* from-blue-500 to-indigo-500 */
   color: white;
 }
 </style>

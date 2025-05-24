@@ -10,7 +10,8 @@ const store_customers = CustomerManagmentStore();
 
 import { storeToRefs } from "pinia";
 const { regions, districts, neighborhoods } = storeToRefs(store_address);
-const { custom_modal, modal, action } = storeToRefs(store_customers);
+const { custom_modal, modal, action, TitleAction } =
+  storeToRefs(store_customers);
 const dialogWidth = ref("");
 window.addEventListener("devicemotion", () => {
   dialogWidth.value =
@@ -43,9 +44,7 @@ const handleLocation = (coords) => {
 const SelectRegion = () => {
   store_address.Regions();
 };
-const SelectNeighborhood = () => {
-  store_address.Neighborhoods();
-};
+
 const categoryes = ref([
   { id: 1, name: "Jismoniy shaxs" },
   { id: 2, name: "Davlat tashkiloti" },
@@ -82,30 +81,28 @@ const PlusValidate = async (formRef) => {
     }
   });
 };
-// const Save = async () => {
-//   try {
-//     if (
-//       order.value.products.length <= 0 &&
-//       order.value.accessorys.length <= 0
-//     ) {
-//       return ToastifyService.ToastError({ msg: "Mahsulot qo'shilmagan !" });
-//     } else {
-//       store_orders.Create({ ...order.value, create: true });
-//     }
-//   } catch (error) {
-//     return ToastifyService.ToastError({ msg: error.message });
-//   }
-// };
+
 const rules = ref({
   required: true,
   message: `Maydon to'ldirilishi zarur !`,
   trigger: "blur",
 });
+const onInput = (value) => {
+  // faqat raqamlarni qoldiramiz
+  modal.model.artikul = value.replace(/[^0-9]/g, "").slice(0, 4);
+  modal.model.inn = value.replace(/[^0-9]/g, "").slice(0, 9);
+};
 const ChangeRegion = async (e) => {
-  const districts = await store_address.Districts(e);
+  modal.value.model.address.region = e.name;
+  await store_address.Districts(e.id);
+};
+const ChangeDistrict = async (e) => {
+  modal.value.model.address.district = e.name;
+  await store_address.Neighborhoods(e.id);
 };
 const ChangeNeighborhood = async (e) => {
-  const neighborhoods = await store_address.Neighborhoods(e);
+  modal.value.model.address.neighborhood = e.name;
+  await store_address.Neighborhoods(e.id);
 };
 const is_map = ref(false);
 let map = ref(null);
@@ -125,8 +122,8 @@ onMounted(async () => {
         <div
           class="bg-slate-100 font-semibold text-[15px] p-1 mt-1 align-center text-center shadow rounded border-t-[1px] border-[#36d887]"
         >
-          <i class="fa-solid fa-user-plus fa-md mr-3"></i> Mijoz kartasini
-          shakillantirish
+          <i class="fa-solid fa-user-plus fa-md mr-3"></i>
+          {{ TitleAction.title }}
         </div>
         <el-form
           ref="formRef"
@@ -137,7 +134,7 @@ onMounted(async () => {
           label-position="top"
         >
           <!-- //  Asosiy ma'lumotlar -->
-          <div
+          <!-- <div
             class="mb-1 col-span-4 p-2 rounded-md border-[1px] border-[#36d887]"
           >
             <h1
@@ -208,15 +205,37 @@ onMounted(async () => {
                 </el-form-item>
               </div>
               <div class="mb-1 col-span-6">
-                <el-form-item label="Artikul" prop="artikul" :rules="rules">
+                <el-form-item
+                  label="Artikul"
+                  prop="artikul"
+                  :rules="[
+                    {
+                      required: true,
+                      message: 'Artikul kiritilishi shart',
+                      trigger: 'blur',
+                    },
+                    {
+                      pattern: /^[0-9]*$/,
+                      message: 'Faqat raqam kiriting',
+                      trigger: 'blur',
+                    },
+                    {
+                      min: 4,
+                      max: 4,
+                      message: 'Artikul 4 xonali bo‘lishi kerak',
+                      trigger: 'blur',
+                    },
+                  ]"
+                >
                   <el-input
-                    required
                     v-model="modal.model.artikul"
                     clearable
                     class="w-[100%]"
                     size="smal"
-                    type="String"
+                    type="text"
+                    maxlength="4"
                     placeholder="..."
+                    @input="onInput"
                   />
                 </el-form-item>
               </div>
@@ -305,21 +324,20 @@ onMounted(async () => {
                   </el-dialog>
                 </el-form-item>
               </div>
-          
             </div>
-          </div>
+          </div> -->
           <!-- //  Identifikatsiya ma’lumotlari -->
           <div
-            class="mb-1 col-span-8 bg-[#e8eded] p-2 rounded-md border-[1px] border-[#36d887]"
+            class="mb-1 col-span-12 bg-[#e8eded] p-2 rounded-md border-[1px] border-[#36d887]"
           >
-            <h1
+            <!-- <h1
               class="bg-slate-100 font-semibold text-[13px] p-1 mt-1 align-center text-center rounded-md border-t-[1px] border-[#36d887]"
             >
               Identifikatsiya ma’lumotlari
-            </h1>
+            </h1> -->
             <div class="grid grid-cols-12 gap-1">
-              <div class="mb-1 col-span-3">
-                <el-form-item label="INN" prop="inn" :rules="rules">
+              <!-- <div class="mb-1 col-span-3">
+                <el-form-item label="INN" prop="inn">
                   <el-input
                     required
                     v-model="modal.model.inn"
@@ -329,23 +347,32 @@ onMounted(async () => {
                     type="text"
                     maxlength="9"
                     placeholder="546789878"
+                    @input="onInput"
                   />
                 </el-form-item>
               </div>
               <div class="mb-1 col-span-3">
                 <el-form-item
-                  label="Pasport serya"
+                  label="Pasport seriyasi"
                   prop="passportNumber"
-                  :rules="rules"
+                  :rules="[
+                    {
+                      required: true,
+                      message: 'Pasport seriyasi kiritilishi shart',
+                      trigger: 'blur',
+                    },
+                    {
+                      pattern: /^[A-Za-z]{2}[0-9]{7}$/,
+                      message: 'Format: 2 harf + 7 raqam (masalan: AA1234567)',
+                      trigger: 'blur',
+                    },
+                  ]"
                 >
                   <el-input
-                    required
                     v-model="modal.model.passportNumber"
-                    clearable
-                    class="w-[100%]"
+                    maxlength="9"
+                    placeholder="AA1234567"
                     size="smal"
-                    type="String"
-                    placeholder="AB4567898"
                   />
                 </el-form-item>
               </div>
@@ -388,8 +415,25 @@ onMounted(async () => {
                     </el-option>
                   </el-select>
                 </el-form-item>
+              </div> -->
+              <div class="mb-1 col-span-4">
+                <el-form-item
+                  label="F.I.O / Korxona nomi"
+                  prop="fullname"
+                  :rules="rules"
+                >
+                  <el-input
+                    required
+                    v-model="modal.model.fullname"
+                    clearable
+                    class="w-[100%]"
+                    size="smal"
+                    type="String"
+                    placeholder="..."
+                  />
+                </el-form-item>
               </div>
-              <div class="mb-1 col-span-3">
+              <div class="mb-1 col-span-4">
                 <el-form-item
                   label="Viloyat"
                   prop="address.region"
@@ -416,9 +460,9 @@ onMounted(async () => {
                     </template>
                     <el-option
                       v-for="item in regions"
-                      :key="item.id"
+                      :key="item._id"
                       :label="item.name"
-                      :value="item.id"
+                      :value="item"
                     >
                       <template #default>
                         <div class="flex justify-between items-center w-full">
@@ -433,7 +477,7 @@ onMounted(async () => {
                   </el-select>
                 </el-form-item>
               </div>
-              <div class="mb-1 col-span-3">
+              <div class="mb-1 col-span-4">
                 <el-form-item
                   label="Tuman"
                   prop="address.district"
@@ -445,7 +489,7 @@ onMounted(async () => {
                     size="smal"
                     style="width: 100%"
                     @click="Type({ type: `color` })"
-                    @change="ChangeNeighborhood($event)"
+                    @change="ChangeDistrict($event)"
                   >
                     <template #prefix>
                       <i
@@ -462,7 +506,7 @@ onMounted(async () => {
                       v-for="item in districts"
                       :key="item._id"
                       :label="item.name"
-                      :value="item.id"
+                      :value="item"
                     >
                       <template #default>
                         <div class="flex justify-between items-center w-full">
@@ -506,7 +550,7 @@ onMounted(async () => {
                       v-for="item in neighborhoods"
                       :key="item.districtId"
                       :label="item.name"
-                      :value="item.districtId"
+                      :value="item"
                     >
                       <template #default>
                         <div class="flex justify-between items-center w-full">
@@ -527,49 +571,20 @@ onMounted(async () => {
                   prop="address.street"
                   :rules="rules"
                 >
-                  <el-select
-                    v-model="modal.model.address.street"
-                    placeholder="..."
-                    size="smal"
-                    style="width: 100%"
-                    @click="Type({ type: `color` })"
-                    @change="ChangeRegion($event)"
-                  >
-                    <template #prefix>
-                      <i
-                        @click.stop="
-                          Plus({
-                            title: `Mato rangi qo'shish`,
-                            state: `doc_type`,
-                          })
-                        "
-                        class="fa-solid fa-plus cursor-pointer"
-                      ></i>
-                    </template>
-                    <el-option
-                      v-for="item in neighborhoods"
-                      :key="item.name"
-                      :label="item.name"
-                      :value="item.name"
-                    >
-                      <template #default>
-                        <div class="flex justify-between items-center w-full">
-                          <span>{{ item.name }}</span>
-                          <i
-                            class="fa-solid fa-trash text-red-500 cursor-pointer fa-xs ml-8"
-                            @click.stop="RemoveItem(item._id)"
-                          ></i>
-                        </div>
-                      </template>
-                    </el-option>
-                  </el-select>
-                </el-form-item>
-              </div>
-
-              <div class="mb-1 col-span-3">
-                <el-form-item label="Uy" prop="address.house" :rules="rules">
                   <el-input
                     required
+                    v-model="modal.model.address.street"
+                    clearable
+                    class="w-[100%]"
+                    size="smal"
+                    type="text"
+                    placeholder="..."
+                  />
+                </el-form-item>
+              </div>
+              <div class="mb-1 col-span-3">
+                <el-form-item label="Uy" prop="address.house">
+                  <el-input
                     v-model="modal.model.address.house"
                     clearable
                     class="w-[100%]"
@@ -579,7 +594,7 @@ onMounted(async () => {
                   />
                 </el-form-item>
               </div>
-              <div class="mb-1 col-span-4">
+              <div class="mb-1 col-span-3">
                 <el-form-item label="Telefon" prop="phoneNumber" :rules="rules">
                   <el-input
                     v-model="modal.model.phoneNumber"
@@ -587,7 +602,8 @@ onMounted(async () => {
                     class="w-[100%]"
                     size="smal"
                     placeholder="93 _____ __ __"
-                    maxlength="17"
+                    maxlength="9"
+                    type="number"
                   >
                     <template #prefix>
                       <span>+998</span>
@@ -595,7 +611,7 @@ onMounted(async () => {
                   </el-input>
                 </el-form-item>
               </div>
-              <div class="mb-1 col-span-4">
+              <!-- <div class="mb-1 col-span-4">
                 <el-form-item label="Email" prop="email">
                   <el-input
                     v-model="modal.model.email"
@@ -608,8 +624,8 @@ onMounted(async () => {
                     :mask="'email'"
                   ></el-input>
                 </el-form-item>
-              </div>
-              <div class="mb-1 col-span-4">
+              </div> -->
+              <!-- <div class="mb-1 col-span-4">
                 <el-form-item label="Telegram" prop="telegram">
                   <el-input
                     v-model="modal.model.telegram"
@@ -622,8 +638,8 @@ onMounted(async () => {
                     :mask="'email'"
                   ></el-input>
                 </el-form-item>
-              </div>
-    <div class="mb-1 col-span-12">
+              </div> -->
+              <div class="mb-1 col-span-12">
                 <el-form-item label="Qo'shimcha ma'lumot" prop="discription">
                   <el-input
                     type="textarea"
@@ -634,32 +650,57 @@ onMounted(async () => {
                   />
                 </el-form-item>
               </div>
-              <div class="col-span-12 p-1 rounded-md">
+              <div class="mb-1 col-span-12">
                 <el-form-item
                   label="Manzilni xaritadan belgila"
                   prop="location"
                   :rules="rules"
                 >
-                <!-- <div v-if="is_map === false" >  <MapView  @locationSelected="handleLocation" /></div> -->
-                
+                  <!-- <div v-if="is_map === false" >  <MapView  @locationSelected="handleLocation" /></div> -->
+
                   <el-dialog
                     class="mt-10"
                     v-model="is_map"
                     title="Manzilni tanlang"
-                    width="1700px"
+                    width="1500px"
                   >
                     <MapView @locationSelected="handleLocation" />
                   </el-dialog>
                   <!-- Xarita -->
+
                   <div
-                    class="mb-1 mt-2 col-span-3 w-auto text-center text-white font-semibold bg-purple-600 rounded-[4px] px-4 py-[5px] hover:bg-purple-700 mr-2 cursor-pointer"
+                    class="mb-1 mt-2 col-span-1 w-auto text-white font-semibold bg-purple-600 rounded-[4px] items-center text-center px-4 py-[5px] hover:bg-purple-700 mr-2 cursor-pointer"
                     @click="is_map = !is_map"
                   >
                     <i class="fa-solid fa-map mr-2 fa-md"></i> Xaritani ochish
                   </div>
-                  <div class="flex justify-end gap-2">
-                <div class="bg-green-200 p-[5px] text-[12px] font-semibold rounded-[4px]">Kordinata (lat): {{  modal.model.location.lat ? modal.model.location.lat : 0}}</div>
-                  <div class="bg-red-200 p-[5px] text-[12px] font-semibold rounded-[4px]">Kordinata (long): {{modal.model.location.long ? modal.model.location.long  : 0}}</div>
+                  <div
+                    class="bg-green-200 col-span-1 w-auto p-[5px] text-[12px] font-semibold rounded-[4px]"
+                  >
+                    Kordinata (lat)
+
+                    <el-input
+                      v-model="modal.model.location.lat"
+                      clearable
+                      class="w-[100%]"
+                      size="smal"
+                      type="Number"
+                      placeholder="..."
+                    />
+                  </div>
+                  <div
+                    class="bg-red-200 col-span-1 w-auto p-[5px] text-[12px] font-semibold rounded-[4px]"
+                  >
+                    Kordinata (long)
+
+                    <el-input
+                      v-model="modal.model.location.long"
+                      clearable
+                      class="w-[100%]"
+                      size="smal"
+                      type="Number"
+                      placeholder="..."
+                    />
                   </div>
                 </el-form-item>
               </div>
@@ -678,7 +719,8 @@ onMounted(async () => {
               padding: 15px;
             "
           >
-            <i class="fa-solid fa-check mr-2 fa-md"></i>Saqlash
+            <i class="fa-solid fa-check mr-2 fa-md"></i
+            >{{ TitleAction.action === "create" ? "Saqlash" : "O'zgartirish" }}
           </el-button>
         </div>
       </span>

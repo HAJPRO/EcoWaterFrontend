@@ -16,8 +16,9 @@ const store_customers = CustomerManagmentStore();
 const store_orders = OrderManagmentStore();
 
 import { storeToRefs } from "pinia";
-const {  } = storeToRefs(store_customers);
-const { order_modal, order, model, order_detail_modal } = storeToRefs(store_orders);
+
+const { order_modal, order, model, order_detail_modal } =
+  storeToRefs(store_orders);
 
 const dialogWidth = ref("");
 window.addEventListener("devicemotion", () => {
@@ -69,7 +70,7 @@ onMounted(async () => {
 </script>
 <template>
   <AddCustomerModal v-if="custom_modal === true" />
-  <DriverBindingModal  />
+  <DriverBindingModal />
 
   <div>
     <el-dialog v-model="order_detail_modal" :width="dialogWidth" class="mt-2">
@@ -93,225 +94,322 @@ onMounted(async () => {
               Buyurtmachi ma'lumotlari
             </h1>
 
-      
- <ul class="mt-2 w-full flex gap-2 cursor-pointer flex-wrap">
-  <li 
-    class="w-auto p-1 bg-gradient-to-r from-green-500 via-blue-500 to-purple-600 rounded-md shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 flex items-center"
-  >
-    <span class="text-white font-semibold text-[12px] mr-2">1.</span>
-    <span class="text-white font-semibold text-[12px]">
-      {{order.customerId.fullname}}
-    </span>
-  </li>
- 
-   <li 
-    class="w-auto p-1 bg-gradient-to-r from-indigo-400 via-blue-500 to-purple-600 rounded-md shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 flex items-center"
-  >
-    <span class="text-white font-semibold text-[12px] mr-2">2.</span>
-    <span class="text-white font-semibold text-[12px]">
-      {{order.customerId.category}}
-    </span>
-  </li>
-   <li 
-    class="w-auto p-1 bg-gradient-to-r from-indigo-400 via-blue-500 to-purple-600 rounded-md shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 flex items-center"
-  >
-    <span class="text-white font-semibold text-[12px] mr-2">3.</span>
-    <span class="text-white font-semibold text-[12px]">
-      Artikul: {{order.customerId.artikul}}
-    </span>
-  </li>
-    <li 
-    class="w-auto p-1 bg-gradient-to-r from-indigo-400 via-blue-500 to-purple-600 rounded-md shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 flex items-center"
-  >
-    <span class="text-white font-semibold text-[12px] mr-2">4.</span>
-    <span class="text-white font-semibold text-[12px]">
-      Daraja: {{order.customerId.position}}
-    </span>
-  </li>
-    <li 
-    class="w-auto p-1 bg-gradient-to-r from-green-500 via-blue-500 to-purple-600 rounded-md shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 flex items-center"
-  >
-    <span class="text-white font-semibold text-[12px] mr-2">5.</span>
-    <span class="text-white font-semibold text-[12px]">
-      Reyting : {{order.customerId.ratings ? order.customerId.ratings : 0 }}
-    </span>
-  </li>
-   <li 
-    class="w-auto p-1 bg-gradient-to-r from-green-500 via-blue-500 to-purple-600 rounded-md shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 flex items-center"
-  >
-    <span class="text-white font-semibold text-[12px] mr-2">6.</span>
-    <span class="text-white font-semibold text-[12px]">
-      Passport : {{order.customerId.passportNumber ? order.customerId.passportNumber : '-' }}
-    </span>
-  </li>
-   <li 
-    class="w-auto p-1 bg-gradient-to-r from-indigo-400 via-blue-500 to-purple-600 rounded-md shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 flex items-center"
-  >
-    <span class="text-white font-semibold text-[12px] mr-2">7.</span>
-    <span class="text-white font-semibold text-[12px]">
-      INN : {{order.customerId.inn ? order.customerId.inn : '-' }}
-    </span>
-  </li>
+            <ul class="mt-2 w-full flex gap-2 cursor-pointer flex-wrap">
+              <li
+                class="w-auto p-1 bg-gradient-to-r from-green-500 via-blue-500 to-purple-600 rounded-md shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 flex items-center"
+              >
+                <span class="text-white font-semibold text-[12px] mr-2"
+                  >1.</span
+                >
+                <span class="text-white font-semibold text-[12px]">
+                  {{ order.customerId.fullname }}
+                </span>
+              </li>
 
-    <li 
-    class="w-auto p-1 bg-gradient-to-r from-indigo-400 via-blue-500 to-purple-600 rounded-md shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 flex items-center"
-  >
-    <span class="text-white font-semibold text-[12px] mr-2">8.</span>
-    <span class="text-white font-semibold text-[12px]">
-      Viloyat : {{order.customerId.address.region ? order.customerId.address.region : '-' }}
-    </span>
-  </li>
-    <li 
-    class="w-auto p-1 bg-gradient-to-r from-indigo-400 via-blue-500 to-purple-600 rounded-md shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 flex items-center"
-  >
-    <span class="text-white font-semibold text-[12px] mr-2">9.</span>
-    <span class="text-white font-semibold text-[12px]">
-      Tuman : {{order.customerId.address.district ? order.customerId.address.district : '-' }}
-    </span>
-  </li>
-   <li 
-    class="w-auto p-1 bg-gradient-to-r from-indigo-400 via-blue-500 to-purple-600 rounded-md shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 flex items-center"
-  >
-    <span class="text-white font-semibold text-[12px] mr-2">10.</span>
-    <span class="text-white font-semibold text-[12px]">
-      Mahalla : {{order.customerId.address.neighborhood ? order.customerId.address.neighborhood : '-' }}
-    </span>
-  </li>
-  <li 
-    class="w-auto p-1 bg-gradient-to-r from-indigo-400 via-blue-500 to-purple-600 rounded-md shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 flex items-center"
-  >
-    <span class="text-white font-semibold text-[12px] mr-2">11.</span>
-    <span class="text-white font-semibold text-[12px]">
-      Ko'cha : {{order.customerId.address.street ? order.customerId.address.street : '-' }}
-    </span>
-  </li>
-  <li 
-    class="w-auto p-1 bg-gradient-to-r from-indigo-400 via-blue-500 to-purple-600 rounded-md shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 flex items-center"
-  >
-    <span class="text-white font-semibold text-[12px] mr-2">12.</span>
-    <span class="text-white font-semibold text-[12px]">
-     Uy : {{order.customerId.address.house ? order.customerId.address.house : '-' }}
-    </span>
-  </li>
-  <li 
-    class="w-auto p-1 bg-gradient-to-r from-indigo-400 via-blue-500 to-purple-600 rounded-md shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 flex items-center"
-  >
-    <span class="text-white font-semibold text-[12px] mr-2">12.</span>
-    <span class="text-white font-semibold text-[12px]">
-     Kordinata : {{order.customerId.location.lat ? order.customerId.location.lat : '-' }} - {{order.customerId.location.long ? order.customerId.location.long : '-' }}
-    </span>
-  </li>
-   <li 
-    class="w-auto p-1 bg-gradient-to-r from-indigo-400 via-blue-500 to-purple-600 rounded-md shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 flex items-center"
-  >
-    <span class="text-white font-semibold text-[12px] mr-2">13.</span>
-    <span class="text-white font-semibold text-[12px]">
-     Telefon : {{order.customerId.phoneNumber ? order.customerId.phoneNumber : '-' }}
-    </span>
-  </li>
-   <li 
-    class="w-auto p-1 bg-gradient-to-r from-indigo-400 via-blue-500 to-purple-600 rounded-md shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 flex items-center"
-  >
-    <span class="text-white font-semibold text-[12px] mr-2">14.</span>
-    <span class="text-white font-semibold text-[12px]">
-     Email : {{order.customerId.email ? order.customerId.email : '-' }}
-    </span>
-  </li>
-    <li 
-    class="w-auto p-1 bg-gradient-to-r from-indigo-400 via-blue-500 to-purple-600 rounded-md shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 flex items-center"
-  >
-    <span class="text-white font-semibold text-[12px] mr-2">15.</span>
-    <span class="text-white font-semibold text-[12px]">
-     Telegram : {{order.customerId.telegram ? order.customerId.telegram : '-' }}
-    </span>
-  </li>
-     <li 
-    class="w-auto p-1 bg-gradient-to-r from-green-500 via-blue-500 to-purple-600 rounded-md shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 flex items-center"
-  >
-    <span class="text-white font-semibold text-[12px] mr-2">16.</span>
-    <span class="text-white font-semibold text-[12px]">
-     Registratsiya :    {{
-                order.customerId.registeredAt 
-                  ? moment
-                      .utc( order.customerId.registeredAt ) // 🟢 UTC formatda olish
-                      .tz("Asia/Tashkent") // 🟢 UTC+5 ga aylantirish
-                      .format("DD.MM.YYYY HH:mm:ss") // 🟢 To‘g‘ri formatda chiqarish
-                  : "-"
-              }}
-    </span>
-  </li>
-   <li 
-    class="w-auto p-1 bg-gradient-to-r from-indigo-400 via-blue-500 to-purple-600 rounded-md shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 flex items-center"
-  >
-    <span class="text-white font-semibold text-[12px] mr-2">17.</span>
-    <span class="text-white font-semibold text-[12px]">
-     Holati : {{order.customerId.status ? order.customerId.status : '-' }}
-    </span>
-  </li>
+              <li
+                class="w-auto p-1 bg-gradient-to-r from-indigo-400 via-blue-500 to-purple-600 rounded-md shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 flex items-center"
+              >
+                <span class="text-white font-semibold text-[12px] mr-2"
+                  >2.</span
+                >
+                <span class="text-white font-semibold text-[12px]">
+                  {{ order.customerId.category }}
+                </span>
+              </li>
+              <li
+                class="w-auto p-1 bg-gradient-to-r from-indigo-400 via-blue-500 to-purple-600 rounded-md shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 flex items-center"
+              >
+                <span class="text-white font-semibold text-[12px] mr-2"
+                  >3.</span
+                >
+                <span class="text-white font-semibold text-[12px]">
+                  Artikul: {{ order.customerId.artikul }}
+                </span>
+              </li>
+              <li
+                class="w-auto p-1 bg-gradient-to-r from-indigo-400 via-blue-500 to-purple-600 rounded-md shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 flex items-center"
+              >
+                <span class="text-white font-semibold text-[12px] mr-2"
+                  >4.</span
+                >
+                <span class="text-white font-semibold text-[12px]">
+                  Daraja: {{ order.customerId.position }}
+                </span>
+              </li>
+              <li
+                class="w-auto p-1 bg-gradient-to-r from-green-500 via-blue-500 to-purple-600 rounded-md shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 flex items-center"
+              >
+                <span class="text-white font-semibold text-[12px] mr-2"
+                  >5.</span
+                >
+                <span class="text-white font-semibold text-[12px]">
+                  Reyting :
+                  {{ order.customerId.ratings ? order.customerId.ratings : 0 }}
+                </span>
+              </li>
+              <li
+                class="w-auto p-1 bg-gradient-to-r from-green-500 via-blue-500 to-purple-600 rounded-md shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 flex items-center"
+              >
+                <span class="text-white font-semibold text-[12px] mr-2"
+                  >6.</span
+                >
+                <span class="text-white font-semibold text-[12px]">
+                  Passport :
+                  {{
+                    order.customerId.passportNumber
+                      ? order.customerId.passportNumber
+                      : "-"
+                  }}
+                </span>
+              </li>
+              <li
+                class="w-auto p-1 bg-gradient-to-r from-indigo-400 via-blue-500 to-purple-600 rounded-md shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 flex items-center"
+              >
+                <span class="text-white font-semibold text-[12px] mr-2"
+                  >7.</span
+                >
+                <span class="text-white font-semibold text-[12px]">
+                  INN : {{ order.customerId.inn ? order.customerId.inn : "-" }}
+                </span>
+              </li>
 
-    <li 
-    class="w-auto p-1 bg-gradient-to-r from-indigo-400 via-blue-500 to-purple-600 rounded-md shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 flex items-center"
-  >
-    <span class="text-white font-semibold text-[12px] mr-2">18.</span>
-    <span class="text-white font-semibold text-[12px]">
-    Buyurtmani yetkazib berish muddati :    {{
-                order.deliveryTime 
-                  ? moment
-                      .utc( order.deliveryTime ) // 🟢 UTC formatda olish
-                      .tz("Asia/Tashkent") // 🟢 UTC+5 ga aylantirish
-                      .format("DD.MM.YYYY HH:mm:ss") // 🟢 To‘g‘ri formatda chiqarish
-                  : "-"
-              }}
-    </span>
-  </li>
+              <li
+                class="w-auto p-1 bg-gradient-to-r from-indigo-400 via-blue-500 to-purple-600 rounded-md shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 flex items-center"
+              >
+                <span class="text-white font-semibold text-[12px] mr-2"
+                  >8.</span
+                >
+                <span class="text-white font-semibold text-[12px]">
+                  Viloyat :
+                  {{
+                    order.customerId.address.region
+                      ? order.customerId.address.region
+                      : "-"
+                  }}
+                </span>
+              </li>
+              <li
+                class="w-auto p-1 bg-gradient-to-r from-indigo-400 via-blue-500 to-purple-600 rounded-md shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 flex items-center"
+              >
+                <span class="text-white font-semibold text-[12px] mr-2"
+                  >9.</span
+                >
+                <span class="text-white font-semibold text-[12px]">
+                  Tuman :
+                  {{
+                    order.customerId.address.district
+                      ? order.customerId.address.district
+                      : "-"
+                  }}
+                </span>
+              </li>
+              <li
+                class="w-auto p-1 bg-gradient-to-r from-indigo-400 via-blue-500 to-purple-600 rounded-md shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 flex items-center"
+              >
+                <span class="text-white font-semibold text-[12px] mr-2"
+                  >10.</span
+                >
+                <span class="text-white font-semibold text-[12px]">
+                  Mahalla :
+                  {{
+                    order.customerId.address.neighborhood
+                      ? order.customerId.address.neighborhood
+                      : "-"
+                  }}
+                </span>
+              </li>
+              <li
+                class="w-auto p-1 bg-gradient-to-r from-indigo-400 via-blue-500 to-purple-600 rounded-md shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 flex items-center"
+              >
+                <span class="text-white font-semibold text-[12px] mr-2"
+                  >11.</span
+                >
+                <span class="text-white font-semibold text-[12px]">
+                  Ko'cha :
+                  {{
+                    order.customerId.address.street
+                      ? order.customerId.address.street
+                      : "-"
+                  }}
+                </span>
+              </li>
+              <li
+                class="w-auto p-1 bg-gradient-to-r from-indigo-400 via-blue-500 to-purple-600 rounded-md shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 flex items-center"
+              >
+                <span class="text-white font-semibold text-[12px] mr-2"
+                  >12.</span
+                >
+                <span class="text-white font-semibold text-[12px]">
+                  Uy :
+                  {{
+                    order.customerId.address.house
+                      ? order.customerId.address.house
+                      : "-"
+                  }}
+                </span>
+              </li>
+              <li
+                class="w-auto p-1 bg-gradient-to-r from-indigo-400 via-blue-500 to-purple-600 rounded-md shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 flex items-center"
+              >
+                <span class="text-white font-semibold text-[12px] mr-2"
+                  >12.</span
+                >
+                <span class="text-white font-semibold text-[12px]">
+                  Kordinata :
+                  {{
+                    order.customerId.location.lat
+                      ? order.customerId.location.lat
+                      : "-"
+                  }}
+                  -
+                  {{
+                    order.customerId.location.long
+                      ? order.customerId.location.long
+                      : "-"
+                  }}
+                </span>
+              </li>
+              <li
+                class="w-auto p-1 bg-gradient-to-r from-indigo-400 via-blue-500 to-purple-600 rounded-md shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 flex items-center"
+              >
+                <span class="text-white font-semibold text-[12px] mr-2"
+                  >13.</span
+                >
+                <span class="text-white font-semibold text-[12px]">
+                  Telefon :
+                  {{
+                    order.customerId.phoneNumber
+                      ? order.customerId.phoneNumber
+                      : "-"
+                  }}
+                </span>
+              </li>
+              <li
+                class="w-auto p-1 bg-gradient-to-r from-indigo-400 via-blue-500 to-purple-600 rounded-md shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 flex items-center"
+              >
+                <span class="text-white font-semibold text-[12px] mr-2"
+                  >14.</span
+                >
+                <span class="text-white font-semibold text-[12px]">
+                  Email :
+                  {{ order.customerId.email ? order.customerId.email : "-" }}
+                </span>
+              </li>
+              <li
+                class="w-auto p-1 bg-gradient-to-r from-indigo-400 via-blue-500 to-purple-600 rounded-md shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 flex items-center"
+              >
+                <span class="text-white font-semibold text-[12px] mr-2"
+                  >15.</span
+                >
+                <span class="text-white font-semibold text-[12px]">
+                  Telegram :
+                  {{
+                    order.customerId.telegram ? order.customerId.telegram : "-"
+                  }}
+                </span>
+              </li>
+              <li
+                class="w-auto p-1 bg-gradient-to-r from-green-500 via-blue-500 to-purple-600 rounded-md shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 flex items-center"
+              >
+                <span class="text-white font-semibold text-[12px] mr-2"
+                  >16.</span
+                >
+                <span class="text-white font-semibold text-[12px]">
+                  Registratsiya :
+                  {{
+                    order.customerId.registeredAt
+                      ? moment
+                          .utc(order.customerId.registeredAt) // 🟢 UTC formatda olish
+                          .tz("Asia/Tashkent") // 🟢 UTC+5 ga aylantirish
+                          .format("DD.MM.YYYY HH:mm:ss") // 🟢 To‘g‘ri formatda chiqarish
+                      : "-"
+                  }}
+                </span>
+              </li>
+              <li
+                class="w-auto p-1 bg-gradient-to-r from-indigo-400 via-blue-500 to-purple-600 rounded-md shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 flex items-center"
+              >
+                <span class="text-white font-semibold text-[12px] mr-2"
+                  >17.</span
+                >
+                <span class="text-white font-semibold text-[12px]">
+                  Holati :
+                  {{ order.customerId.status ? order.customerId.status : "-" }}
+                </span>
+              </li>
 
-     <li 
-    class="w-auto p-1 bg-gradient-to-r from-indigo-400 via-blue-500 to-purple-600 rounded-md shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 flex items-center"
-  >
-    <span class="text-white font-semibold text-[12px] mr-2">18.</span>
-    <span class="text-white font-semibold text-[12px]">
-    Buyurtma qabul qilingan vaqti :    {{
-                order.driverAcceptedTime 
-                  ? moment
-                      .utc( order.driverAcceptedTime ) // 🟢 UTC formatda olish
-                      .tz("Asia/Tashkent") // 🟢 UTC+5 ga aylantirish
-                      .format("DD.MM.YYYY HH:mm:ss") // 🟢 To‘g‘ri formatda chiqarish
-                  : "-"
-              }}
-    </span>
-  </li>
-    <li 
-    class="w-auto p-1 bg-gradient-to-r from-indigo-400 via-blue-500 to-purple-600 rounded-md shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 flex items-center"
-  >
-    <span class="text-white font-semibold text-[12px] mr-2">19.</span>
-    <span class="text-white font-semibold text-[12px]">
-    Buyurtma yetkazilgan vaqti :    {{
-                order.driverArrivedTime 
-                  ? moment
-                      .utc( order.driverArrivedTime ) // 🟢 UTC formatda olish
-                      .tz("Asia/Tashkent") // 🟢 UTC+5 ga aylantirish
-                      .format("DD.MM.YYYY HH:mm:ss") // 🟢 To‘g‘ri formatda chiqarish
-                  : "-"
-              }}
-    </span>
-  </li>
+              <li
+                class="w-auto p-1 bg-gradient-to-r from-indigo-400 via-blue-500 to-purple-600 rounded-md shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 flex items-center"
+              >
+                <span class="text-white font-semibold text-[12px] mr-2"
+                  >18.</span
+                >
+                <span class="text-white font-semibold text-[12px]">
+                  Buyurtmani yetkazib berish muddati :
+                  {{
+                    order.deliveryTime
+                      ? moment
+                          .utc(order.deliveryTime) // 🟢 UTC formatda olish
+                          .tz("Asia/Tashkent") // 🟢 UTC+5 ga aylantirish
+                          .format("DD.MM.YYYY HH:mm:ss") // 🟢 To‘g‘ri formatda chiqarish
+                      : "-"
+                  }}
+                </span>
+              </li>
 
-    <li 
-    class="w-auto p-1 bg-gradient-to-r from-green-500 via-blue-500 to-purple-600 rounded-md shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 flex items-center"
-  >
-    <span class="text-white font-semibold text-[12px] mr-2">20.</span>
-    <span class="text-white font-semibold text-[12px]">
-    Jami buyurtmalari soni :    {{
-                order.customerId.totalOrders 
-                  ? order.customerId.totalOrders
-                  : "0"
-              }}
-    </span>
-  </li>
-</ul>
+              <li
+                class="w-auto p-1 bg-gradient-to-r from-indigo-400 via-blue-500 to-purple-600 rounded-md shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 flex items-center"
+              >
+                <span class="text-white font-semibold text-[12px] mr-2"
+                  >18.</span
+                >
+                <span class="text-white font-semibold text-[12px]">
+                  Buyurtma qabul qilingan vaqti :
+                  {{
+                    order.driverAcceptedTime
+                      ? moment
+                          .utc(order.driverAcceptedTime) // 🟢 UTC formatda olish
+                          .tz("Asia/Tashkent") // 🟢 UTC+5 ga aylantirish
+                          .format("DD.MM.YYYY HH:mm:ss") // 🟢 To‘g‘ri formatda chiqarish
+                      : "-"
+                  }}
+                </span>
+              </li>
+              <li
+                class="w-auto p-1 bg-gradient-to-r from-indigo-400 via-blue-500 to-purple-600 rounded-md shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 flex items-center"
+              >
+                <span class="text-white font-semibold text-[12px] mr-2"
+                  >19.</span
+                >
+                <span class="text-white font-semibold text-[12px]">
+                  Buyurtma yetkazilgan vaqti :
+                  {{
+                    order.driverArrivedTime
+                      ? moment
+                          .utc(order.driverArrivedTime) // 🟢 UTC formatda olish
+                          .tz("Asia/Tashkent") // 🟢 UTC+5 ga aylantirish
+                          .format("DD.MM.YYYY HH:mm:ss") // 🟢 To‘g‘ri formatda chiqarish
+                      : "-"
+                  }}
+                </span>
+              </li>
 
-
-
+              <li
+                class="w-auto p-1 bg-gradient-to-r from-green-500 via-blue-500 to-purple-600 rounded-md shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 flex items-center"
+              >
+                <span class="text-white font-semibold text-[12px] mr-2"
+                  >20.</span
+                >
+                <span class="text-white font-semibold text-[12px]">
+                  Jami buyurtmalari soni :
+                  {{
+                    order.customerId.totalOrders
+                      ? order.customerId.totalOrders
+                      : "0"
+                  }}
+                </span>
+              </li>
+            </ul>
           </div>
           <!-- //  Buyurtma ma’lumotlari -->
           <div
@@ -370,6 +468,20 @@ onMounted(async () => {
                 header-align="center"
                 align="center"
               />
+              <el-table-column
+                prop="packingType"
+                label="Qadoq"
+                :min-width="100"
+                :max-width="400"
+                header-align="center"
+                align="center"
+              >
+                <template #default="{ row }"
+                  ><div class="text-green-600">
+                    {{ row.packingType }}
+                  </div></template
+                ></el-table-column
+              >
 
               <el-table-column
                 prop="pro_quantity"
@@ -450,7 +562,7 @@ onMounted(async () => {
             class="col-span-12 cursor-pointer flex justify-end text-[12px] font-semibold gap-2"
           >
             <div
-            v-if="order.status === `Yangi buyurtma`"
+              v-if="order.status === `Yangi buyurtma`"
               class="mb-1 col-span-3 w-auto text-center text-white font-semibold bg-purple-600 rounded-[4px] px-4 py-[7px] hover:bg-purple-700"
               @click="driverBindingModal(order._id)"
             >
@@ -458,7 +570,7 @@ onMounted(async () => {
               biriktirish
             </div>
             <div
-             v-if="order.status === `Yangi buyurtma`"
+              v-if="order.status === `Yangi buyurtma`"
               class="mb-1 col-span-3 w-auto text-center text-white font-semibold bg-[#36d887] rounded-[4px] px-4 py-[7px] hover:bg-green-500"
               @click="PlusProduct()"
             >

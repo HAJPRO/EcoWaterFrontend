@@ -9,8 +9,8 @@ const IsActive = (is_active) => {
   store_order.GetIsActive(is_active);
 };
 
-const getAll =  () => {
-   store_order.GetAll({status : isActive.value, page : 1, limit : 5});
+const getAll = () => {
+  store_order.GetAll({ status: isActive.value, page: 1, limit: 10 });
   IsActive(isActive.value);
 };
 const isActive = ref(1);
@@ -35,10 +35,11 @@ const ActiveTabLink = (num) => {
     isActive.value = 5;
     return getAll();
   }
-   if (num === 6) {
+  if (num === 6) {
     isActive.value = 6;
     return getAll();
-  } if (num === 7) {
+  }
+  if (num === 7) {
     isActive.value = 7;
     return getAll();
   }
@@ -73,7 +74,7 @@ onMounted(async () => {
           >
         </div>
       </router-link>
-        <router-link
+      <router-link
         @click="ActiveTabLink(2)"
         to=""
         :class="{ activeTab: isActive === 2 }"
@@ -89,13 +90,13 @@ onMounted(async () => {
           >
         </div>
       </router-link>
-       <router-link
+      <router-link
         @click="ActiveTabLink(3)"
         to=""
         :class="{ activeTab: isActive === 3 }"
         class="inline-flex text-[12px] items-center mr-2 px-4 py-1 mb-1 font-medium text-center text-red hover:border-b-2 border-solid border-[#36d887] bg-[#e4e9e9] text-bold rounded"
       >
-        <i class="fa-solid fa-car-side mr-2 fa-xm"></i> Haydovchiga yuborildi 
+        <i class="fa-solid fa-car-side mr-2 fa-xm"></i> Haydovchiga yuborildi
         <div class="flex flex-shrink-0 ml-2">
           <span
             :class="{ activeTabIcon: isActive === 3 }"
@@ -126,7 +127,7 @@ onMounted(async () => {
       <router-link
         @click="ActiveTabLink(5)"
         to=""
-        :class="{ activeTab: isActive ===5 }"
+        :class="{ activeTab: isActive === 5 }"
         class="inline-flex text-[12px] items-center mr-2 px-4 py-1 mb-1 font-medium text-center text-red hover:border-b-2 border-solid border-[#36d887] bg-[#e4e9e9] text-bold rounded"
       >
         <i class="fa-solid fa-store mr-2 fa-xm"></i> Yetkazilgan
@@ -139,8 +140,7 @@ onMounted(async () => {
           >
         </div>
       </router-link>
-   
-     
+
       <router-link
         @click="ActiveTabLink(6)"
         to=""
@@ -157,7 +157,7 @@ onMounted(async () => {
           >
         </div>
       </router-link>
-       <router-link
+      <router-link
         @click="ActiveTabLink(7)"
         to=""
         :class="{ activeTab: isActive === 7 }"
