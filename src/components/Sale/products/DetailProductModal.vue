@@ -6,7 +6,7 @@ import moment from "moment-timezone";
 import { ProductsManagmentStore } from "../../../stores/Sale/products/product.store";
 const store_products = ProductsManagmentStore();
 import { storeToRefs } from "pinia";
-const {  product_detail_modal, product } = storeToRefs(store_products);
+const { product_detail_modal, model } = storeToRefs(store_products);
 
 const dialogWidth = ref("");
 window.addEventListener("devicemotion", () => {
@@ -46,9 +46,9 @@ const AddCustomeModal = () => {
 const driverBindingModal = (id) => {
   store_orders.DriverBindingModal(id);
 };
-const printData = ()=> {
-   window.print();
-}
+const printData = () => {
+  window.print();
+};
 onMounted(async () => {
   try {
     GetAllCustomers();
@@ -56,22 +56,6 @@ onMounted(async () => {
     console.log(error);
   }
 });
-const data = ref(
-  {
-  productName: "Sharbat Mango",
-  productCode: "PRD-2024",
-  quantity: 1200,
-  totalAmount: 24000000,
-  branch: "G'ijduvon tumani filiali",
-  source: "Online",
-  salesByDate: [
-    { date: "2025-05-01", quantity: 300, amount: 6000000 },
-    { date: "2025-05-02", quantity: 400, amount: 8000000 },
-    { date: "2025-05-03", quantity: 500, amount: 10000000 },
-  ]
-}
-
-)
 </script>
 <template>
   <div>
@@ -86,58 +70,147 @@ const data = ref(
           <div class="flex items-center gap-2">
             <i class="fa-solid fa-box text-lg text-blue-500"></i>
             <h3 class="text-xl font-semibold text-gray-500">
-              Mahsulot nomi {{ product?.pro_name || 'Mahsulot nomi' }}
+              Mahsulot nomi {{ model?.pro_name || "Mahsulot nomi" }}
             </h3>
           </div>
         </div>
       </template>
 
-    <div class="grid 2xl:grid-cols-12 xs:grid-cols-6  gap-2 mt-2 text-sm">
-  <!-- Tafsilotlar -->
-  <div class="grid grid-cols-12 gap-2  col-span-6 text-gray-700 bg-gray-50 p-4 rounded-lg border border-gray-200">
-    <div class="col-span-6 p-1 bg-slate-200 rounded-md"><strong><i class="fa-solid fa-barcode mr-1 "></i> Kodi:</strong> {{ product?.code }}</div>
-    <div class="col-span-6  p-1 bg-slate-200 rounded-md"><strong><i class="fa-solid fa-layer-group mr-1"></i> Kategoriya:</strong> {{ product?.pro_category }}</div>
-    <div class="col-span-6 p-1 bg-slate-200 rounded-md"><strong><i class="fa-solid fa-star mr-1"></i> Sifat darajasi:</strong> {{ product?.pro_quality }}</div>
-    <div class="col-span-6 p-1 bg-slate-200 rounded-md"><strong><i class="fa-solid fa-tags mr-1"></i> Sotuv turi:</strong> {{ product?.sale_type }}</div>
-    <div class="col-span-6 p-1 bg-slate-200 rounded-md">
-      <strong><i class="fa-solid fa-calendar-check mr-1"></i> Ishlab chiqarish boshlangan:</strong>
-      {{
-        product.productionStarteddAt
-          ? moment.utc(product.productionStarteddAt).tz('Asia/Tashkent').format('DD.MM.YYYY HH:mm:ss')
-          : '-'
-      }}
-    </div>
-      <div class="col-span-6 p-1 bg-slate-200 rounded-md">
-      <strong><i class="fa-solid fa-calendar-xmark mr-1"></i> Ishlab chiqarish to'xtatilgan:</strong>
-      {{
-        product.productionStopeddAt
-          ? moment.utc(product.productionStopeddAt).tz('Asia/Tashkent').format('DD.MM.YYYY HH:mm:ss')
-          : 'No'
-      }}
-    </div>
-    <div class="col-span-6 p-1 bg-slate-200 rounded-md"><strong><i class="fa-solid fa-boxes-stacked mr-1"></i> Umumiy sotilgan:</strong> {{ data?.quantity }} dona</div>
-    <div class="col-span-6 p-1 bg-slate-200 rounded-md"><strong><i class="fa-solid fa-money-bill-wave mr-1"></i> Umumiy tushum:</strong> {{ formatPrice(data?.totalAmount) }}</div>
-    <div class="col-span-6 p-1 bg-slate-200 rounded-md"><strong><i class="fa-solid fa-building mr-1"></i> Filial:</strong> {{ data?.branch }}</div>
-    <div class="col-span-6 flex items-center gap-2 p-1  bg-slate-200 rounded-md">
-      <strong><i class="fa-solid fa-circle-info mr-1"></i> Holati:</strong>
-      <el-tag :type="data?.status === 'Aktive' ? 'success' : 'info'" size="small">
-        {{ product?.status }}
-      </el-tag>
-    </div>
-  </div>
+      <div class="grid 2xl:grid-cols-12 xs:grid-cols-6 gap-2 mt-2 text-sm">
+        <!-- Tafsilotlar -->
+        <div
+          class="grid grid-cols-12 gap-2 col-span-6 text-gray-700 bg-gray-50 p-4 rounded-lg border border-gray-200"
+        >
+          <div class="col-span-6 p-1 bg-slate-200 rounded-md">
+            <strong><i class="fa-solid fa-barcode mr-1"></i> Kodi:</strong>
+            {{ model?.code }}
+          </div>
+          <div class="col-span-6 p-1 bg-slate-200 rounded-md">
+            <strong
+              ><i class="fa-solid fa-layer-group mr-1"></i> Kategoriya:</strong
+            >
+            {{ model?.pro_category }}
+          </div>
+          <!-- <div class="col-span-6 p-1 bg-slate-200 rounded-md"><strong><i class="fa-solid fa-star mr-1"></i> Sifat darajasi:</strong> {{ model?.pro_quality }}</div> -->
+          <div class="col-span-6 p-1 bg-slate-200 rounded-md">
+            <strong><i class="fa-solid fa-tags mr-1"></i> Sotuv turi:</strong>
+            {{ model?.sale_type }}
+          </div>
+          <div class="col-span-6 p-1 bg-slate-200 rounded-md">
+            <strong
+              ><i class="fa-solid fa-calendar-check mr-1"></i> Ro'yxatdan
+              o'tkazilgan:</strong
+            >
+            {{
+              model.createdAt
+                ? moment
+                    .utc(model.createdAt)
+                    .tz("Asia/Tashkent")
+                    .format("DD.MM.YYYY HH:mm:ss")
+                : "-"
+            }}
+          </div>
+          <!-- <div class="col-span-6 p-1 bg-slate-200 rounded-md">
+            <strong
+              ><i class="fa-solid fa-calendar-xmark mr-1"></i> Ishlab chiqarish
+              to'xtatilgan:</strong
+            >
+            {{
+              product.productionStopeddAt
+                ? moment
+                    .utc(product.productionStopeddAt)
+                    .tz("Asia/Tashkent")
+                    .format("DD.MM.YYYY HH:mm:ss")
+                : "No"
+            }}
+          </div> -->
+          <div class="col-span-6 p-1 bg-slate-200 rounded-md">
+            <strong
+              ><i class="fa-solid fa-boxes-stacked mr-1"></i> Umumiy
+              sotilgan:</strong
+            >
+            {{ 0 }} dona
+          </div>
+          <div class="col-span-6 p-1 bg-slate-200 rounded-md">
+            <strong
+              ><i class="fa-solid fa-money-bill-wave mr-1"></i> Umumiy
+              tushum:</strong
+            >
+            {{ formatPrice(0) }}
+          </div>
+          <div class="col-span-6 p-1 bg-slate-200 rounded-md">
+            <strong><i class="fa-solid fa-building mr-1"></i> Filial:</strong>
+            {{ `G'ijduvon filyali` }}
+          </div>
+          <div
+            class="col-span-6 flex items-center gap-2 p-1 bg-slate-200 rounded-md"
+          >
+            <strong
+              ><i class="fa-solid fa-circle-info mr-1"></i> Holati:</strong
+            >
 
-  <!-- Sotuvlar jadvali -->
-  <div class=" col-span-6 bg-white border rounded-lg shadow-sm overflow-hidden">
-    <div class="bg-gradient-to-r from-green-500 to-indigo-500 text-white px-4 py-2">
-      <i class="fa-solid fa-calendar-days mr-2"></i> 🗓 Sotuv kunlari
-    </div>
-    <el-table :data="data?.salesByDate" size="small" border stripe highlight-current-row class="rounded-none">
-      <el-table-column label="📅 Sana" prop="date" width="120" />
-      <el-table-column label="🔢 Soni" prop="quantity" width="80" />
-      <el-table-column label="💵 Tushum" prop="amount" :formatter="row => formatPrice(row.amount)" />
-    </el-table>
-  </div>
-</div>
+            <router-link
+              to=""
+              :class="[
+                'cursor-pointer inline-flex items-center gap-1 hover:bg-opacity-90 font-medium rounded-md text-[12px] w-full p-[5px] sm:w-auto text-center',
+                model.status === `Active`
+                  ? 'bg-green-200 text-green-900'
+                  : 'bg-red-200 text-red-900',
+              ]"
+            >
+              <i
+                :class="
+                  model.status === `Active`
+                    ? 'fa-solid fa-circle-check text-green-700'
+                    : 'fa-solid fa-hourglass-start text-red-700'
+                "
+              ></i>
+              {{ model.status }}
+            </router-link>
+          </div>
+        </div>
+
+        <!-- Sotuvlar jadvali -->
+        <div
+          class="col-span-6 bg-white border rounded-lg shadow-sm overflow-hidden"
+        >
+          <div
+            class="bg-gradient-to-r from-green-500 to-indigo-500 text-white px-4 py-2"
+          >
+            <i class="fa-solid fa-calendar-days mr-2"></i> 🗓 Mahsulot turlari
+            bo'yicha
+          </div>
+          <el-table
+            :data="model.products"
+            size="small"
+            border
+            stripe
+            highlight-current-row
+            class="rounded-none"
+          >
+            <el-table-column
+              label="📅 Qadoq turi"
+              prop="packingType"
+              :min:width="100"
+              :max:width="500"
+            />
+            <el-table-column
+              label="🔢 Sotuv narxi dona (sum)"
+              prop="buying_price"
+              :min:width="100"
+              :max:width="500"
+              :formatter="(row) => formatPrice(row.buying_price)"
+            />
+            <el-table-column
+              label="💵 Sotuv narxi blok (sum)"
+              prop="amount"
+              :min:width="100"
+              :max:width="500"
+              :formatter="(row) => formatPrice(row.block_buying_price)"
+            />
+          </el-table>
+        </div>
+      </div>
 
       <template #footer>
         <div class="flex justify-between items-center mt-2 border-t pt-2">

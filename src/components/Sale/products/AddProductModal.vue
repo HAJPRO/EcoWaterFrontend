@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from "uuid";
 import { ProductsManagmentStore } from "../../../stores/Sale/products/product.store";
 const store_product = ProductsManagmentStore();
 import { storeToRefs } from "pinia";
-const { product_modal, model } = storeToRefs(store_product);
+const { product_modal, model, TitleAction } = storeToRefs(store_product);
 
 const dialogWidth = ref("");
 window.addEventListener("devicemotion", () => {
@@ -44,10 +44,10 @@ const ChangeCustomerFullname = async (id) => {
   store_customers.GetById({ id, status: "order" });
 };
 const ChangeProductType = async (e) => {
-  model.value.product.pro_type = e;
+  model.value.model.pro_type = e;
 };
 const ChangeProductName = async (e) => {
-  model.value.product.pro_name = e;
+  model.value.model.pro_name = e;
 };
 
 const units = ref([
@@ -74,54 +74,45 @@ const packingTypes = ref([
   { id: 7, name: "10 l" },
   { id: 8, name: "20 l" },
 ]);
-const proQualityes = ref([
-  { id: 1, name: "Oliy" },
-  { id: 2, name: "O'rta" },
-  { id: 3, name: "Standart" },
-]);
+
 const saleTypes = ref([
   { id: 1, name: "Dona" },
-  { id: 2, name: "Litr" },
-  { id: 3, name: "Blok" },
-  { id: 4, name: "Kg" },
-  { id: 5, name: "Tonna" },
+  { id: 2, name: "Blok" },
+  { id: 3, name: "Litr" },
 ]);
-const Products = ref([]);
 const PlusProduct = () => {
   if (
     model.value.packingType === "" ||
-    model.value.cost_price === "" ||
     model.value.buying_price === "" ||
-    model.value.block_buying_price === "" ||
-    model.value.block_cost_price === ""
+    model.value.block_buying_price === ""
   ) {
     ElMessage.error("Iltimos barcha maydonlarni to'ldiring !");
   } else {
     const data = {
       id: uuidv4(),
       packingType: model.value.packingType,
-      cost_price: Number(model.value.cost_price),
       buying_price: Number(model.value.buying_price),
-      block_cost_price: Number(model.value.block_cost_price),
       block_buying_price: Number(model.value.block_buying_price),
     };
-    Products.value.push(data);
+    model.value.products.push(data);
   }
 };
 const formRef = ref();
 const PlusValidate = async (formRef) => {
   await formRef.validate((valid) => {
     if (valid === true) {
-      const main = {
-        code: model.value.code,
-        pro_name: model.value.pro_name,
-        pro_category: model.value.pro_category,
-        pro_quality: model.value.pro_quality,
-        sale_type: model.value.sale_type,
-        pro_image_url: model.value.pro_image_url,
-        productionStarteddAt: new Date(),
-      };
-      store_product.Create({ ...main, products: Products.value });
+      if (TitleAction.value.action === `create`) {
+        store_product.Create({
+          action: TitleAction.value.action,
+          model: model.value,
+        });
+      }
+      if (TitleAction.value.action === `update`) {
+        store_product.Create({
+          action: TitleAction.value.action,
+          model: model.value,
+        });
+      }
     } else {
       ElMessage.error("Iltimos barcha maydonlarni to'ldiring !");
       return false;
@@ -130,10 +121,10 @@ const PlusValidate = async (formRef) => {
 };
 
 const DeleteById = (id) => {
-  const filterLoad = Products.value.filter((item) => {
+  const filterLoad = model.value.products.filter((item) => {
     return item.id !== id;
   });
-  Products.value = filterLoad;
+  model.value.products = filterLoad;
 };
 const rules = ref({
   required: true,
@@ -155,7 +146,8 @@ onMounted(async () => {
         <div
           class="bg-slate-100 font-semibold text-[15px] p-1 mt-1 align-center text-center shadow rounded border-t-[1px] border-[#36d887]"
         >
-          <i class="fa-solid fa-gift fa-md mr-3"></i> Mahsulot qo'shish
+          <i class="fa-solid fa-gift fa-md mr-3"></i> Mahsulot
+          {{ TitleAction.title }}
         </div>
         <el-form
           ref="formRef"
@@ -167,7 +159,7 @@ onMounted(async () => {
         >
           <!-- //  Mahsulot ma'lumotlari -->
           <div
-            class="mb-1 col-span-5 bg-[#e8eded] p-2 rounded-md border-[1px] border-[#36d887]"
+            class="mb-1 col-span-2 bg-[#e8eded] p-2 rounded-md border-[1px] border-[#36d887]"
           >
             <h1
               class="bg-slate-100 font-semibold text-[13px] p-1 mt-1 align-center text-center rounded-md border-t-[1px] border-[#36d887]"
@@ -175,8 +167,8 @@ onMounted(async () => {
               Mahsulot ma'lumotlari
             </h1>
             <div class="grid grid-cols-12 gap-1">
-              <div class="mb-1 col-span-4">
-                <el-form-item label="Kodi" prop="code" :rules="rules">
+              <div class="mb-1 col-span-12">
+                <el-form-item label="Kodi" prop="code">
                   <el-input
                     required
                     v-model="model.code"
@@ -185,10 +177,11 @@ onMounted(async () => {
                     size="smal"
                     type="String"
                     placeholder="..."
+                    maxlength="5"
                   />
                 </el-form-item>
               </div>
-              <div class="mb-1 col-span-4">
+              <div class="mb-1 col-span-12">
                 <el-form-item label="Nomi" prop="pro_name" :rules="rules">
                   <el-input
                     required
@@ -202,7 +195,7 @@ onMounted(async () => {
                 </el-form-item>
               </div>
 
-              <div class="mb-1 col-span-4">
+              <div class="mb-1 col-span-12">
                 <el-form-item
                   label="Kategoryasi"
                   prop="pro_category"
@@ -246,7 +239,7 @@ onMounted(async () => {
                   </el-select>
                 </el-form-item>
               </div>
-              <div class="mb-1 col-span-4">
+              <!-- <div class="mb-1 col-span-4">
                 <el-form-item
                   label="Sifat darajasi"
                   prop="pro_quality"
@@ -289,8 +282,8 @@ onMounted(async () => {
                     </el-option>
                   </el-select>
                 </el-form-item>
-              </div>
-              <div class="mb-1 col-span-4">
+              </div> -->
+              <div class="mb-1 col-span-12">
                 <el-form-item label="Sotuv turi" prop="sale_type">
                   <el-select
                     v-model="model.sale_type"
@@ -330,7 +323,7 @@ onMounted(async () => {
                   </el-select>
                 </el-form-item>
               </div>
-              <div class="mb-1 col-span-4">
+              <!-- <div class="mb-1 col-span-4">
                 <el-form-item
                   label="Ishlab chiqarish"
                   prop="productionStarteddAt"
@@ -346,8 +339,8 @@ onMounted(async () => {
                     size="smal"
                   />
                 </el-form-item>
-              </div>
-              <div class="col-span-12 p-1 rounded-md">
+              </div> -->
+              <!-- <div class="col-span-12 p-1 rounded-md">
                 <el-form-item label="Rasm" prop="pro_image_url">
                   <el-upload
                     class="w-full"
@@ -376,12 +369,12 @@ onMounted(async () => {
                     />
                   </el-dialog>
                 </el-form-item>
-              </div>
+              </div> -->
             </div>
           </div>
           <!-- //  Narx ma'lumotlari -->
           <div
-            class="mb-1 col-span-7 bg-[#e8eded] p-2 rounded-md border-[1px] border-[#36d887]"
+            class="mb-1 col-span-10 bg-[#e8eded] p-2 rounded-md border-[1px] border-[#36d887]"
           >
             <h1
               class="bg-slate-100 font-semibold text-[13px] p-1 mt-1 align-center text-center rounded-md border-t-[1px] border-[#36d887]"
@@ -393,7 +386,7 @@ onMounted(async () => {
                 <el-form-item
                   label="Qadoq turi"
                   prop="packingType"
-                  :rules="rules"
+                  :rules="TitleAction.action === `creat` ? rules : []"
                 >
                   <el-select
                     v-model="model.packingType"
@@ -433,7 +426,7 @@ onMounted(async () => {
                   </el-select>
                 </el-form-item>
               </div>
-              <div class="mb-1 col-span-4">
+              <!-- <div class="mb-1 col-span-4">
                 <el-form-item
                   label="Tan narxi dona (sum)"
                   prop="cost_price"
@@ -451,25 +444,8 @@ onMounted(async () => {
                   />
                 </el-form-item>
               </div>
-              <div class="mb-1 col-span-4">
-                <el-form-item
-                  label="Sotuv narxi dona (sum)"
-                  prop="buying_price"
-                  :rules="rules"
-                >
-                  <el-input
-                    required
-                    v-model="model.buying_price"
-                    clearable
-                    class="w-[100%]"
-                    size="smal"
-                    type="Number"
-                    maxlength="9"
-                    placeholder="..."
-                  />
-                </el-form-item>
-              </div>
-              <div class="mb-1 col-span-6">
+               -->
+              <!-- <div class="mb-1 col-span-6">
                 <el-form-item
                   label="Tan narxi blokda (sum)"
                   prop="block_cost_price"
@@ -486,12 +462,30 @@ onMounted(async () => {
                     placeholder="..."
                   />
                 </el-form-item>
+              </div> -->
+              <div class="mb-1 col-span-4">
+                <el-form-item
+                  label="Sotuv narxi dona (sum)"
+                  prop="buying_price"
+                  :rules="TitleAction.action === `creat` ? rules : []"
+                >
+                  <el-input
+                    required
+                    v-model="model.buying_price"
+                    clearable
+                    class="w-[100%]"
+                    size="smal"
+                    type="Number"
+                    maxlength="9"
+                    placeholder="..."
+                  />
+                </el-form-item>
               </div>
-              <div class="mb-1 col-span-6">
+              <div class="mb-1 col-span-4">
                 <el-form-item
                   label="Sotuv narxi blokda (sum)"
                   prop="block_buying_price"
-                  :rules="rules"
+                  :rules="TitleAction.action === `creat` ? rules : []"
                 >
                   <el-input
                     required
@@ -530,8 +524,8 @@ onMounted(async () => {
               size="small"
               header-align="center"
               empty-text="Mahsulot qo'shilmagan... "
-              height="180"
-              :data="Products"
+              height="200"
+              :data="model.products"
             >
               <el-table-column
                 header-align="center"
@@ -556,7 +550,7 @@ onMounted(async () => {
                   </div></template
                 ></el-table-column
               >
-              <el-table-column
+              <!-- <el-table-column
                 prop="cost_price"
                 label="Tan narxi dona (sum)"
                 :min-width="100"
@@ -569,7 +563,7 @@ onMounted(async () => {
                     {{ row.cost_price ? formatPrice(row.cost_price) : 0 }}
                   </div></template
                 ></el-table-column
-              >
+              > -->
 
               <el-table-column
                 prop="buying_price"
@@ -585,7 +579,7 @@ onMounted(async () => {
                   </div></template
                 ></el-table-column
               >
-              <el-table-column
+              <!-- <el-table-column
                 prop="block_cost_price"
                 label="Tan narxi blok (sum)"
                 :min-width="100"
@@ -602,7 +596,7 @@ onMounted(async () => {
                     }}
                   </div></template
                 ></el-table-column
-              >
+              > -->
 
               <el-table-column
                 prop="block_buying_price"
@@ -657,7 +651,8 @@ onMounted(async () => {
               padding: 15px;
             "
           >
-            <i class="fa-solid fa-check mr-2 fa-md"></i>Saqlash
+            <i class="fa-solid fa-check mr-2 fa-md"></i>
+            {{ TitleAction.action === "create" ? "Saqlash" : "O'zgartirish" }}
           </el-button>
         </div>
       </span>

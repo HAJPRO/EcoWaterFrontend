@@ -13,8 +13,8 @@ const store_products = ProductsManagmentStore();
 import { storeToRefs } from "pinia";
 const { products, all_length } = storeToRefs(store_products);
 
-const addProductModal = () => {
-  store_products.AddProductModal();
+const addProductModal = (data) => {
+  store_products.AddProductModal(data);
 };
 const detailOrderModal = (id) => {
   store_products.DetailOrderModal({ id });
@@ -70,8 +70,14 @@ onMounted(() => {
             header-align="center"
             align="center"
             ><template #default="{ row }"
-              ><div class="text-red-500 font-semibold">
-                {{ row.code }}
+              ><div class="text-red-500 cursor-pointer hover:underline">
+                <router-link
+                  to=""
+                  class="cursor-pointer inline-flex items-center text-red bg-[#e4e9e9] hover:bg-[#d7ebeb] font-medium rounded-md text-[12px] w-ful p-[5px] sm:w-auto text-center"
+                >
+                  <i class="fas fa-qrcode text-gray-500 fa-sm mr-2"></i>
+                  {{ row.code }}
+                </router-link>
               </div></template
             ></el-table-column
           >
@@ -95,7 +101,7 @@ onMounted(() => {
             :min-width="100"
             :max-width="400"
           />
-          <el-table-column
+          <!-- <el-table-column
             label="Qadoq"
             :min-width="150"
             :max-width="400"
@@ -104,18 +110,18 @@ onMounted(() => {
             ><template #default="{ row }">{{
               row.packaging
             }}</template></el-table-column
-          >
+          > -->
 
-          <el-table-column
+          <!-- <el-table-column
             align="center"
             header-align="center"
             prop="packingType"
             label="Idishi turi"
             :min-width="100"
             :max-width="400"
-          />
+          /> -->
 
-          <el-table-column
+          <!-- <el-table-column
             label="Narxi (sum)"
             :min-width="100"
             header-align="center"
@@ -125,7 +131,7 @@ onMounted(() => {
                 {{ row.pro_price ? formatPrice(row.pro_price) : 0 }} sum
               </div></template
             ></el-table-column
-          >
+          > -->
           <el-table-column
             label="🕒 Vaqt maydoni"
             :min-width="150"
@@ -180,12 +186,24 @@ onMounted(() => {
             header-align="center"
             align="center"
           >
-            <template #default="scope">
+            <template #default="{ row }">
               <router-link
                 to=""
-                class="cursor-pointer inline-flex items-center text-red bg-[#e4e9e9] hover:bg-[#d7ebeb] font-medium rounded-md text-[12px] w-ful p-[5px] sm:w-auto text-center"
+                :class="[
+                  'cursor-pointer inline-flex items-center gap-1 hover:bg-opacity-90 font-medium rounded-md text-[12px] w-full p-[5px] sm:w-auto text-center',
+                  row.status === `Active`
+                    ? 'bg-green-200 text-green-900'
+                    : 'bg-red-200 text-red-900',
+                ]"
               >
-                {{ scope.row.status }}
+                <i
+                  :class="
+                    row.status === `Active`
+                      ? 'fa-solid fa-circle-check text-green-700'
+                      : 'fa-solid fa-hourglass-start text-red-700'
+                  "
+                ></i>
+                {{ row.status }}
               </router-link>
             </template>
           </el-table-column>
@@ -227,6 +245,24 @@ onMounted(() => {
                       </template></el-dropdown-item
                     >
                     <el-dropdown-item
+                      class="text-[13px] text-indigo-600"
+                      @click="
+                        addProductModal({
+                          id: row._id,
+                          title: `o'zgartirish`,
+                          action: `update`,
+                        })
+                      "
+                      ><template #default="{}"
+                        ><div>
+                          <i
+                            class="text-black fa-solid fa-pen-to-square fa-pen-to-square fa-sm mr-1"
+                          ></i>
+                          O'zgatirish
+                        </div>
+                      </template></el-dropdown-item
+                    >
+                    <!-- <el-dropdown-item
                       class="text-[13px]"
                       @click="updateById(row._id)"
                       ><template #default="{}"
@@ -237,7 +273,7 @@ onMounted(() => {
                           Bekor qilish
                         </div>
                       </template></el-dropdown-item
-                    >
+                    > -->
 
                     <el-dropdown-item
                       class="text-[13px] text-yellow-500"
@@ -251,16 +287,7 @@ onMounted(() => {
                         </div>
                       </template></el-dropdown-item
                     >
-                    <el-dropdown-item
-                      class="text-[13px] text-indigo-600"
-                      @click="UpdateById(row._id)"
-                      ><template #default="{}"
-                        ><div>
-                          <i class="text-black fa-solid fa-pen fa-sm mr-1"></i>
-                          O'zgatirish
-                        </div>
-                      </template></el-dropdown-item
-                    >
+
                     <el-dropdown-item
                       @click="deleteById(row._id)"
                       class="text-red-500 text-[13px]"
@@ -326,7 +353,12 @@ onMounted(() => {
               </el-select>
               <div class="mt-2.5">
                 <el-button
-                  @click="addProductModal()"
+                  @click="
+                    addProductModal({
+                      title: `shakillantirish`,
+                      action: `create`,
+                    })
+                  "
                   size="small"
                   style="
                     background-color: #36d887;

@@ -36,7 +36,7 @@ const deleteById = (id) => {
   store.DeleteById({ id });
 };
 const UpdateById = (id) => {
-  store.GetById({ id });
+  store_order.GetById({ id });
 };
 const formatPrice = (price) => {
   return new Intl.NumberFormat("uz-UZ").format(price);
@@ -84,9 +84,15 @@ onMounted(() => {
             :max-width="400"
             header-align="center"
             align="center"
-            ><template #default="{ row }"
-              ><div class="text-red-500 font-semibold">
-                {{ row.orderNumber }}
+            ><template #default="{ row }">
+              <div class="text-red-500 cursor-pointer hover:underline">
+                <router-link
+                  to=""
+                  class="cursor-pointer inline-flex items-center text-red bg-[#e4e9e9] hover:bg-[#d7ebeb] font-medium rounded-md text-[12px] w-ful p-[5px] sm:w-auto text-center"
+                >
+                  <i class="fas fa-boxes-stacked text-gray-500 fa-sm mr-2"></i>
+                  {{ row.orderNumber }}
+                </router-link>
               </div></template
             ></el-table-column
           >
@@ -170,12 +176,21 @@ onMounted(() => {
           >
           <el-table-column
             label="Jami (sum)"
-            :min-width="100"
+            :min-width="200"
+            :max-width="400"
             header-align="center"
             align="center"
             ><template #default="{ row }">
-              <div class="text-red-500 font-semibold">
-                {{ row.totalAmount ? formatPrice(row.totalAmount) : 0 }} sum
+              <div class="text-green-700 cursor-pointer hover:underline">
+                <router-link
+                  to=""
+                  class="cursor-pointer inline-flex items-center text-red bg-[#e4e9e9] hover:bg-[#d7ebeb] font-medium rounded-md text-[12px] w-ful p-[5px] sm:w-auto text-center"
+                >
+                  <i
+                    class="fas fa-money-check-dollar text-gray-500 fa-sm mr-2"
+                  ></i>
+                  {{ row.totalAmount ? formatPrice(row.totalAmount) : 0 }} sum
+                </router-link>
               </div></template
             ></el-table-column
           >
@@ -285,17 +300,41 @@ onMounted(() => {
           <el-table-column
             fixed="right"
             label="Holati"
-            :min-width="170"
+            :min-width="200"
             :max-width="400"
             header-align="center"
             align="center"
           >
-            <template #default="scope">
+            <template #default="{ row }">
               <router-link
                 to=""
-                class="cursor-pointer inline-flex items-center text-red bg-[#e4e9e9] hover:bg-[#d7ebeb] font-medium rounded-md text-[12px] w-ful p-[5px] sm:w-auto text-center"
+                :class="[
+                  'cursor-pointer inline-flex items-center gap-1 hover:bg-opacity-90 font-medium rounded-md text-[12px] w-full p-[5px] sm:w-auto text-center',
+                  row.status === 'Yangi buyurtma'
+                    ? 'bg-blue-200 text-blue-900'
+                    : row.status === 'Yetkazib berilmoqda'
+                    ? 'bg-yellow-200 text-yellow-900'
+                    : row.status === 'Yetkazib berildi'
+                    ? 'bg-green-200 text-green-900'
+                    : row.status === 'Bekor qilindi'
+                    ? 'bg-red-200 text-red-900'
+                    : 'bg-gray-200 text-gray-800',
+                ]"
               >
-                {{ scope.row.status }}
+                <i
+                  :class="
+                    row.status === 'Yangi buyurtma'
+                      ? 'fa-solid fa-bell text-blue-700'
+                      : row.status === 'Yetkazib berilmoqda'
+                      ? 'fa-solid fa-truck-fast text-yellow-700'
+                      : row.status === 'Yetkazib berildi'
+                      ? 'fa-solid fa-circle-check text-green-700'
+                      : row.status === 'Bekor qilindi'
+                      ? 'fa-solid fa-xmark text-red-700'
+                      : 'fa-solid fa-question-circle text-gray-700'
+                  "
+                ></i>
+                {{ row.status }}
               </router-link>
             </template>
           </el-table-column>
@@ -336,7 +375,18 @@ onMounted(() => {
                         </div>
                       </template></el-dropdown-item
                     >
-
+                    <el-dropdown-item
+                      class="text-[13px] text-indigo-600"
+                      @click="UpdateById(row._id)"
+                      ><template #default="{}"
+                        ><div>
+                          <i
+                            class="text-black fa-solid fa-pen-to-square fa-pen-to-square fa-sm mr-1"
+                          ></i>
+                          O'zgatirish
+                        </div>
+                      </template></el-dropdown-item
+                    >
                     <el-dropdown-item
                       class="text-[13px] text-yellow-500"
                       @click="ExportExcel(row._id)"
@@ -349,16 +399,7 @@ onMounted(() => {
                         </div>
                       </template></el-dropdown-item
                     >
-                    <el-dropdown-item
-                      class="text-[13px] text-indigo-600"
-                      @click="UpdateById(row._id)"
-                      ><template #default="{}"
-                        ><div>
-                          <i class="text-black fa-solid fa-pen fa-sm mr-1"></i>
-                          O'zgatirish
-                        </div>
-                      </template></el-dropdown-item
-                    >
+
                     <el-dropdown-item
                       @click="deleteById(row._id)"
                       class="text-red-500 text-[13px]"

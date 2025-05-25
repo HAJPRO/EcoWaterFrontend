@@ -4,8 +4,8 @@ import { io } from "socket.io-client";
 const token = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*\=\s*([^;]*).*$)|^.*$/, "$1");
 
 // URL manzilingiz
-// const URL = "https://eco.company-erp.uz";
-const URL = "http://localhost:5000"
+const URL = "https://eco.company-erp.uz";
+// const URL = "http://localhost:5000"
 
 
 const socket = io(URL, {

@@ -180,10 +180,10 @@ const ChangePackingType = (value) => {
 const ChangeUnitType = (value) => {
   if (changedProduct.value) {
     if (value === "Blok") {
-      model.value.product.pro_price = changedProduct.value.block_cost_price;
+      model.value.product.pro_price = changedProduct.value.block_buying_price;
     }
     if (value === "Dona") {
-      model.value.product.pro_price = changedProduct.value.cost_price;
+      model.value.product.pro_price = changedProduct.value.buying_price;
     }
   }
 };
@@ -263,7 +263,7 @@ onMounted(async () => {
                   </el-select>
                 </el-form-item>
               </div>
-              <div class="mb-1 col-span-6">
+              <!-- <div class="mb-1 col-span-6">
                 <el-form-item label="Kategoryasi" prop="customer.category">
                   <el-select
                     disabled
@@ -406,7 +406,7 @@ onMounted(async () => {
                     placeholder="AB4567898"
                   />
                 </el-form-item>
-              </div>
+              </div> -->
               <div class="mb-1 col-span-4">
                 <el-form-item label="Telefon" prop="customer.phoneNumber">
                   <el-input
@@ -465,7 +465,7 @@ onMounted(async () => {
                   </el-select>
                 </el-form-item>
               </div>
-              <div class="mb-1 col-span-3">
+              <div class="mb-1 col-span-4">
                 <el-form-item label="Tuman" prop="customer.address.district">
                   <el-select
                     disabled
@@ -506,7 +506,7 @@ onMounted(async () => {
                   </el-select>
                 </el-form-item>
               </div>
-              <div class="mb-1 col-span-3">
+              <div class="mb-1 col-span-4">
                 <el-form-item
                   label="Mahalla"
                   prop="customer.address.neighborhood"
@@ -550,7 +550,7 @@ onMounted(async () => {
                   </el-select>
                 </el-form-item>
               </div>
-              <div class="mb-1 col-span-3">
+              <div class="mb-1 col-span-4">
                 <el-form-item label="Ko'cha" prop="customer.address.street">
                   <el-select
                     disabled
@@ -592,7 +592,7 @@ onMounted(async () => {
                 </el-form-item>
               </div>
 
-              <div class="mb-1 col-span-3">
+              <div class="mb-1 col-span-4">
                 <el-form-item label="Uy" prop="customer.address.house">
                   <el-input
                     required
@@ -603,6 +603,18 @@ onMounted(async () => {
                     size="smal"
                     type="Number"
                     placeholder="..."
+                  />
+                </el-form-item>
+              </div>
+              <div class="mb-1 col-span-12">
+                <el-form-item label="Qo'shimcha ma'lumot" prop="discription">
+                  <el-input
+                    disabled
+                    type="textarea"
+                    v-model="modal.model.discription"
+                    placeholder="Bu yerga yozing..."
+                    :rows="4"
+                    clearable
                   />
                 </el-form-item>
               </div>

@@ -3,6 +3,7 @@ import Cookies from "js-cookie";
 const role = ref(JSON.parse(Cookies.get("account")).role);
 const permissions = ref(JSON.parse(Cookies.get("account")).permissions);
 const actions = ref(JSON.parse(Cookies.get("account")).actions);
+import { ElMessage } from "element-plus";
 
 import { ref, onMounted } from "vue";
 import { EmployeeManagmentStore } from "../../../stores/HR/employee/employee.store";
@@ -29,6 +30,16 @@ const deleteById = (id) => {
 };
 const UpdateById = (id) => {
   store.GetById({ id, status: "update" });
+};
+const copyToClipboard = (text) => {
+  navigator.clipboard
+    .writeText(text)
+    .then(() => {
+      ElMessage.success("Telefon raqam nusxalandi: " + text);
+    })
+    .catch(() => {
+      ElMessage.error("Nusxalashda xatolik yuz berdi");
+    });
 };
 </script>
 <template>
@@ -67,13 +78,18 @@ const UpdateById = (id) => {
             prop="fullname"
             label="F.I.O"
             :min-width="200"
-            :max-width="400"
+            :max-width="800"
             header-align="center"
             align="left"
             ><template #default="{ row }"
-              ><div class="text-red-500">
-                <i class="fas fa-user text-gray-500 fa-sm mr-2"></i>
-                {{ row.fullname }}
+              ><div class="text-red-500 cursor-pointer hover:underline">
+                <router-link
+                  to=""
+                  class="cursor-pointer inline-flex items-center text-red bg-[#e4e9e9] hover:bg-[#d7ebeb] font-medium rounded-md text-[12px] w-ful p-[5px] sm:w-auto text-center"
+                >
+                  <i class="fas fa-user text-gray-500 fa-sm mr-2"></i>
+                  {{ row.fullname }}
+                </router-link>
               </div></template
             ></el-table-column
           >
@@ -102,7 +118,7 @@ const UpdateById = (id) => {
             :max-width="400"
           >
             <template #default="{ row }">
-              <el-tooltip placement="left" effect="blue">
+              <el-tooltip placement="left" effect="light">
                 <template #content>
                   <div
                     class="bg-[#e8eded] text-white p-4 rounded text-left space-y-3"
@@ -176,16 +192,23 @@ const UpdateById = (id) => {
             :max-width="400"
           />
           <el-table-column
-            align="center"
             header-align="center"
             prop="phoneNumber"
             label="Telefon"
-            :min-width="100"
+            :min-width="150"
             :max-width="400"
             ><template #default="{ row }"
-              ><div class="font-semibold text-blue-600">
-                <i class="fas fa-phone text-gray-500 fa-sm mr-2"></i>
-                {{ row.phoneNumber }}
+              ><div
+                class="text-blue-600 cursor-pointer hover:underline"
+                @click="copyToClipboard(row.phoneNumber)"
+              >
+                <router-link
+                  to=""
+                  class="cursor-pointer inline-flex items-center text-red bg-[#e4e9e9] hover:bg-[#d7ebeb] font-medium rounded-md text-[12px] w-ful p-[5px] sm:w-auto text-center"
+                >
+                  <i class="fas fa-phone text-gray-500 fa-sm mr-2"></i>
+                  {{ row.phoneNumber }}
+                </router-link>
               </div></template
             ></el-table-column
           >
@@ -222,12 +245,24 @@ const UpdateById = (id) => {
             header-align="center"
             align="center"
           >
-            <template #default="scope">
+            <template #default="{ row }">
               <router-link
                 to=""
-                class="cursor-pointer inline-flex items-center text-red bg-[#e4e9e9] hover:bg-[#d7ebeb] font-medium rounded-md text-[12px] w-ful p-[5px] sm:w-auto text-center"
+                :class="[
+                  'cursor-pointer inline-flex items-center gap-1 hover:bg-opacity-90 font-medium rounded-md text-[12px] w-full p-[5px] sm:w-auto text-center',
+                  row.status === `Online`
+                    ? 'bg-green-200 text-green-900'
+                    : 'bg-red-200 text-red-900',
+                ]"
               >
-                {{ scope.row.status }}
+                <i
+                  :class="
+                    row.status === `Online`
+                      ? 'fa-solid fa-circle-check text-green-700'
+                      : 'fa-solid fa-hourglass-start text-red-700'
+                  "
+                ></i>
+                {{ row.status }}
               </router-link>
             </template>
           </el-table-column>

@@ -6,7 +6,10 @@ import { defineStore } from "pinia";
 export const CustomerManagmentStore = defineStore("CustomerManagmentStore", {
   state: () => {
     return {
-      ImagesList: [],
+      TitleAction: {
+        title: "",
+        action: ""
+      },
       isActive: "",
       page: null,
       action: 1,
@@ -18,17 +21,8 @@ export const CustomerManagmentStore = defineStore("CustomerManagmentStore", {
       modal: {
         model: {
           fullname: "",
-          category: "",
-          artikul: "",
-          position: "",
-          registeredAt: "",
-          imageUrl: "",
           discription: "",
-          inn: "",
-          passportNumber: "",
           phoneNumber: "",
-          email: "",
-          telegram: "",
           address: {
             region: "",
             district: "",
@@ -40,6 +34,18 @@ export const CustomerManagmentStore = defineStore("CustomerManagmentStore", {
             lat: "",
             long: "",
           },
+          // category: "",
+          // artikul: "",
+          // position: "",
+          // registeredAt: "",
+          // imageUrl: "",
+
+          // inn: "",
+          // passportNumber: "",
+          // phoneNumber: "",
+          // email: "",
+          // telegram: "",
+
         },
       },
     };
@@ -48,17 +54,27 @@ export const CustomerManagmentStore = defineStore("CustomerManagmentStore", {
     GetIsActive(payload) {
       this.isActive = payload;
     },
-    async AddCustomModal() {
+    async AddCustomModal(data) {
+      this.TitleAction = {
+        title: data.title,
+        action: data.action
+      }
+      if (data.action === 'update') {
+        this.GetById(data)
+      }
       this.custom_modal = true;
+
     },
+
     async AddDetailModal(id) {
       this.GetOrdersByCustomerId(id)
       this.detail_modal = true;
     },
-    async Create(payload) {
+    async Create(model) {
       const loader = loading.show()
-      const data = await CustomerManagmentService.Create(payload);
+      const data = await CustomerManagmentService.Create({ model, action: this.TitleAction.action });
       this.custom_modal = false;
+      this.GetAll({ status: this.isActive, page: this.page, limit: 10 })
       loader.hide()
       ToastifyService.ToastSuccess({
         msg: data.data.msg,
@@ -75,7 +91,15 @@ export const CustomerManagmentStore = defineStore("CustomerManagmentStore", {
 
       loader.hide()
     },
-
+    async UpdateById(id) {
+      const loader = loading.show()
+      const data = await CustomerManagmentService.DeleteById(id)
+      this.GetAll({ status: this.isActive, page: this.page, limit: 10 })
+      loader.hide()
+      ToastifyService.ToastSuccess({
+        msg: data.data.msg,
+      });
+    },
     async DeleteById(id) {
       const loader = loading.show()
       const data = await CustomerManagmentService.DeleteById(id)

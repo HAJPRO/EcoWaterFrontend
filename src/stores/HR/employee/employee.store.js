@@ -84,6 +84,7 @@ export const EmployeeManagmentStore = defineStore("EmployeeManagmentStore", {
             ToastifyService.ToastSuccess({
                 msg: data.data.msg,
             });
+            this.GetAll({ status: this.isActive, page: this.page, limit: 10 })
         },
         async GetAll(payload) {
             const loader = loading.show()

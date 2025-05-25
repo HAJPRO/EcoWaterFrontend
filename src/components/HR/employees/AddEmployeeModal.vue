@@ -88,31 +88,12 @@ const positions = ref([
   { _id: 6, name: "Omborchi" },
   { _id: 7, name: "Sotuv bo'yicha menejer" },
   { _id: 8, name: "Marketing bo'yicha menejer" },
-  { _id: 9, name: "IT mutaxassisi" },
   { _id: 10, name: "SMM mutaxassisi" },
   { _id: 11, name: "Xavfsizlik xodimi" },
   { _id: 12, name: "Haydovchi" },
   { _id: 13, name: "Admin" },
 ]);
-const permissions = ref([
-  { _id: 1, name: "O'qish" },
-  { _id: 2, name: "Yozish" },
-  { _id: 3, name: "O'chirish" },
-  { _id: 4, name: "Tahrirlash" },
-  { _id: 5, name: "Ko'rish" },
-  { _id: 6, name: "Yuklash" },
-  { _id: 7, name: "Xodim qo'shish" },
-  { _id: 8, name: "Buyurtma chiqarish" },
-  { _id: 9, name: "Buyurtma qabul qilish" },
-  { _id: 10, name: "Buyurtmalarni ko'rish" },
-  { _id: 11, name: "Buyurtmalarni tahrirlash" },
-  { _id: 12, name: "Buyurtmalarni o'chirish" },
-  { _id: 13, name: "Buyurtmalarni yuklash" },
-  { _id: 14, name: "Xodimlarni ko'rish" },
-  { _id: 11, name: "Xodimlarni tahrirlash" },
-  { _id: 12, name: "Xodimlarni o'chirish" },
-  { _id: 13, name: "Xodimlarni yuklash" },
-]);
+
 const genders = ref([
   { _id: 1, name: "Erkak" },
   { _id: 2, name: "Ayol" },
@@ -137,11 +118,46 @@ const carColors = ref([
   { _id: 6, name: "Sariq" },
   { _id: 7, name: "Boshqa" },
 ]);
+const validateRoles = (rule, value, callback) => {
+  // 1. Bo‘sh bo‘lishi mumkin emas
+  if (!Array.isArray(value) || value.length === 0) {
+    return callback(
+      new Error("Rol tanlanmagan! Rolni boshqatdan tanlab keyin o'zgartiring")
+    );
+  }
 
+  // 2. Har bir element string bo‘lishi kerak
+  const allValid = value.every(
+    (id) => typeof id === "string" && /^[a-f\d]{24}$/i.test(id)
+  );
+
+  // 3. Agar noto‘g‘ri bo‘lsa, xatolik
+  if (!allValid) {
+    return callback(
+      new Error(
+        "Rol noto‘g‘ri formatda tanlangan! Rolni boshqatdan tanlab keyin o'zgartiring"
+      )
+    );
+  }
+
+  // 4. Hammasi OK bo‘lsa
+  callback();
+};
+
+const ChangeRoleDirection = (roles) => {
+  console.log(roles);
+
+  const isValid =
+    Array.isArray(roles) && roles.every((id) => /^[a-f\d]{24}$/i.test(id));
+  if (!isValid) {
+    ElMessage.error(
+      "Rol tanlanmagan yoki noto'g'ri formatda.Rolni boshqatdan tanlab keyin o'zgartiring!"
+    );
+    return;
+  }
+};
 const formRef = ref();
 const PlusValidate = async (formRef) => {
-  console.log(modal_action.value);
-
   await formRef.validate((valid) => {
     if (valid === true) {
       if (modal_action.value.action === "create") {
@@ -321,7 +337,17 @@ onMounted(async () => {
                 </el-form-item>
               </div>
               <div class="mb-1 col-span-6">
-                <el-form-item label="Rol" prop="roles" :rules="rules">
+                <el-form-item
+                  label="Rol"
+                  prop="roles"
+                  :rules="[
+                    {
+                      required: true,
+                      validator: validateRoles,
+                      trigger: 'change',
+                    },
+                  ]"
+                >
                   <el-select
                     multiple
                     v-model="modal.model.roles"
@@ -329,7 +355,7 @@ onMounted(async () => {
                     size="smal"
                     style="width: 100%"
                     @click="Type({ type: `permission` })"
-                    @change="ChangeOrderDirection($event)"
+                    @change="ChangeRoleDirection($event)"
                   >
                     <template #prefix>
                       <i
@@ -366,7 +392,6 @@ onMounted(async () => {
                 <el-form-item
                   label="Ishga qabul qilingan sana"
                   prop="registeredAt"
-                  :rules="rules"
                 >
                   <el-date-picker
                     required
@@ -380,9 +405,8 @@ onMounted(async () => {
                 </el-form-item>
               </div>
               <div class="mb-1 col-span-6">
-                <el-form-item label="Login " prop="username" :rules="rules">
+                <el-form-item label="Login " prop="username">
                   <el-input
-                    required
                     v-model="modal.model.username"
                     clearable
                     class="w-[100%]"
@@ -393,9 +417,8 @@ onMounted(async () => {
                 </el-form-item>
               </div>
               <div class="mb-1 col-span-6">
-                <el-form-item label="Parol" prop="password" :rules="rules">
+                <el-form-item label="Parol" prop="password">
                   <el-input
-                    required
                     v-model="modal.model.password"
                     clearable
                     class="w-[100%]"
@@ -406,7 +429,7 @@ onMounted(async () => {
                 </el-form-item>
               </div>
 
-              <div class="col-span-3 p-1 rounded-md">
+              <!-- <div class="col-span-3 p-1 rounded-md">
                 <el-form-item label="Rasm" prop="imageUrl">
                   <el-upload
                     class="w-full"
@@ -435,7 +458,7 @@ onMounted(async () => {
                     />
                   </el-dialog>
                 </el-form-item>
-              </div>
+              </div> -->
             </div>
           </div>
           <!-- //  Identifikatsiya ma’lumotlari -->
@@ -448,7 +471,7 @@ onMounted(async () => {
               Identifikatsiya ma’lumotlari
             </h1>
             <div class="grid grid-cols-12 gap-1">
-              <div class="mb-1 col-span-3">
+              <!-- <div class="mb-1 col-span-3">
                 <el-form-item label="INN" prop="inn">
                   <el-input
                     v-model="modal.model.inn"
@@ -473,8 +496,8 @@ onMounted(async () => {
                     placeholder="AB4567898"
                   />
                 </el-form-item>
-              </div>
-              <div class="mb-1 col-span-3">
+              </div> -->
+              <!-- <div class="mb-1 col-span-3">
                 <el-form-item label="Jinsi" prop="gender" :rules="rules">
                   <el-select
                     v-model="modal.model.gender"
@@ -513,8 +536,8 @@ onMounted(async () => {
                     </el-option>
                   </el-select>
                 </el-form-item>
-              </div>
-              <div class="mb-1 col-span-3">
+              </div> -->
+              <div class="mb-1 col-span-4">
                 <el-form-item
                   label="Viloyat"
                   prop="address.region"
@@ -558,7 +581,7 @@ onMounted(async () => {
                   </el-select>
                 </el-form-item>
               </div>
-              <div class="mb-1 col-span-3">
+              <div class="mb-1 col-span-4">
                 <el-form-item
                   label="Tuman"
                   prop="address.district"
@@ -602,7 +625,7 @@ onMounted(async () => {
                   </el-select>
                 </el-form-item>
               </div>
-              <div class="mb-1 col-span-3">
+              <div class="mb-1 col-span-4">
                 <el-form-item
                   label="Mahalla"
                   prop="address.neighborhood"
@@ -646,7 +669,7 @@ onMounted(async () => {
                   </el-select>
                 </el-form-item>
               </div>
-              <div class="mb-1 col-span-3">
+              <div class="mb-1 col-span-4">
                 <el-form-item
                   label="Ko'cha"
                   prop="address.street"
@@ -664,10 +687,9 @@ onMounted(async () => {
                 </el-form-item>
               </div>
 
-              <div class="mb-1 col-span-3">
-                <el-form-item label="Uy" prop="address.house" :rules="rules">
+              <div class="mb-1 col-span-4">
+                <el-form-item label="Uy" prop="address.house">
                   <el-input
-                    required
                     v-model="modal.model.address.house"
                     clearable
                     class="w-[100%]"
@@ -685,7 +707,8 @@ onMounted(async () => {
                     class="w-[100%]"
                     size="smal"
                     placeholder="93 _____ __ __"
-                    maxlength="17"
+                    maxlength="9"
+                    type="Number"
                   >
                     <template #prefix>
                       <span>+998</span>
@@ -693,7 +716,7 @@ onMounted(async () => {
                   </el-input>
                 </el-form-item>
               </div>
-              <div class="mb-1 col-span-4">
+              <!-- <div class="mb-1 col-span-4">
                 <el-form-item label="Email" prop="email">
                   <el-input
                     v-model="modal.model.email"
@@ -706,8 +729,8 @@ onMounted(async () => {
                     :mask="'email'"
                   ></el-input>
                 </el-form-item>
-              </div>
-              <div class="mb-1 col-span-4">
+              </div> -->
+              <!-- <div class="mb-1 col-span-4">
                 <el-form-item label="Telegram" prop="telegram">
                   <el-input
                     v-model="modal.model.telegram"
@@ -720,7 +743,7 @@ onMounted(async () => {
                     :mask="'email'"
                   ></el-input>
                 </el-form-item>
-              </div>
+              </div> -->
 
               <div class="col-span-12 p-1 rounded-md">
                 <el-form-item
@@ -742,21 +765,33 @@ onMounted(async () => {
                   >
                     <i class="fa-solid fa-map mr-2 fa-md"></i> Xaritani ochish
                   </div>
-                  <div
-                    v-if="modal.model.location.lat && modal.model.location.long"
-                    class="flex justify-end gap-2"
-                  >
+                  <div class="flex justify-end gap-2">
                     <div
-                      class="bg-green-200 p-[5px] text-[12px] font-semibold rounded-[4px]"
+                      class="bg-green-200 col-span-1 w-auto p-[5px] text-[12px] font-semibold rounded-[4px]"
                     >
-                      Kordinata (lat) :
-                      {{ modal.model ? modal.model.location.lat : 0 }}
+                      Kordinata (lat)
+                      <el-input
+                        v-model="modal.model.location.lat"
+                        clearable
+                        class="w-[100%]"
+                        size="smal"
+                        type="Number"
+                        placeholder="..."
+                      />
                     </div>
                     <div
-                      class="bg-red-200 p-[5px] text-[12px] font-semibold rounded-[4px]"
+                      class="bg-red-200 col-span-1 w-auto p-[5px] text-[12px] font-semibold rounded-[4px]"
                     >
-                      Kordinata (long):
-                      {{ modal.model ? modal.model.location.long : 0 }}
+                      Kordinata (long)
+
+                      <el-input
+                        v-model="modal.model.location.long"
+                        clearable
+                        class="w-[100%]"
+                        size="smal"
+                        type="Number"
+                        placeholder="..."
+                      />
                     </div>
                   </div>
                 </el-form-item>
@@ -870,7 +905,7 @@ onMounted(async () => {
                   </el-form-item>
                 </div>
 
-                <div class="mb-1 col-span-6">
+                <!-- <div class="mb-1 col-span-6">
                   <el-form-item
                     label="Haydovchilik guvohnoamsi seryasi"
                     prop="driverLicenseNumber"
@@ -903,7 +938,7 @@ onMounted(async () => {
                       size="smal"
                     />
                   </el-form-item>
-                </div>
+                </div> -->
               </div>
             </div>
           </div>
