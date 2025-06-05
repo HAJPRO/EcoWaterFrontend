@@ -24,6 +24,7 @@ export const CustomerManagmentStore = defineStore("CustomerManagmentStore", {
           fullname: "",
           discription: "",
           phoneNumber: "",
+          is_location: "",
           address: {
             region: "",
             district: "",

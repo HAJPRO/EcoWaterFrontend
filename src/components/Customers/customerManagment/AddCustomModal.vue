@@ -702,6 +702,42 @@ onMounted(async () => {
                       placeholder="..."
                     />
                   </div>
+                  <div class="col-span-4">
+                    <el-form-item
+                      prop="print"
+                      :rules="rules"
+                      class="col-span-3 flex items-center mt-0 text-center"
+                      size="small"
+                    >
+                      <el-tooltip
+                        :content="`Mijozni aniq kordinatasini belgiladingizmi ?`"
+                        placement="top"
+                        size="slal"
+                      >
+                        <label
+                          class="relative inline-flex cursor-pointer items-center"
+                        >
+                          <input
+                            required
+                            type="checkbox"
+                            v-model="modal.model.is_location"
+                            class="sr-only peer"
+                          />
+                          <div
+                            class="w-11 h-6 bg-slate-300 rounded-full peer-checked:bg-green-400 transition-all"
+                          ></div>
+                          <p
+                            class="ml-1 text-[12px] font-semibold text-slate-600 peer-checked:text-green-500"
+                          >
+                            Location
+                          </p>
+                          <div
+                            class="absolute left-1 top-1 w-4 h-4 bg-white border rounded-full shadow-md peer-checked:translate-x-5 transition-all"
+                          ></div>
+                        </label>
+                      </el-tooltip>
+                    </el-form-item>
+                  </div>
                 </el-form-item>
               </div>
             </div>
