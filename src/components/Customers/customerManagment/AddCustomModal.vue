@@ -669,13 +669,13 @@ onMounted(async () => {
                   <!-- Xarita -->
 
                   <div
-                    class="mb-1 mt-2 col-span-1 w-auto text-white font-semibold bg-purple-600 rounded-[4px] items-center text-center px-4 py-[5px] hover:bg-purple-700 mr-2 cursor-pointer"
+                    class="mb-1 mt-2 col-span-3 w-auto text-white font-semibold bg-purple-600 rounded-[4px] items-center text-center px-4 py-[5px] hover:bg-purple-700 mr-2 cursor-pointer"
                     @click="is_map = !is_map"
                   >
                     <i class="fa-solid fa-map mr-2 fa-md"></i> Xaritani ochish
                   </div>
                   <div
-                    class="bg-green-200 col-span-1 w-auto p-[5px] text-[12px] font-semibold rounded-[4px]"
+                    class="bg-green-200 col-span-3 w-auto p-[5px] text-[12px] font-semibold rounded-[4px]"
                   >
                     Kordinata (lat)
 
@@ -702,7 +702,7 @@ onMounted(async () => {
                       placeholder="..."
                     />
                   </div>
-                  <div class="col-span-4">
+                  <div class="col-span-2">
                     <el-form-item
                       prop="is_location"
                       :rules="rules"

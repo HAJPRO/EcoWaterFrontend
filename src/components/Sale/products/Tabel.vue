@@ -181,8 +181,8 @@ onMounted(() => {
           <el-table-column
             fixed="right"
             label="Holati"
-            :min-width="170"
-            :max-width="400"
+            :min-width="200"
+            :max-width="500"
             header-align="center"
             align="center"
           >
