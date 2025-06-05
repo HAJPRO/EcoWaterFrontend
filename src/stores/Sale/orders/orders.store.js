@@ -2,10 +2,9 @@
 import { CustomerManagmentService } from "../../../ApiServices/Customers/c-managment/customer.service";
 import { OrderManagmentService } from "../../../ApiServices/Sale/orders/order.service";
 import { DriverManagmentService } from "../../../ApiServices/Drivers/driver/driver.service";
-
-
 import { ToastifyService } from "../../../utils/Toastify";
-import { loading } from "../../../utils/Loader";
+import { Loading } from "../../../utils/Loading";
+const loading = Loading()
 import { defineStore } from "pinia";
 
 export const OrderManagmentStore = defineStore("OrderManagmentStore", {

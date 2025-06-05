@@ -2,7 +2,8 @@ import { UserService } from "../../ApiServices/Admin/user.service";
 import { PermissionService } from "../../ApiServices/Admin/permission.service";
 
 import { ToastifyService } from "../../utils/Toastify";
-import { loading } from "./../../utils/Loader";
+import { Loading } from "../../utils/Loading";
+const loading = Loading()
 import { defineStore } from "pinia";
 
 export const PermissionStore = defineStore("PermissionStore", {

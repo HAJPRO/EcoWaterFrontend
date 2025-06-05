@@ -88,7 +88,7 @@ onMounted(() => {
               <div class="text-red-500 cursor-pointer hover:underline">
                 <router-link
                   to=""
-                  class="cursor-pointer inline-flex items-center text-red bg-[#e4e9e9] hover:bg-[#d7ebeb] font-medium rounded-md text-[12px] w-ful p-[5px] sm:w-auto text-center"
+                  class="cursor-pointer inline-flex items-center text-red bg-[#e4e9e9] hover:bg-[#d7ebeb] font-medium rounded-md text-[12px] w-full p-[5px] sm:w-auto text-center"
                 >
                   <i class="fas fa-boxes-stacked text-gray-500 fa-sm mr-2"></i>
                   {{ row.orderNumber }}
@@ -300,7 +300,7 @@ onMounted(() => {
           <el-table-column
             fixed="right"
             label="Holati"
-            :min-width="200"
+            :min-width="100"
             :max-width="400"
             header-align="center"
             align="center"

@@ -1,6 +1,7 @@
 import { SaleStatisticsService } from "../../../ApiServices/Dashboard/statistics/salestatistics.service.js";
 import { ToastifyService } from "../../../utils/Toastify";
-import { loading } from "../../../utils/Loader";
+import { Loading } from "../../../utils/Loading";
+const loading = Loading()
 import { defineStore } from "pinia";
 
 export const SaleStatisticsStore = defineStore('SaleStatisticsStore', {

@@ -1,6 +1,7 @@
 import { EmployeeManagmentService } from "../../../ApiServices/HR/employee/employee.service";
 import { ToastifyService } from "../../../utils/Toastify";
-import { loading } from "../../../utils/Loader";
+import { Loading } from "../../../utils/Loading";
+const loading = Loading()
 import { defineStore } from "pinia";
 
 export const EmployeeManagmentStore = defineStore("EmployeeManagmentStore", {

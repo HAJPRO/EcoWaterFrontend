@@ -1,9 +1,8 @@
 
 import { ProductManagmentService } from "../../../ApiServices/Sale/products/product.service";
-
-
 import { ToastifyService } from "../../../utils/Toastify";
-import { loading } from "../../../utils/Loader";
+import { Loading } from "../../../utils/Loading";
+const loading = Loading()
 import { defineStore } from "pinia";
 
 export const ProductsManagmentStore = defineStore("ProductsManagmentStore", {

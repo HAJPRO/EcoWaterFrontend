@@ -7,9 +7,11 @@ const bodyParameters = {
 let config = {
   headers: { Authorization: `Bearer ${Cookies.get("token")}` },
 };
+const isProd = window.location.hostname !== 'localhost';
 const api = axios.create({
-  // baseURL: "http://localhost:5000/api/v1/",
-  baseURL: "https://eco.company-erp.uz/api/v1/",
+  baseURL: isProd
+    ? 'https://eco.company-erp.uz/api/v1'
+    : 'http://localhost:5000/api/v1',
   headers: {
     Authorization: `Bearer ${Cookies.get("token")}`,
   },

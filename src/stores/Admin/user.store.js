@@ -1,6 +1,7 @@
 import { UserService } from "../../ApiServices/Admin/user.service";
 import { ToastifyService } from "../../utils/Toastify";
-import { loading } from "../../utils/Loader";
+import { Loading } from "../../utils/Loading";
+const loading = Loading()
 import { defineStore } from "pinia";
 import { RoleService } from "../../ApiServices/Admin/role.service";
 import { PermissionService } from "../../ApiServices/Admin/permission.service";

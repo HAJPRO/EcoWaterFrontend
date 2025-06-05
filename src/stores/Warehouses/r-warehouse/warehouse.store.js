@@ -1,8 +1,8 @@
 import { defineStore } from "pinia";
 import { ReadyWarehouseService } from "../../../ApiServices/Warehouses/r-warehouse/warehouse.service";
 import { ToastifyService } from "../../../utils/Toastify";
-import { loading } from "../../../utils/Loader";
-import { th } from "element-plus/es/locale/index.mjs";
+import { Loading } from "../../../utils/Loading";
+const loading = Loading()
 export const ReadyWarehouseStore = defineStore("ReadyWarehouseStore", {
   state: () => ({
     ModalAction: {
