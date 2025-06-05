@@ -115,7 +115,7 @@ onMounted(async () => {
 });
 </script>
 <template>
-  <!-- <AddOptionModal v-if="is_modal === true" /> -->///
+  <!-- <AddOptionModal v-if="is_modal === true" /> -->
   <div>
     <el-dialog v-model="custom_modal" :width="dialogWidth" class="mt-4">
       <span>
@@ -650,7 +650,7 @@ onMounted(async () => {
                   />
                 </el-form-item>
               </div>
-              <div class="mb-1 col-span-12">
+              <div class="mb-1 col-span-12 gap-3">
                 <el-form-item
                   label="Manzilni xaritadan belgila"
                   prop="location"
@@ -704,7 +704,7 @@ onMounted(async () => {
                   </div>
                   <div class="col-span-4">
                     <el-form-item
-                      prop="print"
+                      prop="is_location"
                       :rules="rules"
                       class="col-span-3 flex items-center mt-0 text-center"
                       size="small"
