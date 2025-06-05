@@ -1,36 +1,48 @@
 <script setup>
-// import { ref, onMounted } from "vue";
-// import { loading } from "../../../utils/Loader";
-// import { HREmployeesStore } from "../../../stores/HR/Employees/employees.store";
-// const store_employees = HREmployeesStore();
-// import { storeToRefs } from "pinia";
-// const { all_length } = storeToRefs(store_employees);
-// const IsActive = (is_active) => {
-//   store_employees.GetIsActive(is_active);
-// };
+import { ref, onMounted } from "vue";
+import { loading } from "../../../utils/Loader";
+import { EmployeeManagmentStore } from "../../../stores/HR/employee/employee.store";
+const store_employees = EmployeeManagmentStore();
+import { storeToRefs } from "pinia";
+const { all_length } = storeToRefs(store_employees);
+const IsActive = (is_active) => {
+  store_employees.GetIsActive(is_active);
+};
 
-// const getAll = async () => {
-//   IsActive(isActive.value);
-//   store_employees.getAll(1);
-// };
-// const isActive = ref(1);
-// const ActiveTabLink = (num) => {
-//   if (num === 1) {
-//     isActive.value = 1;
-//     return getAll();
-//   }
-//   if (num === 2) {
-//     isActive.value = 2;
-//     return getAll();
-//   }
-// };
-// onMounted(async () => {
-//   try {
-//     await getAll();
-//   } catch (err) {
-//     console.log(err);
-//   }
-// });
+const getAll = async () => {
+  IsActive(isActive.value);
+  store_employees.GetAll({ status: isActive.value, page: 1, limit: 10 });
+};
+const isActive = ref(1);
+const ActiveTabLink = (num) => {
+  if (num === 1) {
+    isActive.value = 1;
+    return getAll();
+  }
+  if (num === 2) {
+    isActive.value = 2;
+    return getAll();
+  }
+  if (num === 3) {
+    isActive.value = 3;
+    return getAll();
+  }
+  if (num === 4) {
+    isActive.value = 4;
+    return getAll();
+  }
+  if (num === 5) {
+    isActive.value = 5;
+    return getAll();
+  }
+};
+onMounted(async () => {
+  try {
+    await getAll();
+  } catch (err) {
+    console.log(err);
+  }
+});
 </script>
 <template>
   <div
@@ -38,15 +50,31 @@
   >
     <div class="col-span-9 grid-flow-col flex-wrap">
       <router-link
-        to=""
         @click="ActiveTabLink(1)"
+        to=""
         :class="{ activeTab: isActive === 1 }"
+        class="inline-flex text-[13px] items-center mr-2 px-4 py-1 mb-1 text-sm font-medium text-center text-red hover:border-b-2 border-solid border-[#36d887] bg-[#e4e9e9] text-bold rounded"
+      >
+        <i class="fa-solid fa-list-ul mr-2 fa-md"></i> Barchasi
+        <div class="flex flex-shrink-0 ml-2">
+          <span
+            :class="{ activeTabIcon: isActive === 1 }"
+            class="inline-flex items-center justify-center h-5 text-[11px] font-medium text-white bg-[#36d887] px-3 py-2 rounded"
+          >
+            {{ all_length ? all_length.all : 0 }}</span
+          >
+        </div>
+      </router-link>
+      <router-link
+        to=""
+        @click="ActiveTabLink(2)"
+        :class="{ activeTab: isActive === 2 }"
         class="inline-flex text-[13px] items-center mr-2 px-4 py-1 mb-1 text-sm font-medium text-center text-red hover:border-b-2 border-solid border-[#36d887] bg-[#e4e9e9] text-bold rounded"
       >
         <i class="fa-solid fa-user-tie mr-2 fa-xm"></i>Adminstratsiya
         <div class="flex flex-shrink-0 ml-2">
           <span
-            :class="{ activeTabIcon: isActive === 1 }"
+            :class="{ activeTabIcon: isActive === 2 }"
             class="inline-flex items-center justify-center h-5 text-[11px] font-medium text-white bg-[#36d887] px-3 py-2 rounded"
           >
             {{ 0 }}</span
@@ -54,47 +82,47 @@
         </div>
       </router-link>
       <router-link
-        @click="ActiveTabLink(2)"
+        @click="ActiveTabLink(3)"
         to=""
-        :class="{ activeTab: isActive === 2 }"
+        :class="{ activeTab: isActive === 3 }"
         class="inline-flex text-[13px] items-center mr-2 px-4 py-1 mb-1 text-sm font-medium text-center text-red hover:border-b-2 border-solid border-[#36d887] bg-[#e4e9e9] text-bold rounded"
       >
         <i class="fa-solid fa-car mr-2 fa-xm"></i> Haydovchilar
         <div class="flex flex-shrink-0 ml-2">
           <span
-            :class="{ activeTabIcon: isActive === 2 }"
+            :class="{ activeTabIcon: isActive === 3 }"
             class="inline-flex items-center justify-center h-5 text-[11px] font-medium text-white bg-[#36d887] px-3 py-2 rounded"
           >
             {{ 0 }}</span
           >
         </div>
       </router-link>
-        <router-link
-        @click="ActiveTabLink(2)"
+      <router-link
+        @click="ActiveTabLink(4)"
         to=""
-        :class="{ activeTab: isActive === 2 }"
+        :class="{ activeTab: isActive === 4 }"
         class="inline-flex text-[13px] items-center mr-2 px-4 py-1 mb-1 text-sm font-medium text-center text-red hover:border-b-2 border-solid border-[#36d887] bg-[#e4e9e9] text-bold rounded"
       >
         <i class="fa-solid fa-users mr-2 fa-xm"></i> Agentlar
         <div class="flex flex-shrink-0 ml-2">
           <span
-            :class="{ activeTabIcon: isActive === 2 }"
+            :class="{ activeTabIcon: isActive === 4 }"
             class="inline-flex items-center justify-center h-5 text-[11px] font-medium text-white bg-[#36d887] px-3 py-2 rounded"
           >
             {{ 0 }}</span
           >
         </div>
       </router-link>
-          <router-link
-        @click="ActiveTabLink(2)"
+      <router-link
+        @click="ActiveTabLink(5)"
         to=""
-        :class="{ activeTab: isActive === 2 }"
+        :class="{ activeTab: isActive === 5 }"
         class="inline-flex text-[13px] items-center mr-2 px-4 py-1 mb-1 text-sm font-medium text-center text-red hover:border-b-2 border-solid border-[#36d887] bg-[#e4e9e9] text-bold rounded"
       >
         <i class="fa-solid fa-users-rectangle mr-2 fa-xm"></i> Ishchi xodimlar
         <div class="flex flex-shrink-0 ml-2">
           <span
-            :class="{ activeTabIcon: isActive === 2 }"
+            :class="{ activeTabIcon: isActive === 5 }"
             class="inline-flex items-center justify-center h-5 text-[11px] font-medium text-white bg-[#36d887] px-3 py-2 rounded"
           >
             {{ 0 }}</span

@@ -47,7 +47,7 @@ const routes = [
         component: () => import("../pages/Explore/Dashboard/statistic/sale/index.vue"),
         beforeEnter(to, from, next) {
           const account = Cookies.get("account") ? JSON.parse(Cookies.get("account")) : null;
-          if (account && account.role === 1000) {
+          if (account) {
             next();
           } else {
             next("/explore");
@@ -61,7 +61,7 @@ const routes = [
         component: () => import("../pages/Explore/Admin/users.vue"),
         beforeEnter(to, from, next) {
           const account = Cookies.get("account") ? JSON.parse(Cookies.get("account")) : null;
-          if (account && account.role === 1000) {
+          if (account) {
             next();
           } else {
             next("/explore");
@@ -69,12 +69,12 @@ const routes = [
         },
       },
       {
-        path: "/admin/role",
-        name: "Role",
-        component: () => import("../pages/Explore/Admin/role.vue"),
+        path: "admin/system/role",
+        name: "RoleManagment",
+        component: () => import("../pages/Explore/Admin/system/index.vue"),
         beforeEnter(to, from, next) {
           const account = Cookies.get("account") ? JSON.parse(Cookies.get("account")) : null;
-          if (account && account.role === 1000) {
+          if (account) {
             next();
           } else {
             next("/explore");
@@ -83,12 +83,12 @@ const routes = [
       },
       //Profile
       {
-        path: "/profile",
+        path: "profile",
         name: "profile_card",
         component: () => import("../pages/Explore/Profile/profile.vue"),
       },
       {
-        path: "/profile_settings",
+        path: "profile_settings",
         name: "profile_settings",
         component: () => import("../pages/Explore/Profile/Settings.vue"),
       },

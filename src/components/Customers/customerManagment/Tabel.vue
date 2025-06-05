@@ -3,32 +3,53 @@ import Cookies from "js-cookie";
 const role = ref(JSON.parse(Cookies.get("account")).role);
 const permissions = ref(JSON.parse(Cookies.get("account")).permissions);
 const actions = ref(JSON.parse(Cookies.get("account")).actions);
-
+import { ElMessage } from "element-plus";
 import { ref, onMounted } from "vue";
 import { CustomerManagmentStore } from "../../../stores/Customers/c-managment/customer.store";
 import CustomModal from "../../../components/Customers/customerManagment/AddCustomModal.vue";
+import DetailInfoModal from "./DetailInfoModal.vue";
 import moment from "moment-timezone";
 
 const store = CustomerManagmentStore();
 import { storeToRefs } from "pinia";
-const { custom_modal, modal, customers,all_length, isActive } =
+const { custom_modal, modal, customers, all_length, isActive } =
   storeToRefs(store);
-const AddCustomModal =  () => {
-  store.AddCustomModal()
-}
+const AddCustomModal = () => {
+  store.AddCustomModal({
+    action: "create",
+    title: "Mijoz kartasini shakillantirish",
+  });
+};
+const AddDetailModal = (id) => {
+  store.AddDetailModal({ id });
+};
 const handleCurrentChange = (page) => {
-  store.GetAll({status : isActive.value, page : page, limit:5});
+  store.GetAll({ status: isActive.value, page: page, limit: 10 });
 };
 const deleteById = (id) => {
-  store.DeleteById({id});
+  store.DeleteById({ id });
 };
 const UpdateById = (id) => {
-  store.GetById({id});
+  store.AddCustomModal({
+    id,
+    action: "update",
+    title: "Mijoz kartasini o'zgartirish",
+  });
 };
-
+const copyToClipboard = (text) => {
+  navigator.clipboard
+    .writeText(text)
+    .then(() => {
+      ElMessage.success("Telefon raqam nusxalandi: " + text);
+    })
+    .catch(() => {
+      ElMessage.error("Nusxalashda xatolik yuz berdi");
+    });
+};
 </script>
 <template>
-<Custom-Modal/>
+  <Custom-Modal />
+  <DetailInfoModal />
   <div class="">
     <div class="">
       <div class="rounded-md text-[11px]">
@@ -37,6 +58,8 @@ const UpdateById = (id) => {
             background: '#e8eded',
             border: '0.2px solid #e1e1e3',
           }"
+          stripe
+          highlight-current-row
           load
           style="font-size: 12px"
           size="small"
@@ -57,14 +80,23 @@ const UpdateById = (id) => {
             width="60"
           />
           <el-table-column
-            prop="fullname"
             label="F.I.O"
-            :min-width="100"
+            :min-width="250"
             :max-width="400"
             header-align="center"
-            align="center"
-          />
-          <el-table-column
+            ><template #default="{ row }">
+              <div class="text-red-500 cursor-pointer hover:underline">
+                <router-link
+                  to=""
+                  class="cursor-pointer inline-flex items-center text-red bg-[#e4e9e9] hover:bg-[#d7ebeb] font-medium rounded-md text-[12px] w-ful p-[5px] sm:w-auto text-center"
+                >
+                  <i class="fas fa-user text-gray-500 fa-sm mr-2"></i>
+                  {{ row.fullname }}
+                </router-link>
+              </div></template
+            ></el-table-column
+          >
+          <!-- <el-table-column
             align="center"
             header-align="center"
             prop="artikul"
@@ -72,17 +104,16 @@ const UpdateById = (id) => {
             :min-width="100"
             :max-width="400"
           />
-            <el-table-column
+          <el-table-column
             label="Kategoriyasi"
-          :min-width="100"
-          :max-width="400"
+            :min-width="200"
+            :max-width="400"
             header-align="center"
-            align="center"
             ><template #default="scope">{{
-             scope.row.category
+              scope.row.category
             }}</template></el-table-column
-          >
-           <el-table-column
+          > -->
+          <el-table-column
             align="center"
             header-align="center"
             prop="address.region"
@@ -90,7 +121,7 @@ const UpdateById = (id) => {
             :min-width="100"
             :max-width="400"
           />
-            <el-table-column
+          <el-table-column
             align="center"
             header-align="center"
             prop="address.district"
@@ -98,7 +129,7 @@ const UpdateById = (id) => {
             :min-width="100"
             :max-width="400"
           />
-           <el-table-column
+          <el-table-column
             align="center"
             header-align="center"
             prop="address.neighborhood"
@@ -106,7 +137,7 @@ const UpdateById = (id) => {
             :min-width="100"
             :max-width="400"
           />
-             <el-table-column
+          <el-table-column
             align="center"
             header-align="center"
             prop="address.street"
@@ -114,58 +145,78 @@ const UpdateById = (id) => {
             :min-width="100"
             :max-width="400"
           />
-           <el-table-column
-            align="center"
+          <el-table-column
             header-align="center"
             prop="phoneNumber"
             label="Telefon"
-            :min-width="100"
+            :min-width="150"
             :max-width="400"
-          />
+            ><template #default="{ row }">
+              <div
+                class="text-blue-600 cursor-pointer hover:underline"
+                @click="copyToClipboard(row.phoneNumber)"
+              >
+                <router-link
+                  to=""
+                  class="cursor-pointer inline-flex items-center text-red bg-[#e4e9e9] hover:bg-[#d7ebeb] font-medium rounded-md text-[12px] w-ful p-[5px] sm:w-auto text-center"
+                >
+                  <i class="fas fa-phone text-gray-500 fa-sm mr-2"></i>
+                  {{ row.phoneNumber }}
+                </router-link>
+              </div></template
+            ></el-table-column
+          >
 
-       
-        
-           <el-table-column
+          <el-table-column
             label="Bonus ball"
             :min-width="100"
             header-align="center"
             align="center"
-            ><template #default="scope">{{ 
-             0
-            }}</template></el-table-column
+            ><template #default="scope">{{ 0 }}</template></el-table-column
           >
-             <el-table-column
+          <el-table-column
             label="Registratsiya vaqti"
-          :min-width="100"
-          :max-width="400"
+            :min-width="150"
+            :max-width="400"
             header-align="center"
             align="center"
             ><template #default="scope">
-               {{
-                scope.row.registeredAt
+              {{
+                scope.row.createdAt
                   ? moment
-                      .utc( scope.row.registeredAt) // 🟢 UTC formatda olish
+                      .utc(scope.row.createdAt) // 🟢 UTC formatda olish
                       .tz("Asia/Tashkent") // 🟢 UTC+5 ga aylantirish
                       .format("DD.MM.YYYY HH:mm:ss") // 🟢 To‘g‘ri formatda chiqarish
                   : "-"
               }}
-            
             </template></el-table-column
           >
           <el-table-column
             fixed="right"
-            label="Status"
+            label="Holati"
             :min-width="100"
-              :max-width="400"
+            :max-width="400"
             header-align="center"
             align="center"
           >
-            <template #default="scope">
+            <template #default="{ row }">
               <router-link
                 to=""
-                class="cursor-pointer inline-flex items-center text-red bg-[#e4e9e9] hover:bg-[#d7ebeb] font-medium rounded-md text-[12px] w-ful p-[5px] sm:w-auto text-center"
+                :class="[
+                  'cursor-pointer inline-flex items-center gap-1 hover:bg-opacity-90 font-medium rounded-md text-[12px] w-full p-[5px] sm:w-auto text-center',
+                  row.status === `Aktiv`
+                    ? 'bg-green-200 text-green-900'
+                    : 'bg-red-200 text-red-900',
+                ]"
               >
-                {{ scope.row.status }}
+                <i
+                  :class="
+                    row.status === `Aktiv`
+                      ? 'fa-solid fa-circle-check text-green-700'
+                      : 'fa-solid fa-hourglass-start text-red-700'
+                  "
+                ></i>
+                {{ row.status }}
               </router-link>
             </template>
           </el-table-column>
@@ -198,11 +249,13 @@ const UpdateById = (id) => {
                   <el-dropdown-menu slot="dropdown" append-to-body class="z-50">
                     <el-dropdown-item
                       class="text-[13px] text-green-600"
-                      @click="GetOne(row._id)"
+                      @click="AddDetailModal(row._id)"
                       ><template #default=""
                         ><div>
-                          <i class="text-black fa-solid fa-eye fa-sm mr-2"></i
-                          >Batafsil 
+                          <i
+                            class="text-black fa-solid fa-magnifying-glass fa-sm mr-2"
+                          ></i
+                          >Batafsil
                         </div>
                       </template></el-dropdown-item
                     >
@@ -220,6 +273,18 @@ const UpdateById = (id) => {
                     > -->
 
                     <el-dropdown-item
+                      class="text-[13px] text-indigo-600"
+                      @click="UpdateById(row._id)"
+                      ><template #default="{}"
+                        ><div>
+                          <i
+                            class="text-black fa-solid fa-pen-to-square fa-pen-to-square fa-sm mr-1"
+                          ></i>
+                          O'zgatirish
+                        </div>
+                      </template></el-dropdown-item
+                    >
+                    <el-dropdown-item
                       class="text-[13px] text-yellow-500"
                       @click="ExportExcel(row._id)"
                       ><template #default="{}"
@@ -228,19 +293,6 @@ const UpdateById = (id) => {
                             class="text-black fa-solid fa-file-excel fa-sm mr-1"
                           ></i>
                           Excel
-                        </div>
-                      </template></el-dropdown-item
-                    >
-                     <el-dropdown-item
-                      class="text-[13px] text-indigo-600"
-                      @click="UpdateById(row._id)"
-                      
-                      ><template #default="{}"
-                        ><div>
-                          <i
-                            class="text-black fa-solid fa-pen fa-sm mr-1"
-                          ></i>
-                         O'zgatirish
                         </div>
                       </template></el-dropdown-item
                     >
@@ -329,7 +381,7 @@ const UpdateById = (id) => {
               <el-pagination
                 small
                 @current-change="handleCurrentChange"
-                :page-size="5"
+                :page-size="10"
                 layout="prev, pager, next"
                 :total="all_length.all"
                 class="custom-pagination"

@@ -1,9 +1,9 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import Title from "@/components/Title.vue";
-import HeaderTabLink from "../../../components/Admin/role/HeaderTabLink.vue";
-import AddPermissionModal from "../../../components/Admin/role/AddPermissionModal.vue";
-import AddRoleModal from "../../../components/Admin/role/AddRoleModel.vue";
+import HeaderTabLink from "../../../components/Admin/System/role/HeaderTabLink.vue";
+import AddPermissionModal from "../../../components/Admin/System/role/AddPermissionModal.vue";
+import AddRoleModal from "../../../components/Admin/System/role/AddRoleModel.vue";
 
 import { RoleStore } from "../../../stores/Admin/role.store";
 const store_role = RoleStore();

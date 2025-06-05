@@ -3,8 +3,12 @@ import api from "../../helpers/api";
 
 export const RoleService = {
 
-    CreateRole(data) {
-        let url = "admin/create_role";
+    Create(data) {
+        let url = "admin/role/create";
+        return api.post(url, data);
+    },
+    GetAll(data) {
+        let url = "admin/role/all";
         return api.post(url, data);
     },
 

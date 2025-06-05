@@ -1,11 +1,12 @@
 import { createApp } from "vue";
 import { createPinia } from "pinia";
 
-import ElementPlus from 'element-plus'
-import 'element-plus/dist/index.css'
-import zhCn from 'element-plus/es/locale/lang/zh-cn';
+import ElementPlus from 'element-plus';
+import 'element-plus/dist/index.css';
+import * as ElementPlusIconsVue from '@element-plus/icons-vue';  // faqat 1 marta import qilamiz
+import en from 'element-plus/es/locale/lang/en';
+
 import QrReader from 'vue3-qr-reader';
-import * as ElementPlusIconsVue from "@element-plus/icons-vue";
 import toast from "vue3-toastify";
 import Loading from 'vue-loading-overlay';
 
@@ -17,11 +18,14 @@ const app = createApp(App);
 
 app.use(router);
 app.use(createPinia());
-// Tilni import qilish
-import en from 'element-plus/es/locale/lang/en'  // Inglizcha
-app.use(ElementPlus, { locale: en }); // ✅ To‘g‘ri versiya
+app.use(ElementPlus, { locale: en });
 app.use(QrReader);
 app.use(toast);
 app.use(Loading);
+
+// Element Plus ikonalarni global ro‘yxatga olish
+Object.entries(ElementPlusIconsVue).forEach(([key, component]) => {
+    app.component(key, component);
+});
 
 app.mount("#app");

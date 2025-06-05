@@ -1,17 +1,20 @@
 import { RoleService } from "../../ApiServices/Admin/role.service";
 
 import { ToastifyService } from "../../utils/Toastify";
-import { loading } from "./../../utils/Loader";
+import { Loading } from "../../utils/Loading";
+const loading = Loading()
 import { defineStore } from "pinia";
 
 export const RoleStore = defineStore("RoleStore", {
     state: () => {
         return {
-
-            is_modal_role: false,
+            roles: [],
+            role_modal: false,
             model: {
-                role_name: "",
-                value: ""
+                name: "",
+                value: "",
+                description: "",
+                permissions: []
             },
 
 
@@ -19,21 +22,19 @@ export const RoleStore = defineStore("RoleStore", {
     },
     actions: {
         AddRoleModal() {
-            this.is_modal_role = true
+            this.role_modal = true
         },
-        async CreateRole(payload) {
+        async Create(payload) {
             const loader = loading.show();
-            const data = await RoleService.CreateRole(payload)
-            this.model.role_name = "",
-                this.model.value = "",
-                this.is_modal_role = false
+            const data = await RoleService.Create(payload)
             ToastifyService.ToastSuccess({
                 msg: data.data.msg,
             });
             loader.hide();
         },
-        async GetRoles() {
-            const data = await RoleService.GetRoles()
+        async GetAll() {
+            const data = await RoleService.GetAll()
+            this.roles = data.data.roles
         },
     },
 });

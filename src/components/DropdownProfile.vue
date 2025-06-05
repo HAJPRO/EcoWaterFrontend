@@ -8,17 +8,17 @@
       :aria-expanded="dropdownOpen"
     >
       <div class="flex items-center truncate">
-        <span
+        <!-- <span
           class="font-serif truncate ml-2 text-sm mr-2 font-medium dark:text-slate-300 group-hover:text-slate-800 dark:group-hover:text-slate-100"
           >{{ username }}
-        </span>
+        </span> -->
         <!-- <svg class="w-3 h-3 shrink-0 ml-1 fill-current text-slate-400" viewBox="0 0 12 12">
           <path d="M5.9 11.4L.5 6l1.4-1.4 4 4 4-4L11.3 6z" />
         </svg> -->
       </div>
       <img
         class="w-9 h-9 rounded-full"
-        src="https://avatars.mds.yandex.net/i?id=b91a04260c5720443b62928bb0051a479d0e3a1c-9221446-images-thumbs&n=13"
+        src="https://img.freepik.com/free-photo/medium-shot-smiley-man-sitting-desk_23-2149927603.jpg?t=st=1740713731~exp=1740717331~hmac=80f32fa460a7158c9731adc0cf8a12d6a79dd1630f0fe4cbb25e12fe7e6e4e19&w=1060"
         width="35"
         height="35"
         alt="User"
@@ -58,7 +58,7 @@
             <router-link
               class="font-medium text-sm text-indigo-500 hover:text-indigo-600 dark:hover:text-indigo-400 flex items-center py-1 px-3"
               :to="{ name: 'profile_card' }"
-              >My profile</router-link
+              >Mening profilim</router-link
             >
           </li>
 
@@ -67,15 +67,15 @@
               :to="{ name: 'profile_settings' }"
               class="font-medium text-sm text-indigo-500 hover:text-indigo-600 dark:hover:text-indigo-400 flex items-center py-1 px-3"
               @click="dropdownOpen = false"
-              >Settings</router-link
+              >Sozlamalar</router-link
             >
           </li>
           <li>
             <router-link
-              class="font-medium text-sm text-indigo-500 hover:text-indigo-600 dark:hover:text-indigo-400 flex items-center py-1 px-3"
+              class="font-medium text-sm text-red-500 hover:text-indigo-600 dark:hover:text-indigo-400 flex items-center py-1 px-3"
               to=""
               @click="logout"
-              >Sign Out</router-link
+              >Chiqish</router-link
             >
           </li>
         </ul>

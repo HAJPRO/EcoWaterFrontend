@@ -1,31 +1,49 @@
-import { defineStore } from 'pinia'
-import socket from '../../../socket.js'
+import { defineStore } from 'pinia';
+import socket from '../../../socket.js';
 
 export const MonitoringSocketStore = defineStore('MonitoringSocketStore', {
   state: () => ({
-    drivers: [], // real-time haydovchilar ro'yxati
+    drivers: [], // Real-time haydovchilar ro'yxati
   }),
+
   actions: {
-    connectSocket() {
-      if (!socket.connected) {
-        socket.connect();
-        this.listenEvents();
-      }
+    connectSocket(driverData) {
+      if (!socket.connected) socket.connect();
+
+      // Haydovchi tizimga kirgani haqida serverga ma'lumot yuborish
+      socket.emit("driver:connected", driverData);
+
+      // Eski 'drivers:online' listenerni olib tashlash
+      socket.off("drivers:online");
+
+      // Barcha haydovchilar ro'yxatini olish va yangilash
+      socket.on("drivers:online", (allDrivers) => {
+        this.drivers = allDrivers;
+        console.log("📦 Barcha haydovchilar:", this.drivers);
+      });
+
+      // Qo'shimcha hodisalarni tinglash (agar kerak bo'lsa)
+      this.listenEvents();
     },
+
     listenEvents() {
-      socket.on('driverLocationUpdate', (driverData) => {
-        this.updateDriver(driverData);
+      // Masalan, haydovchi koordinatasi yangilansa
+      socket.off('driver:location:update');
+      socket.on('driver:location:update', (updatedDriver) => {
+        const index = this.drivers.findIndex(d => d.id === updatedDriver.id);
+        if (index !== -1) {
+          this.drivers[index] = updatedDriver;
+        } else {
+          this.drivers.push(updatedDriver);
+        }
       });
     },
-    updateDriver(driverData) {
-      console.log('Driver data received:', driverData);
-      
-      const index = this.drivers.findIndex(d => d.id === driverData.id);
-      if (index !== -1) {
-        this.drivers[index] = driverData;
-      } else {
-        this.drivers.push(driverData);
+
+    // Haydovchi joylashuvini serverga yuborish (agar kerak bo'lsa)
+    sendDriverLocation(locationData) {
+      if (socket.connected) {
+        socket.emit('driver:location', locationData);
       }
-    }
-  }
-})
+    },
+  },
+});

@@ -53,7 +53,7 @@
       <!-- Links -->
       <div class="space-y-5">
         <!-- Dashboard group -->
-        <div v-if="role === 1000">
+        <div>
           <h3
             @click="is_dashboard = !is_dashboard"
             class="text-xs uppercase text-white font-semibold ml-[-9px] mr-[-9px]"
@@ -81,7 +81,7 @@
           </h3>
           <div v-if="is_dashboard === true">
             <!-- Dashboard statistik -->
-            <ul v-if="role === 1000" class="mt-3">
+            <ul class="mt-3">
               <SidebarLinkGroup
                 v-slot="parentLink"
                 :activeCondition="currentRoute.fullPath.includes('ecommerce')"
@@ -137,7 +137,7 @@
                     :class="!parentLink.expanded && 'hidden'"
                   >
                     <router-link
-                      :to="{name : 'StatisticSale'}"
+                      :to="{ name: 'StatisticSale' }"
                       custom
                       v-slot="{ href, navigate, isExactActive }"
                     >
@@ -235,7 +235,7 @@
           </div>
         </div>
         <!-- Ishlab chiqarish group -->
-        <div v-if="role === 1000">
+        <div>
           <h3
             @click="is_production = !is_production"
             class="text-xs uppercase text-white font-semibold ml-[-9px] mr-[-9px]"
@@ -263,7 +263,7 @@
           </h3>
           <div v-if="is_production === true">
             <!-- //suv tozalash// -->
-            <ul v-if="role === 1000" class="mt-3">
+            <ul class="mt-3">
               <SidebarLinkGroup
                 v-slot="parentLink"
                 :activeCondition="currentRoute.fullPath.includes('ecommerce')"
@@ -356,7 +356,7 @@
               </SidebarLinkGroup>
             </ul>
             <!-- // idish to‘ldirish// -->
-            <ul v-if="role === 1000" class="mt-3">
+            <ul class="mt-3">
               <SidebarLinkGroup
                 v-slot="parentLink"
                 :activeCondition="currentRoute.fullPath.includes('ecommerce')"
@@ -450,7 +450,7 @@
               </SidebarLinkGroup>
             </ul>
             <!-- qadoqlash  -->
-            <ul v-if="role === 1000" class="mt-3">
+            <ul class="mt-3">
               <SidebarLinkGroup
                 v-slot="parentLink"
                 :activeCondition="currentRoute.fullPath.includes('ecommerce')"
@@ -532,7 +532,7 @@
               </SidebarLinkGroup>
             </ul>
             <!-- Sifat nazorati  -->
-            <ul v-if="role === 1000" class="mt-3">
+            <ul class="mt-3">
               <SidebarLinkGroup
                 v-slot="parentLink"
                 :activeCondition="currentRoute.fullPath.includes('ecommerce')"
@@ -648,7 +648,7 @@
               </SidebarLinkGroup>
             </ul>
             <!-- xom ashyo  ombori  -->
-            <ul v-if="role === 1000" class="mt-3">
+            <ul class="mt-3">
               <SidebarLinkGroup
                 v-slot="parentLink"
                 :activeCondition="currentRoute.fullPath.includes('ecommerce')"
@@ -730,7 +730,7 @@
               </SidebarLinkGroup>
             </ul>
             <!-- Tayyor mahsulot ombori  -->
-            <ul v-if="role === 1000" class="mt-3">
+            <ul class="mt-3">
               <SidebarLinkGroup
                 v-slot="parentLink"
                 :activeCondition="currentRoute.fullPath.includes('ecommerce')"
@@ -785,7 +785,7 @@
                     :class="!parentLink.expanded && 'hidden'"
                   >
                     <router-link
-                      :to="{name:'ReadyWarehouse' }"
+                      :to="{ name: 'ReadyWarehouse' }"
                       custom
                       v-slot="{ href, navigate, isExactActive }"
                     >
@@ -814,7 +814,7 @@
           </div>
         </div>
         <!-- Bo'limlar group -->
-        <div v-if="role === 1000">
+        <div>
           <h3
             @click="is_departments = !is_departments"
             class="text-xs uppercase text-white font-semibold ml-[-9px] mr-[-9px]"
@@ -842,7 +842,7 @@
           </h3>
           <div v-if="is_departments === true">
             <!-- //Accountant// -->
-            <ul v-if="role === 1000" class="mt-3">
+            <ul class="mt-3">
               <SidebarLinkGroup
                 v-slot="parentLink"
                 :activeCondition="currentRoute.fullPath.includes('ecommerce')"
@@ -965,8 +965,170 @@
                         >
                           <span
                             class="font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
-                            >Xodimlar</span
+                            >Xodimlar boshqaruvi</span
                           >
+                        </a>
+                      </li>
+                    </router-link>
+                    <router-link
+                      to="8596"
+                      custom
+                      v-slot="{ href, navigate, isExactActive }"
+                    >
+                      <li class="mb-1 last:mb-0 text-[13px]">
+                        <a
+                          class="block transition duration-150 truncate"
+                          :class="
+                            isExactActive
+                              ? 'text-[#36d887]'
+                              : 'text-slate-400 hover:text-slate-200'
+                          "
+                          :href="href"
+                          @click="navigate"
+                        >
+                          <span
+                            class="font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                            >Asosiy vositalarni ro'yxatga olish</span
+                          >
+                        </a>
+                      </li>
+                    </router-link>
+                    <router-link
+                      to="8569"
+                      custom
+                      v-slot="{ href, navigate, isExactActive }"
+                    >
+                      <li class="mb-1 last:mb-0 text-[13px]">
+                        <a
+                          class="block transition duration-150 truncate"
+                          :class="
+                            isExactActive
+                              ? 'text-[#36d887]'
+                              : 'text-slate-400 hover:text-slate-200'
+                          "
+                          :href="href"
+                          @click="navigate"
+                        >
+                          <span
+                            class="font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                            >Ish haqi, bonuslar, jarimalar</span
+                          >
+                        </a>
+                      </li>
+                    </router-link>
+                    <router-link
+                      to="79"
+                      custom
+                      v-slot="{ href, navigate, isExactActive }"
+                    >
+                      <li class="mb-1 last:mb-0 text-[13px]">
+                        <a
+                          class="block transition duration-150 truncate"
+                          :class="
+                            isExactActive
+                              ? 'text-[#36d887]'
+                              : 'text-slate-400 hover:text-slate-200'
+                          "
+                          :href="href"
+                          @click="navigate"
+                        >
+                          <span
+                            class="font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                            >Hisobvaraqlar reestri
+                          </span>
+                        </a>
+                      </li>
+                    </router-link>
+
+                    <router-link
+                      to="78"
+                      custom
+                      v-slot="{ href, navigate, isExactActive }"
+                    >
+                      <li class="mb-1 last:mb-0 text-[13px]">
+                        <a
+                          class="block transition duration-150 truncate"
+                          :class="
+                            isExactActive
+                              ? 'text-[#36d887]'
+                              : 'text-slate-400 hover:text-slate-200'
+                          "
+                          :href="href"
+                          @click="navigate"
+                        >
+                          <span
+                            class="font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                            >Kassa kirim-chiqim hujjatlari
+                          </span>
+                        </a>
+                      </li>
+                    </router-link>
+                    <router-link
+                      to="70"
+                      custom
+                      v-slot="{ href, navigate, isExactActive }"
+                    >
+                      <li class="mb-1 last:mb-0 text-[13px]">
+                        <a
+                          class="block transition duration-150 truncate"
+                          :class="
+                            isExactActive
+                              ? 'text-[#36d887]'
+                              : 'text-slate-400 hover:text-slate-200'
+                          "
+                          :href="href"
+                          @click="navigate"
+                        >
+                          <span
+                            class="font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                            >Debit/Kredit
+                          </span>
+                        </a>
+                      </li>
+                    </router-link>
+                    <router-link
+                      to="88"
+                      custom
+                      v-slot="{ href, navigate, isExactActive }"
+                    >
+                      <li class="mb-1 last:mb-0 text-[13px]">
+                        <a
+                          class="block transition duration-150 truncate"
+                          :class="
+                            isExactActive
+                              ? 'text-[#36d887]'
+                              : 'text-slate-400 hover:text-slate-200'
+                          "
+                          :href="href"
+                          @click="navigate"
+                        >
+                          <span
+                            class="font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                            >Bank to‘lovlari va kirimlar
+                          </span>
+                        </a>
+                      </li>
+                    </router-link>
+                    <router-link
+                      to="81"
+                      custom
+                      v-slot="{ href, navigate, isExactActive }"
+                    >
+                      <li class="mb-1 last:mb-0 text-[13px]">
+                        <a
+                          class="block transition duration-150 truncate"
+                          :class="
+                            isExactActive
+                              ? 'text-[#36d887]'
+                              : 'text-slate-400 hover:text-slate-200'
+                          "
+                          :href="href"
+                          @click="navigate"
+                        >
+                          <span
+                            class="font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                            >Mijozlardan qarzdorlik (Debitor) nazorati
+                          </span>
                         </a>
                       </li>
                     </router-link>
@@ -975,7 +1137,7 @@
               </SidebarLinkGroup>
             </ul>
             <!-- //HR// -->
-            <ul v-if="role === 1000" class="mt-3">
+            <ul class="mt-3">
               <SidebarLinkGroup
                 v-slot="parentLink"
                 :activeCondition="currentRoute.fullPath.includes('ecommerce')"
@@ -1068,7 +1230,7 @@
               </SidebarLinkGroup>
             </ul>
             <!-- Sale  -->
-            <ul v-if="role === 1000" class="mt-3">
+            <ul class="mt-3">
               <SidebarLinkGroup
                 v-slot="parentLink"
                 :activeCondition="currentRoute.fullPath.includes('ecommerce')"
@@ -1122,7 +1284,7 @@
                     class="pl-9 mt-1 ml-2"
                     :class="!parentLink.expanded && 'hidden'"
                   >
-                     <router-link
+                    <router-link
                       :to="{ name: 'Products' }"
                       custom
                       v-slot="{ href, navigate, isExactActive }"
@@ -1173,7 +1335,7 @@
               </SidebarLinkGroup>
             </ul>
             <!-- Customers  -->
-            <ul v-if="role === 1000" class="mt-3">
+            <ul class="mt-3">
               <SidebarLinkGroup
                 v-slot="parentLink"
                 :activeCondition="currentRoute.fullPath.includes('ecommerce')"
@@ -1255,7 +1417,7 @@
               </SidebarLinkGroup>
             </ul>
             <!-- Drivers  -->
-            <ul v-if="role === 1000" class="mt-3">
+            <ul class="mt-3">
               <SidebarLinkGroup
                 v-slot="parentLink"
                 :activeCondition="currentRoute.fullPath.includes('ecommerce')"
@@ -1395,7 +1557,7 @@
               </SidebarLinkGroup>
             </ul>
             <!-- Agents  -->
-            <ul v-if="role === 1000" class="mt-3">
+            <ul class="mt-3">
               <SidebarLinkGroup
                 v-slot="parentLink"
                 :activeCondition="currentRoute.fullPath.includes('ecommerce')"
@@ -1504,7 +1666,7 @@
               </SidebarLinkGroup>
             </ul>
             <!-- Omborlar  -->
-            <ul v-if="role === 1000" class="mt-3">
+            <ul class="mt-3">
               <SidebarLinkGroup
                 v-slot="parentLink"
                 :activeCondition="currentRoute.fullPath.includes('ecommerce')"
@@ -1573,7 +1735,7 @@
                     :class="!parentLink.expanded && 'hidden'"
                   >
                     <router-link
-                      :to="{name : 'ReadyWarehouse' }"
+                      :to="{ name: 'ReadyWarehouse' }"
                       custom
                       v-slot="{ href, navigate, isExactActive }"
                     >
@@ -1594,9 +1756,8 @@
                           >
                         </a>
                       </li>
-                     
                     </router-link>
-                      <router-link
+                    <router-link
                       to="577878"
                       custom
                       v-slot="{ href, navigate, isExactActive }"
@@ -1618,14 +1779,13 @@
                           >
                         </a>
                       </li>
-                     
                     </router-link>
                   </ul>
                 </div>
               </SidebarLinkGroup>
             </ul>
             <!-- Uskunalar va texnik xizmat  -->
-            <ul v-if="role === 1000" class="mt-3">
+            <ul class="mt-3">
               <SidebarLinkGroup
                 v-slot="parentLink"
                 :activeCondition="currentRoute.fullPath.includes('ecommerce')"
@@ -1767,7 +1927,7 @@
           </div>
         </div>
         <!-- Hisobotlar group -->
-        <div v-if="role === 1000">
+        <div>
           <h3
             @click="is_reports = !is_reports"
             class="text-xs uppercase text-white font-semibold ml-[-9px] mr-[-9px]"
@@ -1795,7 +1955,7 @@
           </h3>
           <div v-if="is_reports === true">
             <!-- //Accountant// -->
-            <ul v-if="role === 1000" class="mt-3">
+            <ul class="mt-3">
               <SidebarLinkGroup
                 v-slot="parentLink"
                 :activeCondition="currentRoute.fullPath.includes('ecommerce')"
@@ -1876,7 +2036,7 @@
               </SidebarLinkGroup>
             </ul>
             <!-- //HR// -->
-            <ul v-if="role === 1000" class="mt-3">
+            <ul class="mt-3">
               <SidebarLinkGroup
                 v-slot="parentLink"
                 :activeCondition="currentRoute.fullPath.includes('ecommerce')"
@@ -1957,7 +2117,7 @@
               </SidebarLinkGroup>
             </ul>
             <!-- Sale  -->
-            <ul v-if="role === 1000" class="mt-3">
+            <ul class="mt-3">
               <SidebarLinkGroup
                 v-slot="parentLink"
                 :activeCondition="currentRoute.fullPath.includes('ecommerce')"
@@ -2061,7 +2221,7 @@
               </SidebarLinkGroup>
             </ul>
             <!-- Customers  -->
-            <ul v-if="role === 1000" class="mt-3">
+            <ul class="mt-3">
               <SidebarLinkGroup
                 v-slot="parentLink"
                 :activeCondition="currentRoute.fullPath.includes('ecommerce')"
@@ -2143,7 +2303,7 @@
               </SidebarLinkGroup>
             </ul>
             <!-- Drivers  -->
-            <ul v-if="role === 1000" class="mt-3">
+            <ul class="mt-3">
               <SidebarLinkGroup
                 v-slot="parentLink"
                 :activeCondition="currentRoute.fullPath.includes('ecommerce')"
@@ -2225,7 +2385,7 @@
               </SidebarLinkGroup>
             </ul>
             <!-- Agents  -->
-            <ul v-if="role === 1000" class="mt-3">
+            <ul class="mt-3">
               <SidebarLinkGroup
                 v-slot="parentLink"
                 :activeCondition="currentRoute.fullPath.includes('ecommerce')"
@@ -2310,7 +2470,7 @@
         </div>
 
         <!-- Settings group-->
-        <div v-if="role === 1000">
+        <div>
           <h3
             @click="is_settings = !is_settings"
             class="text-xs uppercase text-white font-semibold ml-[-9px] mr-[-9px]"
@@ -2449,7 +2609,7 @@
                     :class="!parentLink.expanded && 'hidden'"
                   >
                     <router-link
-                      to="\"
+                      :to="{ name: 'RoleManagment' }"
                       custom
                       v-slot="{ href, navigate, isExactActive }"
                     >

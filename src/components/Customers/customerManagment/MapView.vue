@@ -35,14 +35,19 @@
   </div>
   <div id="map" class="h-[700px] w-full rounded-2xl shadow-xl"></div>
   <div
-    class="mb-1 mt-2 col-span-3 w-64  text-center text-white font-semibold  rounded-[4px] px-4 py-[5px]  cursor-pointer"
+    class="mb-1 mt-2 col-span-3 w-64 text-center text-white font-semibold rounded-[4px] px-4 py-[5px] cursor-pointer"
     @click="toggleSatellite"
-   :class="{
+    :class="{
       'bg-green-500 hover:bg-green-600': !isSatellite,
-      'bg-purple-500 hover:bg-purple-600-600': isSatellite
+      'bg-purple-500 hover:bg-purple-600-600': isSatellite,
     }"
   >
-    <i v-if="isSatellite === false" class="fa-solid fa-earth-africa mr-2 fa-lg"></i>   <i v-if="isSatellite === true"  class="fa-solid fa-map mr-2 fa-lg"></i>{{isSatellite ? `Xaritada ko'rish`    : `Sputnik ko'rinishi` }} 
+    <i
+      v-if="isSatellite === false"
+      class="fa-solid fa-earth-africa mr-2 fa-lg"
+    ></i>
+    <i v-if="isSatellite === true" class="fa-solid fa-map mr-2 fa-lg"></i
+    >{{ isSatellite ? `Xaritada ko'rish` : `Sputnik ko'rinishi` }}
   </div>
 </template>
 
@@ -87,11 +92,19 @@ const satelliteLayer = L.tileLayer(
 onMounted(() => {
   // map = L.map("map").setView([40.1006, 64.6834], 13);
 
-  
   map = L.map("map", {
+    iconUrl:
+      "https://www.freeiconspng.com/uploads/red-location-icon-map-png-4.png",
     center: [40.1006, 64.6834],
     zoom: 13,
     layers: [osmLayer],
+  });
+  const customIcon = L.icon({
+    iconUrl:
+      "https://png.pngtree.com/png-vector/20230413/ourmid/pngtree-3d-location-icon-clipart-in-transparent-background-vector-png-image_6704161.png",
+    iconSize: [80, 80],
+    iconAnchor: [40, 80],
+    popupAnchor: [0, -80],
   });
 
   map.on("click", async (e) => {
@@ -124,7 +137,9 @@ onMounted(() => {
     if (selectedMarker.value) {
       selectedMarker.value.setLatLng([lat, lng]);
     } else {
-      selectedMarker.value = L.marker([lat, lng]).addTo(map);
+      selectedMarker.value = L.marker([lat, lng], { icon: customIcon }).addTo(
+        map
+      );
     }
     emit("locationSelected", { lat, long: lng }); // parentga yuborish
     selectedMarker.value.bindPopup(popupText).openPopup();
@@ -134,24 +149,6 @@ onMounted(() => {
   });
 });
 
-function updateDriverPositions() {
-  drivers.value.forEach((driver) => {
-    // Har bir driver uchun tasodifiy ozgarish kiritamiz
-    const deltaLat = (Math.random() - 0.5) * 0.001;
-    const deltaLng = (Math.random() - 0.5) * 0.001;
-
-    driver.lat += deltaLat;
-    driver.lng += deltaLng;
-
-    // Marker pozitsiyasini update qilamiz
-    const marker = driverMarkers[driver.id];
-    marker.setLatLng([driver.lat, driver.lng]);
-
-    // Trayektoriyaga yangi nuqta qo‘shamiz
-    const trajectory = driverTrajectories[driver.id];
-    trajectory.addLatLng([driver.lat, driver.lng]);
-  });
-}
 // Joy nomini olish funksiyasi
 async function getAddressFromCoords(lat, lng) {
   const res = await fetch(

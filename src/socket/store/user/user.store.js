@@ -1,21 +1,22 @@
 import { defineStore } from "pinia";
-import  socket  from "../../socket"; // Socket.io ulanishi
+import socket from "../../socket";
 
-export const UserSocketStore = defineStore("socket", {
+export const UserSocketStore = defineStore("UserSocketStore", {
     state: () => ({
-        onlineUsers: [], // Tizimga kirgan foydalanuvchilar ro‘yxati
-        isConnected: false, // Socket ulanish holati
+        onlineUsers: [],     // Tizimga kirgan foydalanuvchilar ro‘yxati
+        isConnected: false,  // Socket ulanish holati
     }),
 
     actions: {
         SocketConnect(user) {
-            console.log("🟢 Serverga foydalanuvchi ulandi", user);
-            this.onlineUsers.push(user); // Foydalanuvchilar ro‘yxatini tozalash
-            socket.emit("register", user); // 🟢 Serverga foydalanuvchini yuborish
+            this.disconnect(); // 🔄 Avvalgi tinglovchilarni o‘chirish
 
             socket.on("connect", () => {
                 console.log("✅ Socket.io bog‘landi:", socket.id);
                 this.isConnected = true;
+
+                // 🔗 Serverga user va lokatsiyani yuborish
+                socket.emit("user:register", user);
             });
 
             socket.on("disconnect", () => {
@@ -23,22 +24,23 @@ export const UserSocketStore = defineStore("socket", {
                 this.isConnected = false;
             });
 
-            // 🔵 **"OnlineUsers" eventini tinglash** va foydalanuvchilarni yangilash
-            socket.on("OnlineUsers", (user) => {
-                console.log(user);
-                
-                // const exists = this.onlineUsers.some(user => user.id === newUser.id);
-                // if (!exists) {
-                //     this.onlineUsers.push(newUser);
-                //     console.log("🟢 Yangi foydalanuvchi qo‘shildi:", newUser);
-                // }
+            socket.on("OnlineUsers", (users) => {
+                this.onlineUsers = users;
+                console.log("🟢 Online foydalanuvchilar:", users);
             });
+
+
         },
 
+        // 📡 Haydovchi lokatsiyasi yangilanishini tinglash
+
+
         disconnect() {
+            // 🎯 Oldingi eventlarni tozalash
             socket.off("connect");
             socket.off("disconnect");
             socket.off("OnlineUsers");
+            this.isConnected = false;
         },
-    },
+    }
 });

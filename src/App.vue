@@ -28,55 +28,52 @@
 </template>
 
 <script setup>
+import { onMounted, onUnmounted, onBeforeUnmount, ref } from "vue";
+const user = Cookies.get("account") ? JSON.parse(Cookies.get("account")) : null;
+const token = Cookies.get("token") ? Cookies.get("token") : null;
 import Cookies from "js-cookie";
 const isOnline = ref(false);
-
 const updateOnlineStatus = () => {
   isOnline.value = !navigator.onLine;
 };
-const user = Cookies.get("account") ? JSON.parse(Cookies.get("account")) : null;
-const token = Cookies.get("token") ? Cookies.get("token") : null;
-import { onMounted, onUnmounted, ref } from "vue";
-import socket from "./socket/socket.js";
-import { UserSocketStore } from "./socket/store/user/user.store.js";
+
+import { UserSocketStore } from "./socket/store/user/user.store";
+import { storeToRefs } from "pinia";
 const userSocketStore = UserSocketStore();
-onMounted(() => {
-  console.log("🟢 Komponent yuklandi! WebSocketga ulanmoqda...");
- // 🟢 Cookies orqali foydalanuvchi ma'lumotlarini olish
+
+onMounted(async () => {
+  try {
+    // 🟢 Cookies orqali foydalanuvchi ma'lumotlarini olish
     const user = Cookies.get("account")
       ? JSON.parse(Cookies.get("account"))
       : null;
     const token = Cookies.get("token") ? Cookies.get("token") : null;
 
     if (user && user.id && token) {
-      
       userSocketStore.SocketConnect(user); // 🔗 Foydalanuvchini socket'ga bog‘lash
     }
     window.addEventListener("online", updateOnlineStatus);
     window.addEventListener("offline", updateOnlineStatus);
     updateOnlineStatus(); // Kirishda ham tekshiramiz
-  // 🔴 Eski listenerlarni tozalash
-  socket.off("connect");
-  socket.off("disconnect");
-
-  // ✅ Faqat bitta marta ishlaydigan listenerlar
-  socket.once("connect", () => {
-    console.log("✅ WebSocketga muvaffaqiyatli ulandi:", socket.id);
-  });
-
-  socket.once("disconnect", () => {
-    console.warn("❌ WebSocket uzildi! Qayta ulanishga harakat qilinmoqda...");
-  });
-
-  // 🌐 WebSocket ulanishni boshlash
-  if (!socket.connected) {
-    socket.connect();
+  } catch (error) {
+    console.error("❌ Cookiesdan userni o‘qishda xatolik:", error);
   }
+
+  // Event listener – barcha komponentlar ichidan trigger qilish mumkin
+  // window.addEventListener("toggle-edo-sidebar", toggleEdoSidebar);
+  // window.addEventListener("toggle-chat-sidebar", toggleHajegramSidebar);
 });
 
+// 🔴 Sahifadan chiqilganda socket hodisalarini tozalash
 onUnmounted(() => {
-  console.log("🔴 Komponent yopildi! WebSocketdan uzilyapti...");
-  socket.off("connect");
-  socket.off("disconnect");
+  window.removeEventListener("toggle-edo-sidebar", toggleEdoSidebar);
+  window.removeEventListener("toggle-chat-sidebar", toggleHajegramSidebar);
 });
+onBeforeUnmount(() => {
+  window.removeEventListener("online", updateOnlineStatus);
+  window.removeEventListener("offline", updateOnlineStatus);
+});
+const reloadPage = () => {
+  location.reload(); // Sahifani qayta yuklaydi
+};
 </script>

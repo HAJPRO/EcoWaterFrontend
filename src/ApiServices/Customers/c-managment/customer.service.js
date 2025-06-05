@@ -2,7 +2,7 @@ import api from "@/helpers/api";
 // import $api from "../../helpers/$api";
 
 export const CustomerManagmentService = {
-   
+
     Create(state) {
         let url = "customers/managment/create";
         return api.post(url, state);
@@ -17,6 +17,10 @@ export const CustomerManagmentService = {
     },
     GetById(id) {
         let url = "customers/managment/getone";
+        return api.post(url, id);
+    },
+    GetOrdersByCustomerId(id) {
+        let url = "customers/managment/customerId/orders";
         return api.post(url, id);
     },
 };
