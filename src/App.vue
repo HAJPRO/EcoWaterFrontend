@@ -43,7 +43,7 @@ const userSocketStore = UserSocketStore();
 
 onMounted(async () => {
   try {
-    // 🟢 Cookies orqali foydalanuvchi ma'lumotlarini olish
+    // 🟢 Cookies orqali foydalanuvchi ma'lumotlarini olish//
     const user = Cookies.get("account")
       ? JSON.parse(Cookies.get("account"))
       : null;
