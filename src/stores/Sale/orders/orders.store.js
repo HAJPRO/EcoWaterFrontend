@@ -91,7 +91,7 @@ export const OrderManagmentStore = defineStore("OrderManagmentStore", {
     },
     async DeleteById(id) {
       const loader = loading.show()
-      const data = await CustomerManagmentService.DeleteById(id)
+      const data = await OrderManagmentService.DeleteById(id)
       this.GetAll({ status: this.isActive, page: this.page, limit: 10 })
       loader.hide()
       ToastifyService.ToastSuccess({

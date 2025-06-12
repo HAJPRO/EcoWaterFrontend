@@ -20,7 +20,7 @@ export const OrderManagmentService = {
         return api.post(url, status);
     },
     DeleteById(id) {
-        let url = "customers/managment/deleted";
+        let url = "sale/managment/delete";
         return api.post(url, id);
     },
     OrderGetById(id) {

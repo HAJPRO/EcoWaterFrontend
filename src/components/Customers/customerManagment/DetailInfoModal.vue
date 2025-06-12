@@ -1,4 +1,5 @@
 <script setup>
+import { ExcelExportOrdersByCustomer } from "../../../utils/ExcelExport";
 import { ElMessage } from "element-plus";
 import { onMounted, ref, computed } from "vue";
 import { v4 as uuidv4 } from "uuid";
@@ -84,6 +85,20 @@ const getSummaries = ({ columns, data }) => {
   });
 
   return sums;
+};
+
+const ExportExcel = async () => {
+  ExcelExportOrdersByCustomer(orders.value);
+};
+
+const dateRange = ref([]); // [startDate, endDate]
+
+const filterByDate = () => {
+  if (dateRange.value.length === 2) {
+    const [start, end] = dateRange.value;
+    console.log("Boshlanish:", start);
+    console.log("Tugash:", end);
+  }
 };
 </script>
 <template>
@@ -710,7 +725,7 @@ const getSummaries = ({ columns, data }) => {
 
                       <el-dropdown-item
                         class="text-[13px] text-yellow-500"
-                        @click="ExportExcel(row._id)"
+                        @click="ExportExcel(orders.value)"
                         ><template #default="{}"
                           ><div>
                             <i
@@ -761,33 +776,42 @@ const getSummaries = ({ columns, data }) => {
       </div>
 
       <template #footer>
-        <div class="flex justify-between items-center mt-2 border-t pt-2">
-          <el-select placeholder="Export" class="w-32 my-2">
-            <el-option @click="ExportExcel()" label="Excel" value="excel">
-              <i class="fa-solid fa-file-excel mr-2 fa-xm"></i> Excel
-            </el-option>
-            <el-option label="Pdf" value="pdf">
-              <i class="fa-solid fa-file-pdf mr-2 fa-xm"></i> Pdf
-            </el-option>
-            <el-option label="Word" value="word">
-              <i class="fa-solid fa-file-word mr-2 fa-xm"></i> Word
-            </el-option>
-          </el-select>
+        <div class="flex flex-col gap-2 mt-2 border-t pt-2">
+          <!-- 📅 Sana oralig‘i filteri -->
+          <div class="flex items-center gap-4">
+            <el-date-picker
+              v-model="dateRange"
+              type="daterange"
+              range-separator="→"
+              start-placeholder="Boshlanish sanasi"
+              end-placeholder="Tugash sanasi"
+              format="YYYY-MM-DD"
+              class="w-50"
+              @change="filterByDate"
+            />
 
-          <div class="flex gap-3">
-            <!-- <div
-              class="mb-1 col-span-3 w-auto text-center text-white text-[13px] font-semibold bg-red-600 rounded-[4px] px-4 py-[5px] hover:bg-red-700"
-              @click="driverBindingModal(order._id)"
-            >
-              <i class="fa-solid fa-xmark mr-2 fa-md"></i> Bekor qilish
-            </div> -->
+            <el-select placeholder="Export" class="w-32">
+              <el-option @click="ExportExcel()" label="Excel" value="excel">
+                <i class="fa-solid fa-file-excel mr-2 fa-xm"></i> Excel
+              </el-option>
+              <el-option label="Pdf" value="pdf">
+                <i class="fa-solid fa-file-pdf mr-2 fa-xm"></i> Pdf
+              </el-option>
+              <el-option label="Word" value="word">
+                <i class="fa-solid fa-file-word mr-2 fa-xm"></i> Word
+              </el-option>
+            </el-select>
+          </div>
+
+          <!-- 👇 Tugmalar -->
+          <!-- <div class="flex justify-end gap-3">
             <div
-              class="mb-1 col-span-3 w-auto text-center text-white text-[13px] font-semibold bg-green-500 rounded-[4px] px-4 py-[5px] hover:bg-green-600"
+              class="mb-1 w-auto text-center text-white text-[13px] font-semibold bg-green-500 rounded-[4px] px-4 py-[5px] hover:bg-green-600"
               @click="printData()"
             >
               <i class="fa-solid fa-print mr-2 fa-md"></i> Chop etish
             </div>
-          </div>
+          </div> -->
         </div>
       </template>
     </el-dialog>

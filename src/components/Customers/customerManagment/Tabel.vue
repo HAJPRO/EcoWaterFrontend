@@ -53,6 +53,10 @@ const filter = ref({
 const FilterByFullname = () => {
   store.GetAll({ filter: filter.value });
 };
+const formatPrice = (num) => {
+  const val = Number(num);
+  return isNaN(val) ? "0" : val.toLocaleString("uz-UZ");
+};
 </script>
 <template>
   <Custom-Modal />
@@ -180,6 +184,30 @@ const FilterByFullname = () => {
             header-align="center"
             align="center"
             ><template #default="scope">{{ 0 }}</template></el-table-column
+          >
+          <el-table-column
+            label="Kredit (sum)"
+            :min-width="100"
+            header-align="center"
+            align="center"
+            ><template #default="scope"
+              ><div class="bg-red-200 text-gray-600 p-1 rounded-md">
+                <i class="fa-solid fa-hand-holding-dollar mr-2 fa-md"></i>
+                {{ formatPrice(150000) }}
+              </div></template
+            ></el-table-column
+          >
+          <el-table-column
+            label="Debitor (sum)"
+            :min-width="100"
+            header-align="center"
+            align="center"
+            ><template #default="scope"
+              ><div class="bg-green-200 text-gray-600 p-1 rounded-md">
+                <i class="fa-solid fa-circle-dollar-to-slot mr-2 fa-md"></i>
+                {{ formatPrice(0) }}
+              </div></template
+            ></el-table-column
           >
           <el-table-column
             label="Registratsiya vaqti"

@@ -33,13 +33,20 @@ const handleCurrentChange = (page) => {
   store_order.GetAll({ status: isActive.value, page: page, limit: 10 });
 };
 const deleteById = (id) => {
-  store.DeleteById({ id });
+  store_order.DeleteById({ id });
 };
 const UpdateById = (id) => {
   store_order.GetById({ id });
 };
 const formatPrice = (price) => {
   return new Intl.NumberFormat("uz-UZ").format(price);
+};
+const filter = ref({
+  fullname: null,
+  sort: "",
+});
+const FilterByFullname = () => {
+  store_order.GetAll({ filter: filter.value });
 };
 onMounted(() => {
   // GetAllCustomers()
@@ -174,6 +181,7 @@ onMounted(() => {
             align="center"
             ><template #default="scope">{{ 0 }}</template></el-table-column
           >
+
           <el-table-column
             label="Jami (sum)"
             :min-width="200"
@@ -300,7 +308,7 @@ onMounted(() => {
           <el-table-column
             fixed="right"
             label="Holati"
-            :min-width="100"
+            :min-width="180"
             :max-width="400"
             header-align="center"
             align="center"
@@ -430,15 +438,17 @@ onMounted(() => {
                 class="my-2 text-[11px] items-center font-medium text-center text-white"
               >
                 <el-input
+                  @input="FilterByFullname"
+                  v-model="filter.fullname"
                   clearable
                   size="smal"
                   type="String"
-                  placeholder="Arikul bo'yicha..."
+                  placeholder="F.I.O bo'yicha izlash..."
                   style="width: 150px; font-size: 12px"
                 />
               </div>
 
-              <div
+              <!-- <div
                 class="my-2 text-[11px] items-center font-medium text-center text-white"
               >
                 <el-input
@@ -448,7 +458,7 @@ onMounted(() => {
                   placeholder="Yil bo'yicha..."
                   style="width: 150px; font-size: 12px"
                 />
-              </div>
+              </div> -->
 
               <el-select placeholder="Excel" class="w-32 my-2">
                 <el-option @click="ExportExcel()" label="Excel" value="excel">
