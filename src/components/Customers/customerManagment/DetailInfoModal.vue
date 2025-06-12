@@ -88,7 +88,7 @@ const getSummaries = ({ columns, data }) => {
 };
 
 const ExportExcel = async () => {
-  ExcelExportOrdersByCustomer(orders.value);
+  store_customer.ExcelExportOrdersByCustomer(orders.value);
 };
 
 const dateRange = ref([]); // [startDate, endDate]

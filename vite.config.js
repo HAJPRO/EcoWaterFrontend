@@ -37,7 +37,7 @@ export default defineConfig({
       transformMixedEsModules: true,
     },
   },
-  optimizeDeps: {
-    include: ["file-saver"]
-  },
+  // optimizeDeps: {
+  //   include: ["file-saver"]
+  // },
 });

@@ -23,4 +23,10 @@ export const CustomerManagmentService = {
         let url = "customers/managment/customerId/orders";
         return api.post(url, id);
     },
+    ExcelExportOrdersByCustomer(data) {
+        let url = "customers/managment/excel";
+        return api.post(url, data,{
+            responseType: "blob", // 👈 bu juda muhim!
+          });
+    },
 };
