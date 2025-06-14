@@ -214,11 +214,15 @@ const copyToClipboard = (text) => {
           >
 
           <el-table-column
-            label="Bonus ball"
+            label="Chat Id"
             :min-width="100"
             header-align="center"
             align="center"
-            ><template #default="scope">{{ 0 }}</template></el-table-column
+            ><template #default="{ row }"
+              ><div>
+                {{ row.chatId ? row.chatId : "Chat Id mavjud emas" }}
+              </div></template
+            ></el-table-column
           >
           <el-table-column
             label="Ishga qabul qilingan sana"
