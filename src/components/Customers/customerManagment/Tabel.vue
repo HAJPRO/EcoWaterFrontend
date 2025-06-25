@@ -360,15 +360,21 @@ const formatPrice = (num) => {
               <div
                 class="my-2 text-[11px] items-center font-medium text-center text-white"
               >
-                <el-input
-                  @input="FilterByFullname()"
-                  v-model="filter.fullname"
-                  clearable
-                  size="smal"
-                  type="String"
-                  placeholder="F.I.O bo'yicha izlash..."
-                  style="width: 150px; font-size: 12px"
-                />
+                <el-tooltip
+                  content="Mijozni F.I.O va Telefon nomeri bilan izlash!"
+                  placement="bottom"
+                  effect="dark"
+                >
+                  <el-input
+                    @input="FilterByFullname()"
+                    v-model="filter.fullname"
+                    clearable
+                    size="smal"
+                    type="String"
+                    placeholder="F.I.O/Tel nomer bo'yicha izlash..."
+                    style="width: 150px; font-size: 12px"
+                  />
+                </el-tooltip>
               </div>
 
               <!-- <div

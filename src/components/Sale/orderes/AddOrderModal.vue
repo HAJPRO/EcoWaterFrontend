@@ -191,14 +191,22 @@ const ChangeUnitType = (value) => {
 const filter = ref({
   fullname: "",
 });
+
 const filteredCustomers = computed(() => {
-  if (!filter.value.fullname) return customers.value;
-  const query = filter.value.fullname.toLowerCase();
+  const query = filter.value.fullname?.toLowerCase().trim();
+  if (!query) return customers.value;
+
   return customers.value.filter((customer) => {
-    const name = customer.fullname.toLowerCase();
-    return name.startsWith(query) || name === query;
+    const name = customer.fullname?.toLowerCase() || "";
+    const phone = customer.phoneNumber?.toLowerCase() || "";
+
+    return (
+      name.includes(query) || // ismning istalgan qismidan qidirmoqda
+      phone.includes(query) // telefon raqamning istalgan qismidan qidirmoqda
+    );
   });
 });
+
 onMounted(async () => {
   store_products.GetAll({ status: 0 });
   try {

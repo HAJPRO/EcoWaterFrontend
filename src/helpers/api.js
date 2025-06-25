@@ -1,12 +1,12 @@
 import axios from "axios";
 import Cookies from "js-cookie";
 
-const isProd = window.location.hostname !== 'localhost';
+const isProd = window.location.hostname !== "localhost";
 
 const api = axios.create({
   baseURL: isProd
-    ? 'https://eco.company-erp.uz/api/v1'
-    : 'http://localhost:5000/api/v1',
+    ? "https://eco.company-erp.uz/api/v1"
+    : "http://localhost:5000/api/v1",
 });
 
 // Har bir so‘rovga token avtomatik qo‘shiladi

@@ -385,27 +385,7 @@ const filterByDate = () => {
                             ></el-table-column
                           >
 
-                          <!-- <el-table-column
-                            fixed="right"
-                            prop="id"
-                            label=""
-                            :min-width="60"
-                            :max-width="100"
-                            header-align="center"
-                            align="center"
-                          >
-                            <template #default="scope">
-                              <router-link
-                                to=""
-                                @click="DeleteById(scope.row.id)"
-                                class="inline-flex items-center mt-4 ml-2 text-white hover:bg-slate-300 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
-                              >
-                                <i
-                                  class="text-black fa-sharp fa-solid fa-trash fa-xs"
-                                ></i>
-                              </router-link>
-                            </template>
-                          </el-table-column> -->
+                       
                         </el-table>
                         <div class="bg-white p-2 rounded-md flex justify-end">
                           <div
