@@ -410,6 +410,25 @@ onMounted(() => {
                   </div>
                 </template></el-table-column
               >
+              <el-table-column
+                label="Registratsiya"
+                :min-width="150"
+                :max-width="400"
+                header-align="center"
+                align="center"
+                ><template #default="scope">
+                  <div class="text-gray-900 font-semibold">
+                    {{
+                      scope.row.registeredAt
+                        ? moment
+                            .utc(scope.row.registeredAt) // 🟢 UTC formatda olish
+                            .tz("Asia/Tashkent") // 🟢 UTC+5 ga aylantirish
+                            .format("DD.MM.YYYY HH:mm:ss") // 🟢 To‘g‘ri formatda chiqarish
+                        : "-"
+                    }}
+                  </div>
+                </template></el-table-column
+              >
             </el-table-column>
             <el-table-column
               label="Miqdori"
