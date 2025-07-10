@@ -12,30 +12,60 @@ import { storeToRefs } from "pinia";
 const { detail_modal, product } = storeToRefs(store_rw);
 
 const dialogWidth = ref("");
-window.addEventListener("devicemotion", () => {
+const updateDialogWidth = () => {
+  const w = window.innerWidth;
   dialogWidth.value =
-    window.innerWidth > 1400
-      ? "1300"
-      : window.innerWidth > 1000
-      ? "1000"
-      : window.innerWidth > 800
-      ? "800"
-      : window.innerWidth > 600
-      ? "600"
-      : "450";
-});
-window.addEventListener("resize", () => {
-  dialogWidth.value =
-    window.innerWidth > 1400
-      ? "1500"
-      : window.innerWidth > 1000
-      ? "1000"
-      : window.innerWidth > 800
-      ? "800"
-      : window.innerWidth > 600
-      ? "600"
-      : "450";
-});
+    w > 1600
+      ? 1400
+      : w > 1200
+      ? 1100
+      : w > 992
+      ? 980
+      : w > 768
+      ? 750
+      : w > 480
+      ? 470
+      : 350;
+};
+
+const total_amount = ref(0); // dona soni
+const total_price_amount = ref(0); // umumiy summa (totalPrice)
+
+const getSummaries = ({ columns, data }) => {
+  const sums = [];
+
+  columns.forEach((column, index) => {
+    if (index === 0) {
+      sums[index] = "Jami:";
+      return;
+    }
+
+    const prop = column.property;
+
+    if (prop === "quantity") {
+      const totalQty = data.reduce((acc, row) => {
+        const qty = Number(row.quantity);
+        return isNaN(qty) ? acc : acc + qty;
+      }, 0);
+
+      sums[index] = `${totalQty.toLocaleString()} dona`;
+      total_amount.value = totalQty;
+    } else if (prop === "totalPrice") {
+      const totalPrice = data.reduce((acc, row) => {
+        const price = Number(row.totalPrice);
+        return isNaN(price) ? acc : acc + price;
+      }, 0);
+
+      sums[index] = `${totalPrice.toLocaleString()} so'm`;
+      total_price_amount.value = totalPrice;
+    } else {
+      sums[index] = "";
+    }
+  });
+
+  return sums;
+};
+
 const formatPrice = (price) => {
   return new Intl.NumberFormat("uz-UZ").format(price);
 };
@@ -137,18 +167,21 @@ const OutputSaveAll = () => {
 const ProductInputModal = (id) => {
   store_rw.TransferModal({ id, action: "input" });
 };
-const ReturnProduct = (id) => {
-  console.log("vazvirat id : ", id);
+const ReturnProduct = (id) => {};
+const AddProductModal = (id) => {
+  store_rw.AddProductModal({
+    id: product.value._id,
+    title: "Mahsulotni yangilash",
+    action: "update",
+  });
 };
 const recipientes = ref([
   { id: 2, name: "Sotuv" },
   { id: 1, name: "Sklad 2" },
 ]);
-onMounted(async () => {
-  try {
-  } catch (error) {
-    console.log(error);
-  }
+onMounted(() => {
+  updateDialogWidth();
+  window.addEventListener("resize", updateDialogWidth);
 });
 </script>
 <template>
@@ -158,7 +191,7 @@ onMounted(async () => {
       v-model="detail_modal"
       :width="dialogWidth"
       :before-close="handleClose"
-      class="rounded-md p-4 shadow-lg custom-modal"
+      class="rounded-md p-4 shadow-lg custom-modal mt-4"
       @close="onDialogClose"
     >
       <template #header>
@@ -269,6 +302,8 @@ onMounted(async () => {
                 ? product?.products
                 : product?.output
             "
+            show-summary
+            :summary-method="getSummaries"
             :header-cell-style="{
               background: '#E3F4FB', // Soft, light cyan-blue
               border: '1px solid #D1E3ED', // Very light border for separation
@@ -439,7 +474,7 @@ onMounted(async () => {
               header-align="center"
               prop="outputInfo"
               align="center"
-              label="Mahsulot chiqarish malumotlari"
+              label="Mahsulot chiqarish malumotlarini kiritish !"
             >
               <template #default="{ row }">
                 <div class="flex gap-2 items-center text-center">
@@ -453,8 +488,23 @@ onMounted(async () => {
                         message: 'Miqdorni kiriting',
                         trigger: 'blur',
                       },
+                      {
+                        validator: (rule, value, callback) => {
+                          const quantity = Number(value);
+                          const max = Number(row.quantity); // mavjud miqdor
+                          if (quantity > max) {
+                            callback(
+                              new Error(`Miqdor ${max} dan oshmasligi kerak`)
+                            );
+                          } else {
+                            callback();
+                          }
+                        },
+                        trigger: 'blur',
+                      },
                     ]"
                   />
+
                   <el-select
                     v-model="row.outputRecipient"
                     placeholder="Qayerga chiqarilyapti"
@@ -643,11 +693,11 @@ onMounted(async () => {
           <div
             class="bg-white text-gray-600 text-[12px] font-semibold px-4 py-1 text-center flex items-center justify-between"
           >
-            <div>
+            <!-- <div>
               Kirim:
               {{ product.totalAmount ? formatPrice(product.totalAmount) : 0 }}
               so'm
-            </div>
+            </div> -->
             <div>
               Qoldiq:
               {{
@@ -708,7 +758,7 @@ onMounted(async () => {
             <div class="flex justify-start bg-white p-2 gap-2">
               <div
                 v-if="isActive === 1"
-                @click="OutputSaveAll()"
+                @click="AddProductModal()"
                 class="text-white text-[12px] font-semibold bg-green-500 rounded-[4px] px-4 py-[6px] hover:bg-green-600 cursor-pointer"
               >
                 <i

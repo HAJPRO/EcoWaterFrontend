@@ -14,8 +14,8 @@ import { storeToRefs } from "pinia";
 
 const { all_length, products, isActive } = storeToRefs(store_rw);
 
-const addProductModal = () => {
-  store_rw.AddProductModal();
+const addProductModal = (payload) => {
+  store_rw.AddProductModal(payload);
 };
 const detailModal = (id) => {
   store_rw.DetailModal({ id });
@@ -85,6 +85,24 @@ onMounted(() => {
                   class="cursor-pointer inline-flex items-center text-red bg-[#e4e9e9] hover:bg-[#d7ebeb] font-medium rounded-md text-[12px] w-ful p-[5px] sm:w-auto text-center"
                 >
                   {{ row.partyNumber }}
+                </router-link>
+              </div></template
+            ></el-table-column
+          >
+          <el-table-column
+            prop="product"
+            label="Mahsulot nomi"
+            :min-width="100"
+            :max-width="400"
+            header-align="center"
+            align="center"
+            ><template #default="{ row }">
+              <div class="text-blue-800 cursor-pointer hover:underline">
+                <router-link
+                  to=""
+                  class="cursor-pointer inline-flex items-center text-red bg-blue-200 hover:bg-blue-300 font-medium rounded-md text-[12px] w-ful p-[5px] sm:w-auto text-center"
+                >
+                  {{ row.product }}
                 </router-link>
               </div></template
             ></el-table-column
@@ -350,7 +368,12 @@ onMounted(() => {
               </el-select>
               <div class="mt-2.5">
                 <el-button
-                  @click="addProductModal()"
+                  @click="
+                    addProductModal({
+                      title: `Mahsulot qo'shish`,
+                      action: `create`,
+                    })
+                  "
                   size="small"
                   style="
                     background-color: #36d887;

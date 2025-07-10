@@ -6,8 +6,7 @@ const loading = Loading()
 export const ReadyWarehouseStore = defineStore("ReadyWarehouseStore", {
   state: () => ({
     ModalAction: {
-      title: "",
-      action: ""
+
     },
     partyId: "",
     detail_modal: false,
@@ -43,13 +42,17 @@ export const ReadyWarehouseStore = defineStore("ReadyWarehouseStore", {
     TransferModal(id) {
       this.transfer_modal = true;
     },
-    async AddProductModal() {
-      this.GetModel();
-      this.product_modal = true;
-      this.ModalAction = {
-        title: `Mahsulot qo'shish`,
-        action: 'create'
+    async AddProductModal(payload) {
+      if (payload.action === "create") {
+        this.GetModel();
+        this.product_modal = true;
       }
+      if (payload.action === "update") {
+        this.GetOne({ id: payload.id })
+        this.product_modal = true;
+      }
+
+      this.ModalAction = payload
     },
     async GetModel() {
       const data = await ReadyWarehouseService.GetModel();
@@ -59,16 +62,24 @@ export const ReadyWarehouseStore = defineStore("ReadyWarehouseStore", {
     async Create(payload) {
       const loader = loading.show();
       const data = await ReadyWarehouseService.Create(payload);
+      this.GetModel()
       loader.hide();
-      ToastifyService.ToastSuccess({
-        msg: data.data.msg,
-      });
+      if (data.data.status === 404) {
+        ToastifyService.ToastError({
+          msg: data.data.msg,
+        });
+      }
+      if (data.data.status === 200) {
+        ToastifyService.ToastSuccess({
+          msg: data.data.msg,
+        });
+      }
+
     },
     async GetAll(payload) {
       const loader = loading.show();
       const data = await ReadyWarehouseService.GetAll(payload);
       this.products = data.data.products;
-      console.log(data.data);
 
       this.all_length = data.data.all_length;
 
@@ -83,6 +94,8 @@ export const ReadyWarehouseStore = defineStore("ReadyWarehouseStore", {
       loader.hide();
 
     },
+
+
     async OutputProduct(output) {
       // const loader = loading.show();
       const data = await ReadyWarehouseService.OutputProduct({ output, partyId: this.partyId });

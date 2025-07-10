@@ -80,7 +80,10 @@ const PlusProduct = () => {
         : "Dastlab qo'shilgan",
   };
   model.value.products.push(product);
-  model.value.input.push(product);
+  model.value.packagingType = "";
+  model.value.quantity = "";
+  model.value.costPrice = "";
+  model.value.unit = "";
 };
 
 const formRef = ref(null);
@@ -99,8 +102,16 @@ const DeleteById = (id) => {
   const filterLoad = model.value.products.filter((item) => {
     return item.id !== id;
   });
+
   model.value.products = filterLoad;
 };
+watch(
+  () => model.value.product,
+  (newValue) => {
+    ChangeName(newValue);
+    ChangePacking(newValue);
+  }
+);
 const pakings = ref();
 const SelectedProduct = ref();
 const ChangeName = (value) => {
@@ -125,7 +136,7 @@ const ChangePacking = (value) => {
 
     if (selectedPacking) {
       model.value.packagingType = selectedPacking.packingType;
-      model.value.costPrice = selectedPacking.cost_price;
+      model.value.costPrice = selectedPacking.buying_price;
       model.value.blockCostPrice = selectedPacking.block_cost_price;
     }
   }
@@ -218,12 +229,54 @@ onMounted(() => {
                 </el-form-item>
               </div>
               <div class="mb-1 col-span-12">
+                <el-form-item label="Nomi" prop="product" :rules="rules">
+                  <el-select
+                    :disabled="model.products?.length > 0"
+                    v-model="model.product"
+                    placeholder="..."
+                    size="smal"
+                    style="width: 100%"
+                    @click="Type({ type: `product` })"
+                    @change="ChangeName($event)"
+                  >
+                    <template #prefix>
+                      <i
+                        @click.stop="
+                          Plus({
+                            title: `Buyurtmachi kategoryasini qo'shish`,
+                            state: `product`,
+                          })
+                        "
+                        class="fa-solid fa-plus cursor-pointer"
+                      ></i>
+                    </template>
+                    <el-option
+                      v-for="item in products"
+                      :key="item._id"
+                      :label="item.pro_name"
+                      :value="item.pro_name"
+                    >
+                      <template #default>
+                        <div class="flex justify-between items-center w-full">
+                          <span>{{ item.pro_name }}</span>
+                          <i
+                            class="fa-solid fa-trash text-red-500 cursor-pointer fa-xs ml-8"
+                            @click.stop="RemoveItem(item._id)"
+                          ></i>
+                        </div>
+                      </template>
+                    </el-option>
+                  </el-select>
+                </el-form-item>
+              </div>
+              <div class="mb-1 col-span-12">
                 <el-form-item
                   label="Ishlab chiqaruvchi korxona"
                   prop="manufacturer"
                   :rules="rules"
                 >
                   <el-select
+                    :disabled="model.products?.length > 0"
                     v-model="model.manufacturer"
                     placeholder="..."
                     size="smal"
@@ -299,6 +352,7 @@ onMounted(() => {
                   prop="senderEmployee"
                 >
                   <el-select
+                    :disabled="model.products?.length > 0"
                     v-model="model.senderEmployee"
                     placeholder="..."
                     size="smal"
@@ -340,9 +394,9 @@ onMounted(() => {
                 <el-form-item
                   label="Mahsulotni qabul qiluvchi "
                   prop="receivedBy"
-                  :rules="rules"
                 >
                   <el-select
+                    :disabled="model.products?.length > 0"
                     v-model="model.receivedBy"
                     placeholder="..."
                     size="smal"
@@ -392,48 +446,8 @@ onMounted(() => {
               Mahsulot ma'lumotlari
             </h1>
             <div class="grid grid-cols-12 gap-1">
-              <div class="mb-1 col-span-3">
-                <el-form-item label="Nomi" prop="product" :rules="rules">
-                  <el-select
-                    v-model="model.product"
-                    placeholder="..."
-                    size="smal"
-                    style="width: 100%"
-                    @click="Type({ type: `product` })"
-                    @change="ChangeName($event)"
-                  >
-                    <template #prefix>
-                      <i
-                        @click.stop="
-                          Plus({
-                            title: `Buyurtmachi kategoryasini qo'shish`,
-                            state: `product`,
-                          })
-                        "
-                        class="fa-solid fa-plus cursor-pointer"
-                      ></i>
-                    </template>
-                    <el-option
-                      v-for="item in products"
-                      :key="item._id"
-                      :label="item.pro_name"
-                      :value="item.pro_name"
-                    >
-                      <template #default>
-                        <div class="flex justify-between items-center w-full">
-                          <span>{{ item.pro_name }}</span>
-                          <i
-                            class="fa-solid fa-trash text-red-500 cursor-pointer fa-xs ml-8"
-                            @click.stop="RemoveItem(item._id)"
-                          ></i>
-                        </div>
-                      </template>
-                    </el-option>
-                  </el-select>
-                </el-form-item>
-              </div>
-              <div class="mb-1 col-span-3">
-                <el-form-item label="Kodi" prop="code" :rules="rules">
+              <div class="mb-1 col-span-4">
+                <el-form-item label="Kodi" prop="code">
                   <el-input
                     disabled
                     required
@@ -487,7 +501,7 @@ onMounted(() => {
                   </el-select>
                 </el-form-item>
               </div> -->
-              <div class="mb-1 col-span-3">
+              <div class="mb-1 col-span-4">
                 <el-form-item
                   label="Ishlab chiqarilgan sana"
                   prop="manufactureDate"
@@ -504,7 +518,7 @@ onMounted(() => {
                   />
                 </el-form-item>
               </div>
-              <div class="mb-1 col-span-3">
+              <div class="mb-1 col-span-4">
                 <el-form-item
                   label="Yaroqlilik muddati"
                   prop="expireDate"
@@ -522,11 +536,7 @@ onMounted(() => {
                 </el-form-item>
               </div>
               <div class="mb-1 col-span-3">
-                <el-form-item
-                  label="Qadoq turi"
-                  prop="packagingType"
-                  :rules="rules"
-                >
+                <el-form-item label="Qadoq turi" prop="packagingType">
                   <el-select
                     v-model="model.packagingType"
                     placeholder="..."
@@ -566,9 +576,8 @@ onMounted(() => {
                 </el-form-item>
               </div>
               <div class="mb-1 col-span-3">
-                <el-form-item label="Miqdori" prop="quantity" :rules="rules">
+                <el-form-item label="Miqdori" prop="quantity">
                   <el-input
-                    required
                     v-model="model.quantity"
                     clearable
                     class="w-[100%]"
@@ -580,7 +589,7 @@ onMounted(() => {
                 </el-form-item>
               </div>
               <div class="mb-1 col-span-3">
-                <el-form-item label="Birligi" prop="unit" :rules="rules">
+                <el-form-item label="Birligi" prop="unit">
                   <el-select
                     v-model="model.unit"
                     placeholder="..."
@@ -620,11 +629,7 @@ onMounted(() => {
                 </el-form-item>
               </div>
               <div class="mb-1 col-span-3">
-                <el-form-item
-                  label="Sotuv narxi dona (sum)"
-                  prop="costPrice"
-                  :rules="rules"
-                >
+                <el-form-item label="Sotuv narxi dona (sum)" prop="costPrice">
                   <el-input
                     disabled
                     required
