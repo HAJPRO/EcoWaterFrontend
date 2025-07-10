@@ -61,6 +61,7 @@ onMounted(() => {
           header-align="center"
           empty-text="Mahsulot qo'shilmagan... "
           border="true"
+          max-height="500"
         >
           <el-table-column
             header-align="center"
