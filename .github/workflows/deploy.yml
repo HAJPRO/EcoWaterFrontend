@@ -1,0 +1,36 @@
+name: "CI/CD ECO CLIENT APP"
+
+on:
+  push:
+    branches:
+      - eco-branch # Yangi branch nomini bu yerda ko'rsatamiz \\
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: "Checkout code"
+        uses: actions/checkout@v4
+
+      - name: "Set up Node.js"
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20.18.1"
+
+      - name: "Install dependencies and build"
+        run: |
+          npm install
+          npm run build
+
+      - name: "Deploy to local server"
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST_ECO }}
+          username: ${{ secrets.USERNAME_ECO }}
+          key: ${{ secrets.KEY_ECO }}
+          port: 22
+          script: |
+            cd /var/www/workers/EcoWaterFrontend/
+            git pull --no-rebase origin eco-branch
+            /usr/bin/npm install
+            /usr/bin/npm run build
