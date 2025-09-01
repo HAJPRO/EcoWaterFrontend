@@ -1,8 +1,8 @@
 <script setup>
-import MapView from "../../Customers/customerManagment/MapView.vue";
+import { dialogWidth } from "../../../utils/dialogOptions/useDialogWidth.js"
+import { TableHeaderStyle, TableStyle, formatPrice } from "../../../utils/TableOptions/useTableOptions.js"
 import { ElMessage } from "element-plus";
 import { onMounted, ref, computed } from "vue";
-import { v4 as uuidv4 } from "uuid";
 import { CustomerManagmentStore } from "../../../stores/Customers/c-managment/customer.store";
 import { OrderManagmentStore } from "../../../stores/Sale/orders/orders.store";
 
@@ -16,34 +16,7 @@ const { custom_modal, modal, action, customers } = storeToRefs(store_customers);
 const { order_modal, drivers, driver_binding_modal } =
   storeToRefs(store_orders);
 
-const dialogWidth = ref("");
-window.addEventListener("devicemotion", () => {
-  dialogWidth.value =
-    window.innerWidth > 1400
-      ? "1300"
-      : window.innerWidth > 1000
-      ? "1000"
-      : window.innerWidth > 800
-      ? "800"
-      : window.innerWidth > 600
-      ? "600"
-      : "450";
-});
-window.addEventListener("resize", () => {
-  dialogWidth.value =
-    window.innerWidth > 1400
-      ? "1500"
-      : window.innerWidth > 1000
-      ? "1000"
-      : window.innerWidth > 800
-      ? "800"
-      : window.innerWidth > 600
-      ? "600"
-      : "450";
-});
-const formatPrice = (price) => {
-  return new Intl.NumberFormat("uz-UZ").format(price);
-};
+
 const model = ref({
   fullname: "",
   deliveryTime: "",
@@ -96,128 +69,98 @@ onMounted(async () => {
 });
 </script>
 <template>
-  <div>
-    <el-dialog v-model="driver_binding_modal" :width="500" class="mt-2">
-      <span>
-        <div
-          class="bg-slate-100 font-semibold text-[15px] p-1 mt-1 align-center text-center shadow rounded border-t-[1px] border-[#36d887]"
-        >
-          <i class="fa-solid fa-car-side fa-md mr-3"></i> Buyurtmaga haydovchi
-          biriktirish
+  <el-dialog v-model="driver_binding_modal" :width="dialogWidth" :before-close="handleClose"
+    class="rounded-md p-4 shadow-lg custom-modal dark:bg-slate-700 mt-2" @close="onDialogClose">
+    <template #header>
+      <div class="flex items-center justify-between border-b pb-1">
+        <div class="flex items-center gap-2">
+          <i class="fa-solid fa-car-side text-blue-500 fa-lg"></i>
+          <h3 class="text-xl font-semibold text-slate-500 dark:text-slate-300">
+            Buyurtmaga haydovchi
+            biriktirish
+          </h3>
         </div>
-        <el-form
-          ref="formRef"
-          :model="model"
-          label-width="auto"
-          class="filter-box grid grid-cols-12 bg-[#e8eded] md:grid md:grid-cols-12 gap-1 sm:flex sm:flex-wrap rounded shadow-sm p-2 mt-2 text-[13px]"
-          size="small"
-          label-position="top"
-        >
-          <div class="mb-1 col-span-6">
-            <el-form-item
-              label="Haydovchi tanlang"
-              prop="fullname"
-              :rules="rules"
-            >
-              <el-select
-                v-model="model.fullname"
-                placeholder="..."
-                size="smal"
-                style="width: 100%"
-                @change="ChangeCustomerFullname($event)"
-                :no-data-text="'Haydovchi topilmadi'"
-              >
-                <!-- ➕ ICON qo‘shish -->
-                <template #prefix>
-                  <i
-                    @click.stop="AddCustomeModal()"
-                    class="fa-solid fa-plus cursor-pointer"
-                  ></i>
-                </template>
+      </div>
+    </template>
 
-                <!-- 🔍 FILTER INPUT QO‘SHAMIZ -->
-                <template #header>
-                  <div class="p-1 w-full bg-white">
-                    <el-input
-                      v-model="filter.fullname"
-                      placeholder="Ism bo‘yicha izlang..."
-                      size="smal"
-                      clearable
-                      class="w-full"
-                      @input="FilterByFullname"
-                    />
+    <span>
+      <el-form ref="formRef" :model="model" label-width="auto"
+        class="filter-box grid grid-cols-12 bg-[#e8eded] md:grid md:grid-cols-12 gap-1 sm:flex sm:flex-wrap rounded shadow-sm p-2 mt-2 text-[13px]"
+        size="small" label-position="top">
+        <div class="mb-1 col-span-6">
+          <el-form-item label="Haydovchi tanlang" prop="fullname" :rules="rules">
+            <el-select v-model="model.fullname" placeholder="..." size="smal" style="width: 100%"
+              @change="ChangeCustomerFullname($event)" :no-data-text="'Haydovchi topilmadi'">
+              <!-- ➕ ICON qo‘shish -->
+              <template #prefix>
+                <i @click.stop="AddCustomeModal()" class="fa-solid fa-plus cursor-pointer"></i>
+              </template>
+
+              <!-- 🔍 FILTER INPUT QO‘SHAMIZ -->
+              <template #header>
+                <div class="p-1 w-full bg-white">
+                  <el-input v-model="filter.fullname" placeholder="Ism bo‘yicha izlang..." size="smal" clearable
+                    class="w-full" @input="FilterByFullname" />
+                </div>
+              </template>
+
+              <!-- 🔁 OPTIONLAR -->
+              <el-option v-for="item in filteredDrivers" :key="item._id" :label="item.fullname" :value="item._id">
+                <template #default>
+                  <div class="flex justify-between items-center w-full text-[12px]">
+                    <span class="text-[14px] font-semibold">{{
+                      item.fullname
+                    }}</span>
+                    <span class="ml-4 text-red-500 font-semibold">
+                      <i class="fa-solid fa-car text-red-500 cursor-pointer fa-xs mr-1"></i>
+                      {{ item.carNumber ? item.carNumber : "-" }}
+                      {{ item.carType ? item.carType : "" }}
+                    </span>
+                    <span class="ml-4 text-green-700">Vil:{{ item.address.region }}</span>
+                    <span class="ml-4 text-blue-500 font-semibold">Tel:{{ item.phoneNumber }}</span>
                   </div>
                 </template>
+              </el-option>
+            </el-select>
+          </el-form-item>
+        </div>
 
-                <!-- 🔁 OPTIONLAR -->
-                <el-option
-                  v-for="item in filteredDrivers"
-                  :key="item._id"
-                  :label="item.fullname"
-                  :value="item._id"
-                >
-                  <template #default>
-                    <div
-                      class="flex justify-between items-center w-full text-[12px]"
-                    >
-                      <span class="text-[14px] font-semibold">{{
-                        item.fullname
-                      }}</span>
-                      <span class="ml-4 text-red-500 font-semibold">
-                        <i
-                          class="fa-solid fa-car text-red-500 cursor-pointer fa-xs mr-1"
-                        ></i>
-                        {{ item.carNumber ? item.carNumber : "-" }}
-                        {{ item.carType ? item.carType : "" }}
-                      </span>
-                      <span class="ml-4 text-green-700"
-                        >Vil:{{ item.address.region }}</span
-                      >
-                      <span class="ml-4 text-blue-500 font-semibold"
-                        >Tel:{{ item.phoneNumber }}</span
-                      >
-                    </div>
-                  </template>
-                </el-option>
-              </el-select>
-            </el-form-item>
-          </div>
+        <div class="mb-1 col-span-6">
+          <el-form-item label="Yetkazib berish muddati" prop="deliveryTime" :rules="rules">
+            <el-date-picker
+                      required
+                     v-model="model.deliveryTime"
+                      style="width: 100%"
+                      clearable
+                      type="date"
+                      placeholder="..."
+                      size="smal"
+                    />
+          </el-form-item>
+        </div>
+      </el-form>
 
-          <div class="mb-1 col-span-6">
-            <el-form-item
-              label="Yetkazib berish muddati"
-              prop="deliveryTime"
-              :rules="rules"
-            >
-              <el-date-picker
-                v-model="model.deliveryTime"
-                type="date"
-                placeholder="..."
-                size="smal"
-                class="w-full"
-              />
-            </el-form-item>
-          </div>
-        </el-form>
+     
+    </span>
+    <template #footer>
+      <div class="flex justify-end items-center mt-2 border-t pt-2 ">
 
-        <div class="flex justify-end bg-[#e8eded] p-2 rounded">
-          <el-button
-            @click="PlusValidate(formRef)"
-            style="
+        <div class="col-span-12 cursor-pointer flex justify-end text-[12px] font-semibold gap-2">
+         <el-button @click="PlusValidate(formRef)" style="
               width: 190px;
               background-color: #36d887;
               color: white;
               border: none;
               cursor: pointer;
               padding: 15px;
-            "
-          >
-            <i class="fa-solid fa-check mr-2 fa-md"></i>Saqlash
-          </el-button>
+            ">
+          <i class="fa-solid fa-check mr-2 fa-md"></i>Saqlash
+        </el-button>
         </div>
-      </span>
-    </el-dialog>
-  </div>
+
+      </div>
+    </template>
+  </el-dialog>
 </template>
 
 <style scoped>
@@ -245,6 +188,7 @@ onMounted(async () => {
   color: #409eff;
   margin-bottom: 10px;
 }
+
 #map {
   height: 300px;
   width: 100%;

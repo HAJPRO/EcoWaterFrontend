@@ -1,5 +1,9 @@
 <script setup>
-// import { ExcelExportOrdersByCustomer } from "../../../utils/ExcelExport";
+import {dialogWidth} from "../../../utils/dialogOptions/useDialogWidth";
+import { TableHeaderStyle , TableStyle, formatPrice,   opened,
+  toggle,
+  enter,
+  leave} from "../../../utils/TableOptions/useTableOptions";
 import { ElMessage } from "element-plus";
 import { onMounted, ref, computed } from "vue";
 import { v4 as uuidv4 } from "uuid";
@@ -10,35 +14,6 @@ const store_customer = CustomerManagmentStore();
 import { storeToRefs } from "pinia";
 const { detail_modal, orders } = storeToRefs(store_customer);
 
-const dialogWidth = ref("");
-window.addEventListener("devicemotion", () => {
-  dialogWidth.value =
-    window.innerWidth > 1400
-      ? "1300"
-      : window.innerWidth > 1000
-      ? "1000"
-      : window.innerWidth > 800
-      ? "800"
-      : window.innerWidth > 600
-      ? "600"
-      : "450";
-});
-window.addEventListener("resize", () => {
-  dialogWidth.value =
-    window.innerWidth > 1400
-      ? "1500"
-      : window.innerWidth > 1000
-      ? "1000"
-      : window.innerWidth > 800
-      ? "800"
-      : window.innerWidth > 600
-      ? "600"
-      : "450";
-});
-const formatPrice = (num) => {
-  const val = Number(num);
-  return isNaN(val) ? "0" : val.toLocaleString("uz-UZ");
-};
 
 const isActive = ref(1);
 const Title = ref("Kiritilgan");
@@ -100,6 +75,65 @@ const filterByDate = () => {
     console.log("Tugash:", end);
   }
 };
+const timeFields = (row) => {
+  return [
+    {
+      label: "Registratsiya",
+      value: row.createdAt,
+      icon: "fa-regular fa-calendar-check",
+      iconColor: "text-blue-500",
+      bg: "bg-blue-50",
+      border: "border border-blue-200",
+      textColor: "text-blue-600",
+    },
+    {
+      label: "Yetkazib berish vaqti",
+      value: row.deliveryTimedeliveryTime,
+      icon: "fa-solid fa-clock",
+      iconColor: "text-indigo-500",
+      bg: "bg-indigo-50",
+      border: "border border-indigo-200",
+      textColor: "text-indigo-600",
+    },
+    {
+      label: "Haydovchiga jo'natildi",
+      value: row.driverSentToTime,
+      icon: "fa-solid fa-car-side",
+      iconColor: "text-purple-500",
+      bg: "bg-purple-50",
+      border: "border border-purple-200",
+      textColor: "text-purple-600",
+    },
+    {
+      label: "Haydovchi qabul qildi",
+      value: row.driverAcceptedTime,
+      icon: "fa-regular fa-hourglass-half",
+      iconColor: "text-yellow-500",
+      bg: "bg-yellow-50",
+      border: "border border-yellow-200",
+      textColor: "text-yellow-600",
+    },
+    {
+      label: "Yetkazib berildi",
+      value: row.driverArrivedTime,
+      icon: "fa-solid fa-check-circle",
+      iconColor: "text-indigo-500",
+      bg: "bg-indigo-50",
+      border: "border border-indigo-200",
+      textColor: "text-indigo-600",
+    },
+   
+    {
+      label: "Bekor qilingan",
+      value: row.canceleddAt,
+      icon: "fa-solid fa-ban",
+      iconColor: "text-red-500",
+      bg: "bg-red-50",
+      border: "border border-red-200",
+      textColor: "text-red-600",
+    },
+  ];
+};
 </script>
 <template>
   <div>
@@ -107,13 +141,13 @@ const filterByDate = () => {
       v-model="detail_modal"
       :width="dialogWidth"
       :before-close="handleClose"
-      class="rounded-md p-4 shadow-lg custom-modal mt-2"
+      class="rounded-md p-4 shadow-lg custom-modal mt-2 bg-white dark:bg-slate-700"
     >
       <template #header>
         <div class="flex items-center justify-between border-b pb-1">
           <div class="flex items-center gap-2">
             <i class="fa-solid fa-box text-lg text-blue-500"></i>
-            <h3 class="text-xl font-semibold text-gray-500">
+            <h3 class="text-xl font-semibold text-slate-500 dark:text-slate-200">
               {{ orders[0] ? orders[0].customerId.fullname : "Mijoz" }}
             </h3>
           </div>
@@ -156,76 +190,7 @@ const filterByDate = () => {
       </template>
 
       <div class="grid 2xl:grid-cols-12 xs:grid-cols-6 gap-2 mt-1 text-sm">
-        <!-- Tafsilotlar -->
-        <!-- <div
-          class="grid grid-cols-12 gap-2 col-span-6 text-gray-700 bg-gray-50 p-4 rounded-lg border border-gray-200"
-        >
-          <div class="col-span-6 p-1 bg-slate-200 rounded-md">
-            <strong><i class="fa-solid fa-barcode mr-1"></i> Kodi:</strong>
-            {{ 0 }}
-          </div>
-          <div class="col-span-6 p-1 bg-slate-200 rounded-md">
-            <strong
-              ><i class="fa-solid fa-layer-group mr-1"></i> Kategoriya:</strong
-            >
-            {{ 0 }}
-          </div>
-          <div class="col-span-6 p-1 bg-slate-200 rounded-md">
-            <strong
-              ><i class="fa-solid fa-star mr-1"></i> Sifat darajasi:</strong
-            >
-            {{ 0 }}
-          </div>
-          <div class="col-span-6 p-1 bg-slate-200 rounded-md">
-            <strong><i class="fa-solid fa-tags mr-1"></i> Sotuv turi:</strong>
-            {{ product?.sale_type }}
-          </div>
-          <div class="col-span-6 p-1 bg-slate-200 rounded-md">
-            <strong
-              ><i class="fa-solid fa-calendar-check mr-1"></i> Ishlab chiqarish
-              boshlangan:</strong
-            >
-            {{ 0 }}
-          </div>
-          <div class="col-span-6 p-1 bg-slate-200 rounded-md">
-            <strong
-              ><i class="fa-solid fa-calendar-xmark mr-1"></i> Ishlab chiqarish
-              to'xtatilgan:</strong
-            >
-            {{ 0 }}
-          </div>
-          <div class="col-span-6 p-1 bg-slate-200 rounded-md">
-            <strong
-              ><i class="fa-solid fa-boxes-stacked mr-1"></i> Umumiy
-              sotilgan:</strong
-            >
-            {{ 0 }} dona
-          </div>
-          <div class="col-span-6 p-1 bg-slate-200 rounded-md">
-            <strong
-              ><i class="fa-solid fa-money-bill-wave mr-1"></i> Umumiy
-              tushum:</strong
-            >
-            {{ formatPrice(0) }}
-          </div>
-          <div class="col-span-6 p-1 bg-slate-200 rounded-md">
-            <strong><i class="fa-solid fa-building mr-1"></i> Filial:</strong>
-            {{ 0 }}
-          </div>
-          <div
-            class="col-span-6 flex items-center gap-2 p-1 bg-slate-200 rounded-md"
-          >
-            <strong
-              ><i class="fa-solid fa-circle-info mr-1"></i> Holati:</strong
-            >
-            <el-tag
-              :type="data?.status === 'Aktive' ? 'success' : 'info'"
-              size="small"
-            >
-              {{ 0 }}
-            </el-tag>
-          </div>
-        </div> -->
+        
 
         <!--  mahsulotlar jadvali-->
         <div
@@ -239,27 +204,24 @@ const filterByDate = () => {
             buyurtmalar jadvali
           </div>
           <el-table
-            :header-cell-style="{
-              background: '#e8eded',
-              border: '0.2px solid #e1e1e3',
-            }"
-            show-summary
+            :header-cell-style="TableHeaderStyle"
+          stripe
+           show-summary
             :summary-method="getSummaries"
             :default-sort="[
               { prop: 'status', order: 'descending' },
               { prop: 'orderNumber', order: 'descending' },
             ]"
-            stripe
-            highlight-current-row
-            load
-            style="font-size: 12px"
-            size="small"
-            class="w-full my-summary-table"
-            header-align="right"
-            :max-height="600"
-            empty-text="Mahsulot qo'shilmagan... "
-            :data="orders"
-            border
+          highlight-current-row
+          :data="orders"
+          size="small"
+          :border="true"
+          show-header
+          header-align="center"
+          empty-text="Ma'lumot yo'q..."
+          :style="TableStyle"
+          class="rounded-t-md border-t-[1px] border-[#36d887]"
+          :max-height="600"
           >
             <el-table-column
               header-align="center"
@@ -270,222 +232,277 @@ const filterByDate = () => {
               label="№"
               width="60"
             />
-            <el-table-column
+          <el-table-column
+  fixed="left"
+  prop="orderNumber"
+  label="Buyurtma nomeri"
+  :min-width="160"
+  :max-width="300"
+  sortable
+  header-align="center"
+  align="center"
+>
+  <template #default="{ row }">
+    <el-tooltip placement="left" effect="light" popper-class="custom-tooltip">
+      <!-- Tooltip ichidagi kontent -->
+      <template #content>
+        <div
+          class="bg-white shadow-lg rounded-md p-3 text-left space-y-4"
+          style="width: 480px; max-height: 500px; overflow-y: auto"
+        >
+          <!-- Agar haydovchi va mahsulotlar bo‘lsa -->
+          <div v-if="row">
+            <el-table
+             :header-cell-style="TableHeaderStyle({background : `#bfdbfe`})"
+          stripe
+          highlight-current-row
+          :data="row.products"
+          size="small"
+          :border="true"
+          show-header
+          header-align="center"
+          empty-text="Ma'lumot yo'q..."
+          :style="TableStyle"
+          class="rounded-md border-[1px] border-blue-600"
+          :max-height="600"
+            >
+              <el-table-column
               fixed="left"
-              prop="orderNumber"
-              label="Buyurtma nomeri"
-              :min-width="150"
-              :max-width="400"
-              sortable
-              header-align="center"
-              align="center"
-            >
-              <template #default="{ row }">
-                <el-tooltip
-                  placement="left"
-                  effect="light"
-                  popper-class="custom-tooltip"
-                >
-                  <template #content>
-                    <div
-                      class="bg-[#e8eded] text-white p-4 rounded text-left space-y-3"
-                      style="width: auto; max-height: 1200px; overflow-y: auto"
-                    >
-                      <div v-if="row.driverId.fullname">
-                        <el-table
-                          :header-cell-style="{
-                            background: '#e8ed90',
-                            border: '0.2px solid #e1e1e3',
-                          }"
-                          border
-                          stripe
-                          highlight-current-row
-                          class="gradient-header-table rounded-none"
-                          load
-                          style="font-size: 12px"
-                          size="small"
-                          header-align="center"
-                          empty-text="Mahsulot qo'shilmagan... "
-                          height="160"
-                          :data="row.products"
-                        >
-                          <el-table-column
-                            header-align="center"
-                            align="center"
-                            type="index"
-                            prop="index"
-                            fixed="left"
-                            label="№"
-                            width="60"
-                          />
-                          <el-table-column
-                            prop="pro_type"
-                            label="Turi"
-                            :min-width="100"
-                            :max-width="400"
-                            header-align="center"
-                            align="center"
-                          >
-                            <template #default="{ row }"
-                              ><div class="text-red-500">
-                                {{ row.pro_type }}
-                              </div></template
-                            ></el-table-column
-                          >
-                          <el-table-column
-                            prop="pro_name"
-                            label="Nomi"
-                            :min-width="100"
-                            :max-width="400"
-                            header-align="center"
-                            align="center"
-                          />
+                type="index"
+                label="№"
+                width="50"
+                align="center"
+              />
+              <el-table-column
+                prop="pro_type"
+                label="Turi"
+                :min-width="100"
+                align="center"
+              >
+                <template #default="{ row }">
+                  <span class="text-indigo-600 font-medium">
+                    {{ row.pro_type }}
+                  </span>
+                </template>
+              </el-table-column>
 
-                          <el-table-column
-                            prop="pro_quantity"
-                            label="Miqdori"
-                            :min-width="100"
-                            :max-width="400"
-                            header-align="center"
-                            align="center"
-                          >
-                            <template #default="{ row }"
-                              ><div class="text-green-600">
-                                {{ formatPrice(row.pro_quantity) }}
-                                {{ row.pro_unit }}
-                              </div></template
-                            ></el-table-column
-                          >
-                          <el-table-column
-                            prop="pro_price"
-                            label="Narxi (sum)"
-                            :min-width="100"
-                            :max-width="400"
-                            header-align="center"
-                            align="center"
-                          >
-                            <template #default="{ row }"
-                              ><div class="text-red-600">
-                                {{ formatPrice(row.pro_price) }} sum
-                              </div></template
-                            ></el-table-column
-                          >
+              <el-table-column
+                prop="pro_name"
+                label="Nomi"
+                :min-width="120"
+                align="center"
+              />
 
-                          <el-table-column
-                            prop="pro_total_price"
-                            label="Jami (sum)"
-                            :min-width="100"
-                            :max-width="400"
-                            header-align="center"
-                            align="center"
-                            ><template #default="{ row }"
-                              ><div class="text-purple-600">
-                                {{ formatPrice(row.pro_total_price) }} sum
-                              </div></template
-                            ></el-table-column
-                          >
+              <el-table-column
+                prop="pro_quantity"
+                label="Miqdori"
+                :min-width="100"
+                align="center"
+              >
+                <template #default="{ row }">
+                  <span class="text-green-600 font-medium">
+                    {{ formatPrice(row.pro_quantity) }} {{ row.pro_unit }}
+                  </span>
+                </template>
+              </el-table-column>
 
-                       
-                        </el-table>
-                        <div class="bg-white p-2 rounded-md flex justify-end">
-                          <div
-                            class="mb-1 col-span-12 w-full flex justify-end text-purple-600 font-semibold bg-purple-100 rounded-md p-2"
-                          >
-                            Jami :
-                            {{ formatPrice(row.totalAmount) }} sum
-                          </div>
-                        </div>
-                      </div>
-                      <div
-                        class="text-center font-semibold text-gray-800"
-                        v-else
-                      >
-                        Topilmadi
-                      </div>
-                    </div>
-                  </template>
+              <el-table-column
+                prop="pro_price"
+                label="Narxi (sum)"
+                :min-width="120"
+                align="center"
+              >
+                <template #default="{ row }">
+                  <span class="text-red-500 font-medium">
+                    {{ formatPrice(row.pro_price) }} sum
+                  </span>
+                </template>
+              </el-table-column>
 
-                  <div class="text-red-500 cursor-pointer hover:underline">
-                    <router-link
-                      to=""
-                      class="cursor-pointer inline-flex items-center text-red bg-[#e4e9e9] hover:bg-[#d7ebeb] font-medium rounded-md text-[12px] w-ful p-[5px] sm:w-auto text-center"
-                    >
-                      {{ row.orderNumber }}
-                    </router-link>
+              <el-table-column
+                prop="pro_total_price"
+                label="Jami (sum)"
+                :min-width="140"
+                align="center"
+              >
+                <template #default="{ row }">
+                  <div
+                    :class="[
+                      'inline-flex items-center gap-2 font-medium rounded-md px-2 py-1 text-[12px]',
+                      row.pro_total_price > 0
+                        ? 'bg-green-50 text-green-700'
+                        : row.pro_total_price < 0
+                        ? 'bg-red-50 text-red-700'
+                        : 'bg-gray-50 text-gray-500',
+                    ]"
+                  >
+                    <i
+                      :class="[
+                        'fa-solid fa-sack-dollar',
+                        row.pro_total_price > 0
+                          ? 'text-green-500'
+                          : row.pro_total_price < 0
+                          ? 'text-red-500'
+                          : 'text-gray-400',
+                      ]"
+                    ></i>
+                    <span class="truncate">
+                      {{ row.pro_total_price ? formatPrice(row.pro_total_price) : 0 }} sum
+                    </span>
                   </div>
-                </el-tooltip>
-              </template></el-table-column
-            >
-            <el-table-column
-              prop="fullname"
-              label="F.I.O"
-              :min-width="100"
-              :max-width="400"
-              header-align="center"
-              align="center"
-            >
-              <template #default="{ row }">{{
-                row.customerId.fullname
-              }}</template></el-table-column
-            >
-            <el-table-column
-              align="center"
-              header-align="center"
-              prop="customerId.artikul"
-              label="Artikul"
-              :min-width="100"
-              :max-width="400"
-            />
-            <el-table-column
-              label="Kategoriyasi"
-              :min-width="150"
-              :max-width="400"
-              header-align="center"
-              align="center"
-              ><template #default="scope">{{
-                scope.row.customerId.category
-              }}</template></el-table-column
-            >
-            <el-table-column
-              align="center"
-              header-align="center"
-              prop="customerId.address.region"
-              label="Viloyat"
-              :min-width="100"
-              :max-width="400"
-            />
-            <el-table-column
-              align="center"
-              header-align="center"
-              prop="customerId.address.district"
-              label="Tuman"
-              :min-width="100"
-              :max-width="400"
-            />
-            <el-table-column
-              align="center"
-              header-align="center"
-              prop="customerId.address.neighborhood"
-              label="Mahalla"
-              :min-width="100"
-              :max-width="400"
-            />
-            <el-table-column
-              align="center"
-              header-align="center"
-              prop="customerId.address.street"
-              label="Ko'cha"
-              :min-width="100"
-              :max-width="400"
-            />
-            <el-table-column
-              align="center"
-              header-align="center"
-              prop="customerId.phoneNumber"
-              label="Telefon"
-              :min-width="100"
-              :max-width="400"
-            />
+                </template>
+              </el-table-column>
+            </el-table>
+
+            <!-- Umumiy summasi -->
+<div class="flex justify-end mt-4 w-full">
+  <div
+    class="inline-flex items-center gap-2 bg-blue-50 text-blue-700 font-semibold px-5 py-2 rounded-lg text-sm shadow-sm hover:bg-blue-100 transition-colors duration-200"
+  >
+    <i class="fa-solid fa-wallet text-blue-500"></i>
+    <span>
+      Jami: {{ formatPrice(row.totalAmount) }} sum
+    </span>
+  </div>
+</div>
+
+          </div>
+
+          <!-- Agar topilmasa -->
+          <div v-else class="text-center text-gray-500 font-medium">
+            Ma'lumot topilmadi
+          </div>
+        </div>
+      </template>
+
+      <!-- Asosiy ko‘rinishi -->
+      <router-link
+        to=""
+        class="inline-flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-md px-3 py-1.5 text-[13px] transition-colors duration-200"
+      >
+        <i class="fa-solid fa-receipt text-gray-500"></i>
+        <span>{{ row.orderNumber }}</span>
+      </router-link>
+    </el-tooltip>
+  </template>
+</el-table-column>
+
+              <el-table-column
+  label="Mijoz ma'lumotlari"
+  :min-width="500"
+  :max-width="600"
+  align="center"
+>
+  <template #default="{ row }">
+    <div class="bg-white border border-gray-200 rounded-lg shadow-sm text-left">
+      <!-- Toggle Button -->
+      <button
+        class="w-full flex items-center justify-center gap-2 text-xs font-semibold text-indigo-600 hover:text-indigo-800 transition py-2"
+        @click="toggle('comRows', row._id)"
+      >
+        <i
+          :class="[
+            'fa-solid transition-transform duration-200',
+            opened.comRows?.[row._id] ? 'fa-chevron-down' : 'fa-chevron-right',
+          ]"
+        ></i>
+        {{
+          opened.comRows?.[row._id]
+            ? "Ma'lumotlarni yopish"
+            : "Ma'lumotlarni ko‘rish"
+        }}
+      </button>
+
+      <!-- Customer Details -->
+      <transition name="expand" @enter="enter" @leave="leave">
+        <div
+          v-show="opened.comRows?.[row._id]"
+          class="overflow-hidden border-t border-gray-100"
+        >
+          <div class="grid grid-cols-2 gap-x-4 gap-y-3 p-2 text-[12px] text-gray-700">
+            <!-- F.I.O -->
+            <div class="flex items-center gap-2">
+              <span class="w-5 h-5 flex items-center justify-center bg-blue-100 text-blue-500 rounded-full text-[10px]">
+                <i class="fa-solid fa-user"></i>
+              </span>
+              <div>
+                <div class="text-[11px] text-gray-500">F.I.O</div>
+                <div class="font-medium truncate">
+                  {{ row.customerId.fullname || "—" }}
+                </div>
+              </div>
+            </div>
+
+            <!-- Viloyat -->
+            <div class="flex items-center gap-2">
+              <span class="w-5 h-5 flex items-center justify-center bg-green-100 text-green-500 rounded-full text-[10px]">
+                <i class="fa-solid fa-map"></i>
+              </span>
+              <div>
+                <div class="text-[11px] text-gray-500">Viloyat</div>
+                <div class="font-medium">
+                  {{ row.customerId.address?.region || "—" }}
+                </div>
+              </div>
+            </div>
+
+            <!-- Tuman -->
+            <div class="flex items-center gap-2">
+              <span class="w-5 h-5 flex items-center justify-center bg-teal-100 text-teal-500 rounded-full text-[10px]">
+                <i class="fa-solid fa-location-dot"></i>
+              </span>
+              <div>
+                <div class="text-[11px] text-gray-500">Tuman</div>
+                <div class="font-medium">
+                  {{ row.customerId.address?.district || "—" }}
+                </div>
+              </div>
+            </div>
+
+            <!-- Mahalla -->
+            <div class="flex items-center gap-2">
+              <span class="w-5 h-5 flex items-center justify-center bg-orange-100 text-orange-500 rounded-full text-[10px]">
+                <i class="fa-solid fa-house"></i>
+              </span>
+              <div>
+                <div class="text-[11px] text-gray-500">Mahalla</div>
+                <div class="font-medium">
+                  {{ row.customerId.address?.neighborhood || "—" }}
+                </div>
+              </div>
+            </div>
+
+            <!-- Ko‘cha -->
+            <div class="flex items-center gap-2">
+              <span class="w-5 h-5 flex items-center justify-center bg-purple-100 text-purple-500 rounded-full text-[10px]">
+                <i class="fa-solid fa-road"></i>
+              </span>
+              <div>
+                <div class="text-[11px] text-gray-500">Ko‘cha</div>
+                <div class="font-medium">
+                  {{ row.customerId.address?.street || "—" }}
+                </div>
+              </div>
+            </div>
+
+            <!-- Telefon -->
+            <div class="flex items-center gap-2">
+              <span class="w-5 h-5 flex items-center justify-center bg-pink-100 text-pink-500 rounded-full text-[10px]">
+                <i class="fa-solid fa-phone"></i>
+              </span>
+              <div>
+                <div class="text-[11px] text-gray-500">Telefon</div>
+                <div class="font-medium">
+                  {{ row.customerId.phoneNumber || "—" }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </transition>
+    </div>
+  </template>
+</el-table-column>
 
             <el-table-column
               label="Bonus ball"
@@ -494,123 +511,105 @@ const filterByDate = () => {
               align="center"
               ><template #default="scope">{{ 0 }}</template></el-table-column
             >
-            <el-table-column
-              prop="totalAmount"
-              fixed="right"
-              label="Jami (sum)"
-              :min-width="200"
-              :max-width="400"
-              header-align="center"
-              align="center"
-              ><template #default="{ row }">
-                <div class="text-red-500 font-semibold">
-                  {{ row.totalAmount ? formatPrice(row.totalAmount) : 0 }} sum
-                </div></template
-              ></el-table-column
+        <el-table-column
+  prop="totalAmount"
+  label="Jami (sum)"
+  :min-width="160"
+  :max-width="280"
+  header-align="center"
+  align="center"
+>
+  <template #default="{ row }">
+    <div
+      :class="[
+        'inline-flex items-center gap-2 font-medium rounded-lg px-3 py-1.5 text-[12px] transition-colors duration-200',
+        row.totalAmount > 0
+          ? 'bg-green-50 text-green-700 hover:bg-green-100'
+          : row.totalAmount < 0
+          ? 'bg-red-50 text-red-700 hover:bg-red-100'
+          : 'bg-gray-50 text-gray-500 hover:bg-gray-100',
+      ]"
+    >
+      <i
+        :class="[
+          'fa-solid fa-sack-dollar',
+          row.totalAmount > 0
+            ? 'text-green-500'
+            : row.totalAmount < 0
+            ? 'text-red-500'
+            : 'text-gray-400',
+        ]"
+      ></i>
+      <span class="truncate">
+        {{ row.totalAmount ? formatPrice(row.totalAmount) : 0 }} sum
+      </span>
+    </div>
+  </template>
+</el-table-column>
+
+          <el-table-column label="🕒 Vaqt maydoni" min-width="240" align="center">
+          <template #default="{ row }">
+            <div
+              class="bg-white border border-gray-200 rounded-lg p-2 shadow-sm text-left"
             >
-            <el-table-column
-              label="🕒 Vaqt maydoni"
-              :min-width="150"
-              :max-width="400"
-              header-align="center"
-              align="center"
-            >
-              <el-table-column
-                label="Yaratilgan"
-                :min-width="150"
-                :max-width="400"
-                header-align="center"
-                align="center"
-                ><template #default="scope">
-                  <div class="text-gray-900 font-semibold">
-                    {{
-                      scope.row.createdAt
-                        ? moment
-                            .utc(scope.row.createdAt) // 🟢 UTC formatda olish
-                            .tz("Asia/Tashkent") // 🟢 UTC+5 ga aylantirish
-                            .format("DD.MM.YYYY HH:mm:ss") // 🟢 To‘g‘ri formatda chiqarish
-                        : "-"
-                    }}
-                  </div>
-                </template></el-table-column
+              <!-- Toggle Button -->
+              <button
+                class="w-full flex items-center justify-center gap-2 text-xs font-semibold text-blue-600 hover:text-blue-800 transition"
+                @click="toggle('timeRows', row._id)"
               >
-              <el-table-column
-                label="Yetkazish muddati"
-                :min-width="150"
-                :max-width="400"
-                header-align="center"
-                align="center"
-                ><template #default="scope">
-                  <div class="text-blue-600 font-semibold">
-                    {{
-                      scope.row.deliveryTime
-                        ? moment
-                            .utc(scope.row.deliveryTime) // 🟢 UTC formatda olish
-                            .tz("Asia/Tashkent") // 🟢 UTC+5 ga aylantirish
-                            .format("DD.MM.YYYY HH:mm:ss") // 🟢 To‘g‘ri formatda chiqarish
-                        : "-"
-                    }}
-                  </div>
-                </template></el-table-column
-              >
-              <el-table-column
-                label="Haydovchiga yuborildi"
-                :min-width="150"
-                :max-width="400"
-                header-align="center"
-                align="center"
-                ><template #default="scope">
-                  <div class="text-yellow-600 font-semibold">
-                    {{
-                      scope.row.driverSentToTime
-                        ? moment
-                            .utc(scope.row.driverSentToTime) // 🟢 UTC formatda olish
-                            .tz("Asia/Tashkent") // 🟢 UTC+5 ga aylantirish
-                            .format("DD.MM.YYYY HH:mm:ss") // 🟢 To‘g‘ri formatda chiqarish
-                        : "-"
-                    }}
-                  </div>
-                </template></el-table-column
-              >
-              <el-table-column
-                label="Haydovchi qabul qildi "
-                :min-width="150"
-                :max-width="400"
-                header-align="center"
-                align="center"
-                ><template #default="scope">
-                  <div class="text-purple-600 font-semibold">
-                    {{
-                      scope.row.driverAcceptedTime
-                        ? moment
-                            .utc(scope.row.driverAcceptedTime) // 🟢 UTC formatda olish
-                            .tz("Asia/Tashkent") // 🟢 UTC+5 ga aylantirish
-                            .format("DD.MM.YYYY HH:mm:ss") // 🟢 To‘g‘ri formatda chiqarish
-                        : "-"
-                    }}
-                  </div>
-                </template></el-table-column
-              >
-              <el-table-column
-                label="Yetkazib berildi"
-                :min-width="150"
-                :max-width="400"
-                header-align="center"
-                align="center"
-                ><template #default="scope">
-                  <div class="text-green-600 font-semibold">
-                    {{
-                      scope.row.driverArrivedTime
-                        ? moment
-                            .utc(scope.row.driverArrivedTime) // 🟢 UTC formatda olish
-                            .tz("Asia/Tashkent") // 🟢 UTC+5 ga aylantirish
-                            .format("DD.MM.YYYY HH:mm:ss") // 🟢 To‘g‘ri formatda chiqarish
-                        : "-"
-                    }}
-                  </div>
-                </template></el-table-column
-              >
-            </el-table-column>
+                <i
+                  :class="[
+                    'fa-solid transition-transform duration-200',
+                    opened.timeRows[row._id]
+                      ? 'fa-chevron-down'
+                      : 'fa-chevron-right',
+                  ]"
+                ></i>
+                {{
+                  opened.timeRows[row._id]
+                    ? "Vaqt maydonini yopish"
+                    : "Vaqt maydonini ko‘rish"
+                }}
+              </button>
+
+              <!-- Time Details -->
+              <transition name="expand" @enter="enter" @leave="leave">
+                <div v-show="opened.timeRows[row._id]" class="overflow-hidden">
+                  <ul
+                    class="space-y-1 max-h-36 overflow-y-auto pr-1 custom-scroll text-[10px] mt-2"
+                  >
+                    <li
+                      v-for="(item, index) in timeFields(row)"
+                      :key="index"
+                      :class="[
+                        'flex items-center gap-2 p-1 rounded-md hover:opacity-90 transition',
+                        item.bg,
+                        item.border,
+                      ]"
+                    >
+                      <i :class="[item.icon, item.iconColor]"></i>
+                      <div class="flex flex-col items-start leading-tight">
+                        <span :class="item.textColor + ' font-bold'">{{
+                          item.label
+                        }}</span>
+                        <span class="truncate" :title="item.value">
+                          {{
+                            item.value
+                              ? moment
+                                  .utc(item.value)
+                                  .tz("Asia/Tashkent")
+                                  .format("DD.MM.YYYY HH:mm:ss")
+                              : "—"
+                          }}
+                        </span>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+              </transition>
+            </div>
+          </template>
+        </el-table-column>
             <el-table-column
               fixed="right"
               label="Holati"

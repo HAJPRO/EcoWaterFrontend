@@ -1,4 +1,6 @@
 <script setup>
+import {dialogWidth} from "../../../utils/dialogOptions/useDialogWidth.js"
+import {TableHeaderStyle,TableStyle,formatPrice} from "../../../utils/TableOptions/useTableOptions.js"
 import MapView from "../../Customers/customerManagment/MapView.vue";
 import AddCustomerModal from "../../Customers/customerManagment/AddCustomModal.vue";
 import DriverBindingModal from "../../Sale/orderes/DriverBindingModal.vue";
@@ -20,34 +22,7 @@ import { storeToRefs } from "pinia";
 const { order_modal, order, model, order_detail_modal } =
   storeToRefs(store_orders);
 
-const dialogWidth = ref("");
-window.addEventListener("devicemotion", () => {
-  dialogWidth.value =
-    window.innerWidth > 1400
-      ? "1300"
-      : window.innerWidth > 1000
-      ? "1000"
-      : window.innerWidth > 800
-      ? "800"
-      : window.innerWidth > 600
-      ? "600"
-      : "450";
-});
-window.addEventListener("resize", () => {
-  dialogWidth.value =
-    window.innerWidth > 1400
-      ? "1500"
-      : window.innerWidth > 1000
-      ? "1000"
-      : window.innerWidth > 800
-      ? "800"
-      : window.innerWidth > 600
-      ? "600"
-      : "450";
-});
-const formatPrice = (price) => {
-  return new Intl.NumberFormat("uz-UZ").format(price);
-};
+
 
 const GetAllCustomers = () => {
   store_customers.GetAll();
@@ -73,14 +48,26 @@ onMounted(async () => {
   <DriverBindingModal />
 
   <div>
-    <el-dialog v-model="order_detail_modal" :width="dialogWidth" class="mt-2">
-      <span>
-        <div
-          class="bg-slate-100 font-semibold text-[15px] p-1 mt-1 align-center text-center shadow rounded border-t-[1px] border-[#36d887]"
-        >
-          <i class="fa-solid fa-cart-plus fa-md mr-3"></i> Buyurtmaning batafsil
-          malumoti
+   <el-dialog
+      v-model="order_detail_modal"
+      :width="dialogWidth"
+      :before-close="handleClose"
+      class="rounded-md p-4 shadow-lg custom-modal dark:bg-slate-700 mt-2"
+      @close="onDialogClose"
+    >
+      <template #header>
+        <div class="flex items-center justify-between border-b pb-1">
+          <div class="flex items-center gap-2">
+            <i class="fa-solid fa-file-invoice text-blue-500 fa-lg"></i>
+            <h3 class="text-xl font-semibold text-slate-500 dark:text-slate-300">
+              Buyurtmaning batafsil malumoti
+            </h3>
+          </div>
         </div>
+      </template>
+
+       <span>
+        
         <div
           class="filter-box bg-[#e8eded] md:grid md:grid-cols-12 gap-1 sm:flex sm:flex-wrap rounded shadow-sm p-2 mt-2 text-[13px]"
         >
@@ -557,7 +544,12 @@ onMounted(async () => {
           </div>
         </div>
 
-        <div class="flex justify-end bg-[#e8eded] p-2 rounded">
+        
+      </span>
+
+      <template #footer>
+        <div class="flex justify-between items-center mt-2 border-t pt-2 ">
+       
           <div
             class="col-span-12 cursor-pointer flex justify-end text-[12px] font-semibold gap-2"
           >
@@ -583,8 +575,9 @@ onMounted(async () => {
               <i class="fa-solid fa-xmark mr-2 fa-md"></i> Bekor qilish
             </div>
           </div>
+        
         </div>
-      </span>
+      </template>
     </el-dialog>
   </div>
 </template>

@@ -1,4 +1,6 @@
 <script setup>
+import {dialogWidth} from "../../../utils/dialogOptions/useDialogWidth.js"
+import {TableHeaderStyle,TableStyle,formatPrice} from "../../../utils/TableOptions/useTableOptions.js"
 import AddCustomerModal from "../../Customers/customerManagment/AddCustomModal.vue";
 import { ElMessage } from "element-plus";
 import { onMounted, ref, computed } from "vue";
@@ -18,25 +20,8 @@ const { regions, districts, neighborhoods } = storeToRefs(store_address);
 const { custom_modal, modal, action, customers } = storeToRefs(store_customers);
 const { order_modal, model } = storeToRefs(store_orders);
 const { products: productsOptions } = storeToRefs(store_products);
-const dialogWidth = ref("");
-const updateDialogWidth = () => {
-  const w = window.innerWidth;
-  dialogWidth.value =
-    w > 1600
-      ? 1400
-      : w > 1200
-      ? 1100
-      : w > 992
-      ? 980
-      : w > 768
-      ? 750
-      : w > 480
-      ? 470
-      : 350;
-};
-const formatPrice = (price) => {
-  return new Intl.NumberFormat("uz-UZ").format(price);
-};
+
+
 const packingTypes = ref([
   { id: 1, name: "0.5 l" },
   { id: 2, name: "1 l" },
@@ -198,8 +183,7 @@ const filteredCustomers = computed(() => {
 });
 
 onMounted(() => {
-  updateDialogWidth();
-  window.addEventListener("resize", updateDialogWidth);
+  
   store_products.GetAll({ status: 0 });
 });
 </script>
@@ -210,14 +194,14 @@ onMounted(() => {
       v-model="order_modal"
       :width="dialogWidth"
       :before-close="handleClose"
-      class="rounded-md p-4 shadow-lg custom-modal mt-4"
+      class="rounded-md p-4 shadow-lg custom-modal dark:bg-slate-700 mt-2"
       @close="onDialogClose"
     >
       <template #header>
         <div class="flex items-center justify-between border-b pb-1">
           <div class="flex items-center gap-2">
-            <i class="fa-solid fa-cart-plus text-blue-500"></i>
-            <h3 class="text-xl font-semibold text-gray-500">
+            <i class="fa-solid fa-cart-plus text-blue-500 fa-lg"></i>
+            <h3 class="text-xl font-semibold text-slate-500 dark:text-slate-300">
               Buyurtmani shakilantirish
             </h3>
           </div>
@@ -233,18 +217,14 @@ onMounted(() => {
           size="small"
           label-position="top"
         >
-          <!-- //  Asosiy ma'lumotlar -->
+        
+          <!-- //  Buyurtma ma’lumotlari -->
           <div
-            class="mb-1 col-span-6 p-2 rounded-md border-[1px] border-[#36d887]"
+            class="mb-1 col-span-12 bg-[#e8eded] p-2 rounded-md border-[1px] border-blue-600"
           >
-            <h1
-              class="font-semibold bg-slate-100 text-[13px] p-1 mt-1 align-center text-center rounded-md border-t-[1px] border-[#36d887]"
-            >
-              Buyurtmachi ma'lumotlari
-            </h1>
-
+           
             <div class="grid grid-cols-12 gap-1">
-              <div class="mb-1 col-span-12">
+                <div class="mb-1 col-span-12">
                 <el-form-item
                   label="F.I.O / Korxona nomi"
                   prop="fullname"
@@ -332,373 +312,6 @@ onMounted(() => {
                   </el-select>
                 </el-form-item>
               </div>
-              <!-- <div class="mb-1 col-span-6">
-                <el-form-item label="Kategoryasi" prop="customer.category">
-                  <el-select
-                    disabled
-                    v-model="modal.model.category"
-                    placeholder="..."
-                    size="smal"
-                    style="width: 100%"
-                    @click="Type({ type: `category` })"
-                    @change="ChangeOrderDirection($event)"
-                  >
-                    <template #prefix>
-                      <i
-                        @click.stop="
-                          Plus({
-                            title: `Buyurtmachi kategoryasini qo'shish`,
-                            state: `category`,
-                          })
-                        "
-                        class="fa-solid fa-plus cursor-pointer"
-                      ></i>
-                    </template>
-                    <el-option
-                      v-for="item in categoryes"
-                      :key="item._id"
-                      :label="item.name"
-                      :value="item.name"
-                    >
-                      <template #default>
-                        <div class="flex justify-between items-center w-full">
-                          <span>{{ item.name }}</span>
-                          <i
-                            class="fa-solid fa-trash text-red-500 cursor-pointer fa-xs ml-8"
-                            @click.stop="RemoveItem(item._id)"
-                          ></i>
-                        </div>
-                      </template>
-                    </el-option>
-                  </el-select>
-                </el-form-item>
-              </div>
-              <div class="mb-1 col-span-6">
-                <el-form-item label="Artikul" prop="customer.artikul">
-                  <el-input
-                    disabled
-                    required
-                    v-model="modal.model.artikul"
-                    clearable
-                    class="w-[100%]"
-                    size="smal"
-                    type="String"
-                    placeholder="..."
-                  />
-                </el-form-item>
-              </div>
-
-              <div class="mb-1 col-span-4">
-                <el-form-item label="Darajasi" prop="customer.position">
-                  <el-select
-                    disabled
-                    v-model="modal.model.position"
-                    placeholder="..."
-                    size="smal"
-                    style="width: 100%"
-                    @click="Type({ type: `position` })"
-                    @change="ChangeCustomerPosition($event)"
-                  >
-                    <template #prefix>
-                      <i
-                        @click.stop="
-                          Plus({
-                            title: `Buyurtmachi darajasini qo'shish`,
-                            state: `position`,
-                          })
-                        "
-                        class="fa-solid fa-plus cursor-pointer"
-                      ></i>
-                    </template>
-                    <el-option
-                      v-for="item in positions"
-                      :key="item._id"
-                      :label="item.name"
-                      :value="item.name"
-                    >
-                      <template #default>
-                        <div class="flex justify-between items-center w-full">
-                          <span>{{ item.name }}</span>
-                          <i
-                            class="fa-solid fa-trash text-red-500 cursor-pointer fa-xs ml-8"
-                            @click.stop="RemoveItem(item._id)"
-                          ></i>
-                        </div>
-                      </template>
-                    </el-option>
-                  </el-select>
-                </el-form-item>
-              </div>
-              <div class="mb-1 col-span-4">
-                <el-form-item
-                  label="Registratsiya vaqti"
-                  prop="customer.registeredAt"
-                >
-                  <el-date-picker
-                    disabled
-                    v-model="modal.model.registeredAt"
-                    type="date"
-                    placeholder="..."
-                    size="smal"
-                    class="w-full"
-                  />
-                </el-form-item>
-              </div>
-              <div class="mb-1 col-span-4">
-                <el-form-item label="INN" prop="customer.inn">
-                  <el-input
-                    disabled
-                    required
-                    v-model="modal.model.inn"
-                    clearable
-                    class="w-[100%]"
-                    size="smal"
-                    type="text"
-                    maxlength="9"
-                    placeholder="546789878"
-                  />
-                </el-form-item>
-              </div>
-              <div class="mb-1 col-span-4">
-                <el-form-item
-                  label="Pasport serya"
-                  prop="customer.passportNumber"
-                >
-                  <el-input
-                    disabled
-                    required
-                    v-model="modal.model.passportNumber"
-                    clearable
-                    class="w-[100%]"
-                    size="smal"
-                    type="String"
-                    placeholder="AB4567898"
-                  />
-                </el-form-item>
-              </div> -->
-              <div class="mb-1 col-span-4">
-                <el-form-item label="Telefon" prop="customer.phoneNumber">
-                  <el-input
-                    disabled
-                    v-model="modal.model.phoneNumber"
-                    clearable
-                    class="w-[100%]"
-                    size="smal"
-                    placeholder="93 _____ __ __"
-                    maxlength="17"
-                  >
-                    <template #prefix>
-                      <span>+998</span>
-                    </template>
-                  </el-input>
-                </el-form-item>
-              </div>
-              <div class="mb-1 col-span-4">
-                <el-form-item label="Viloyat" prop="customer.address.region">
-                  <el-select
-                    disabled
-                    v-model="modal.model.address.region"
-                    placeholder="..."
-                    size="smal"
-                    style="width: 100%"
-                    @change="ChangeRegion($event)"
-                    @click="Type()"
-                  >
-                    <template #prefix>
-                      <i
-                        @click.stop="
-                          Plus({
-                            title: `Mato rangi qo'shish`,
-                            state: `doc_type`,
-                          })
-                        "
-                        class="fa-solid fa-plus cursor-pointer"
-                      ></i>
-                    </template>
-                    <el-option
-                      v-for="item in regions"
-                      :key="item.id"
-                      :label="item.name"
-                      :value="item.id"
-                    >
-                      <template #default>
-                        <div class="flex justify-between items-center w-full">
-                          <span>{{ item.name }}</span>
-                          <i
-                            class="fa-solid fa-trash text-red-500 cursor-pointer fa-xs ml-8"
-                            @click.stop="RemoveItem(item._id)"
-                          ></i>
-                        </div>
-                      </template>
-                    </el-option>
-                  </el-select>
-                </el-form-item>
-              </div>
-              <div class="mb-1 col-span-4">
-                <el-form-item label="Tuman" prop="customer.address.district">
-                  <el-select
-                    disabled
-                    v-model="modal.model.address.district"
-                    placeholder="..."
-                    size="smal"
-                    style="width: 100%"
-                    @click="Type({ type: `color` })"
-                    @change="ChangeNeighborhood($event)"
-                  >
-                    <template #prefix>
-                      <i
-                        @click.stop="
-                          Plus({
-                            title: `Mato rangi qo'shish`,
-                            state: `doc_type`,
-                          })
-                        "
-                        class="fa-solid fa-plus cursor-pointer"
-                      ></i>
-                    </template>
-                    <el-option
-                      v-for="item in districts"
-                      :key="item._id"
-                      :label="item.name"
-                      :value="item.id"
-                    >
-                      <template #default>
-                        <div class="flex justify-between items-center w-full">
-                          <span>{{ item.name }}</span>
-                          <i
-                            class="fa-solid fa-trash text-red-500 cursor-pointer fa-xs ml-8"
-                            @click.stop="RemoveItem(item._id)"
-                          ></i>
-                        </div>
-                      </template>
-                    </el-option>
-                  </el-select>
-                </el-form-item>
-              </div>
-              <div class="mb-1 col-span-4">
-                <el-form-item
-                  label="Mahalla"
-                  prop="customer.address.neighborhood"
-                >
-                  <el-select
-                    disabled
-                    v-model="modal.model.address.neighborhood"
-                    placeholder="..."
-                    size="smal"
-                    style="width: 100%"
-                    @click="Type({ type: `color` })"
-                    @change="ChangeNeighborhood($event)"
-                  >
-                    <template #prefix>
-                      <i
-                        @click.stop="
-                          Plus({
-                            title: `Mato rangi qo'shish`,
-                            state: `doc_type`,
-                          })
-                        "
-                        class="fa-solid fa-plus cursor-pointer"
-                      ></i>
-                    </template>
-                    <el-option
-                      v-for="item in neighborhoods"
-                      :key="item.districtId"
-                      :label="item.name"
-                      :value="item.districtId"
-                    >
-                      <template #default>
-                        <div class="flex justify-between items-center w-full">
-                          <span>{{ item.name }}</span>
-                          <i
-                            class="fa-solid fa-trash text-red-500 cursor-pointer fa-xs ml-8"
-                            @click.stop="RemoveItem(item._id)"
-                          ></i>
-                        </div>
-                      </template>
-                    </el-option>
-                  </el-select>
-                </el-form-item>
-              </div>
-              <div class="mb-1 col-span-4">
-                <el-form-item label="Ko'cha" prop="customer.address.street">
-                  <el-select
-                    disabled
-                    v-model="modal.model.address.street"
-                    placeholder="..."
-                    size="smal"
-                    style="width: 100%"
-                    @click="Type({ type: `color` })"
-                    @change="ChangeRegion($event)"
-                  >
-                    <template #prefix>
-                      <i
-                        @click.stop="
-                          Plus({
-                            title: `Mato rangi qo'shish`,
-                            state: `doc_type`,
-                          })
-                        "
-                        class="fa-solid fa-plus cursor-pointer"
-                      ></i>
-                    </template>
-                    <el-option
-                      v-for="item in neighborhoods"
-                      :key="item.name"
-                      :label="item.name"
-                      :value="item.name"
-                    >
-                      <template #default>
-                        <div class="flex justify-between items-center w-full">
-                          <span>{{ item.name }}</span>
-                          <i
-                            class="fa-solid fa-trash text-red-500 cursor-pointer fa-xs ml-8"
-                            @click.stop="RemoveItem(item._id)"
-                          ></i>
-                        </div>
-                      </template>
-                    </el-option>
-                  </el-select>
-                </el-form-item>
-              </div>
-
-              <div class="mb-1 col-span-4">
-                <el-form-item label="Uy" prop="customer.address.house">
-                  <el-input
-                    required
-                    disabled
-                    v-model="modal.model.address.house"
-                    clearable
-                    class="w-[100%]"
-                    size="smal"
-                    type="Number"
-                    placeholder="..."
-                  />
-                </el-form-item>
-              </div>
-              <div class="mb-1 col-span-12">
-                <el-form-item label="Qo'shimcha ma'lumot" prop="discription">
-                  <el-input
-                    disabled
-                    type="textarea"
-                    v-model="modal.model.discription"
-                    placeholder="Bu yerga yozing..."
-                    :rows="4"
-                    clearable
-                  />
-                </el-form-item>
-              </div>
-            </div>
-          </div>
-          <!-- //  Buyurtma ma’lumotlari -->
-          <div
-            class="mb-1 col-span-6 bg-[#e8eded] p-2 rounded-md border-[1px] border-[#36d887]"
-          >
-            <h1
-              class="bg-slate-100 font-semibold text-[13px] p-1 mt-1 align-center text-center rounded-md border-t-[1px] border-[#36d887]"
-            >
-              Buyurtma ma'lumotlari
-            </h1>
-            <div class="grid grid-cols-12 gap-1">
               <div class="mb-1 col-span-6">
                 <el-form-item
                   label="Mahsulot nomi"
@@ -918,34 +531,28 @@ onMounted(() => {
               </div>
             </div>
             <div
-              class="col-span-12 cursor-pointer flex justify-end text-[12px] font-semibold border-b-[1px] border-purple-600"
+              class="col-span-12 cursor-pointer flex justify-end text-[12px] font-semibold border-b-[1px] border-blue-600 rounded-md   mb-2"
             >
               <div
-                class="mb-1 col-span-3 w-auto text-center text-white font-semibold bg-purple-600 rounded-sm px-5 py-1 hover:bg-purple-700"
+                class="mb-2 col-span-3 w-auto text-center text-white font-semibold bg-blue-600 rounded-md px-5 py-2 "
                 @click="PlusProduct()"
               >
                 <i class="fa-solid fa-plus mr-2 fa-md"></i> Qo'shish
               </div>
             </div>
             <el-table
-              :header-cell-style="{
-                background: '#E3F4FB', // Soft, light cyan-blue
-                border: '1px solid #D1E3ED', // Very light border for separation
-                color: '#1E3A8A', // Deep indigo for strong text contrast
-                fontWeight: '600', // Semi-bold for emphasis
-                textAlign: 'center',
-                fontSize: '10px', // Optional: for tidiness
-              }"
-              :data="products"
-              stripe
-              highlight-current-row
-              load
-              style="font-size: 11px"
-              size="small"
-              class="el-table-custom w-full text-gray-700 bg-white rounded-md shadow-sm"
-              header-align="center"
-              empty-text="Mahsulot qo'shilmagan... "
-              border="true"
+        :header-cell-style="TableHeaderStyle({background : '#BFDBFE'})"s
+        stripe
+        highlight-current-row
+        :data="products"
+        size="small"
+        :border="true"
+        show-header
+        header-align="center"
+        empty-text="Hujjat yo'q..."
+        :style="TableStyle"
+        max-height="700"
+        class="rounded-t-md"
             >
               <el-table-column
                 header-align="center"
@@ -1050,14 +657,13 @@ onMounted(() => {
                 </template>
               </el-table-column>
             </el-table>
-            <div class="bg-white p-2 rounded-md flex justify-end">
+            
               <div
-                class="mb-1 col-span-12 w-full flex justify-end text-purple-600 font-semibold bg-purple-100 rounded-md p-2"
+                class="mb-1 col-span-12 w-full flex justify-end text-blue-600 font-semibold bg-blue-200 rounded-b-md p-2"
               >
                 Jami :
                 {{ formatPrice(pro_total_price) }} sum
               </div>
-            </div>
           </div>
         </el-form>
       </span>
@@ -1065,7 +671,7 @@ onMounted(() => {
       <template #footer>
         <div class="flex justify-between items-center mt-2 border-t pt-2">
           <div class="flex gap-2">
-            <div
+            <!-- <div
               class="text-[11px] items-center font-medium text-center text-white"
             >
               <el-input
@@ -1075,7 +681,7 @@ onMounted(() => {
                 placeholder="Izlash..."
                 style="width: 150px; font-size: 12px"
               />
-            </div>
+            </div> -->
             <el-select placeholder="Export" class="w-32">
               <el-option @click="ExportExcel()" label="Excel" value="excel">
                 <i class="fa-solid fa-file-excel mr-2 fa-xm"></i> Excel
@@ -1089,7 +695,7 @@ onMounted(() => {
             </el-select>
           </div>
           <div class="flex gap-3">
-            <div class="flex justify-start bg-white p-2 gap-2">
+            <div class="flex justify-start  p-2 gap-2">
               <div
                 @click="PlusValidate(formRef)"
                 class="text-white text-[12px] font-semibold bg-green-500 rounded-[4px] px-4 py-[6px] hover:bg-green-600 cursor-pointer"

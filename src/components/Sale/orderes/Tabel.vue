@@ -1,4 +1,8 @@
 <script setup>
+import { TableHeaderStyle , TableStyle, formatPrice,   opened,
+  toggle,
+  enter,
+  leave} from "../../../utils/TableOptions/useTableOptions";
 import Cookies from "js-cookie";
 const role = ref(JSON.parse(Cookies.get("account")).role);
 const permissions = ref(JSON.parse(Cookies.get("account")).permissions);
@@ -21,7 +25,7 @@ import { storeToRefs } from "pinia";
 const { orders, all_length, customers, model, isActive } =
   storeToRefs(store_order);
 const {} = storeToRefs(store);
-
+const comRows = ref({});
 const AddCustomModal = () => {
   store_order.AddOrderModal();
   store.GetAll({ status: 0 });
@@ -38,15 +42,72 @@ const deleteById = (id) => {
 const UpdateById = (id) => {
   store_order.GetById({ id });
 };
-const formatPrice = (price) => {
-  return new Intl.NumberFormat("uz-UZ").format(price);
-};
+
 const filter = ref({
   fullname: null,
   sort: "",
 });
 const FilterByFullname = () => {
   store_order.GetAll({ filter: filter.value });
+};
+const timeFields = (row) => {
+  return [
+    {
+      label: "Registratsiya",
+      value: row.createdAt,
+      icon: "fa-regular fa-calendar-check",
+      iconColor: "text-blue-500",
+      bg: "bg-blue-50",
+      border: "border border-blue-200",
+      textColor: "text-blue-600",
+    },
+    {
+      label: "Yetkazib berish vaqti",
+      value: row.deliveryTimedeliveryTime,
+      icon: "fa-solid fa-clock",
+      iconColor: "text-indigo-500",
+      bg: "bg-indigo-50",
+      border: "border border-indigo-200",
+      textColor: "text-indigo-600",
+    },
+    {
+      label: "Haydovchiga jo'natildi",
+      value: row.driverSentToTime,
+      icon: "fa-solid fa-car-side",
+      iconColor: "text-purple-500",
+      bg: "bg-purple-50",
+      border: "border border-purple-200",
+      textColor: "text-purple-600",
+    },
+    {
+      label: "Haydovchi qabul qildi",
+      value: row.driverAcceptedTime,
+      icon: "fa-regular fa-hourglass-half",
+      iconColor: "text-yellow-500",
+      bg: "bg-yellow-50",
+      border: "border border-yellow-200",
+      textColor: "text-yellow-600",
+    },
+    {
+      label: "Yetkazib berildi",
+      value: row.driverArrivedTime,
+      icon: "fa-solid fa-check-circle",
+      iconColor: "text-indigo-500",
+      bg: "bg-indigo-50",
+      border: "border border-indigo-200",
+      textColor: "text-indigo-600",
+    },
+   
+    {
+      label: "Bekor qilingan",
+      value: row.canceleddAt,
+      icon: "fa-solid fa-ban",
+      iconColor: "text-red-500",
+      bg: "bg-red-50",
+      border: "border border-red-200",
+      textColor: "text-red-600",
+    },
+  ];
 };
 onMounted(() => {
   // GetAllCustomers()
@@ -59,24 +120,18 @@ onMounted(() => {
     <div class="">
       <div class="rounded-md text-[11px]">
         <el-table
-          :header-cell-style="{
-            background: '#E3F4FB', // Soft, light cyan-blue
-            border: '1px solid #D1E3ED', // Very light border for separation
-            color: '#1E3A8A', // Deep indigo for strong text contrast
-            fontWeight: '600', // Semi-bold for emphasis
-            textAlign: 'center',
-            fontSize: '10px', // Optional: for tidiness
-          }"
-          :data="orders"
+         :header-cell-style="TableHeaderStyle"
           stripe
           highlight-current-row
-          load
-          style="font-size: 11px"
+          :data="orders"
           size="small"
-          class="el-table-custom w-full text-gray-700 bg-white rounded-md shadow-sm"
+          :border="true"
+          show-header
           header-align="center"
-          empty-text="Mahsulot qo'shilmagan... "
-          border="true"
+          empty-text="Ma'lumot yo'q..."
+          :style="TableStyle"
+          class="rounded-t-md border-t-[1px] border-[#36d887]"
+          :max-height="600"
         >
           <el-table-column
             header-align="center"
@@ -87,95 +142,143 @@ onMounted(() => {
             label="№"
             width="60"
           />
-          <el-table-column
-            prop="orderNumber"
-            label="Buyurtma nomeri"
-            :min-width="150"
-            :max-width="400"
-            header-align="center"
-            align="center"
-            ><template #default="{ row }">
-              <div class="text-red-500 cursor-pointer hover:underline">
-                <router-link
-                  to=""
-                  class="cursor-pointer inline-flex items-center text-red bg-[#e4e9e9] hover:bg-[#d7ebeb] font-medium rounded-md text-[12px] w-full p-[5px] sm:w-auto text-center"
-                >
-                  <i class="fas fa-boxes-stacked text-gray-500 fa-sm mr-2"></i>
-                  {{ row.orderNumber }}
-                </router-link>
-              </div></template
-            ></el-table-column
-          >
-          <el-table-column
-            prop="fullname"
-            label="F.I.O"
-            :min-width="100"
-            :max-width="400"
-            header-align="center"
-            align="center"
-          >
-            <template #default="{ row }">{{
-              row.customerId.fullname
-            }}</template></el-table-column
-          >
-          <!-- <el-table-column
-            align="center"
-            header-align="center"
-            prop="customerId.artikul"
-            label="Artikul"
-            :min-width="100"
-            :max-width="400"
-          />
-          <el-table-column
-            label="Kategoriyasi"
-            :min-width="150"
-            :max-width="400"
-            header-align="center"
-            align="center"
-            ><template #default="scope">{{
-              scope.row.customerId.category
-            }}</template></el-table-column
-          > -->
-          <el-table-column
-            align="center"
-            header-align="center"
-            prop="customerId.address.region"
-            label="Viloyat"
-            :min-width="100"
-            :max-width="400"
-          />
-          <el-table-column
-            align="center"
-            header-align="center"
-            prop="customerId.address.district"
-            label="Tuman"
-            :min-width="100"
-            :max-width="400"
-          />
-          <el-table-column
-            align="center"
-            header-align="center"
-            prop="customerId.address.neighborhood"
-            label="Mahalla"
-            :min-width="100"
-            :max-width="400"
-          />
-          <el-table-column
-            align="center"
-            header-align="center"
-            prop="customerId.address.street"
-            label="Ko'cha"
-            :min-width="100"
-            :max-width="400"
-          />
-          <el-table-column
-            align="center"
-            header-align="center"
-            prop="customerId.phoneNumber"
-            label="Telefon"
-            :min-width="100"
-            :max-width="400"
-          />
+       <el-table-column
+  prop="orderNumber"
+  label="Buyurtma nomeri"
+  :min-width="180"
+  :max-width="320"
+  header-align="center"
+  align="center"
+>
+  <template #default="{ row }">
+    <router-link
+      to=""
+      class="inline-flex items-center gap-2 bg-blue-50 hover:bg-blue-100 text-blue-700 font-medium rounded-lg px-3 py-1.5 text-[12px] transition-colors duration-200"
+    >
+      <i class="fa-solid fa-box text-blue-500"></i>
+      <span class="truncate">{{ row.orderNumber }}</span>
+    </router-link>
+  </template>
+</el-table-column>
+
+       <el-table-column
+  label="Mijoz ma'lumotlari"
+  :min-width="500"
+  :max-width="600"
+  align="center"
+>
+  <template #default="{ row }">
+    <div class="bg-white border border-gray-200 rounded-lg shadow-sm text-left">
+      <!-- Toggle Button -->
+      <button
+        class="w-full flex items-center justify-center gap-2 text-xs font-semibold text-indigo-600 hover:text-indigo-800 transition py-2"
+        @click="toggle('comRows', row._id)"
+      >
+        <i
+          :class="[
+            'fa-solid transition-transform duration-200',
+            opened.comRows?.[row._id] ? 'fa-chevron-down' : 'fa-chevron-right',
+          ]"
+        ></i>
+        {{
+          opened.comRows?.[row._id]
+            ? "Ma'lumotlarni yopish"
+            : "Ma'lumotlarni ko‘rish"
+        }}
+      </button>
+
+      <!-- Customer Details -->
+      <transition name="expand" @enter="enter" @leave="leave">
+        <div
+          v-show="opened.comRows?.[row._id]"
+          class="overflow-hidden border-t border-gray-100"
+        >
+          <div class="grid grid-cols-2 gap-x-4 gap-y-3 p-2 text-[12px] text-gray-700">
+            <!-- F.I.O -->
+            <div class="flex items-center gap-2">
+              <span class="w-5 h-5 flex items-center justify-center bg-blue-100 text-blue-500 rounded-full text-[10px]">
+                <i class="fa-solid fa-user"></i>
+              </span>
+              <div>
+                <div class="text-[11px] text-gray-500">F.I.O</div>
+                <div class="font-medium truncate">
+                  {{ row.customerId.fullname || "—" }}
+                </div>
+              </div>
+            </div>
+
+            <!-- Viloyat -->
+            <div class="flex items-center gap-2">
+              <span class="w-5 h-5 flex items-center justify-center bg-green-100 text-green-500 rounded-full text-[10px]">
+                <i class="fa-solid fa-map"></i>
+              </span>
+              <div>
+                <div class="text-[11px] text-gray-500">Viloyat</div>
+                <div class="font-medium">
+                  {{ row.customerId.address?.region || "—" }}
+                </div>
+              </div>
+            </div>
+
+            <!-- Tuman -->
+            <div class="flex items-center gap-2">
+              <span class="w-5 h-5 flex items-center justify-center bg-teal-100 text-teal-500 rounded-full text-[10px]">
+                <i class="fa-solid fa-location-dot"></i>
+              </span>
+              <div>
+                <div class="text-[11px] text-gray-500">Tuman</div>
+                <div class="font-medium">
+                  {{ row.customerId.address?.district || "—" }}
+                </div>
+              </div>
+            </div>
+
+            <!-- Mahalla -->
+            <div class="flex items-center gap-2">
+              <span class="w-5 h-5 flex items-center justify-center bg-orange-100 text-orange-500 rounded-full text-[10px]">
+                <i class="fa-solid fa-house"></i>
+              </span>
+              <div>
+                <div class="text-[11px] text-gray-500">Mahalla</div>
+                <div class="font-medium">
+                  {{ row.customerId.address?.neighborhood || "—" }}
+                </div>
+              </div>
+            </div>
+
+            <!-- Ko‘cha -->
+            <div class="flex items-center gap-2">
+              <span class="w-5 h-5 flex items-center justify-center bg-purple-100 text-purple-500 rounded-full text-[10px]">
+                <i class="fa-solid fa-road"></i>
+              </span>
+              <div>
+                <div class="text-[11px] text-gray-500">Ko‘cha</div>
+                <div class="font-medium">
+                  {{ row.customerId.address?.street || "—" }}
+                </div>
+              </div>
+            </div>
+
+            <!-- Telefon -->
+            <div class="flex items-center gap-2">
+              <span class="w-5 h-5 flex items-center justify-center bg-pink-100 text-pink-500 rounded-full text-[10px]">
+                <i class="fa-solid fa-phone"></i>
+              </span>
+              <div>
+                <div class="text-[11px] text-gray-500">Telefon</div>
+                <div class="font-medium">
+                  {{ row.customerId.phoneNumber || "—" }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </transition>
+    </div>
+  </template>
+</el-table-column>
+
+
 
           <el-table-column
             label="Bonus ball"
@@ -185,129 +288,89 @@ onMounted(() => {
             ><template #default="scope">{{ 0 }}</template></el-table-column
           >
 
-          <el-table-column
-            label="Jami (sum)"
-            :min-width="200"
-            :max-width="400"
-            header-align="center"
-            align="center"
-            ><template #default="{ row }">
-              <div class="text-green-700 cursor-pointer hover:underline">
-                <router-link
-                  to=""
-                  class="cursor-pointer inline-flex items-center text-red bg-[#e4e9e9] hover:bg-[#d7ebeb] font-medium rounded-md text-[12px] w-ful p-[5px] sm:w-auto text-center"
-                >
-                  <i
-                    class="fas fa-money-check-dollar text-gray-500 fa-sm mr-2"
-                  ></i>
-                  {{ row.totalAmount ? formatPrice(row.totalAmount) : 0 }} sum
-                </router-link>
-              </div></template
-            ></el-table-column
-          >
-          <el-table-column
-            label="🕒 Vaqt maydoni"
-            :min-width="150"
-            :max-width="400"
-            header-align="center"
-            align="center"
-          >
-            <el-table-column
-              label="Yaratilgan"
-              :min-width="150"
-              :max-width="400"
-              header-align="center"
-              align="center"
-              ><template #default="scope">
-                <div class="text-gray-900 font-semibold">
-                  {{
-                    scope.row.createdAt
-                      ? moment
-                          .utc(scope.row.createdAt) // 🟢 UTC formatda olish
-                          .tz("Asia/Tashkent") // 🟢 UTC+5 ga aylantirish
-                          .format("DD.MM.YYYY HH:mm:ss") // 🟢 To‘g‘ri formatda chiqarish
-                      : "-"
-                  }}
-                </div>
-              </template></el-table-column
+       <el-table-column
+  label="Jami (sum)"
+  :min-width="200"
+  :max-width="320"
+  header-align="center"
+  align="center"
+>
+  <template #default="{ row }">
+    <router-link
+      to=""
+      class="inline-flex items-center gap-2 bg-green-50 hover:bg-green-100 text-green-700 font-medium rounded-lg px-3 py-1.5 text-[12px] transition-colors duration-200"
+    >
+      <i class="fa-solid fa-sack-dollar text-green-500"></i>
+      <span class="truncate">
+        {{ row.totalAmount ? formatPrice(row.totalAmount) : 0 }} sum
+      </span>
+    </router-link>
+  </template>
+</el-table-column>
+
+         <el-table-column label="🕒 Vaqt maydoni" min-width="240" align="center">
+          <template #default="{ row }">
+            <div
+              class="bg-white border border-gray-200 rounded-lg p-2 shadow-sm text-left"
             >
-            <el-table-column
-              label="Yetkazish muddati"
-              :min-width="150"
-              :max-width="400"
-              header-align="center"
-              align="center"
-              ><template #default="scope">
-                <div class="text-blue-600 font-semibold">
-                  {{
-                    scope.row.deliveryTime
-                      ? moment
-                          .utc(scope.row.deliveryTime) // 🟢 UTC formatda olish
-                          .tz("Asia/Tashkent") // 🟢 UTC+5 ga aylantirish
-                          .format("DD.MM.YYYY HH:mm:ss") // 🟢 To‘g‘ri formatda chiqarish
-                      : "-"
-                  }}
+              <!-- Toggle Button -->
+              <button
+                class="w-full flex items-center justify-center gap-2 text-xs font-semibold text-blue-600 hover:text-blue-800 transition"
+                @click="toggle('timeRows', row._id)"
+              >
+                <i
+                  :class="[
+                    'fa-solid transition-transform duration-200',
+                    opened.timeRows[row._id]
+                      ? 'fa-chevron-down'
+                      : 'fa-chevron-right',
+                  ]"
+                ></i>
+                {{
+                  opened.timeRows[row._id]
+                    ? "Vaqt maydonini yopish"
+                    : "Vaqt maydonini ko‘rish"
+                }}
+              </button>
+
+              <!-- Time Details -->
+              <transition name="expand" @enter="enter" @leave="leave">
+                <div v-show="opened.timeRows[row._id]" class="overflow-hidden">
+                  <ul
+                    class="space-y-1 max-h-36 overflow-y-auto pr-1 custom-scroll text-[10px] mt-2"
+                  >
+                    <li
+                      v-for="(item, index) in timeFields(row)"
+                      :key="index"
+                      :class="[
+                        'flex items-center gap-2 p-1 rounded-md hover:opacity-90 transition',
+                        item.bg,
+                        item.border,
+                      ]"
+                    >
+                      <i :class="[item.icon, item.iconColor]"></i>
+                      <div class="flex flex-col items-start leading-tight">
+                        <span :class="item.textColor + ' font-bold'">{{
+                          item.label
+                        }}</span>
+                        <span class="truncate" :title="item.value">
+                          {{
+                            item.value
+                              ? moment
+                                  .utc(item.value)
+                                  .tz("Asia/Tashkent")
+                                  .format("DD.MM.YYYY HH:mm:ss")
+                              : "—"
+                          }}
+                        </span>
+                      </div>
+                    </li>
+                  </ul>
                 </div>
-              </template></el-table-column
-            >
-            <el-table-column
-              label="Haydovchiga yuborildi"
-              :min-width="150"
-              :max-width="400"
-              header-align="center"
-              align="center"
-              ><template #default="scope">
-                <div class="text-yellow-600 font-semibold">
-                  {{
-                    scope.row.driverSentToTime
-                      ? moment
-                          .utc(scope.row.driverSentToTime) // 🟢 UTC formatda olish
-                          .tz("Asia/Tashkent") // 🟢 UTC+5 ga aylantirish
-                          .format("DD.MM.YYYY HH:mm:ss") // 🟢 To‘g‘ri formatda chiqarish
-                      : "-"
-                  }}
-                </div>
-              </template></el-table-column
-            >
-            <el-table-column
-              label="Haydovchi qabul qildi "
-              :min-width="150"
-              :max-width="400"
-              header-align="center"
-              align="center"
-              ><template #default="scope">
-                <div class="text-purple-600 font-semibold">
-                  {{
-                    scope.row.driverAcceptedTime
-                      ? moment
-                          .utc(scope.row.driverAcceptedTime) // 🟢 UTC formatda olish
-                          .tz("Asia/Tashkent") // 🟢 UTC+5 ga aylantirish
-                          .format("DD.MM.YYYY HH:mm:ss") // 🟢 To‘g‘ri formatda chiqarish
-                      : "-"
-                  }}
-                </div>
-              </template></el-table-column
-            >
-            <el-table-column
-              label="Yetkazib berildi"
-              :min-width="150"
-              :max-width="400"
-              header-align="center"
-              align="center"
-              ><template #default="scope">
-                <div class="text-green-600 font-semibold">
-                  {{
-                    scope.row.driverArrivedTime
-                      ? moment
-                          .utc(scope.row.driverArrivedTime) // 🟢 UTC formatda olish
-                          .tz("Asia/Tashkent") // 🟢 UTC+5 ga aylantirish
-                          .format("DD.MM.YYYY HH:mm:ss") // 🟢 To‘g‘ri formatda chiqarish
-                      : "-"
-                  }}
-                </div>
-              </template></el-table-column
-            >
-          </el-table-column>
+              </transition>
+            </div>
+          </template>
+        </el-table-column>
           <el-table-column
             fixed="right"
             label="Holati"
@@ -431,10 +494,10 @@ onMounted(() => {
           </el-table-column>
         </el-table>
         <div
-          class="flex justify-between flex-wrap font-semibold text-[11px] p-1 shadow border-b-[1px] border-[#36d887]"
+         class="flex justify-between flex-wrap font-semibold text-[11px] shadow border-b-[1px] border-[#36d887] rounded-b-md"
         >
           <div
-            class="sticky flex justify-between flex-wrap bg-white pr-2 pl-2 w-full mx-auto"
+             class="sticky flex justify-between flex-wrap bg-white dark:bg-slate-600 pr-2 pl-2 w-full mx-auto rounded-b-md"
           >
             <div class="flex gap-2 flex-wrap">
               <div
@@ -457,17 +520,7 @@ onMounted(() => {
                 </el-tooltip>
               </div>
 
-              <!-- <div
-                class="my-2 text-[11px] items-center font-medium text-center text-white"
-              >
-                <el-input
-                  clearable
-                  size="smal"
-                  type="String"
-                  placeholder="Yil bo'yicha..."
-                  style="width: 150px; font-size: 12px"
-                />
-              </div> -->
+             
 
               <el-select placeholder="Excel" class="w-32 my-2">
                 <el-option @click="ExportExcel()" label="Excel" value="excel">

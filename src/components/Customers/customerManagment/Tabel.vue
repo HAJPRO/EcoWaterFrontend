@@ -1,4 +1,8 @@
 <script setup>
+import { TableHeaderStyle , TableStyle, formatPrice,   opened,
+  toggle,
+  enter,
+  leave} from "../../../utils/TableOptions/useTableOptions";
 import Cookies from "js-cookie";
 const role = ref(JSON.parse(Cookies.get("account")).role);
 const permissions = ref(JSON.parse(Cookies.get("account")).permissions);
@@ -53,10 +57,7 @@ const filter = ref({
 const FilterByFullname = () => {
   store.GetAll({ filter: filter.value });
 };
-const formatPrice = (num) => {
-  const val = Number(num);
-  return isNaN(val) ? "0" : val.toLocaleString("uz-UZ");
-};
+
 </script>
 <template>
   <Custom-Modal />
@@ -65,21 +66,18 @@ const formatPrice = (num) => {
     <div class="">
       <div class="rounded-md text-[11px]">
         <el-table
-          :header-cell-style="{
-            background: '#e8eded',
-            border: '0.2px solid #e1e1e3',
-          }"
+         :header-cell-style="TableHeaderStyle"
           stripe
           highlight-current-row
-          load
-          style="font-size: 12px"
-          size="small"
-          class="w-full"
-          header-align="right"
-          :max-height="600"
-          empty-text="Mahsulot qo'shilmagan... "
           :data="customers"
-          border
+          size="small"
+          :border="true"
+          show-header
+          header-align="center"
+          empty-text="Ma'lumot yo'q..."
+          :style="TableStyle"
+          class="rounded-t-md border-t-[1px] border-[#36d887]"
+          :max-height="600"
         >
           <el-table-column
             header-align="center"
@@ -90,93 +88,122 @@ const formatPrice = (num) => {
             label="№"
             width="60"
           />
-          <el-table-column
-            label="F.I.O"
-            :min-width="250"
-            :max-width="400"
-            header-align="center"
-            ><template #default="{ row }">
-              <div class="text-red-500 cursor-pointer hover:underline">
-                <router-link
-                  to=""
-                  class="cursor-pointer inline-flex items-center text-red bg-[#e4e9e9] hover:bg-[#d7ebeb] font-medium rounded-md text-[12px] w-ful p-[5px] sm:w-auto text-center"
-                >
-                  <i class="fas fa-user text-gray-500 fa-sm mr-2"></i>
-                  {{ row.fullname }}
-                </router-link>
-              </div></template
-            ></el-table-column
-          >
-          <!-- <el-table-column
-            align="center"
-            header-align="center"
-            prop="artikul"
-            label="Artikul"
-            :min-width="100"
-            :max-width="400"
-          />
-          <el-table-column
-            label="Kategoriyasi"
-            :min-width="200"
-            :max-width="400"
-            header-align="center"
-            ><template #default="scope">{{
-              scope.row.category
-            }}</template></el-table-column
-          > -->
-          <el-table-column
-            align="center"
-            header-align="center"
-            prop="address.region"
-            label="Viloyat"
-            :min-width="100"
-            :max-width="400"
-          />
-          <el-table-column
-            align="center"
-            header-align="center"
-            prop="address.district"
-            label="Tuman"
-            :min-width="100"
-            :max-width="400"
-          />
-          <el-table-column
-            align="center"
-            header-align="center"
-            prop="address.neighborhood"
-            label="Mahalla"
-            :min-width="100"
-            :max-width="400"
-          />
-          <el-table-column
-            align="center"
-            header-align="center"
-            prop="address.street"
-            label="Ko'cha"
-            :min-width="100"
-            :max-width="400"
-          />
-          <el-table-column
-            header-align="center"
-            prop="phoneNumber"
-            label="Telefon"
-            :min-width="150"
-            :max-width="400"
-            ><template #default="{ row }">
-              <div
-                class="text-blue-600 cursor-pointer hover:underline"
-                @click="copyToClipboard(row.phoneNumber)"
-              >
-                <router-link
-                  to=""
-                  class="cursor-pointer inline-flex items-center text-red bg-[#e4e9e9] hover:bg-[#d7ebeb] font-medium rounded-md text-[12px] w-ful p-[5px] sm:w-auto text-center"
-                >
-                  <i class="fas fa-phone text-gray-500 fa-sm mr-2"></i>
-                  {{ row.phoneNumber }}
-                </router-link>
-              </div></template
-            ></el-table-column
-          >
+           <el-table-column
+  label="Mijoz ma'lumotlari"
+  :min-width="500"
+  :max-width="600"
+  align="center"
+>
+  <template #default="{ row }">
+    <div class="bg-white border border-gray-200 rounded-lg shadow-sm text-left">
+      <!-- Toggle Button -->
+      <button
+        class="w-full flex items-center justify-center gap-2 text-xs font-semibold text-indigo-600 hover:text-indigo-800 transition py-2"
+        @click="toggle('comRows', row._id)"
+      >
+        <i
+          :class="[
+            'fa-solid transition-transform duration-200',
+            opened.comRows?.[row._id] ? 'fa-chevron-down' : 'fa-chevron-right',
+          ]"
+        ></i>
+        {{
+          opened.comRows?.[row._id]
+            ? "Ma'lumotlarni yopish"
+            : "Ma'lumotlarni ko‘rish"
+        }}
+      </button>
+
+      <!-- Customer Details -->
+      <transition name="expand" @enter="enter" @leave="leave">
+        <div
+          v-show="opened.comRows?.[row._id]"
+          class="overflow-hidden border-t border-gray-100"
+        >
+          <div class="grid grid-cols-2 gap-x-4 gap-y-3 p-2 text-[12px] text-gray-700">
+            <!-- F.I.O -->
+            <div class="flex items-center gap-2">
+              <span class="w-5 h-5 flex items-center justify-center bg-blue-100 text-blue-500 rounded-full text-[10px]">
+                <i class="fa-solid fa-user"></i>
+              </span>
+              <div>
+                <div class="text-[11px] text-gray-500">F.I.O</div>
+                <div class="font-medium truncate">
+                  {{ row.fullname || "—" }}
+                </div>
+              </div>
+            </div>
+
+            <!-- Viloyat -->
+            <div class="flex items-center gap-2">
+              <span class="w-5 h-5 flex items-center justify-center bg-green-100 text-green-500 rounded-full text-[10px]">
+                <i class="fa-solid fa-map"></i>
+              </span>
+              <div>
+                <div class="text-[11px] text-gray-500">Viloyat</div>
+                <div class="font-medium">
+                  {{ row.address?.region || "—" }}
+                </div>
+              </div>
+            </div>
+
+            <!-- Tuman -->
+            <div class="flex items-center gap-2">
+              <span class="w-5 h-5 flex items-center justify-center bg-teal-100 text-teal-500 rounded-full text-[10px]">
+                <i class="fa-solid fa-location-dot"></i>
+              </span>
+              <div>
+                <div class="text-[11px] text-gray-500">Tuman</div>
+                <div class="font-medium">
+                  {{ row.address?.district || "—" }}
+                </div>
+              </div>
+            </div>
+
+            <!-- Mahalla -->
+            <div class="flex items-center gap-2">
+              <span class="w-5 h-5 flex items-center justify-center bg-orange-100 text-orange-500 rounded-full text-[10px]">
+                <i class="fa-solid fa-house"></i>
+              </span>
+              <div>
+                <div class="text-[11px] text-gray-500">Mahalla</div>
+                <div class="font-medium">
+                  {{ row.address?.neighborhood || "—" }}
+                </div>
+              </div>
+            </div>
+
+            <!-- Ko‘cha -->
+            <div class="flex items-center gap-2">
+              <span class="w-5 h-5 flex items-center justify-center bg-purple-100 text-purple-500 rounded-full text-[10px]">
+                <i class="fa-solid fa-road"></i>
+              </span>
+              <div>
+                <div class="text-[11px] text-gray-500">Ko‘cha</div>
+                <div class="font-medium">
+                  {{ row.address?.street || "—" }}
+                </div>
+              </div>
+            </div>
+
+            <!-- Telefon -->
+            <div class="flex items-center gap-2">
+              <span class="w-5 h-5 flex items-center justify-center bg-pink-100 text-pink-500 rounded-full text-[10px]">
+                <i class="fa-solid fa-phone"></i>
+              </span>
+              <div>
+                <div class="text-[11px] text-gray-500">Telefon</div>
+                <div class="font-medium">
+                  {{ row.phoneNumber || "—" }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </transition>
+    </div>
+  </template>
+</el-table-column>
 
           <el-table-column
             label="Bonus ball"
@@ -351,10 +378,10 @@ const formatPrice = (num) => {
           </el-table-column>
         </el-table>
         <div
-          class="flex justify-between flex-wrap font-semibold text-[11px] p-1 shadow border-b-[1px] border-[#36d887]"
+           class="flex justify-between flex-wrap font-semibold text-[11px] shadow border-b-[1px] border-[#36d887] rounded-b-md"
         >
           <div
-            class="sticky flex justify-between flex-wrap bg-white pr-2 pl-2 w-full mx-auto"
+          class="sticky flex justify-between flex-wrap bg-white dark:bg-slate-600 pr-2 pl-2 w-full mx-auto rounded-b-md"
           >
             <div class="flex gap-2 flex-wrap">
               <div

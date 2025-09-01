@@ -2,8 +2,9 @@
   <div>
     <!-- Sidebar backdrop (mobile only) -->
     <div
-      class="fixed inset-0 bg-slate-900 bg-opacity-30 z-40 lg:hidden lg:z-auto transition-opacity duration-200"
+      class="fixed inset-0 bg-white dark:bg-slate-600 border-b border-slate-200 dark:border-slate-400 bg-opacity-30 z-40 transition-opacity duration-200"
       :class="sidebarOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'"
+      @click="handleSidebarClose"
       aria-hidden="true"
     ></div>
 
@@ -11,43 +12,133 @@
     <div
       id="sidebar"
       ref="sidebar"
-      class="flex flex-col absolute z-40 left-0 top-0 lg:static lg:left-auto lg:top-auto lg:translate-x-0 h-screen overflow-y-scroll lg:overflow-y-auto no-scrollbar w-64 lg:w-20 lg:sidebar-expanded:!w-64 2xl:!w-64 shrink-0 bg-slate-800 p-4 transition-all duration-200 ease-in-out"
+     class="flex flex-col absolute z-40 left-0 top-0 lg:static lg:left-auto lg:top-auto lg:translate-x-0 h-screen overflow-y-scroll lg:overflow-y-auto no-scrollbar w-64 lg:w-20 lg:sidebar-expanded:!w-64 2xl:w-20 2xl:sidebar-expanded:!w-64 shrink-0 bg-slate-800 dark:bg-slate-800 border-r border-slate-300 dark:border-slate-400 p-4 transition-all duration-200 ease-in-out"
       :class="sidebarOpen ? 'translate-x-0' : '-translate-x-64'"
     >
-      <!-- Sidebar header -->
-      <div class="flex justify-between mb-5 ml-2 sm:px-2">
-        <!-- Logo -->
-        <div>
-          <router-link class="flex" to="/explore">
-            <img
-              class="rounded-[50%] ml-[-20px]"
-              src="../../public/eco_logo.jpg"
-              style="width: 50px; height: 50px"
-              alt="logo"
-            />
-            <h5 class="text-white mt-3 ml-7 font-serif font-bold">Eco Water</h5>
-          </router-link>
-          <div class="mt-4 ml-[-30px] border-b-[0.2px] w-screen"></div>
-        </div>
-        <!-- Close button -->
-        <button
-          ref="trigger"
-          class="lg:hidden text-slate-500 hover:text-slate-400"
-          @click.stop="$emit('close-sidebar')"
-          aria-controls="sidebar"
-          :aria-expanded="sidebarOpen"
+       <!-- Sidebar Header (Responsive) -->
+      <div
+        class="transition-all duration-300 sticky top-0 z-40 mb-4 ml-[-9px]"
+        :class="sidebarExpanded ? 'w-60' : 'w-16'"
+      >
+        <div
+          class="flex items-center justify-between px-3 py-3 bg-slate-700 backdrop-blur-md rounded-md shadow border border-white/10 w-full"
         >
-          <span class="sr-only">Close sidebar</span>
-          <svg
-            class="w-6 h-6 fill-current"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M10.7 18.7l1.4-1.4L7.8 13H20v-2H7.8l4.3-4.3-1.4-1.4L4 12z"
-            />
-          </svg>
-        </button>
+          <div class="flex items-center gap-3">
+            <HeaderAnimatsion class="" :season="selectedAnimationTheme" />
+
+            <!-- Logo va matn -->
+            <div
+              class="flex items-center gap-3 w-full"
+              :class="!sidebarExpanded ? 'justify-center' : ''"
+            >
+              <!-- Logo (click to open sidebar) -->
+              <img
+              src="../../public/eco_logo.jpg"
+                class="rounded-full border border-white shadow object-cover cursor-pointer transition-all duration-300"
+                :class="sidebarExpanded ? 'w-14 h-14' : 'w-10 h-10'"
+                @click="handleSidebarClose"
+              />
+
+              <!-- Matn faqat expanded bo‘lsa -->
+              <div v-if="sidebarExpanded" class="leading-tight">
+                <h1
+                  class="text-white text-xl font-sans tracking-wide font-bold mb-[0.5]"
+                >
+                 Eco water
+                </h1>
+                <p
+                  class="text-[10px] text-gray-400 font-sans tracking-wide font-medium"
+                >
+                  Raqamli boshqaruv — real yutuq.
+                </p>
+              </div>
+            </div>
+            <!-- Yopish Icon faqat expanded bo‘lsa va mobilda ko‘rinmasin -->
+            <button
+              v-if="sidebarExpanded"
+              @click.prevent="sidebarExpanded = !sidebarExpanded"
+              class="text-white hover:text-gray-300 transition text-lg hidden sm:inline"
+            >
+              <i class="fas fa-arrow-left"></i>
+            </button>
+          </div>
+        </div>
+        <div
+          v-if="sidebarExpanded"
+          class="flex items-center justify-between px-1 py-1 bg-slate-700 backdrop-blur-md rounded-md shadow border border-white/10 w-full mt-1 gap-2"
+        >
+          <div class="flex items-center gap-2">
+            <!-- EDO tugmasi -->
+            <div
+              @click="openEdoSidebar"
+              class="inline-flex text-[11px] items-center px-1 py-1 font-medium text-center text-white bg-slate-300 rounded-[50%] text-bold cursor-pointer"
+            >
+              <img
+                class="rounded-full w-[25px] h-[25px]"
+                src="https://play-lh.googleusercontent.com/iG3OBZOG3jaX4h8CZOEOl_ZNHeMSC6_HFiQX63NdnhzgvzEDemi0eAXT5ng62ov7Ag"
+                alt="EDO"
+              />
+            </div>
+            <!--HAJ CHAT-->
+            <div
+              @click="openChatSidebar"
+              class="inline-flex text-[11px] items-center px-1 py-1 font-medium text-center text-white bg-slate-300 rounded-[50%] text-bold cursor-pointer"
+            >
+              <img
+                width="24px"
+                height="24px"
+                src="https://static.tildacdn.com/tild6536-3666-4039-b131-666165613134/_2.png"
+                alt="Telegram"
+              />
+            </div>
+            <!--HAJ DIDOX-->
+            <div
+              class="inline-flex text-[11px] items-center px-1 py-1 font-medium text-center text-white bg-slate-300 rounded-[50%] text-bold cursor-pointer"
+            >
+              <a href="https://didox.uz" target="_blank">
+                <img
+                  src="https://aloqabusiness.uz/upload/iblock/b38/e2pseped973eqvb9pipop1yosmi6b1aw/logo_partner_didox.webp"
+                  alt="DIDOX"
+                  style="width: 24px; height: 24px; border-radius: 50%"
+                />
+              </a>
+            </div>
+            <!--1C -->
+            <div
+              class="inline-flex text-[11px] items-center px-1 py-1 font-medium text-center text-white bg-slate-300 rounded-[50%] text-bold cursor-pointer"
+            >
+              <a
+                target="_blank"
+                href="https://1solution.uz/products/1s-bukhgalteriya-8/?utm_source=google&utm_medium=cpc&utm_campaign=1s-buh&utm_content=1s-buh&utm_term=1c&utm_source=google&utm_medium=cpc&utm_campaign=uzbekistan-search&utm_content=ch_google_adwords|trg_kwd-743347551|crt_704197679248|gid_164858089838|cid_21416012319|kwmt_p|ps_|srct_g|trgt_|src_|devt_c|devm_|lcl_9075970|fdi_|mrlid_5402|dop_&utm_term=1c&gad_source=1&gad_campaignid=21416012319&gbraid=0AAAAAqLxKWxThMorRhiBJqRGTJLexECiI&gclid=Cj0KCQjwtMHEBhC-ARIsABua5iRKuv8BuVoaWOjXw_MWWfVEB3V2qnLCFIQfnysZE8MjoNk36jKraR8aAq5AEALw_wcB"
+              >
+                <img
+                  src="https://kassa.bifit.com/wiki/images/thumb/7/72/Product-1c.svg/2048px-Product-1c.svg.png"
+                  alt="DIDOX"
+                  style="width: 24px; height: 24px; border-radius: 50%"
+                />
+              </a>
+            </div>
+            <!--CLICK -->
+            <div
+              class="inline-flex text-[11px] items-center px-1 py-1 font-medium text-center text-white bg-slate-300 rounded-[50%] text-bold cursor-pointer"
+            >
+              <a href="https://click.uz/uz" target="_blank">
+                <img
+                  src="https://play-lh.googleusercontent.com/vinYJkoh5f-UTTHgiV2DZ9YssEEfk69esYFrasVirZ5Wfp_-da5ahAel63pY-Q2IMnc"
+                  alt="CLICK"
+                  style="width: 24px; height: 24px; border-radius: 50%"
+                />
+              </a>
+            </div>
+          </div>
+          <div>
+            <i
+              @click="removeFile"
+              class="fa-solid fa-xmark mr-2 fa-sm text-red-500 cursor-pointer"
+            >
+            </i>
+          </div>
+        </div>
       </div>
 
       <!-- Links -->
@@ -58,15 +149,11 @@
             @click="is_dashboard = !is_dashboard"
             class="text-xs uppercase text-white font-semibold ml-[-9px] mr-[-9px]"
           >
-            <span
-              class="hidden lg:block lg:sidebar-expanded:hidden 2xl:hidden text-center w-6"
-              aria-hidden="true"
-              >•••</span
-            >
+         
             <div
-              class="flex justify-between cursor-pointer bg-slate-600 p-2 rounded w-full"
+              class="flex justify-between cursor-pointe bg-slate-700 p-2 rounded w-full cursor-pointer"
             >
-              <span class="lg:hidden lg:sidebar-expanded:block 2xl:block"
+              <span class="lg:hidden lg:sidebar-expanded:block 2xl:sidebar-expanded:block 2xl:hidden"
                 >Dashboard
               </span>
               <i
@@ -116,7 +203,8 @@
                         <path fill="none" d="M0 0h36v36H0z" />
                       </svg>
                       <span
-                        class="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                          class="text-sm font-medium ml-3 lg:opacity-0 2xl:opacity-0 lg:sidebar-expanded:opacity-100 duration-200"
+
                         >Statistika
                       </span>
                     </div>
@@ -241,14 +329,14 @@
             class="text-xs uppercase text-white font-semibold ml-[-9px] mr-[-9px]"
           >
             <span
-              class="hidden lg:block lg:sidebar-expanded:hidden 2xl:hidden text-center w-6"
+                 class="hidden lg:block lg:sidebar-expanded:hidden 2xl:hidden text-center w-6"
               aria-hidden="true"
               >•••</span
             >
             <div
-              class="flex justify-between cursor-pointer bg-slate-600 p-2 rounded w-full"
+              class="flex justify-between cursor-pointe bg-slate-700 p-2 rounded w-full cursor-pointer"
             >
-              <span class="lg:hidden lg:sidebar-expanded:block 2xl:block"
+              <span  class="lg:hidden lg:sidebar-expanded:block 2xl:sidebar-expanded:block 2xl:hidden"
                 >Ishlab chiqarish
               </span>
               <i
@@ -308,7 +396,7 @@
                         <path fill="none" d="M0 0h36v36H0z" />
                       </svg>
                       <span
-                        class="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                       class="text-sm font-medium ml-3 lg:opacity-0 2xl:opacity-0 lg:sidebar-expanded:opacity-100 duration-200"
                         >Suv tozalash
                       </span>
                     </div>
@@ -401,7 +489,7 @@
                         />
                       </svg>
                       <span
-                        class="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                        class="text-sm font-medium ml-3 lg:opacity-0 2xl:opacity-0 lg:sidebar-expanded:opacity-100 duration-200"
                       >
                         Idish to'ldirish
                       </span>
@@ -483,7 +571,7 @@
                         />
                       </svg>
                       <spttan
-                        class="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                        class="text-sm font-medium ml-3 lg:opacity-0 2xl:opacity-0 lg:sidebar-expanded:opacity-100 duration-200"
                         >Qadoqlash
                       </spttan>
                     </div>
@@ -565,7 +653,7 @@
                         />
                       </svg>
                       <spttan
-                        class="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                        class="text-sm font-medium ml-3 lg:opacity-0 2xl:opacity-0 lg:sidebar-expanded:opacity-100 duration-200"
                         >Sifat nazorati
                       </spttan>
                     </div>
@@ -681,7 +769,7 @@
                         />
                       </svg>
                       <span
-                        class="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                        class="text-sm font-medium ml-3 lg:opacity-0 2xl:opacity-0 lg:sidebar-expanded:opacity-100 duration-200"
                         >Ombor(xom ashyo)
                       </span>
                     </div>
@@ -763,7 +851,7 @@
                         />
                       </svg>
                       <span
-                        class="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                        class="text-sm font-medium ml-3 lg:opacity-0 2xl:opacity-0 lg:sidebar-expanded:opacity-100 duration-200"
                         >Ombor(tayyor mahsulot)
                       </span>
                     </div>
@@ -825,9 +913,9 @@
               >•••</span
             >
             <div
-              class="flex justify-between cursor-pointer bg-slate-600 p-2 rounded w-full"
+              class="flex justify-between cursor-pointe bg-slate-700 p-2 rounded w-full cursor-pointer"
             >
-              <span class="lg:hidden lg:sidebar-expanded:block 2xl:block"
+              <span class="lg:hidden lg:sidebar-expanded:block 2xl:sidebar-expanded:block 2xl:hidden"
                 >Bo'limlar
               </span>
               <i
@@ -927,7 +1015,7 @@
                         <path fill="none" d="M0 0h36v36H0z" />
                       </svg>
                       <span
-                        class="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                        class="text-sm font-medium ml-3 lg:opacity-0 2xl:opacity-0 lg:sidebar-expanded:opacity-100 duration-200"
                         >Buhgalterya
                       </span>
                     </div>
@@ -1182,7 +1270,7 @@
                         />
                       </svg>
                       <span
-                        class="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                        class="text-sm font-medium ml-3 lg:opacity-0 2xl:opacity-0 lg:sidebar-expanded:opacity-100 duration-200"
                         >Kadrlar
                       </span>
                     </div>
@@ -1263,7 +1351,7 @@
                         />
                       </svg>
                       <spttan
-                        class="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                        class="text-sm font-medium ml-3 lg:opacity-0 2xl:opacity-0 lg:sidebar-expanded:opacity-100 duration-200"
                         >Sotuv
                       </spttan>
                     </div>
@@ -1368,7 +1456,7 @@
                         />
                       </svg>
                       <span
-                        class="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                        class="text-sm font-medium ml-3 lg:opacity-0 2xl:opacity-0 lg:sidebar-expanded:opacity-100 duration-200"
                         >Mijozlar
                       </span>
                     </div>
@@ -1462,7 +1550,7 @@
                         <path fill="none" d="M0 0h36v36H0z" />
                       </svg>
                       <span
-                        class="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                        class="text-sm font-medium ml-3 lg:opacity-0 2xl:opacity-0 lg:sidebar-expanded:opacity-100 duration-200"
                         >Logistika
                       </span>
                     </div>
@@ -1617,7 +1705,7 @@
                         <path fill="none" d="M0 0h36v36H0z" />
                       </svg>
                       <span
-                        class="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                        class="text-sm font-medium ml-3 lg:opacity-0 2xl:opacity-0 lg:sidebar-expanded:opacity-100 duration-200"
                         >Agentlar
                       </span>
                     </div>
@@ -1713,7 +1801,7 @@
                         <path fill="none" d="M0 0h36v36H0z" />
                       </svg>
                       <spttan
-                        class="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                        class="text-sm font-medium ml-3 lg:opacity-0 2xl:opacity-0 lg:sidebar-expanded:opacity-100 duration-200"
                         >Omborlar
                       </spttan>
                     </div>
@@ -1825,7 +1913,7 @@
                         <path fill="none" d="M0 0h36v36H0z" />
                       </svg>
                       <spttan
-                        class="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                        class="text-sm font-medium ml-3 lg:opacity-0 2xl:opacity-0 lg:sidebar-expanded:opacity-100 duration-200"
                         >Texnik xizmat
                       </spttan>
                     </div>
@@ -1938,9 +2026,9 @@
               >•••</span
             >
             <div
-              class="flex justify-between cursor-pointer bg-slate-600 p-2 rounded w-full"
+              class="flex justify-between cursor-pointe bg-slate-700 p-2 rounded w-full cursor-pointer"
             >
-              <span class="lg:hidden lg:sidebar-expanded:block 2xl:block"
+              <span class="lg:hidden lg:sidebar-expanded:block 2xl:sidebar-expanded:block 2xl:hidden"
                 >Hisobotlar
               </span>
               <i
@@ -1988,7 +2076,7 @@
                         />
                       </svg>
                       <span
-                        class="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                        class="text-sm font-medium ml-3 lg:opacity-0 2xl:opacity-0 lg:sidebar-expanded:opacity-100 duration-200"
                         >Buhgalterya hisoboti
                       </span>
                     </div>
@@ -2069,7 +2157,7 @@
                         />
                       </svg>
                       <span
-                        class="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                        class="text-sm font-medium ml-3 lg:opacity-0 2xl:opacity-0 lg:sidebar-expanded:opacity-100 duration-200"
                         >Kadrlar hisoboti
                       </span>
                     </div>
@@ -2150,7 +2238,7 @@
                         />
                       </svg>
                       <spttan
-                        class="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                        class="text-sm font-medium ml-3 lg:opacity-0 2xl:opacity-0 lg:sidebar-expanded:opacity-100 duration-200"
                         >Sotuv hisoboti
                       </spttan>
                     </div>
@@ -2254,7 +2342,7 @@
                         />
                       </svg>
                       <span
-                        class="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                        class="text-sm font-medium ml-3 lg:opacity-0 2xl:opacity-0 lg:sidebar-expanded:opacity-100 duration-200"
                         >Mijozlar hisoboti
                       </span>
                     </div>
@@ -2336,7 +2424,7 @@
                         />
                       </svg>
                       <span
-                        class="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                        class="text-sm font-medium ml-3 lg:opacity-0 2xl:opacity-0 lg:sidebar-expanded:opacity-100 duration-200"
                         >Haydovchilar hisoboti
                       </span>
                     </div>
@@ -2418,7 +2506,7 @@
                         />
                       </svg>
                       <span
-                        class="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                        class="text-sm font-medium ml-3 lg:opacity-0 2xl:opacity-0 lg:sidebar-expanded:opacity-100 duration-200"
                         >Agentlar hisoboti
                       </span>
                     </div>
@@ -2481,9 +2569,9 @@
               >•••</span
             >
             <div
-              class="flex justify-between cursor-pointer bg-slate-600 p-2 rounded w-full"
+              class="flex justify-between cursor-pointe bg-slate-700 p-2 rounded w-full cursor-pointer"
             >
-              <span class="lg:hidden lg:sidebar-expanded:block 2xl:block"
+              <span class="lg:hidden lg:sidebar-expanded:block 2xl:sidebar-expanded:block 2xl:hidden"
                 >Sozlamalar
               </span>
               <i
@@ -2531,7 +2619,7 @@
                         />
                       </svg>
                       <span
-                        class="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                        class="text-sm font-medium ml-3 lg:opacity-0 2xl:opacity-0 lg:sidebar-expanded:opacity-100 duration-200"
                         >Tizm sozlamalari
                       </span>
                     </div>
@@ -2712,9 +2800,9 @@
               >•••</span
             >
             <div
-              class="flex justify-between cursor-pointer bg-slate-600 p-2 rounded w-full"
+              class="flex justify-between cursor-pointe bg-slate-700 p-2 rounded w-full cursor-pointer"
             >
-              <span class="lg:hidden lg:sidebar-expanded:block 2xl:block"
+              <span class="lg:hidden lg:sidebar-expanded:block 2xl:sidebar-expanded:block 2xl:hidden"
                 >Boshqalar
               </span>
               <i
@@ -2763,7 +2851,7 @@
                         />
                       </svg>
                       <span
-                        class="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                        class="text-sm font-medium ml-3 lg:opacity-0 2xl:opacity-0 lg:sidebar-expanded:opacity-100 duration-200"
                         >Authentication</span
                       >
                     </div>
@@ -2873,7 +2961,7 @@
                         />
                       </svg>
                       <span
-                        class="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200"
+                        class="text-sm font-medium ml-3 lg:opacity-0 2xl:opacity-0 lg:sidebar-expanded:opacity-100 duration-200"
                         >Tizm sozlamalari
                       </span>
                     </div>
@@ -3099,6 +3187,39 @@
           </div>
         </div>
       </div>
+      
+      <!-- 🔥 Footer -->
+      <div
+        :class="
+          sidebarExpanded
+            ? 'w-6 4px-4 text-left items-start'
+            : 'w-16 px-1 text-center items-center mr-4'
+        "
+        class="sticky bottom-0 z-50 w-full px-3 py-2   bg-slate-800 dark:bg-slate-800 shadow rounded-md"
+      >
+        <div class="flex items-center justify-between text-white">
+          <!-- Aloqa markazi -->
+          <div class="flex items-center gap-3">
+            <div
+              class="w-9 h-9 flex items-center justify-center rounded-full bg-[#36d887] shadow cursor-pointer"
+            >
+              <i class="fa-solid fa-headset text-white text-lg"></i>
+            </div>
+            <div v-if="sidebarExpanded">
+              <p class="text-[11px] font-semibold opacity-80">Aloqa markazi</p>
+              <a
+                href="tel:+998930043936"
+                class="text-[11px] font-semibold opacity-80 text-[#36d887] hover:underline"
+              >
+                +998 93 004 39 36
+              </a>
+            </div>
+          </div>
+
+          <!-- Qo‘shimcha link -->
+          <div class="hidden sm:block"></div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -3108,26 +3229,34 @@ import Cookies from "js-cookie";
 import { ref, onMounted, onUnmounted, watch } from "vue";
 import { useRouter } from "vue-router";
 import SidebarLinkGroup from "./SidebarLinkGroup.vue";
+import HeaderAnimatsion from "./Settings/HeaderAnimatsion.vue";
 
 export default {
   name: "Sidebar",
   props: ["sidebarOpen"],
   components: {
     SidebarLinkGroup,
+    HeaderAnimatsion,
   },
+  emits: ["close-sidebar"],
   setup(props, { emit }) {
+    // --- Stores ---
+
+    // --- Refs ---
     const trigger = ref(null);
     const sidebar = ref(null);
-    const role = ref(JSON.parse(Cookies.get("account")).role);
     const is_dashboard = ref(false);
     const is_production = ref(false);
-    const is_departments = ref(false);
     const is_reports = ref(false);
+    const is_departments = ref(false);
     const is_settings = ref(false);
     const is_mores = ref(false);
+    const is_chat = ref(false);
+    const is_edo = ref(false);
+    const isCollapsed = ref(false);
+    const role = ref(JSON.parse(Cookies.get("account")).role);
 
-    // const permissions = ref(JSON.parse(Cookies.get("account")).permissions);
-
+    // --- Sidebar expanded state from localStorage ---
     const storedSidebarExpanded = localStorage.getItem("sidebar-expanded");
     const sidebarExpanded = ref(
       storedSidebarExpanded === null ? false : storedSidebarExpanded === "true"
@@ -3135,7 +3264,7 @@ export default {
 
     const currentRoute = useRouter().currentRoute.value;
 
-    // close on click outside
+    // --- Click outside to close sidebar ---
     const clickHandler = ({ target }) => {
       if (!sidebar.value || !trigger.value) return;
       if (
@@ -3146,23 +3275,58 @@ export default {
         return;
       emit("close-sidebar");
     };
-
-    // close if the esc key is pressed
+    // --- ESC key to close sidebar ---
     const keyHandler = ({ keyCode }) => {
       if (!props.sidebarOpen || keyCode !== 27) return;
       emit("close-sidebar");
     };
 
+    // --- Responsive resize handler: auto-close on <lg or ≥2xl ---
+    const resizeHandler = () => {
+      const width = window.innerWidth;
+      if ((width < 1024 || width >= 1536) && props.sidebarOpen) {
+        emit("close-sidebar");
+      }
+    };
+    const defaultAnimation = "0";
+
+    // Boshlanish qiymatini localStorage'dan olamiz yoki '0' qilamiz
+    const selectedAnimationTheme = ref(
+      localStorage.getItem("animation") || defaultAnimation
+    );
+
+    // Har 500ms da tekshiradi, localStorage'dagi o‘zgarishlarni muntazam aniqlaydi
+    setInterval(() => {
+      const newValue = localStorage.getItem("animation") || defaultAnimation;
+      if (selectedAnimationTheme.value !== newValue) {
+        selectedAnimationTheme.value = newValue;
+      }
+    }, 500); // Har yarim soniyada tekshiradi
+    console.log(selectedAnimationTheme.value);
+
+    // --- Mount and unmount lifecycle hooks ---
     onMounted(() => {
       document.addEventListener("click", clickHandler);
       document.addEventListener("keydown", keyHandler);
+      window.addEventListener("resize", resizeHandler);
+      resizeHandler(); // Initial check
+
+      // 🔥 Endi faqat localStorage dagi qiymatni saqlaymiz
+      const storedSidebarExpanded = localStorage.getItem("sidebar-expanded");
+      sidebarExpanded.value =
+        storedSidebarExpanded === null
+          ? true
+          : storedSidebarExpanded === "false";
     });
 
     onUnmounted(() => {
       document.removeEventListener("click", clickHandler);
       document.removeEventListener("keydown", keyHandler);
+      window.removeEventListener("resize", resizeHandler);
+      setInterval(updateTime, 1000);
     });
 
+    // --- Watch for sidebar expansion and save to localStorage ---
     watch(sidebarExpanded, () => {
       localStorage.setItem("sidebar-expanded", sidebarExpanded.value);
       if (sidebarExpanded.value) {
@@ -3171,8 +3335,21 @@ export default {
         document.querySelector("body").classList.remove("sidebar-expanded");
       }
     });
+    const handleSidebarClose = () => {
+      sidebarExpanded.value = true;
+      emit("close-sidebar");
+    };
+    // Sidebar funksiyalari
+    const openEdoSidebar = () => {
+      window.dispatchEvent(new Event("toggle-edo-sidebar"));
+    };
+
+    const openChatSidebar = () => {
+      window.dispatchEvent(new Event("toggle-chat-sidebar"));
+    };
 
     return {
+      isCollapsed,
       role,
       trigger,
       sidebar,
@@ -3180,10 +3357,16 @@ export default {
       currentRoute,
       is_dashboard,
       is_production,
-      is_departments,
       is_reports,
+      is_departments,
       is_settings,
       is_mores,
+      is_chat,
+      is_edo,
+      handleSidebarClose,
+      openEdoSidebar,
+      openChatSidebar,
+      selectedAnimationTheme,
     };
   },
 };
