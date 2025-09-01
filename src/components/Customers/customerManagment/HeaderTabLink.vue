@@ -82,7 +82,7 @@ onMounted(getAll);
     <!-- ✅ Desktop Tabs -->
     <div
       v-if="!isMobile"
-      class="grid grid-cols-12 grid-flow-col justify-between bg-white dark:bg-slate-600 rounded-[4px] shadow-md p-2 mb-2"
+      class="grid grid-cols-12 grid-flow-col justify-between bg-white dark:bg-slate-600 rounded-[4px] shadow-md px-1 pt-2 mb-1"
     >
       <div class="col-span-12 flex flex-wrap">
         <router-link

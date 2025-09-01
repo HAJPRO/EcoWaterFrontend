@@ -74,7 +74,7 @@ onMounted(getAll);
     <!-- ✅ Desktop Tabs -->
     <div
       v-if="!isMobile"
-      class="grid grid-cols-12 grid-flow-col justify-between bg-white dark:bg-slate-600 rounded-[4px] shadow-md p-2 mb-2"
+     class="grid grid-cols-12 grid-flow-col justify-between bg-white dark:bg-slate-600 rounded-[4px] shadow-md px-1 p-1 mb-1 items-center text-center"
     >
       <div class="col-span-12 flex flex-wrap">
         <router-link
@@ -98,7 +98,7 @@ onMounted(getAll);
     <!-- ✅ Mobile Dropdown (Element Plus) -->
     <div
       v-else
-      class="bg-white dark:bg-slate-600 rounded-[4px] shadow-md p-2 mb-2"
+      class="bg-white dark:bg-slate-600 rounded-[4px] shadow-md px-1 pt-1 mb-1"
     >
       <el-select
         v-model="isActive"
@@ -157,7 +157,7 @@ onMounted(getAll);
 </template>
 <style scoped>
 .tab-item {
-  @apply inline-flex items-center mr-2 px-4 py-1 mb-1 text-[13px] font-medium transition-all duration-300 ease-in-out rounded-[4px];
+  @apply inline-flex items-center mr-2 px-4 p-1 text-[13px] font-medium transition-all duration-300 ease-in-out rounded-[4px];
 }
 .tab-item:not(.active-tab) {
   @apply bg-slate-50 text-green-600 border;
