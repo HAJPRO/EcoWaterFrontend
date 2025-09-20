@@ -42,513 +42,185 @@ onMounted(async () => {
     console.log(error);
   }
 });
+const showCustomerInfo = ref(false);
 </script>
 <template>
-  <AddCustomerModal v-if="custom_modal === true" />
-  <DriverBindingModal />
-
-  <div>
-   <el-dialog
-      v-model="order_detail_modal"
-      :width="dialogWidth"
-      :before-close="handleClose"
-      class="rounded-md p-4 shadow-lg custom-modal dark:bg-slate-700 mt-2"
-      @close="onDialogClose"
-    >
-      <template #header>
+  <DriverBindingModal/>
+  <AddCustomerModal />
+  <el-dialog
+    v-model="order_detail_modal"
+    :width="dialogWidth"
+    class="rounded-lg shadow-xl p-3 overflow-hidden"
+  >
+    <!-- Header -->
+   <template #header>
         <div class="flex items-center justify-between border-b pb-1">
           <div class="flex items-center gap-2">
             <i class="fa-solid fa-file-invoice text-blue-500 fa-lg"></i>
-            <h3 class="text-xl font-semibold text-slate-500 dark:text-slate-300">
+            <h3 class="text-lg font-semibold text-slate-500 dark:text-slate-300">
               Buyurtmaning batafsil malumoti
             </h3>
+              <el-tag
+          :type="order.status === 'Yangi buyurtma' ? 'success' : 'info'"
+          effect="dark"
+          size="small"
+        >
+          {{ order.status }}
+        </el-tag>
           </div>
         </div>
       </template>
 
-       <span>
-        
-        <div
-          class="filter-box bg-[#e8eded] md:grid md:grid-cols-12 gap-1 sm:flex sm:flex-wrap rounded shadow-sm p-2 mt-2 text-[13px]"
+    <!-- Body -->
+    <div class="p-4 space-y-4 bg-gray-50">
+      <!-- Customer Info -->
+      <div class="bg-white rounded-xl shadow-md border p-5">
+    <!-- Header with Toggle Button -->
+    <div class="flex items-center justify-between mb-3">
+      <h2 class="text-base font-semibold text-gray-700 flex items-center gap-2">
+        <span class="w-7 h-7 flex items-center justify-center bg-indigo-100 text-indigo-600 rounded-full">
+          <i class="fa-solid fa-user"></i>
+        </span>
+        Mijoz ma’lumotlari
+      </h2>
+
+      <button
+        @click="showCustomerInfo = !showCustomerInfo"
+        class="text-sm px-3 py-1 rounded-md border text-indigo-600 hover:bg-indigo-50 transition"
+      >
+        {{ showCustomerInfo ? "Yopish" : "Ko‘rish" }}
+      </button>
+    </div>
+
+    <!-- Customer Info -->
+    <div v-show="showCustomerInfo" class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+      <div class="flex flex-col">
+        <span class="text-xs text-gray-500">F.I.O</span>
+        <span class="font-medium text-gray-800">{{ order.customerId?.fullname || "-" }}</span>
+      </div>
+
+      <div class="flex flex-col">
+        <span class="text-xs text-gray-500">Kategoriya</span>
+        <span class="font-medium text-gray-800">{{ order.customerId?.category || "-" }}</span>
+      </div>
+
+      <div class="flex flex-col">
+        <span class="text-xs text-gray-500">Artikul</span>
+        <span class="font-medium text-gray-800">{{ order.customerId?.artikul || "-" }}</span>
+      </div>
+
+      <div class="flex flex-col">
+        <span class="text-xs text-gray-500">Daraja</span>
+        <span class="font-medium text-gray-800">{{ order.customerId?.position || "-" }}</span>
+      </div>
+
+      <div class="flex flex-col">
+        <span class="text-xs text-gray-500">Reyting</span>
+        <span class="font-medium text-gray-800">{{ order.customerId?.ratings || 0 }}</span>
+      </div>
+
+      <div class="flex flex-col">
+        <span class="text-xs text-gray-500">Telefon</span>
+        <span class="font-medium text-gray-800">{{ order.customerId?.phoneNumber || "-" }}</span>
+      </div>
+
+      <div class="flex flex-col">
+        <span class="text-xs text-gray-500">Viloyat</span>
+        <span class="font-medium text-gray-800">{{ order.customerId?.address?.region || "-" }}</span>
+      </div>
+
+      <div class="flex flex-col">
+        <span class="text-xs text-gray-500">Tuman</span>
+        <span class="font-medium text-gray-800">{{ order.customerId?.address?.district || "-" }}</span>
+      </div>
+
+      <div class="flex flex-col">
+        <span class="text-xs text-gray-500">Mahalla</span>
+        <span class="font-medium text-gray-800">{{ order.customerId?.address?.neighborhood || "-" }}</span>
+      </div>
+
+      <div class="flex flex-col">
+        <span class="text-xs text-gray-500">Ko‘cha</span>
+        <span class="font-medium text-gray-800">{{ order.customerId?.address?.street || "-" }}</span>
+      </div>
+
+      <div class="flex flex-col">
+        <span class="text-xs text-gray-500">Uy</span>
+        <span class="font-medium text-gray-800">{{ order.customerId?.address?.house || "-" }}</span>
+      </div>
+
+      <div class="flex flex-col">
+        <span class="text-xs text-gray-500">Email</span>
+        <span class="font-medium text-gray-800">{{ order.customerId?.email || "-" }}</span>
+      </div>
+    </div>
+  </div>
+
+
+      <!-- Order Products -->
+      <div class="bg-white rounded-xl shadow-sm border p-4">
+        <h2 class="text-sm font-semibold text-gray-600 border-b pb-2 mb-3">
+          📦 Buyurtma mahsulotlari
+        </h2>
+        <el-table
+          :data="order.products"
+          border
+          size="small"
+          class="rounded-lg"
+          :header-cell-style="{ background: '#f9fafb', color: '#374151' }"
         >
-          <!-- //  Asosiy ma'lumotlar -->
-          <div
-            class="mb-1 col-span-6 p-2 rounded-md border-[1px] border-[#36d887]"
+          <el-table-column type="index" width="50" label="№" align="center" />
+          <el-table-column prop="pro_name" label="Mahsulot" min-width="120" />
+          <el-table-column prop="packingType" label="Qadoq" min-width="100" />
+          <el-table-column
+            prop="pro_quantity"
+            label="Miqdor"
+            align="center"
+            min-width="100"
           >
-            <h1
-              class="font-semibold bg-slate-100 text-[13px] p-1 mt-1 align-center text-center rounded-md border-t-[1px] border-[#36d887]"
-            >
-              Buyurtmachi ma'lumotlari
-            </h1>
-
-            <ul class="mt-2 w-full flex gap-2 cursor-pointer flex-wrap">
-              <li
-                class="w-auto p-1 bg-gradient-to-r from-green-500 via-blue-500 to-purple-600 rounded-md shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 flex items-center"
-              >
-                <span class="text-white font-semibold text-[12px] mr-2"
-                  >1.</span
-                >
-                <span class="text-white font-semibold text-[12px]">
-                  {{ order.customerId.fullname }}
-                </span>
-              </li>
-
-              <li
-                class="w-auto p-1 bg-gradient-to-r from-indigo-400 via-blue-500 to-purple-600 rounded-md shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 flex items-center"
-              >
-                <span class="text-white font-semibold text-[12px] mr-2"
-                  >2.</span
-                >
-                <span class="text-white font-semibold text-[12px]">
-                  {{ order.customerId.category }}
-                </span>
-              </li>
-              <li
-                class="w-auto p-1 bg-gradient-to-r from-indigo-400 via-blue-500 to-purple-600 rounded-md shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 flex items-center"
-              >
-                <span class="text-white font-semibold text-[12px] mr-2"
-                  >3.</span
-                >
-                <span class="text-white font-semibold text-[12px]">
-                  Artikul: {{ order.customerId.artikul }}
-                </span>
-              </li>
-              <li
-                class="w-auto p-1 bg-gradient-to-r from-indigo-400 via-blue-500 to-purple-600 rounded-md shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 flex items-center"
-              >
-                <span class="text-white font-semibold text-[12px] mr-2"
-                  >4.</span
-                >
-                <span class="text-white font-semibold text-[12px]">
-                  Daraja: {{ order.customerId.position }}
-                </span>
-              </li>
-              <li
-                class="w-auto p-1 bg-gradient-to-r from-green-500 via-blue-500 to-purple-600 rounded-md shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 flex items-center"
-              >
-                <span class="text-white font-semibold text-[12px] mr-2"
-                  >5.</span
-                >
-                <span class="text-white font-semibold text-[12px]">
-                  Reyting :
-                  {{ order.customerId.ratings ? order.customerId.ratings : 0 }}
-                </span>
-              </li>
-              <li
-                class="w-auto p-1 bg-gradient-to-r from-green-500 via-blue-500 to-purple-600 rounded-md shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 flex items-center"
-              >
-                <span class="text-white font-semibold text-[12px] mr-2"
-                  >6.</span
-                >
-                <span class="text-white font-semibold text-[12px]">
-                  Passport :
-                  {{
-                    order.customerId.passportNumber
-                      ? order.customerId.passportNumber
-                      : "-"
-                  }}
-                </span>
-              </li>
-              <li
-                class="w-auto p-1 bg-gradient-to-r from-indigo-400 via-blue-500 to-purple-600 rounded-md shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 flex items-center"
-              >
-                <span class="text-white font-semibold text-[12px] mr-2"
-                  >7.</span
-                >
-                <span class="text-white font-semibold text-[12px]">
-                  INN : {{ order.customerId.inn ? order.customerId.inn : "-" }}
-                </span>
-              </li>
-
-              <li
-                class="w-auto p-1 bg-gradient-to-r from-indigo-400 via-blue-500 to-purple-600 rounded-md shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 flex items-center"
-              >
-                <span class="text-white font-semibold text-[12px] mr-2"
-                  >8.</span
-                >
-                <span class="text-white font-semibold text-[12px]">
-                  Viloyat :
-                  {{
-                    order.customerId.address.region
-                      ? order.customerId.address.region
-                      : "-"
-                  }}
-                </span>
-              </li>
-              <li
-                class="w-auto p-1 bg-gradient-to-r from-indigo-400 via-blue-500 to-purple-600 rounded-md shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 flex items-center"
-              >
-                <span class="text-white font-semibold text-[12px] mr-2"
-                  >9.</span
-                >
-                <span class="text-white font-semibold text-[12px]">
-                  Tuman :
-                  {{
-                    order.customerId.address.district
-                      ? order.customerId.address.district
-                      : "-"
-                  }}
-                </span>
-              </li>
-              <li
-                class="w-auto p-1 bg-gradient-to-r from-indigo-400 via-blue-500 to-purple-600 rounded-md shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 flex items-center"
-              >
-                <span class="text-white font-semibold text-[12px] mr-2"
-                  >10.</span
-                >
-                <span class="text-white font-semibold text-[12px]">
-                  Mahalla :
-                  {{
-                    order.customerId.address.neighborhood
-                      ? order.customerId.address.neighborhood
-                      : "-"
-                  }}
-                </span>
-              </li>
-              <li
-                class="w-auto p-1 bg-gradient-to-r from-indigo-400 via-blue-500 to-purple-600 rounded-md shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 flex items-center"
-              >
-                <span class="text-white font-semibold text-[12px] mr-2"
-                  >11.</span
-                >
-                <span class="text-white font-semibold text-[12px]">
-                  Ko'cha :
-                  {{
-                    order.customerId.address.street
-                      ? order.customerId.address.street
-                      : "-"
-                  }}
-                </span>
-              </li>
-              <li
-                class="w-auto p-1 bg-gradient-to-r from-indigo-400 via-blue-500 to-purple-600 rounded-md shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 flex items-center"
-              >
-                <span class="text-white font-semibold text-[12px] mr-2"
-                  >12.</span
-                >
-                <span class="text-white font-semibold text-[12px]">
-                  Uy :
-                  {{
-                    order.customerId.address.house
-                      ? order.customerId.address.house
-                      : "-"
-                  }}
-                </span>
-              </li>
-              <li
-                class="w-auto p-1 bg-gradient-to-r from-indigo-400 via-blue-500 to-purple-600 rounded-md shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 flex items-center"
-              >
-                <span class="text-white font-semibold text-[12px] mr-2"
-                  >12.</span
-                >
-                <span class="text-white font-semibold text-[12px]">
-                  Kordinata :
-                  {{
-                    order.customerId.location.lat
-                      ? order.customerId.location.lat
-                      : "-"
-                  }}
-                  -
-                  {{
-                    order.customerId.location.long
-                      ? order.customerId.location.long
-                      : "-"
-                  }}
-                </span>
-              </li>
-              <li
-                class="w-auto p-1 bg-gradient-to-r from-indigo-400 via-blue-500 to-purple-600 rounded-md shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 flex items-center"
-              >
-                <span class="text-white font-semibold text-[12px] mr-2"
-                  >13.</span
-                >
-                <span class="text-white font-semibold text-[12px]">
-                  Telefon :
-                  {{
-                    order.customerId.phoneNumber
-                      ? order.customerId.phoneNumber
-                      : "-"
-                  }}
-                </span>
-              </li>
-              <li
-                class="w-auto p-1 bg-gradient-to-r from-indigo-400 via-blue-500 to-purple-600 rounded-md shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 flex items-center"
-              >
-                <span class="text-white font-semibold text-[12px] mr-2"
-                  >14.</span
-                >
-                <span class="text-white font-semibold text-[12px]">
-                  Email :
-                  {{ order.customerId.email ? order.customerId.email : "-" }}
-                </span>
-              </li>
-              <li
-                class="w-auto p-1 bg-gradient-to-r from-indigo-400 via-blue-500 to-purple-600 rounded-md shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 flex items-center"
-              >
-                <span class="text-white font-semibold text-[12px] mr-2"
-                  >15.</span
-                >
-                <span class="text-white font-semibold text-[12px]">
-                  Telegram :
-                  {{
-                    order.customerId.telegram ? order.customerId.telegram : "-"
-                  }}
-                </span>
-              </li>
-              <li
-                class="w-auto p-1 bg-gradient-to-r from-green-500 via-blue-500 to-purple-600 rounded-md shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 flex items-center"
-              >
-                <span class="text-white font-semibold text-[12px] mr-2"
-                  >16.</span
-                >
-                <span class="text-white font-semibold text-[12px]">
-                  Registratsiya :
-                  {{
-                    order.customerId.registeredAt
-                      ? moment
-                          .utc(order.customerId.registeredAt) // 🟢 UTC formatda olish
-                          .tz("Asia/Tashkent") // 🟢 UTC+5 ga aylantirish
-                          .format("DD.MM.YYYY HH:mm:ss") // 🟢 To‘g‘ri formatda chiqarish
-                      : "-"
-                  }}
-                </span>
-              </li>
-              <li
-                class="w-auto p-1 bg-gradient-to-r from-indigo-400 via-blue-500 to-purple-600 rounded-md shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 flex items-center"
-              >
-                <span class="text-white font-semibold text-[12px] mr-2"
-                  >17.</span
-                >
-                <span class="text-white font-semibold text-[12px]">
-                  Holati :
-                  {{ order.customerId.status ? order.customerId.status : "-" }}
-                </span>
-              </li>
-
-              <li
-                class="w-auto p-1 bg-gradient-to-r from-indigo-400 via-blue-500 to-purple-600 rounded-md shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 flex items-center"
-              >
-                <span class="text-white font-semibold text-[12px] mr-2"
-                  >18.</span
-                >
-                <span class="text-white font-semibold text-[12px]">
-                  Buyurtmani yetkazib berish muddati :
-                  {{
-                    order.deliveryTime
-                      ? moment
-                          .utc(order.deliveryTime) // 🟢 UTC formatda olish
-                          .tz("Asia/Tashkent") // 🟢 UTC+5 ga aylantirish
-                          .format("DD.MM.YYYY HH:mm:ss") // 🟢 To‘g‘ri formatda chiqarish
-                      : "-"
-                  }}
-                </span>
-              </li>
-
-              <li
-                class="w-auto p-1 bg-gradient-to-r from-indigo-400 via-blue-500 to-purple-600 rounded-md shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 flex items-center"
-              >
-                <span class="text-white font-semibold text-[12px] mr-2"
-                  >18.</span
-                >
-                <span class="text-white font-semibold text-[12px]">
-                  Buyurtma qabul qilingan vaqti :
-                  {{
-                    order.driverAcceptedTime
-                      ? moment
-                          .utc(order.driverAcceptedTime) // 🟢 UTC formatda olish
-                          .tz("Asia/Tashkent") // 🟢 UTC+5 ga aylantirish
-                          .format("DD.MM.YYYY HH:mm:ss") // 🟢 To‘g‘ri formatda chiqarish
-                      : "-"
-                  }}
-                </span>
-              </li>
-              <li
-                class="w-auto p-1 bg-gradient-to-r from-indigo-400 via-blue-500 to-purple-600 rounded-md shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 flex items-center"
-              >
-                <span class="text-white font-semibold text-[12px] mr-2"
-                  >19.</span
-                >
-                <span class="text-white font-semibold text-[12px]">
-                  Buyurtma yetkazilgan vaqti :
-                  {{
-                    order.driverArrivedTime
-                      ? moment
-                          .utc(order.driverArrivedTime) // 🟢 UTC formatda olish
-                          .tz("Asia/Tashkent") // 🟢 UTC+5 ga aylantirish
-                          .format("DD.MM.YYYY HH:mm:ss") // 🟢 To‘g‘ri formatda chiqarish
-                      : "-"
-                  }}
-                </span>
-              </li>
-
-              <li
-                class="w-auto p-1 bg-gradient-to-r from-green-500 via-blue-500 to-purple-600 rounded-md shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 flex items-center"
-              >
-                <span class="text-white font-semibold text-[12px] mr-2"
-                  >20.</span
-                >
-                <span class="text-white font-semibold text-[12px]">
-                  Jami buyurtmalari soni :
-                  {{
-                    order.customerId.totalOrders
-                      ? order.customerId.totalOrders
-                      : "0"
-                  }}
-                </span>
-              </li>
-            </ul>
-          </div>
-          <!-- //  Buyurtma ma’lumotlari -->
-          <div
-            class="mb-1 col-span-6 bg-[#e8eded] p-2 rounded-md border-[1px] border-[#36d887]"
+            <template #default="{ row }">
+              <span class="text-green-600 font-medium">
+                {{ formatPrice(row.pro_quantity) }} {{ row.pro_unit }}
+              </span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="pro_price"
+            label="Narxi"
+            align="center"
+            min-width="100"
           >
-            <h1
-              class="bg-slate-100 font-semibold text-[13px] p-1 mt-1 align-center text-center rounded-md border-t-[1px] border-[#36d887]"
-            >
-              Buyurtma ma'lumotlari
-            </h1>
-            <div class="grid grid-cols-12 gap-1"></div>
+            <template #default="{ row }">
+              <span class="text-red-600 font-medium">
+                {{ formatPrice(row.pro_price) }} so‘m
+              </span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="pro_total_price"
+            label="Jami"
+            align="center"
+            min-width="120"
+          >
+            <template #default="{ row }">
+              <span class="text-purple-600 font-semibold">
+                {{ formatPrice(row.pro_total_price) }} so‘m
+              </span>
+            </template>
+          </el-table-column>
+        </el-table>
 
-            <el-table
-              :header-cell-style="{
-                background: '#e8ed90',
-                border: '0.2px solid #e1e1e3',
-              }"
-              load
-              style="font-size: 12px"
-              size="small"
-              class="w-full mt-2"
-              header-align="center"
-              empty-text="Mahsulot qo'shilmagan... "
-              border
-              height="160"
-              :data="order.products"
-            >
-              <el-table-column
-                header-align="center"
-                align="center"
-                type="index"
-                prop="index"
-                fixed="left"
-                label="№"
-                width="60"
-              />
-              <el-table-column
-                prop="pro_type"
-                label="Turi"
-                :min-width="100"
-                :max-width="400"
-                header-align="center"
-                align="center"
-              >
-                <template #default="{ row }"
-                  ><div class="text-red-500">
-                    {{ row.pro_type }}
-                  </div></template
-                ></el-table-column
-              >
-              <el-table-column
-                prop="pro_name"
-                label="Nomi"
-                :min-width="100"
-                :max-width="400"
-                header-align="center"
-                align="center"
-              />
-              <el-table-column
-                prop="packingType"
-                label="Qadoq"
-                :min-width="100"
-                :max-width="400"
-                header-align="center"
-                align="center"
-              >
-                <template #default="{ row }"
-                  ><div class="text-green-600">
-                    {{ row.packingType }}
-                  </div></template
-                ></el-table-column
-              >
-
-              <el-table-column
-                prop="pro_quantity"
-                label="Miqdori"
-                :min-width="100"
-                :max-width="400"
-                header-align="center"
-                align="center"
-              >
-                <template #default="{ row }"
-                  ><div class="text-green-600">
-                    {{ formatPrice(row.pro_quantity) }} {{ row.pro_unit }}
-                  </div></template
-                ></el-table-column
-              >
-              <el-table-column
-                prop="pro_price"
-                label="Narxi (sum)"
-                :min-width="100"
-                :max-width="400"
-                header-align="center"
-                align="center"
-              >
-                <template #default="{ row }"
-                  ><div class="text-red-600">
-                    {{ formatPrice(row.pro_price) }} sum
-                  </div></template
-                ></el-table-column
-              >
-
-              <el-table-column
-                prop="pro_total_price"
-                label="Jami (sum)"
-                :min-width="100"
-                :max-width="400"
-                header-align="center"
-                align="center"
-                ><template #default="{ row }"
-                  ><div class="text-purple-600">
-                    {{ formatPrice(row.pro_total_price) }} sum
-                  </div></template
-                ></el-table-column
-              >
-
-              <el-table-column
-                fixed="right"
-                prop="id"
-                label=""
-                :min-width="60"
-                :max-width="100"
-                header-align="center"
-                align="center"
-              >
-                <template #default="scope">
-                  <router-link
-                    to=""
-                    @click="DeleteById(scope.row.id)"
-                    class="inline-flex items-center mt-4 ml-2 text-white hover:bg-slate-300 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
-                  >
-                    <i class="text-black fa-sharp fa-solid fa-trash fa-xs"></i>
-                  </router-link>
-                </template>
-              </el-table-column>
-            </el-table>
-            <div class="bg-white p-2 rounded-md flex justify-end">
-              <div
-                class="mb-1 col-span-12 w-full flex justify-end text-purple-600 font-semibold bg-purple-100 rounded-md p-2"
-              >
-                Jami :
-                {{ formatPrice(order.totalAmount) }} sum
-              </div>
-            </div>
+        <!-- Total -->
+        <div class="flex justify-end mt-3">
+          <div class="px-4 py-2 rounded-lg bg-purple-100 text-purple-700 font-semibold">
+            Jami: {{ formatPrice(order.totalAmount) }} so‘m
           </div>
         </div>
+      </div>
+    </div>
 
-        
-      </span>
-
-      <template #footer>
-        <div class="flex justify-between items-center mt-2 border-t pt-2 ">
+    <template #footer>
+        <div class="flex justify-between items-center mt-2 border-t pt-2  ml-4">
        
           <div
             class="col-span-12 cursor-pointer flex justify-end text-[12px] font-semibold gap-2"
@@ -578,8 +250,7 @@ onMounted(async () => {
         
         </div>
       </template>
-    </el-dialog>
-  </div>
+  </el-dialog>
 </template>
 
 <style scoped>

@@ -109,9 +109,8 @@ const timeFields = (row) => {
     },
   ];
 };
-onMounted(() => {
-  // GetAllCustomers()
-});
+
+
 </script>
 <template>
   <OrderModal />
@@ -190,7 +189,6 @@ onMounted(() => {
       <!-- Customer Details -->
       <transition name="expand" @enter="enter" @leave="leave">
         <div
-          v-show="opened.comRows?.[row._id]"
           class="overflow-hidden border-t border-gray-100"
         >
           <div class="grid grid-cols-2 gap-x-4 gap-y-3 p-2 text-[12px] text-gray-700">

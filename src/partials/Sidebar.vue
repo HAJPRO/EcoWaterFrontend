@@ -3188,19 +3188,22 @@
         </div>
       </div>
       
-      <!-- 🔥 Footer -->
+       <!-- 🔥 Footer -->
       <div
         :class="
           sidebarExpanded
-            ? 'w-6 4px-4 text-left items-start'
+            ? 'w-60 px-3'
             : 'w-16 px-1 text-center items-center mr-4'
         "
-        class="sticky bottom-0 z-50 w-full px-3 py-2   bg-slate-800 dark:bg-slate-800 shadow rounded-md"
+        class="sticky bottom-0 z-50 w-full px-3 py-2 border border-green-800 dark:border-slate-700 bg-slate-800 dark:bg-slate-800 shadow rounded-md"
       >
         <div class="flex items-center justify-between text-white">
           <!-- Aloqa markazi -->
           <div class="flex items-center gap-3">
             <div
+              :class="{
+                'ml-[-8px]': !sidebarExpanded,
+              }"
               class="w-9 h-9 flex items-center justify-center rounded-full bg-[#36d887] shadow cursor-pointer"
             >
               <i class="fa-solid fa-headset text-white text-lg"></i>

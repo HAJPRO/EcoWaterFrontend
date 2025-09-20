@@ -75,7 +75,7 @@ onMounted(async () => {
       <div class="flex items-center justify-between border-b pb-1">
         <div class="flex items-center gap-2">
           <i class="fa-solid fa-car-side text-blue-500 fa-lg"></i>
-          <h3 class="text-xl font-semibold text-slate-500 dark:text-slate-300">
+          <h3 class="text-lg font-semibold text-slate-500 dark:text-slate-300">
             Buyurtmaga haydovchi
             biriktirish
           </h3>
@@ -85,7 +85,7 @@ onMounted(async () => {
 
     <span>
       <el-form ref="formRef" :model="model" label-width="auto"
-        class="filter-box grid grid-cols-12 bg-[#e8eded] md:grid md:grid-cols-12 gap-1 sm:flex sm:flex-wrap rounded shadow-sm p-2 mt-2 text-[13px]"
+        class="filter-box grid grid-cols-12 bg-blue-50 md:grid md:grid-cols-12 gap-1 sm:flex sm:flex-wrap rounded shadow-sm p-2 mt-2 text-[13px]"
         size="small" label-position="top">
         <div class="mb-1 col-span-6">
           <el-form-item label="Haydovchi tanlang" prop="fullname" :rules="rules">
