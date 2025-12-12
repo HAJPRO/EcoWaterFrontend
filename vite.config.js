@@ -2,7 +2,7 @@ import { fileURLToPath, URL } from "url";
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
 // Electron yoki browser-ni aniqlash
-const isElectron = navigator.userAgent.toLowerCase().includes(' electron/');
+// const isElectron = navigator.userAgent.toLowerCase().includes(' electron/');
 
 
 // https://vitejs.dev/config/
