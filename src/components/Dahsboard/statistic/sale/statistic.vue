@@ -1,15 +1,10 @@
 <script setup>
+import { onMounted, computed, ref, watch } from "vue";
 import moment from "moment-timezone";
-import { onMounted, ref, computed } from "vue";
-import Title from "../../../../components/Title.vue";
-import { SaleStatisticsStore } from "../../../../stores/Dashboard/statistics/saleStatistic.store";
-const store_sale_statistics = SaleStatisticsStore();
 import { storeToRefs } from "pinia";
-const { metrics, barSeries, lineSeries, TopDrivers, TopCustomers } =
-  storeToRefs(store_sale_statistics);
-import { ElCard, ElTable, ElTableColumn, ElAvatar } from "element-plus";
-import "element-plus/dist/index.css";
+import Title from "../../../../components/Title.vue";
 
+// --- ECHARTS IMPORTS ---
 import { use } from "echarts/core";
 import VChart from "vue-echarts";
 import { CanvasRenderer } from "echarts/renderers";
@@ -21,6 +16,12 @@ import {
   LegendComponent,
 } from "echarts/components";
 
+// --- STORE ---
+import { SaleStatisticsStore } from "../../../../stores/Dashboard/statistics/saleStatistic.store";
+const store_sale_statistics = SaleStatisticsStore();
+const { metrics, barSeries, lineSeries, TopDrivers, TopCustomers } = storeToRefs(store_sale_statistics);
+
+// Echarts Register
 use([
   CanvasRenderer,
   BarChart,
@@ -31,769 +32,292 @@ use([
   LegendComponent,
 ]);
 
-const chartOptions = computed(() => ({
-  title: {
-    text: "Oylik sotuvlar (Ustunli)",
-    left: "center",
-  },
-  tooltip: {},
-  legend: {
-    data: ["Gazli", "Gazsiz", "Sharbatlar"],
-    top: "bottom",
-  },
-  xAxis: {
-    data: [
-      "Yanvar",
-      "Fevral",
-      "Mart",
-      "Aprel",
-      "May",
-      "Iyun",
-      "Iyul",
-      "Avgust",
-      "Sentabr",
-      "Oktabr",
-      "Noyabr",
-      "Dekabr",
-    ],
-  },
-  yAxis: {},
-  series: barSeries.value,
+// --- DARK MODE LOGIC (Loyiha global storiga ulash kerak) ---
+// Hozircha lokal test uchun:
+const isDark = ref(false); 
+const toggleTheme = () => {
+    isDark.value = !isDark.value;
+    if (isDark.value) document.documentElement.classList.add('dark');
+    else document.documentElement.classList.remove('dark');
+};
+
+// --- CHART OPTIONS (Dinamik) ---
+const commonChartOptions = computed(() => ({
+  textStyle: { fontFamily: 'Inter, sans-serif' },
+  backgroundColor: 'transparent',
+  grid: { top: '15%', left: '3%', right: '4%', bottom: '10%', containLabel: true },
 }));
 
+// Bar Chart
+const chartOptions = computed(() => ({
+  ...commonChartOptions.value,
+  title: { 
+      text: "Oylik sotuvlar (Kategoriya)", 
+      left: "left", 
+      textStyle: { fontSize: 14, color: isDark.value ? '#94a3b8' : '#64748b' } 
+  },
+  tooltip: { 
+      trigger: 'axis', 
+      backgroundColor: isDark.value ? '#1e293b' : 'rgba(255, 255, 255, 0.95)', 
+      borderColor: isDark.value ? '#334155' : '#e2e8f0',
+      textStyle: { color: isDark.value ? '#e2e8f0' : '#333' } 
+  },
+  legend: { 
+      bottom: 0, 
+      icon: 'circle',
+      textStyle: { color: isDark.value ? '#94a3b8' : '#64748b' }
+  },
+  xAxis: {
+    type: 'category',
+    data: ["Yan", "Fev", "Mar", "Apr", "May", "Iyun", "Iyul", "Avg", "Sen", "Okt", "Noy", "Dek"],
+    axisLine: { show: false },
+    axisTick: { show: false },
+    axisLabel: { color: isDark.value ? '#64748b' : '#94a3b8' }
+  },
+  yAxis: { 
+      type: 'value', 
+      splitLine: { lineStyle: { type: 'dashed', color: isDark.value ? '#334155' : '#e2e8f0' } },
+      axisLabel: { color: isDark.value ? '#64748b' : '#94a3b8' }
+  },
+  series: barSeries.value.map(s => ({ ...s, type: 'bar', barWidth: '15%', itemStyle: { borderRadius: [4, 4, 0, 0] } })),
+}));
+
+// Line Chart
 const lineChartOptions = computed(() => ({
-  title: {
-    text: "Oylik sotuvlar (Chiziqli)",
-    left: "center",
+  ...commonChartOptions.value,
+  title: { 
+      text: "Oylik sotuvlar (Mahsulot)", 
+      left: "left", 
+      textStyle: { fontSize: 14, color: isDark.value ? '#94a3b8' : '#64748b' } 
   },
-  tooltip: {
-    trigger: "axis",
+  tooltip: { 
+      trigger: "axis",
+      backgroundColor: isDark.value ? '#1e293b' : 'rgba(255, 255, 255, 0.95)', 
+      borderColor: isDark.value ? '#334155' : '#e2e8f0',
+      textStyle: { color: isDark.value ? '#e2e8f0' : '#333' }
   },
-  legend: {
-    data: ["Kola", "Fanta", "Chortoq", "Eco Water"],
-    top: "bottom",
+  legend: { 
+      bottom: 0, 
+      icon: 'roundRect',
+      textStyle: { color: isDark.value ? '#94a3b8' : '#64748b' }
   },
   xAxis: {
     type: "category",
-    data: [
-      "Yanvar",
-      "Fevral",
-      "Mart",
-      "Aprel",
-      "May",
-      "Iyun",
-      "Iyul",
-      "Avgust",
-      "Sentabr",
-      "Oktabr",
-      "Noyabr",
-      "Dekabr",
-    ],
+    boundaryGap: false,
+    data: ["Yan", "Fev", "Mar", "Apr", "May", "Iyun", "Iyul", "Avg", "Sen", "Okt", "Noy", "Dek"],
+    axisLine: { show: false },
+    axisTick: { show: false },
+    axisLabel: { color: isDark.value ? '#64748b' : '#94a3b8' }
   },
-  yAxis: {
-    type: "value",
+  yAxis: { 
+      type: "value", 
+      splitLine: { lineStyle: { type: 'dashed', color: isDark.value ? '#334155' : '#e2e8f0' } },
+      axisLabel: { color: isDark.value ? '#64748b' : '#94a3b8' }
   },
-  series: lineSeries.value,
+  series: lineSeries.value.map(s => ({ ...s, type: 'line', smooth: true, symbolSize: 6, lineStyle: { width: 3 } })),
 }));
 
+// --- UTILS ---
 const formatPrice = (price) => {
-  return new Intl.NumberFormat("uz-UZ").format(price);
+  return new Intl.NumberFormat("uz-UZ").format(price || 0);
 };
+
+// Hover state
+const hoveredRowId = ref(null);
+const setHover = (id) => hoveredRowId.value = id;
+const clearHover = () => hoveredRowId.value = null;
 
 onMounted(() => {
   try {
     store_sale_statistics.GetSaleStatistics();
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 });
 </script>
+
 <template>
-  <Title>
-    <template v-slot:title>
-      <h3>
-        <i class="fa-solid fa-chart-line mr-3 fa-md"></i>Sotuv statistikasi
-      </h3>
-    </template>
-  </Title>
-  <div class="p-2 grid grid-cols-12 gap-2">
-    <div class="grid grid-cols-1 col-span-12 md:grid-cols-3 gap-2">
-      <el-card
-        v-for="metric in metrics"
-        :key="metric.title"
-        :class="[
-          'rounded-2xl shadow text-gray-900',
-          metric.change > 0
-            ? 'bg-green-50'
-            : metric.change < 0
-            ? 'bg-purple-50'
-            : 'bg-gray-50',
-        ]"
+  <div class="p-2 font-sans text-slate-700 dark:text-slate-200 bg-slate-50/50 dark:bg-slate-900 min-h-screen transition-colors duration-300">
+    
+ <Title>
+      <template v-slot:title>
+        <h3><i class="fa-solid fa-chart-pie mr-3 fa-lg"></i>Sotuv statistikasi</h3> 
+      </template>
+    </Title>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-4 mt-2">
+      <div 
+        v-for="(metric, index) in metrics" 
+        :key="index"
+        class="bg-white dark:bg-slate-800 p-5 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700/50 relative overflow-hidden group hover:shadow-md transition-all duration-300"
       >
-        <div
-          class="flex flex-col items-center justify-center text-center h-24 gap-1"
-        >
-          <div class="text-sm text-gray-500 flex items-center gap-1">
-            {{ metric.title }}
-            <el-tooltip content="Qo'shimcha ma'lumot" placement="top">
-              <i class="el-icon-info text-gray-400" />
-            </el-tooltip>
-          </div>
-          <div class="text-2xl font-bold text-gray-800">
-            {{ metric.value.toLocaleString() }}
-          </div>
-          <div
-            class="text-xs flex items-center gap-1"
-            :class="
-              metric.change > 0
-                ? 'text-green-600'
-                : metric.change < 0
-                ? 'text-red-600'
-                : 'text-gray-500'
-            "
-          >
-            {{ metric.text }}
-            <span v-if="metric.change !== 0">
-              {{ Math.abs(metric.change) }}%
-              <span v-if="metric.change > 0">▲</span>
-              <span v-else>▼</span>
-            </span>
-          </div>
+        <div class="absolute -right-6 -top-6 w-24 h-24 rounded-full opacity-10 dark:opacity-20 transition-transform group-hover:scale-110"
+             :class="metric.change >= 0 ? 'bg-emerald-500' : 'bg-rose-500'"></div>
+
+        <div class="flex justify-between items-start mb-2 relative z-10">
+            <div>
+                <p class="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">{{ metric.title }}</p>
+                <h3 class="text-2xl font-bold text-slate-800 dark:text-white mt-1">{{ metric.value?.toLocaleString() }}</h3>
+            </div>
+            <div class="w-8 h-8 rounded-lg flex items-center justify-center text-sm font-bold transition-colors"
+                 :class="metric.change >= 0 
+                    ? 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400' 
+                    : 'bg-rose-50 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400'">
+                 <i :class="metric.change >= 0 ? 'fa-solid fa-arrow-trend-up' : 'fa-solid fa-arrow-trend-down'"></i>
+            </div>
         </div>
-      </el-card>
+        
+        <div class="flex items-center gap-2 text-xs font-medium relative z-10">
+            <span :class="metric.change >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'" class="flex items-center gap-1">
+                {{ metric.change > 0 ? '+' : '' }}{{ metric.change }}%
+            </span>
+            <span class="text-slate-400 dark:text-slate-500">{{ metric.text }}</span>
+        </div>
+      </div>
     </div>
 
-    <!-- 1-chi grafik (bar) -->
-    <el-card class="2xl:col-span-12 xs:col-span-12 rounded-2xl shadow-md">
-      <h2
-        class="text-lg text-center bg-slate-100 p-2 text-gray-500 rounded-md font-semibold mb-6"
-      >
-        Sotuvlar statistikasi yo'nalishlar bo'yicha
-      </h2>
-      <v-chart class="h-96 w-full" :option="chartOptions" autoresize />
-    </el-card>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
+      <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700/50 transition-colors">
+        <v-chart class="h-80 w-full" :option="chartOptions" autoresize />
+      </div>
+      <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700/50 transition-colors">
+        <v-chart class="h-80 w-full" :option="lineChartOptions" autoresize />
+      </div>
+    </div>
 
-    <!-- 2-chi grafik (line) -->
-    <el-card class="2xl:col-span-12 xs:col-span-12 rounded-2xl shadow-md">
-      <h2
-        class="text-lg text-center bg-slate-100 p-2 text-gray-500 rounded-md font-semibold mb-6"
-      >
-        Sotuvlar statistikasi mahsulot turlari bo'yicha
-      </h2>
-      <v-chart class="h-96" :option="lineChartOptions" autoresize />
-    </el-card>
-    <!-- 3-chi grafik (haydovchilar ) -->
-    <el-card
-      class="col-span-12 mt-4 rounded-2xl shadow-md overflow-visible relative z-30"
-    >
-      <h2
-        class="text-lg text-center bg-slate-100 p-2 text-gray-500 rounded-md font-semibold mb-6"
-      >
-        Aktiv haydovchilar ro'yxati
-      </h2>
-      <el-table
-        :data="TopDrivers"
-        class="overflow-visible relative z-30"
-        style="border-radius: 12px; width: 100%"
-      >
-        <el-table-column label="Xodim" width="250">
-          <template #default="{ row }">
-            <el-tooltip
-              placement="right"
-              effect="light"
-              popper-class="custom-tooltip"
-            >
-              <template #content>
-                <img
-                  :src="
-                    row.driver.avatar ||
-                    'https://easy-feedback.com/wp-content/uploads/2022/10/Employee-Journey-What-it-is-and-how-to-improve-it-768x512.jpg'
-                  "
-                  class="w-48 h-48 rounded-lg shadow-xl border object-cover"
-                  alt="Driver avatar"
-                />
-              </template>
-              <div class="flex items-center gap-3 cursor-pointer">
-                <el-avatar
-                  :src="
-                    row.driver.avatar ||
-                    'https://easy-feedback.com/wp-content/uploads/2022/10/Employee-Journey-What-it-is-and-how-to-improve-it-768x512.jpg'
-                  "
-                  size="medium"
-                />
-                <span class="font-medium">{{ row.driver.fullname }}</span>
-              </div>
-            </el-tooltip>
-          </template>
-        </el-table-column>
+    <div class="grid grid-cols-1 xl:grid-cols-2 gap-4">
+        
+      <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700/50 flex flex-col transition-colors">
+        <div class="p-4 border-b border-slate-50 dark:border-slate-700 flex justify-between items-center">
+             <h3 class="font-bold text-slate-700 dark:text-slate-200 flex items-center gap-2">
+                <i class="fa-solid fa-trophy text-amber-400"></i> Top Haydovchilar
+             </h3>
+             <button class="text-xs text-indigo-600 dark:text-indigo-400 hover:underline">Barchasi</button>
+        </div>
+        <div class="flex-1 overflow-x-auto p-2">
+            <table class="w-full text-left text-xs">
+                <thead class="bg-slate-50 dark:bg-slate-700/50 text-slate-400 dark:text-slate-400 font-semibold uppercase">
+                    <tr>
+                        <th class="px-3 py-2 rounded-l-lg">№</th>
+                        <th class="px-3 py-2">Xodim</th>
+                        <th class="px-3 py-2">Bo'lim/Rol</th>
+                        <th class="px-3 py-2 text-right rounded-r-lg">Sotuv</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-50 dark:divide-slate-700">
+                    <tr v-for="(row, i) in TopDrivers" :key="i" class="group hover:bg-slate-50/80 dark:hover:bg-slate-700/30 transition-colors relative">
+                        <td class="px-3 py-3 font-mono text-slate-400">{{ i + 1 }}</td>
+                        <td class="px-3 py-3 relative">
+                            <div class="flex items-center gap-3 cursor-pointer"
+                                 @mouseenter="setHover('d-'+i)" @mouseleave="clearHover()">
+                                <img :src="row.driver.avatar || 'https://ui-avatars.com/api/?name='+row.driver.fullname+'&background=random'" 
+                                     class="w-8 h-8 rounded-full object-cover border border-slate-200 dark:border-slate-600">
+                                <div>
+                                    <div class="font-semibold text-slate-700 dark:text-slate-200 group-hover:text-indigo-600 dark:group-hover:text-indigo-400">{{ row.driver.fullname }}</div>
+                                    <div class="text-[10px] text-slate-400 dark:text-slate-500">{{ row.driver.phoneNumber }}</div>
+                                </div>
+                            </div>
+                            
+                            <transition name="fade">
+                                <div v-if="hoveredRowId === 'd-'+i" 
+                                     class="absolute left-10 bottom-full mb-2 z-50 w-48 bg-white dark:bg-slate-800 p-1 rounded-xl shadow-xl border border-slate-100 dark:border-slate-600 pointer-events-none">
+                                    <img :src="row.driver.avatar || 'https://ui-avatars.com/api/?name='+row.driver.fullname+'&background=random'" 
+                                         class="w-full h-48 object-cover rounded-lg">
+                                    <div class="text-center p-1 font-bold text-xs text-slate-600 dark:text-slate-300">{{ row.driver.fullname }}</div>
+                                </div>
+                            </transition>
+                        </td>
+                        <td class="px-3 py-3">
+                            <div class="text-slate-600 dark:text-slate-300 font-medium">{{ row.driver.position }}</div>
+                            <div class="flex gap-1 mt-1">
+                                <span v-for="r in row.roles" :key="r.name" 
+                                      class="px-1.5 py-0.5 bg-indigo-50 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-300 rounded text-[9px] font-bold">
+                                    {{ r.name }}
+                                </span>
+                            </div>
+                        </td>
+                        <td class="px-3 py-3 text-right">
+                            <div class="font-bold text-emerald-600 dark:text-emerald-400">{{ formatPrice(row.driver.totalSales) }}</div>
+                            <div class="text-[9px] text-slate-400">so'm</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+      </div>
 
-        <el-table-column
-          header-align="center"
-          align="center"
-          type="index"
-          prop="index"
-          fixed="left"
-          label="№"
-          width="60"
-        />
+      <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700/50 flex flex-col transition-colors">
+        <div class="p-4 border-b border-slate-50 dark:border-slate-700 flex justify-between items-center">
+             <h3 class="font-bold text-slate-700 dark:text-slate-200 flex items-center gap-2">
+                <i class="fa-solid fa-users text-blue-400"></i> Top Mijozlar
+             </h3>
+             <button class="text-xs text-indigo-600 dark:text-indigo-400 hover:underline">Barchasi</button>
+        </div>
+        <div class="flex-1 overflow-x-auto p-2">
+            <table class="w-full text-left text-xs">
+                <thead class="bg-slate-50 dark:bg-slate-700/50 text-slate-400 dark:text-slate-400 font-semibold uppercase">
+                    <tr>
+                        <th class="px-3 py-2 rounded-l-lg">№</th>
+                        <th class="px-3 py-2">Mijoz</th>
+                        <th class="px-3 py-2">Manzil</th>
+                        <th class="px-3 py-2 text-right rounded-r-lg">Xarid</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-50 dark:divide-slate-700">
+                    <tr v-for="(row, i) in TopCustomers" :key="i" class="group hover:bg-slate-50/80 dark:hover:bg-slate-700/30 transition-colors relative">
+                        <td class="px-3 py-3 font-mono text-slate-400">{{ i + 1 }}</td>
+                        <td class="px-3 py-3 relative">
+                             <div class="flex items-center gap-3 cursor-pointer"
+                                 @mouseenter="setHover('c-'+i)" @mouseleave="clearHover()">
+                                <img :src="row.customer.avatar || 'https://ui-avatars.com/api/?name='+row.customer.fullname+'&background=random'" 
+                                     class="w-8 h-8 rounded-full object-cover border border-slate-200 dark:border-slate-600">
+                                <div>
+                                    <div class="font-semibold text-slate-700 dark:text-slate-200 group-hover:text-blue-600 dark:group-hover:text-blue-400">{{ row.customer.fullname }}</div>
+                                    <div class="text-[10px] text-slate-400 dark:text-slate-500 flex items-center gap-1">
+                                        <span class="w-2 h-2 rounded-full" :class="row.customer.status === 'Active' ? 'bg-emerald-500' : 'bg-rose-500'"></span>
+                                        {{ row.customer.status }}
+                                    </div>
+                                </div>
+                            </div>
 
-        <el-table-column
-          align="center"
-          header-align="center"
-          prop="driver.department"
-          label="Bo'lim"
-          :min-width="100"
-          :max-width="400"
-        />
-        <el-table-column
-          align="center"
-          header-align="center"
-          prop="driver.position"
-          label="Lavozim"
-          :min-width="200"
-          :max-width="400"
-        />
-        <el-table-column
-          align="center"
-          header-align="center"
-          prop="driver.role"
-          label="Rol"
-          :min-width="100"
-          :max-width="400"
-        >
-          <template #default="{ row }">
-            <el-tooltip placement="left" effect="blue">
-              <template #content>
-                <div
-                  class="bg-[#e8eded] text-white p-4 rounded text-left space-y-3"
-                  style="width: 300px; max-height: 1200px; overflow-y: auto"
-                >
-                  <div v-if="row.roles && row.roles.length">
-                    <div
-                      class="bg-white p-2 rounded mb-2"
-                      v-for="(role, index) in row.roles"
-                      :key="index"
-                    >
-                      <div
-                        class="text-center font-semibold text-[16px] text-white p-2 bg-purple-500 rounded mb-1"
-                      >
-                        {{ role.name }}
-                      </div>
-                      <ul class="ml-4 list-disc mb-3 text-purple-600">
-                        <div
-                          class=""
-                          v-for="(permission, pIndex) in role.permissions"
-                          :key="pIndex"
-                        >
-                          {{ permission }}
-                        </div>
-                      </ul>
-                    </div>
-                  </div>
-                  <div class="text-center font-semibold text-gray-800" v-else>
-                    Rol topilmadi
-                  </div>
-                </div>
-              </template>
+                             <transition name="fade">
+                                <div v-if="hoveredRowId === 'c-'+i" 
+                                     class="absolute left-10 bottom-full mb-2 z-50 w-48 bg-white dark:bg-slate-800 p-1 rounded-xl shadow-xl border border-slate-100 dark:border-slate-600 pointer-events-none">
+                                    <img :src="row.customer.avatar || 'https://ui-avatars.com/api/?name='+row.customer.fullname+'&background=random'" 
+                                         class="w-full h-48 object-cover rounded-lg">
+                                    <div class="text-center p-1 font-bold text-xs text-slate-600 dark:text-slate-300">{{ row.customer.fullname }}</div>
+                                </div>
+                            </transition>
+                        </td>
+                        <td class="px-3 py-3">
+                            <div class="text-slate-600 dark:text-slate-300 font-medium">{{ row.customer.address?.region }}</div>
+                            <div class="text-[10px] text-slate-400 dark:text-slate-500">{{ row.customer.address?.district }}</div>
+                        </td>
+                        <td class="px-3 py-3 text-right">
+                            <div class="font-bold text-blue-600 dark:text-blue-400">{{ formatPrice(row.customer.totalSales) }}</div>
+                            <div class="text-[9px] text-slate-400">so'm</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+      </div>
 
-              <div class="text-purple-500 cursor-pointer hover:underline">
-                Ko'rish
-              </div>
-            </el-tooltip>
-          </template>
-        </el-table-column>
+    </div>
 
-        <el-table-column
-          align="center"
-          header-align="center"
-          prop="driver.address.region"
-          label="Viloyat"
-          :min-width="100"
-          :max-width="400"
-        />
-        <el-table-column
-          align="center"
-          header-align="center"
-          prop="driver.address.district"
-          label="Tuman"
-          :min-width="100"
-          :max-width="400"
-        />
-        <el-table-column
-          align="center"
-          header-align="center"
-          prop="driver.address.neighborhood"
-          label="Mahalla"
-          :min-width="100"
-          :max-width="400"
-        />
-        <el-table-column
-          align="center"
-          header-align="center"
-          prop="driver.address.street"
-          label="Ko'cha"
-          :min-width="100"
-          :max-width="400"
-        />
-        <el-table-column
-          align="center"
-          header-align="center"
-          prop="driver.phoneNumber"
-          label="Telefon"
-          :min-width="100"
-          :max-width="400"
-          ><template #default="{ row }"
-            ><div class="font-semibold text-blue-600">
-              <i class="fas fa-phone text-gray-500 fa-sm mr-2"></i>
-              {{ row.phoneNumber }}
-            </div></template
-          ></el-table-column
-        >
-
-        <el-table-column
-          label="Bonus ball"
-          :min-width="100"
-          header-align="center"
-          align="center"
-          ><template #default="scope">{{ 0 }}</template></el-table-column
-        >
-        <el-table-column
-          label="Ishga qabul qilingan sana"
-          :min-width="150"
-          :max-width="400"
-          header-align="center"
-          align="center"
-          ><template #default="scope">
-            {{
-              scope.row.driver.registeredAt
-                ? moment
-                    .utc(scope.row.registeredAt) // 🟢 UTC formatda olish
-                    .tz("Asia/Tashkent") // 🟢 UTC+5 ga aylantirish
-                    .format("DD.MM.YYYY HH:mm:ss") // 🟢 To‘g‘ri formatda chiqarish
-                : "-"
-            }}
-          </template></el-table-column
-        >
-        <el-table-column
-          fixed="right"
-          label="Sotuv miqdori (so'mda)"
-          :min-width="300"
-          :max-width="400"
-          header-align="center"
-          align="center"
-        >
-          <template #default="{ row }"
-            ><div
-              class="bg-green-300 p-2 rounded-md text-gray-800 font-semibold text-[12px]"
-            >
-              {{
-                row.driver.totalSales ? formatPrice(row.driver.totalSales) : 0
-              }}
-              so'm
-            </div></template
-          ></el-table-column
-        >
-        <el-table-column
-          fixed="right"
-          label="Holati"
-          :min-width="100"
-          :max-width="400"
-          header-align="center"
-          align="center"
-        >
-          <template #default="scope">
-            <router-link
-              to=""
-              class="cursor-pointer inline-flex items-center text-red bg-[#e4e9e9] hover:bg-[#d7ebeb] font-medium rounded-md text-[12px] w-ful p-[5px] sm:w-auto text-center"
-            >
-              {{ scope.row.driver.status }}
-            </router-link>
-          </template>
-        </el-table-column>
-
-        <el-table-column
-          fixed="right"
-          prop="id"
-          label=""
-          width="60"
-          header-align="center"
-          align="center"
-        >
-          <template #default="{ row }">
-            <!-- Dropdown -->
-            <el-dropdown
-              trigger="click"
-              class="relative"
-              :popper-options="{
-                modifiers: [
-                  {
-                    name: 'preventOverflow',
-                    options: { boundary: 'window' },
-                  },
-                ],
-              }"
-            >
-              <el-button type="text" class="text-sm; text-gray-500">
-                <i class="fa-solid fa-ellipsis-vertical"></i>
-              </el-button>
-              <template #dropdown>
-                <el-dropdown-menu slot="dropdown" append-to-body class="z-50">
-                  <el-dropdown-item
-                    class="text-[13px] text-green-600"
-                    @click="GetOne(row._id)"
-                    ><template #default=""
-                      ><div>
-                        <i
-                          class="text-black fa-solid fa-magnifying-glass fa-sm mr-2"
-                        ></i
-                        >Batafsil
-                      </div>
-                    </template></el-dropdown-item
-                  >
-
-                  <el-dropdown-item
-                    class="text-[13px] text-indigo-600"
-                    @click="UpdateById(row._id)"
-                    ><template #default="{}"
-                      ><div>
-                        <i
-                          class="text-black fa-solid fa-pen-to-square fa-pen-to-square fa-sm mr-1"
-                        ></i>
-                        O'zgatirish
-                      </div>
-                    </template></el-dropdown-item
-                  >
-                  <el-dropdown-item
-                    class="text-[13px] text-yellow-500"
-                    @click="ExportExcel(row._id)"
-                    ><template #default="{}"
-                      ><div>
-                        <i
-                          class="text-black fa-solid fa-file-excel fa-sm mr-1"
-                        ></i>
-                        Excel
-                      </div>
-                    </template></el-dropdown-item
-                  >
-                  <el-dropdown-item
-                    class="text-[13px]"
-                    @click="updateById(row._id)"
-                  >
-                    <template #default>
-                      <div>
-                        <i
-                          class="text-black fa-solid fa-box-archive fa-sm mr-1"
-                        ></i>
-                        Arxivlash
-                      </div>
-                    </template>
-                  </el-dropdown-item>
-
-                  <el-dropdown-item
-                    @click="deleteById(row._id)"
-                    class="text-red-500 text-[13px]"
-                  >
-                    <template #default=""
-                      ><div>
-                        <i class="text-black fa-solid fa-trash fa-sm mr-1"></i>
-                        O'chirish
-                      </div>
-                    </template>
-                  </el-dropdown-item>
-                </el-dropdown-menu>
-              </template>
-            </el-dropdown>
-          </template>
-        </el-table-column>
-      </el-table>
-    </el-card>
-    <!-- //// -->
-    <!-- 4-chi grafik (Mijozlar ) -->
-    <el-card
-      class="col-span-12 mt-4 rounded-2xl shadow-md overflow-visible relative z-30"
-    >
-      <h2
-        class="text-lg text-center bg-slate-100 p-2 text-gray-500 rounded-md font-semibold mb-6"
-      >
-        Aktiv mijozlar ro'yxati
-      </h2>
-      <el-table
-        :data="TopCustomers"
-        class="overflow-visible relative z-30"
-        style="border-radius: 12px; width: 100%"
-      >
-        <el-table-column label="Mijoz" width="250">
-          <template #default="{ row }">
-            <el-tooltip
-              placement="right"
-              effect="light"
-              popper-class="custom-tooltip"
-            >
-              <template #content>
-                <img
-                  :src="
-                    row.customer.avatar ||
-                    'https://easy-feedback.com/wp-content/uploads/2022/10/Employee-Journey-What-it-is-and-how-to-improve-it-768x512.jpg'
-                  "
-                  class="w-48 h-48 rounded-lg shadow-xl border object-cover"
-                  alt="Driver avatar"
-                />
-              </template>
-              <div class="flex items-center gap-3 cursor-pointer">
-                <el-avatar
-                  :src="
-                    row.customer.avatar ||
-                    'https://easy-feedback.com/wp-content/uploads/2022/10/Employee-Journey-What-it-is-and-how-to-improve-it-768x512.jpg'
-                  "
-                  size="medium"
-                />
-                <span class="font-medium">{{ row.customer.fullname }}</span>
-              </div>
-            </el-tooltip>
-          </template>
-        </el-table-column>
-
-        <el-table-column
-          header-align="center"
-          align="center"
-          type="index"
-          prop="index"
-          fixed="left"
-          label="№"
-          width="60"
-        />
-
-        <el-table-column
-          align="center"
-          header-align="center"
-          prop="customer.position"
-          label="Darajasi"
-          :min-width="100"
-          :max-width="400"
-        />
-        <el-table-column
-          align="center"
-          header-align="center"
-          prop="customer.address.region"
-          label="Viloyat"
-          :min-width="100"
-          :max-width="400"
-        />
-        <el-table-column
-          align="center"
-          header-align="center"
-          prop="customer.address.district"
-          label="Tuman"
-          :min-width="100"
-          :max-width="400"
-        />
-        <el-table-column
-          align="center"
-          header-align="center"
-          prop="customer.address.neighborhood"
-          label="Mahalla"
-          :min-width="100"
-          :max-width="400"
-        />
-        <el-table-column
-          align="center"
-          header-align="center"
-          prop="customer.address.street"
-          label="Ko'cha"
-          :min-width="100"
-          :max-width="400"
-        />
-        <el-table-column
-          align="center"
-          header-align="center"
-          prop="customer.phoneNumber"
-          label="Telefon"
-          :min-width="100"
-          :max-width="400"
-          ><template #default="{ row }"
-            ><div class="font-semibold text-blue-600">
-              <i class="fas fa-phone text-gray-500 fa-sm mr-2"></i>
-              {{ row.phoneNumber }}
-            </div></template
-          ></el-table-column
-        >
-
-        <el-table-column
-          label="Bonus ball"
-          :min-width="100"
-          :max-width="400"
-          header-align="center"
-          align="center"
-          ><template #default="scope">{{ 0 }}</template></el-table-column
-        >
-        <el-table-column
-          label="Jami buyurtmalari"
-          :min-width="150"
-          :max-width="400"
-          header-align="center"
-          align="center"
-          ><template #default="scope">{{ 0 }}</template></el-table-column
-        >
-        <el-table-column
-          label="Mijoz bo'lgan sana"
-          :min-width="200"
-          :max-width="400"
-          header-align="center"
-          align="center"
-          ><template #default="scope">
-            {{
-              scope.row.customer.registeredAt
-                ? moment
-                    .utc(scope.row.registeredAt) // 🟢 UTC formatda olish
-                    .tz("Asia/Tashkent") // 🟢 UTC+5 ga aylantirish
-                    .format("DD.MM.YYYY HH:mm:ss") // 🟢 To‘g‘ri formatda chiqarish
-                : "-"
-            }}
-          </template></el-table-column
-        >
-        <el-table-column
-          fixed="right"
-          label="Sotuv miqdori (so'mda)"
-          :min-width="300"
-          :max-width="400"
-          header-align="center"
-          align="center"
-        >
-          <template #default="{ row }"
-            ><div
-              class="bg-green-300 p-2 rounded-md text-gray-800 font-semibold text-[12px]"
-            >
-              {{
-                row.customer.totalSales
-                  ? formatPrice(row.customer.totalSales)
-                  : 0
-              }}
-              so'm
-            </div></template
-          ></el-table-column
-        >
-        <el-table-column
-          fixed="right"
-          label="Holati"
-          :min-width="100"
-          :max-width="400"
-          header-align="center"
-          align="center"
-        >
-          <template #default="scope">
-            <router-link
-              to=""
-              class="cursor-pointer inline-flex items-center text-red bg-[#e4e9e9] hover:bg-[#d7ebeb] font-medium rounded-md text-[12px] w-ful p-[5px] sm:w-auto text-center"
-            >
-              {{ scope.row.customer.status }}
-            </router-link>
-          </template>
-        </el-table-column>
-
-        <el-table-column
-          fixed="right"
-          prop="id"
-          label=""
-          width="60"
-          header-align="center"
-          align="center"
-        >
-          <template #default="{ row }">
-            <!-- Dropdown -->
-            <el-dropdown
-              trigger="click"
-              class="relative"
-              :popper-options="{
-                modifiers: [
-                  {
-                    name: 'preventOverflow',
-                    options: { boundary: 'window' },
-                  },
-                ],
-              }"
-            >
-              <el-button type="text" class="text-sm; text-gray-500">
-                <i class="fa-solid fa-ellipsis-vertical"></i>
-              </el-button>
-              <template #dropdown>
-                <el-dropdown-menu slot="dropdown" append-to-body class="z-50">
-                  <el-dropdown-item
-                    class="text-[13px] text-green-600"
-                    @click="GetOne(row._id)"
-                    ><template #default=""
-                      ><div>
-                        <i
-                          class="text-black fa-solid fa-magnifying-glass fa-sm mr-2"
-                        ></i
-                        >Batafsil
-                      </div>
-                    </template></el-dropdown-item
-                  >
-
-                  <el-dropdown-item
-                    class="text-[13px] text-indigo-600"
-                    @click="UpdateById(row._id)"
-                    ><template #default="{}"
-                      ><div>
-                        <i
-                          class="text-black fa-solid fa-pen-to-square fa-pen-to-square fa-sm mr-1"
-                        ></i>
-                        O'zgatirish
-                      </div>
-                    </template></el-dropdown-item
-                  >
-                  <el-dropdown-item
-                    class="text-[13px] text-yellow-500"
-                    @click="ExportExcel(row._id)"
-                    ><template #default="{}"
-                      ><div>
-                        <i
-                          class="text-black fa-solid fa-file-excel fa-sm mr-1"
-                        ></i>
-                        Excel
-                      </div>
-                    </template></el-dropdown-item
-                  >
-                  <el-dropdown-item
-                    class="text-[13px]"
-                    @click="updateById(row._id)"
-                  >
-                    <template #default>
-                      <div>
-                        <i
-                          class="text-black fa-solid fa-box-archive fa-sm mr-1"
-                        ></i>
-                        Arxivlash
-                      </div>
-                    </template>
-                  </el-dropdown-item>
-
-                  <el-dropdown-item
-                    @click="deleteById(row._id)"
-                    class="text-red-500 text-[13px]"
-                  >
-                    <template #default=""
-                      ><div>
-                        <i class="text-black fa-solid fa-trash fa-sm mr-1"></i>
-                        O'chirish
-                      </div>
-                    </template>
-                  </el-dropdown-item>
-                </el-dropdown-menu>
-              </template>
-            </el-dropdown>
-          </template>
-        </el-table-column>
-      </el-table>
-    </el-card>
-    <!-- //// -->
   </div>
 </template>
 
 <style scoped>
-.custom-tooltip {
-  padding: 0; /* tooltip ichidagi bo‘sh joylarni olib tashlash */
-  background: transparent; /* fonni shaffof qilish */
-  box-shadow: none; /* soyani olib tashlash */
+/* Tooltip animatsiyasi */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+  transform: translateY(10px) scale(0.95);
 }
 </style>

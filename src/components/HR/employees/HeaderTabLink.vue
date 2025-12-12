@@ -1,148 +1,65 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import { loading } from "../../../utils/Loader";
-import { EmployeeManagmentStore } from "../../../stores/HR/employee/employee.store";
-const store_employees = EmployeeManagmentStore();
 import { storeToRefs } from "pinia";
+import { EmployeeManagmentStore } from "../../../stores/HR/employee/employee.store"; // To'g'ri store
+import BaseTabs from "../../../UI/BaseTabs.vue"; // Yangi UI komponent
+
+// Store-ni chaqirish
+const store_employees = EmployeeManagmentStore();
 const { all_length } = storeToRefs(store_employees);
-const IsActive = (is_active) => {
-  store_employees.GetIsActive(is_active);
+
+// --- 1. TABLAR KONFIGURATSIYASI ---
+// Eski koddagi barcha kategoriyalarni shu yerga yozdik
+const employeeTabs = [
+  { id: 1, label: "Barchasi", key: "all", icon: "fa-solid fa-list-ul" },
+  { id: 2, label: "Adminstratsiya", key: "admin", icon: "fa-solid fa-user-tie" },
+  { id: 3, label: "Haydovchilar", key: "drivers", icon: "fa-solid fa-car" },
+  { id: 4, label: "Agentlar", key: "agents", icon: "fa-solid fa-users" },
+  { id: 5, label: "Ishchi xodimlar", key: "workers", icon: "fa-solid fa-users-rectangle" },
+];
+
+// --- 2. ACTIVE STATE (LocalStorage bilan) ---
+// Oxirgi tanlangan bo'limni eslab qolish uchun
+const savedTab = localStorage.getItem("EmployeeActiveTab");
+const activeTabId = ref(savedTab ? Number(savedTab) : 1);
+
+// --- 3. DATA FETCHING (Ma'lumot olish) ---
+const fetchData = async () => {
+  // Storega qaysi tab aktivligini bildiramiz (eski koddagi IsActive funksiyasi)
+  store_employees.GetIsActive(activeTabId.value);
+
+  // Ma'lumotlarni yuklaymiz
+  await store_employees.GetAll({
+    status: activeTabId.value,
+    page: 1,
+    limit: 10,
+  });
 };
 
-const getAll = async () => {
-  IsActive(isActive.value);
-  store_employees.GetAll({ status: isActive.value, page: 1, limit: 10 });
+// --- 4. HANDLER (Tab o'zgarganda) ---
+const handleTabChange = (newId) => {
+  activeTabId.value = newId;
+  localStorage.setItem("EmployeeActiveTab", newId); // Tanlovni saqlash
+  fetchData(); // Yangi ma'lumotni tortish
 };
-const isActive = ref(1);
-const ActiveTabLink = (num) => {
-  if (num === 1) {
-    isActive.value = 1;
-    return getAll();
-  }
-  if (num === 2) {
-    isActive.value = 2;
-    return getAll();
-  }
-  if (num === 3) {
-    isActive.value = 3;
-    return getAll();
-  }
-  if (num === 4) {
-    isActive.value = 4;
-    return getAll();
-  }
-  if (num === 5) {
-    isActive.value = 5;
-    return getAll();
-  }
-};
-onMounted(async () => {
+
+// Sahifa yuklanganda ishga tushadi
+onMounted(() => {
   try {
-    await getAll();
+    fetchData();
   } catch (err) {
-    console.log(err);
+    console.error("Xatolik:", err);
   }
 });
 </script>
+
 <template>
-  <div
-    class="grid grid-cols-12 grid-flow-col justify-between bg-white rounded-md shadow-md p-2 mb-2"
-  >
-    <div class="col-span-9 grid-flow-col flex-wrap">
-      <router-link
-        @click="ActiveTabLink(1)"
-        to=""
-        :class="{ activeTab: isActive === 1 }"
-        class="inline-flex text-[13px] items-center mr-2 px-4 py-1 mb-1 text-sm font-medium text-center text-red hover:border-b-2 border-solid border-[#36d887] bg-[#e4e9e9] text-bold rounded"
-      >
-        <i class="fa-solid fa-list-ul mr-2 fa-md"></i> Barchasi
-        <div class="flex flex-shrink-0 ml-2">
-          <span
-            :class="{ activeTabIcon: isActive === 1 }"
-            class="inline-flex items-center justify-center h-5 text-[11px] font-medium text-white bg-[#36d887] px-3 py-2 rounded"
-          >
-            {{ all_length ? all_length.all : 0 }}</span
-          >
-        </div>
-      </router-link>
-      <router-link
-        to=""
-        @click="ActiveTabLink(2)"
-        :class="{ activeTab: isActive === 2 }"
-        class="inline-flex text-[13px] items-center mr-2 px-4 py-1 mb-1 text-sm font-medium text-center text-red hover:border-b-2 border-solid border-[#36d887] bg-[#e4e9e9] text-bold rounded"
-      >
-        <i class="fa-solid fa-user-tie mr-2 fa-xm"></i>Adminstratsiya
-        <div class="flex flex-shrink-0 ml-2">
-          <span
-            :class="{ activeTabIcon: isActive === 2 }"
-            class="inline-flex items-center justify-center h-5 text-[11px] font-medium text-white bg-[#36d887] px-3 py-2 rounded"
-          >
-            {{ 0 }}</span
-          >
-        </div>
-      </router-link>
-      <router-link
-        @click="ActiveTabLink(3)"
-        to=""
-        :class="{ activeTab: isActive === 3 }"
-        class="inline-flex text-[13px] items-center mr-2 px-4 py-1 mb-1 text-sm font-medium text-center text-red hover:border-b-2 border-solid border-[#36d887] bg-[#e4e9e9] text-bold rounded"
-      >
-        <i class="fa-solid fa-car mr-2 fa-xm"></i> Haydovchilar
-        <div class="flex flex-shrink-0 ml-2">
-          <span
-            :class="{ activeTabIcon: isActive === 3 }"
-            class="inline-flex items-center justify-center h-5 text-[11px] font-medium text-white bg-[#36d887] px-3 py-2 rounded"
-          >
-            {{ 0 }}</span
-          >
-        </div>
-      </router-link>
-      <router-link
-        @click="ActiveTabLink(4)"
-        to=""
-        :class="{ activeTab: isActive === 4 }"
-        class="inline-flex text-[13px] items-center mr-2 px-4 py-1 mb-1 text-sm font-medium text-center text-red hover:border-b-2 border-solid border-[#36d887] bg-[#e4e9e9] text-bold rounded"
-      >
-        <i class="fa-solid fa-users mr-2 fa-xm"></i> Agentlar
-        <div class="flex flex-shrink-0 ml-2">
-          <span
-            :class="{ activeTabIcon: isActive === 4 }"
-            class="inline-flex items-center justify-center h-5 text-[11px] font-medium text-white bg-[#36d887] px-3 py-2 rounded"
-          >
-            {{ 0 }}</span
-          >
-        </div>
-      </router-link>
-      <router-link
-        @click="ActiveTabLink(5)"
-        to=""
-        :class="{ activeTab: isActive === 5 }"
-        class="inline-flex text-[13px] items-center mr-2 px-4 py-1 mb-1 text-sm font-medium text-center text-red hover:border-b-2 border-solid border-[#36d887] bg-[#e4e9e9] text-bold rounded"
-      >
-        <i class="fa-solid fa-users-rectangle mr-2 fa-xm"></i> Ishchi xodimlar
-        <div class="flex flex-shrink-0 ml-2">
-          <span
-            :class="{ activeTabIcon: isActive === 5 }"
-            class="inline-flex items-center justify-center h-5 text-[11px] font-medium text-white bg-[#36d887] px-3 py-2 rounded"
-          >
-            {{ 0 }}</span
-          >
-        </div>
-      </router-link>
-    </div>
+  <div class="">
+    <BaseTabs
+      v-model="activeTabId" 
+      :tabs="employeeTabs"
+      :counts="all_length"
+      @change="handleTabChange"
+    />
   </div>
 </template>
-<style scoped>
-.activeTab {
-  transition-duration: 0.6s;
-  background: #36d887;
-  color: whitesmoke;
-  box-sizing: border-box;
-  font-size: 14px;
-  font-weight: bold;
-}
-.activeTabIcon {
-  background: whitesmoke;
-  color: black;
-}
-</style>
