@@ -57,7 +57,7 @@ const routes = [
       //Admin
       {
         path: "/admin/users",
-        name: "Users",
+        name: "Foydalanuvchilar",
         component: () => import("../pages/Explore/Admin/users.vue"),
         beforeEnter(to, from, next) {
           const account = Cookies.get("account") ? JSON.parse(Cookies.get("account")) : null;
@@ -70,7 +70,7 @@ const routes = [
       },
       {
         path: "admin/system/role",
-        name: "RoleManagment",
+        name: "Rollar boshqaruvi",
         component: () => import("../pages/Explore/Admin/system/index.vue"),
         beforeEnter(to, from, next) {
           const account = Cookies.get("account") ? JSON.parse(Cookies.get("account")) : null;
@@ -109,11 +109,16 @@ const routes = [
         name: "Orders",
         component: () => import("../pages/Explore/Sale/orders/index.vue"),
       },
+        {
+        path: "sale/salepos",
+        name: "Sotuv (POS)",
+        component: () => import("../pages/Explore/Sale/salepos/index.vue"),
+      },
 
       // Customers
       {
         path: "customers",
-        name: "CustomersManagement",
+        name: "Mijozlar ro'yxati",
         component: () => import("../pages/Explore/Customers/customers/index.vue"),
       },
 

@@ -1,30 +1,31 @@
 import { fileURLToPath, URL } from "url";
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
+// Electron yoki browser-ni aniqlash
+const isElectron = navigator.userAgent.toLowerCase().includes(' electron/');
+
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  darkMode: "class", // yoki 'media'
+  server: {
+    host: "0.0.0.0",
+    port: 5173, // kerakli port
+  },
+  // base: isElectron ?"./":"/", // bu to‘g‘ri
+  base:"./", // bu to‘g‘ri
+
   define: {
-    "process.env": process.env,
+    "process.env": {}, // yoki "import.meta.env" ni ishlatishingiz mumkin
   },
   plugins: [
-    vue(), // ...
-    // AutoImport({
-    //   resolvers: [ElementPlusResolver()],
-    // }),
-    // Components({
-    //   resolvers: [ElementPlusResolver()],
-    // }),
+    vue(), // JSON uchun alohida plugin kerak emas
   ],
   resolve: {
     alias: [
-
       {
-
-        find: /^~.+/,
-        replacement: (val) => {
-          return val.replace(/^~/, "");
-        },
+        find: /^~(.*)/, // ~ prefiksni olib tashlaydi
+        replacement: (_, s1) => s1,
       },
       {
         find: "@",
@@ -36,8 +37,9 @@ export default defineConfig({
     commonjsOptions: {
       transformMixedEsModules: true,
     },
+    rollupOptions: {
+      // katta JSON fayllarni external qilish mumkin
+      external: ["emoji-mart-vue-fast/data/all.json"],
+    },
   },
-  // optimizeDeps: {
-  //   include: ["file-saver"]
-  // },
 });

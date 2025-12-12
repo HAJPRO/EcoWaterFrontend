@@ -1,60 +1,56 @@
 <template>
   <div
-    class="fixed inset-0 z-[9999] flex items-center justify-center bg-black bg-opacity-60 w-full"
+    class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/70 backdrop-blur-sm"
   >
-    <div
-      class="bg-opacity-50 rounded-lg relative flex flex-col items-center justify-center"
-    >
-      <!-- Logo with rotating color ring -->
-      <div class="relative w-36 h-36 flex items-center justify-center">
-        <!-- Rotating gradient ring with animated colors -->
-        <div
-          class="absolute inset-0 rounded-full ring-gradient animate-gradient"
-        ></div>
+    <div class="relative flex flex-col items-center justify-center">
+      <!-- Rotating gradient ring with glow -->
+      <div class="relative w-40 h-40 flex items-center justify-center">
+        <!-- Outer glowing animated ring -->
+        <div class="absolute inset-0 animate-gradient ring-glow"></div>
 
-        <!-- Logo itself -->
+        <!-- Cemtrix logo -->
         <img
-          src="/public/eco_logo.jpg"
-          alt="logo"
-          class="w-28 h-28 drop-shadow-xl animate-pulse-slow rounded-full"
+           src="/public/eco_logo.jpg"
+          alt="Cemtrix Logo"
+          class="w-32 h-32 drop-shadow-2xl animate-pulse-slow animate-rotate-logo rounded-full"
         />
       </div>
+
+      <!-- Optional text under logo -->
+      <p
+        class="mt-6 text-indigo-200 font-semibold text-lg tracking-widest animate-fade-in"
+      >
+        Loading Ecowater...
+      </p>
     </div>
   </div>
 </template>
 
 <script setup>
+// Optional future dynamic color cycling if needed
 const colors = [
   "#2563EB", // blue-600
   "#4F46E5", // indigo-600
-  "#EC4899", // pink-500
-  "#F59E0B", // amber-500
-  "#10B981", // emerald-500
   "#3B82F6", // blue-500
   "#8B5CF6", // violet-500
 ];
 </script>
 
 <style scoped>
-@keyframes bounce-custom {
-  0%,
-  100% {
-    transform: translateY(0);
-    opacity: 1;
+/* Rotating Cemtrix logo */
+@keyframes rotate-logo {
+  0% {
+    transform: rotate(0deg);
   }
-  50% {
-    transform: translateY(-18px);
-    opacity: 0.4;
+  100% {
+    transform: rotate(360deg);
   }
 }
-.animate-bounce-custom {
-  display: inline-block;
-  animation: bounce-custom 1.2s ease-in-out infinite;
-  will-change: transform, opacity;
-  user-select: none;
+.animate-rotate-logo {
+  animation: rotate-logo 5s linear infinite;
 }
 
-/* Slow pulse for logo */
+/* Slow pulsing effect */
 @keyframes pulse-slow {
   0%,
   100% {
@@ -62,15 +58,30 @@ const colors = [
     transform: scale(1);
   }
   50% {
-    opacity: 0.8;
-    transform: scale(1.2);
+    opacity: 0.9;
+    transform: scale(1.15);
   }
 }
 .animate-pulse-slow {
-  animation: pulse-slow 2s ease-in-out infinite;
+  animation: pulse-slow 2.5s ease-in-out infinite;
 }
 
-/* Gradient ring with color animation */
+/* Smooth fade-in for text */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.animate-fade-in {
+  animation: fade-in 1.5s ease forwards;
+}
+
+/* Gradient halo with indigo-blue spectrum */
 @keyframes gradient-shift {
   0% {
     background-position: 0% 50%;
@@ -83,24 +94,48 @@ const colors = [
   }
 }
 .animate-gradient {
-  background: conic-gradient(from 0deg, #ec4899, #f59e0b, #10b981, #8b5cf6);
+  background: conic-gradient(
+    from 0deg,
+    #4f46e5,
+    #2563eb,
+    #3b82f6,
+    #8b5cf6,
+    #4f46e5
+  );
   background-size: 200% 200%;
   background-repeat: no-repeat;
-  animation: gradient-shift 0.5s linear infinite;
-
+  animation: gradient-shift 3s ease-in-out infinite;
   border-radius: 50%;
-  padding: 6px;
-
-  /* Transparent middle ring */
+  padding: 8px;
   mask: radial-gradient(
     farthest-side,
     transparent calc(100% - 6px),
-    black calc(100% - 5px)
+    black calc(100% - 2px)
   );
   -webkit-mask: radial-gradient(
     farthest-side,
     transparent calc(100% - 6px),
-    black calc(100% - 5px)
+    black calc(100% - 2px)
   );
+}
+
+/* Soft glowing ring around logo */
+.ring-glow::after {
+  content: "";
+  position: absolute;
+  inset: -10px;
+  border-radius: 50%;
+  box-shadow: 0 0 25px 10px rgba(79, 70, 229, 0.4),
+    0 0 50px 20px rgba(37, 99, 235, 0.2);
+  animation: pulse-glow 3s ease-in-out infinite;
+}
+@keyframes pulse-glow {
+  0%,
+  100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
 }
 </style>

@@ -3,13 +3,13 @@
     <!-- Trigger -->
     <button
       ref="trigger"
-      class="inline-flex items-center justify-center focus:outline-none"
+      class="inline-flex items-center justify-center focus:outline-none border-2 border-indigo-500 rounded-full shadow-sm w-9 h-9 overflow-hidden"
       aria-haspopup="true"
       :aria-expanded="dropdownOpen"
       @click.prevent="dropdownOpen = !dropdownOpen"
     >
       <img
-        class="w-10 h-10 rounded-full border-2 border-indigo-500 shadow-sm"
+        class="w-full h-full object-cover"
         src="https://i.pinimg.com/1200x/23/d1/3a/23d13a1dbad6a60319413ec2512aed29.jpg"
         alt="User Avatar"
       />
@@ -27,26 +27,26 @@
       <div
         v-show="dropdownOpen"
         ref="dropdown"
-        class="absolute right-0 mt-12 w-56 bg-white dark:bg-slate-700 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-600 overflow-hidden z-60"
+        class="absolute right-0 mt-12 w-56 bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 overflow-hidden z-60"
       >
         <!-- User info -->
         <div
-          class="px-4 py-3 border-b border-slate-200 dark:border-slate-500 text-left"
+          class="px-4 py-3 border-b border-slate-200 dark:border-slate-700 text-left"
         >
-          <div class="font-semibold text-slate-800 dark:text-slate-100">
+          <div class="font-semibold text-slate-800 dark:text-slate-100 truncate">
             {{ fullname || username }}
           </div>
-          <div class="text-xs text-slate-500 dark:text-slate-400 italic">
+          <div class="text-xs text-slate-500 dark:text-slate-400 italic truncate">
             {{ department }} bo'limi
           </div>
         </div>
 
         <!-- Menu items -->
-        <ul class="divide-y divide-gray-200 dark:divide-gray-600">
+        <ul class="divide-y divide-gray-200 dark:divide-gray-700">
           <li>
             <router-link
               :to="{ name: 'profile_card' }"
-              class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-indigo-500 hover:text-indigo-600 dark:hover:text-indigo-400"
+              class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-indigo-600 hover:text-indigo-700 dark:hover:text-indigo-400 transition-colors duration-200"
               @click="dropdownOpen = false"
             >
               <i class="fas fa-user"></i> Mening profilim
@@ -55,7 +55,7 @@
           <li>
             <router-link
               :to="{ name: 'profile_settings' }"
-              class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-indigo-500 hover:text-indigo-600 dark:hover:text-indigo-400"
+              class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-indigo-600 hover:text-indigo-700 dark:hover:text-indigo-400 transition-colors duration-200"
               @click="dropdownOpen = false"
             >
               <i class="fas fa-cog"></i> Sozlamalar
@@ -64,7 +64,7 @@
           <li>
             <button
               @click="logout"
-              class="w-full flex items-center gap-2 px-4 py-2 text-sm font-medium text-red-500 hover:text-red-600 dark:hover:text-red-400"
+              class="w-full flex items-center gap-2 px-4 py-2 text-sm font-medium text-red-500 hover:text-red-600 dark:hover:text-red-400 transition-colors duration-200"
             >
               <i class="fas fa-sign-out-alt"></i> Chiqish
             </button>
@@ -86,34 +86,30 @@ export default {
     const trigger = ref(null);
     const dropdown = ref(null);
 
-    const username = ref(JSON.parse(Cookie.get("account")).username);
-    const department = ref(JSON.parse(Cookie.get("account")).department);
-    const fullname = ref(JSON.parse(Cookie.get("account")).fullname);
+    const account = JSON.parse(Cookie.get("account") || "{}");
+    const username = ref(account.username || "");
+    const department = ref(account.department || "");
+    const fullname = ref(account.fullname || "");
 
     function logout() {
       Cookie.remove("token");
       Cookie.remove("account");
       dropdownOpen.value = false;
-      setTimeout(() => {
-        window.location.reload();
-      }, 500);
+      setTimeout(() => window.location.reload(), 500);
     }
 
-    // close on click outside
     const clickHandler = ({ target }) => {
+      if (!dropdownOpen.value) return;
       if (
-        !dropdownOpen.value ||
-        dropdown.value.contains(target) ||
-        trigger.value.contains(target)
-      )
-        return;
-      dropdownOpen.value = false;
+        !dropdown.value.contains(target) &&
+        !trigger.value.contains(target)
+      ) {
+        dropdownOpen.value = false;
+      }
     };
 
-    // close if ESC key is pressed
     const keyHandler = ({ keyCode }) => {
-      if (!dropdownOpen.value || keyCode !== 27) return;
-      dropdownOpen.value = false;
+      if (dropdownOpen.value && keyCode === 27) dropdownOpen.value = false;
     };
 
     onMounted(() => {

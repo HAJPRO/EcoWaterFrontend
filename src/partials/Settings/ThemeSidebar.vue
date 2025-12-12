@@ -1,163 +1,176 @@
 <template>
-  <div
-    v-show="visible"
-    class="border-l border-slate-200 dark:border-slate-400 fixed top-0 right-0 h-full w-80 bg-white/95 dark:bg-slate-700 shadow-lg z-50 transition-transform duration-300 flex flex-col"
-    :class="{ 'translate-x-0': visible, 'translate-x-full': !visible }"
-  >
-    <!-- Header -->
+  <div>
     <div
-      class="flex justify-between items-center p-4 border-b dark:border-slate-600"
-    >
-      <h2 class="text-lg font-semibold text-slate-600 dark:text-white">
-        Sozlamalar
-      </h2>
-      <button
-        @click="$emit('close')"
-        class="text-slate-700 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition"
-      >
-        <i class="fa-solid fa-xmark text-xl"></i>
-      </button>
-    </div>
+      v-if="visible"
+      @click="$emit('close')"
+      class="fixed inset-0 bg-black/20 backdrop-blur-sm z-40 transition-opacity duration-300"
+    ></div>
 
-    <!-- Body -->
-    <div class="p-4 space-y-5 flex-1 overflow-y-auto">
-      <!-- Mavzu -->
-      <div>
-        <label class="label">Mavzu</label>
-        <el-select
-          v-model="selectedTheme"
-          placeholder="Mavzu tanlang"
-          class="w-full"
-        >
-          <el-option
-            v-for="theme in themeOptions"
-            :key="theme.value"
-            :value="theme.value"
-          >
-            <span class="inline-flex items-center">
-              <span
-                class="w-4 h-4 rounded-full mr-2 border border-black/20"
-                :style="{ backgroundColor: theme.color }"
-              ></span>
-              {{ theme.label }}
-            </span>
-          </el-option>
-        </el-select>
-      </div>
-
-      <!-- Til -->
-      <div>
-        <label class="label">Tillar</label>
-        <el-select
-          v-model="selectedLang"
-          placeholder="Tilni tanlang"
-          class="w-full"
-        >
-          <el-option
-            v-for="lang in languageOptions"
-            :key="lang.value"
-            :value="lang.value"
-          >
-            <img :src="lang.flag" class="inline w-5 h-4 mr-2 rounded-sm" />
-            {{ lang.label }}
-          </el-option>
-        </el-select>
-      </div>
-
-      <!-- Shrift -->
-      <div>
-        <label class="label">Shrift hajmi</label>
-        <el-select
-          v-model="fontSize"
-          placeholder="Shriftni tanlang"
-          class="w-full"
-        >
-          <el-option
-            v-for="size in fontSizes"
-            :key="size.value"
-            :value="size.value"
-          >
-            <span class="inline-flex items-center">
-              <i :class="size.icon" class="mr-2"></i>
-              <span>{{ size.label }}</span>
-            </span>
-          </el-option>
-        </el-select>
-      </div>
-
-      <!-- Yon panel joylashuvi -->
-      <div>
-        <label class="label">Yon panel joylashuvi</label>
-        <el-select
-          v-model="sidebarPosition"
-          placeholder="Joylashuvni tanlang"
-          class="w-full"
-        >
-          <el-option label="Chapda" value="left" />
-          <el-option label="O‘ngda" value="right" />
-        </el-select>
-      </div>
-
-      <!-- Animatsiyalar -->
-      <div>
-        <label class="label">Animatsiyalar</label>
-        <el-select
-          v-model="selectedAnimationTheme"
-          placeholder="Faslni tanlang"
-          class="w-full"
-        >
-          <el-option
-            v-for="anim in animationThemes"
-            :key="anim.value"
-            :value="anim.value"
-            :label="anim.label"
-          >
-            <span class="inline-flex items-center">
-              <i
-                :class="anim.icon"
-                :style="{ color: anim.color }"
-                class="mr-2"
-              ></i>
-              <span>{{ anim.label }}</span>
-            </span>
-          </el-option>
-        </el-select>
-      </div>
-
-      <!-- Switchlar -->
-      <div class="flex items-center justify-between">
-        <span class="label">Pastki panel</span>
-        <el-switch v-model="footerVisible" @change="toggleFooter" />
-      </div>
-
-      <div class="flex items-center justify-between">
-        <span
-          class="text-[13px] font-semibold text-slate-600 dark:text-gray-300"
-          >Tungi rejim</span
-        >
-        <el-switch v-model="autoDarkMode" @change="toggleDarkMode" />
-      </div>
-    </div>
-
-    <!-- Footer Buttons -->
     <div
-      class="flex justify-end items-center p-4 border-t dark:border-slate-600 bg-white dark:bg-slate-700"
+      class="fixed top-0 right-0 h-full w-[380px] z-50 flex flex-col shadow-2xl transform transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]"
+      :class="visible ? 'translate-x-0' : 'translate-x-full'"
     >
-      <div class="flex gap-2 w-full justify-end">
-        <button
-          @click="saveSettings"
-          class="inline-flex items-center gap-1 bg-green-500 hover:bg-green-600 text-white text-xs font-medium px-3 py-1.5 rounded-md shadow-sm transition"
-        >
-          <i class="fa-solid fa-check text-xs"></i>
-          Saqlash
-        </button>
-        <button
-          @click="resetSettings"
-          class="inline-flex items-center gap-1 bg-red-500 hover:bg-red-600 text-white text-xs font-medium px-3 py-1.5 rounded-md shadow-sm transition"
-        >
-          <i class="fa-solid fa-arrows-rotate text-xs"></i>
-          Restart
-        </button>
+      <div class="absolute inset-0 bg-white/90 dark:bg-[#0f172a]/90 backdrop-blur-xl z-0"></div>
+      
+      <div class="absolute top-[-10%] right-[-10%] w-64 h-64 bg-indigo-500/20 rounded-full blur-[80px] pointer-events-none z-0"></div>
+      <div class="absolute bottom-[-10%] left-[-10%] w-64 h-64 bg-fuchsia-500/20 rounded-full blur-[80px] pointer-events-none z-0"></div>
+
+      <div class="relative z-10 flex flex-col h-full">
+        
+        <div class="px-8 py-6 flex justify-between items-center border-b border-gray-100/50 dark:border-gray-800/50">
+          <div>
+            <h2 class="text-2xl font-black bg-gradient-to-r from-indigo-600 to-fuchsia-600 bg-clip-text text-transparent">
+              Sozlamalar
+            </h2>
+            <p class="text-xs text-gray-500 dark:text-gray-400 font-medium tracking-wide mt-1">
+              INTERFACE & PREFERENCES
+            </p>
+          </div>
+          <button
+            @click="$emit('close')"
+            class="w-10 h-10 flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800 text-gray-500 hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-900/20 transition-all duration-300 group"
+          >
+            <i class="fa-solid fa-xmark text-xl group-hover:rotate-90 transition-transform duration-300"></i>
+          </button>
+        </div>
+
+        <div class="flex-1 overflow-y-auto px-8 py-6 space-y-8 custom-scrollbar">
+          
+          <section>
+            <h3 class="section-title"><i class="fa-solid fa-palette mr-2"></i> Mavzu Rangi</h3>
+            <div class="grid grid-cols-3 gap-3">
+              <button
+                v-for="theme in themeOptions"
+                :key="theme.value"
+                @click="changeTheme(theme.value)"
+                class="relative h-14 rounded-xl flex flex-col items-center justify-center gap-1 border-2 transition-all duration-200 overflow-hidden group"
+                :class="selectedTheme === theme.value 
+                  ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20' 
+                  : 'border-transparent bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700'"
+              >
+                <div class="w-4 h-4 rounded-full shadow-sm" :style="{ backgroundColor: theme.color }"></div>
+                <span class="text-[10px] font-bold uppercase tracking-wider text-gray-600 dark:text-gray-300">{{ theme.label }}</span>
+                
+                <div v-if="selectedTheme === theme.value" class="absolute top-1 right-1 text-indigo-500 text-[10px]">
+                  <i class="fa-solid fa-circle-check"></i>
+                </div>
+              </button>
+            </div>
+          </section>
+
+          <section class="p-4 rounded-2xl bg-gray-50 dark:bg-gray-800/50 border border-gray-100 dark:border-gray-700/50">
+            <div class="flex justify-between items-center">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full flex items-center justify-center bg-white dark:bg-gray-700 shadow-sm text-lg">
+                  <i class="fa-solid" :class="autoDarkMode ? 'fa-moon text-indigo-400' : 'fa-sun text-amber-500'"></i>
+                </div>
+                <div>
+                  <div class="text-sm font-bold text-gray-800 dark:text-gray-100">Tungi Rejim</div>
+                  <div class="text-[11px] text-gray-500">Qorong'u muhit uchun</div>
+                </div>
+              </div>
+              <el-switch v-model="autoDarkMode" @change="toggleDarkMode" style="--el-switch-on-color: #6366f1;" />
+            </div>
+          </section>
+
+          <section>
+            <h3 class="section-title"><i class="fa-solid fa-wind mr-2"></i> Fasl Effekti</h3>
+            <div class="grid grid-cols-2 gap-3">
+              <button
+                v-for="anim in animationThemes"
+                :key="anim.value"
+                @click="selectedAnimationTheme = anim.value"
+                class="relative p-3 rounded-xl border flex items-center gap-3 transition-all duration-300"
+                :class="selectedAnimationTheme === anim.value
+                  ? 'border-indigo-500 bg-white dark:bg-gray-800 shadow-lg shadow-indigo-500/10'
+                  : 'border-gray-200 dark:border-gray-700 bg-transparent opacity-60 hover:opacity-100'"
+              >
+                <div class="w-10 h-10 rounded-lg flex items-center justify-center text-xl bg-gray-50 dark:bg-gray-700" :style="{ color: anim.color }">
+                  <i :class="anim.icon"></i>
+                </div>
+                <div class="text-left">
+                  <div class="text-xs font-bold text-gray-800 dark:text-gray-200">{{ anim.label }}</div>
+                  <div class="text-[10px] text-gray-500">Animatsiya</div>
+                </div>
+              </button>
+            </div>
+          </section>
+
+          <section class="space-y-4">
+            <h3 class="section-title"><i class="fa-solid fa-sliders mr-2"></i> Tizim</h3>
+            
+            <div class="setting-row">
+              <label class="text-sm text-gray-600 dark:text-gray-300 font-medium">Til (Language)</label>
+              <el-select v-model="selectedLang" placeholder="Til" class="w-32 custom-select" size="default">
+                <el-option v-for="lang in languageOptions" :key="lang.value" :value="lang.value" :label="lang.label">
+                  <div class="flex items-center gap-2">
+                    <img :src="lang.flag" class="w-4 h-3 rounded shadow-sm" />
+                    <span>{{ lang.label }}</span>
+                  </div>
+                </el-option>
+              </el-select>
+            </div>
+
+            <div class="setting-row">
+              <label class="text-sm text-gray-600 dark:text-gray-300 font-medium">Shrift Hajmi</label>
+              <div class="flex bg-gray-100 dark:bg-gray-800 rounded-lg p-1">
+                <button 
+                  v-for="size in fontSizes" 
+                  :key="size.value"
+                  @click="fontSize = size.value"
+                  class="px-3 py-1 text-xs rounded-md transition-all font-medium"
+                  :class="fontSize === size.value ? 'bg-white dark:bg-gray-600 shadow text-indigo-600 dark:text-white' : 'text-gray-500 hover:text-gray-700'"
+                >
+                  {{ size.icon_text }}
+                </button>
+              </div>
+            </div>
+
+            <div class="setting-row">
+              <label class="text-sm text-gray-600 dark:text-gray-300 font-medium">Menu Joylashuvi</label>
+              <div class="flex bg-gray-100 dark:bg-gray-800 rounded-lg p-1 gap-1">
+                 <button 
+                  @click="sidebarPosition = 'left'"
+                  class="w-8 h-7 rounded flex items-center justify-center transition-all"
+                  :class="sidebarPosition === 'left' ? 'bg-white dark:bg-gray-600 shadow text-indigo-600' : 'text-gray-400'"
+                 >
+                   <i class="fa-solid fa-align-left"></i>
+                 </button>
+                 <button 
+                  @click="sidebarPosition = 'right'"
+                  class="w-8 h-7 rounded flex items-center justify-center transition-all"
+                  :class="sidebarPosition === 'right' ? 'bg-white dark:bg-gray-600 shadow text-indigo-600' : 'text-gray-400'"
+                 >
+                   <i class="fa-solid fa-align-right"></i>
+                 </button>
+              </div>
+            </div>
+
+             <div class="setting-row">
+              <label class="text-sm text-gray-600 dark:text-gray-300 font-medium">Pastki Panel (Footer)</label>
+              <el-switch v-model="footerVisible" size="small" />
+            </div>
+          </section>
+
+        </div>
+
+        <div class="p-6 border-t border-gray-100 dark:border-gray-800 bg-white/50 dark:bg-gray-900/50 backdrop-blur-md">
+          <div class="grid grid-cols-2 gap-4">
+            <button
+              @click="resetSettings"
+              class="flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-bold text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-all active:scale-95"
+            >
+              <i class="fa-solid fa-rotate-left"></i> Tiklash
+            </button>
+            <button
+              @click="saveSettings"
+              class="flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-bold text-white bg-gradient-to-r from-indigo-600 to-fuchsia-600 hover:shadow-lg hover:shadow-indigo-500/30 transition-all transform hover:-translate-y-0.5 active:scale-95"
+            >
+              <i class="fa-solid fa-floppy-disk"></i> Saqlash
+            </button>
+          </div>
+        </div>
+
       </div>
     </div>
   </div>
@@ -168,73 +181,81 @@ import { ref, onMounted, watch } from "vue";
 
 // Props va emits
 const props = defineProps({ visible: Boolean });
-const emit = defineEmits(["close", "update:animationTheme"]);
+const emit = defineEmits(["close"]);
 
-// Reaktiv o‘zgaruvchilar
+// State
 const selectedTheme = ref(localStorage.getItem("theme") || "light");
-const selectedLang = ref("uz");
-const fontSize = ref("medium");
-const footerVisible = ref(true);
-const autoDarkMode = ref(false);
-const autoFooterMode = ref(true);
-const sidebarPosition = ref("right");
+const selectedLang = ref(localStorage.getItem("lang") || "uz");
+const fontSize = ref(localStorage.getItem("fontSize") || "medium");
+const footerVisible = ref(JSON.parse(localStorage.getItem("footerVisible")) ?? true);
+const autoDarkMode = ref(localStorage.getItem("theme") === "dark");
+const sidebarPosition = ref(localStorage.getItem("sidebarPosition") || "right");
 const selectedAnimationTheme = ref(localStorage.getItem("animation") || "1");
 
-// Watchers
+// Options Data
+const themeOptions = [
+  { value: "light", label: "Classic", color: "#f3f4f6" },
+  { value: "dark", label: "Dark", color: "#1f2937" },
+  { value: "blue", label: "Ocean", color: "#3b82f6" },
+  { value: "green", label: "Forest", color: "#10b981" },
+  { value: "purple", label: "Royal", color: "#8b5cf6" },
+  { value: "solarized", label: "Sunset", color: "#f59e0b" },
+];
+
+const animationThemes = [
+  { value: "1", label: "Bahor", icon: "fa-solid fa-seedling", color: "#10b981" },
+  { value: "2", label: "Yoz", icon: "fa-solid fa-sun", color: "#facc15" },
+  { value: "3", label: "Kuz", icon: "fa-solid fa-leaf", color: "#f97316" },
+  { value: "4", label: "Qish", icon: "fa-solid fa-snowflake", color: "#60a5fa" },
+];
+
+const languageOptions = [
+  { value: "uz", label: "UZB", flag: "https://flagcdn.com/w20/uz.png" },
+  { value: "ru", label: "RUS", flag: "https://flagcdn.com/w20/ru.png" },
+  { value: "en", label: "ENG", flag: "https://flagcdn.com/w20/gb.png" },
+];
+
+const fontSizes = [
+  { value: "small", icon_text: "Aa" },
+  { value: "medium", icon_text: "Aa+" },
+  { value: "large", icon_text: "Aa++" },
+];
+
+// Logic
+function changeTheme(val) {
+  selectedTheme.value = val;
+  autoDarkMode.value = val === 'dark';
+}
+
 watch(selectedTheme, (val) => {
   localStorage.setItem("theme", val);
-});
-watch(selectedAnimationTheme, (val) => {
-  localStorage.setItem("animation", val);
+  document.documentElement.classList.toggle("dark", val === 'dark');
 });
 
-// Dark rejimni almashtirish
+watch(selectedAnimationTheme, (val) => localStorage.setItem("animation", val));
+
 function toggleDarkMode() {
-  if (autoDarkMode.value) {
-    document.documentElement.classList.add("dark");
-    localStorage.setItem("theme", "dark");
-  } else {
-    document.documentElement.classList.remove("dark");
-    localStorage.setItem("theme", "light");
-  }
-}
-function toggleFooter() {
-  if (autoFooterMode.value) {
-    document.documentElement.classList.add("visabel");
-    localStorage.setItem("footer", "visabel");
-  } else {
-    document.documentElement.classList.remove("hiddin");
-    localStorage.setItem("footer", "hiddin");
-  }
+  selectedTheme.value = autoDarkMode.value ? "dark" : "light";
 }
 
-// Dastlabki holat
 onMounted(() => {
   const savedTheme = localStorage.getItem("theme");
-  const savedFooter = localStorage.getItem("footer");
-  autoDarkMode.value = savedTheme === "dark";
-  autoFooterMode.value = savedFooter === "hiddin";
-
-  if (autoDarkMode.value) {
-    document.documentElement.classList.add("dark");
-  }
-  if (autoFooterMode.value) {
-    document.documentElement.classList.add("visible");
+  if (savedTheme) {
+    selectedTheme.value = savedTheme;
+    autoDarkMode.value = savedTheme === "dark";
+    document.documentElement.classList.toggle("dark", savedTheme === "dark");
   }
 });
 
-// Sozlamalarni saqlash
 function saveSettings() {
-  localStorage.setItem("theme", selectedTheme.value);
   localStorage.setItem("lang", selectedLang.value);
   localStorage.setItem("fontSize", fontSize.value);
   localStorage.setItem("footerVisible", JSON.stringify(footerVisible.value));
   localStorage.setItem("sidebarPosition", sidebarPosition.value);
-  localStorage.setItem("animation", selectedAnimationTheme.value);
-  console.log("Sozlamalar saqlandi");
+  emit('close');
+  // Bu yerda Toast xabarnoma chiqarish mumkin
 }
 
-// Default holatga qaytarish
 function resetSettings() {
   selectedTheme.value = "light";
   selectedLang.value = "uz";
@@ -243,55 +264,46 @@ function resetSettings() {
   autoDarkMode.value = false;
   sidebarPosition.value = "right";
   selectedAnimationTheme.value = "1";
-  document.documentElement.classList.remove("dark");
   localStorage.clear();
+  document.documentElement.classList.remove("dark");
 }
-
-// Variantlar ro‘yxati
-const themeOptions = [
-  { value: "light", label: "Yorug‘", color: "#ffffff" },
-  { value: "dark", label: "Qorong‘i", color: "#1f2937" },
-  { value: "blue", label: "Moviy (Ocean)", color: "#3b82f6" },
-  { value: "green", label: "Yashil (Nature)", color: "#10b981" },
-  { value: "purple", label: "Binafsha (Lavender)", color: "#8b5cf6" },
-  { value: "gray", label: "Kulrang (Minimal)", color: "#9ca3af" },
-  { value: "solarized", label: "Solarized", color: "#fcd34d" },
-  { value: "dracula", label: "Dracula", color: "#44475a" },
-  { value: "high-contrast", label: "Yuqori Kontrast", color: "#000000" },
-];
-
-const languageOptions = [
-  { value: "uz", label: "O‘zbek", flag: "https://flagcdn.com/w40/uz.png" },
-  { value: "ru", label: "Rus", flag: "https://flagcdn.com/w40/ru.png" },
-  { value: "en", label: "Ingliz", flag: "https://flagcdn.com/w40/gb.png" },
-];
-
-const fontSizes = [
-  { value: "small", label: "Kichik", icon: "fa-solid fa-text-height text-sm" },
-  { value: "medium", label: "O‘rta", icon: "fa-solid fa-font text-base" },
-  { value: "large", label: "Katta", icon: "fa-solid fa-text-width text-lg" },
-];
-
-const animationThemes = [
-  {
-    value: "1",
-    label: "Bahor",
-    icon: "fa-solid fa-seedling",
-    color: "#10b981",
-  },
-  { value: "2", label: "Yoz", icon: "fa-solid fa-sun", color: "#facc15" },
-  { value: "3", label: "Kuz", icon: "fa-solid fa-leaf", color: "#f97316" },
-  {
-    value: "4",
-    label: "Qish",
-    icon: "fa-solid fa-snowflake",
-    color: "#60a5fa",
-  },
-];
 </script>
 
 <style scoped>
-.label {
-  @apply block text-[13px] font-semibold text-slate-600 dark:text-gray-300 mb-1;
+/* Custom Scrollbar for sleek look */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: rgba(156, 163, 175, 0.3);
+  border-radius: 20px;
+}
+.custom-scrollbar:hover::-webkit-scrollbar-thumb {
+  background-color: rgba(156, 163, 175, 0.5);
+}
+
+.section-title {
+  @apply text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-4 flex items-center;
+}
+
+.setting-row {
+  @apply flex items-center justify-between p-3 rounded-xl bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700/50 shadow-sm transition-all hover:border-indigo-200 dark:hover:border-indigo-900/50;
+}
+
+/* Element Plus override for clean look */
+:deep(.el-input__wrapper) {
+  box-shadow: none !important;
+  background-color: transparent !important;
+}
+:deep(.el-input__inner) {
+  text-align: right;
+  font-weight: 600;
+  color: #4b5563;
+}
+:deep(.dark .el-input__inner) {
+  color: #e5e7eb;
 }
 </style>

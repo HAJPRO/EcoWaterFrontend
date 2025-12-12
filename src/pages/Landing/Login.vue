@@ -1,212 +1,306 @@
 <template>
-  <div
-    class="flex justify-center items-center min-h-screen bg-gray-100 bg-center bg-cover"
-    style="
-      background: url('https://ecowater.company-erp.uz/eco_water.jpeg')
-        no-repeat center center/cover;
-    "
-  >
-    <div class="bg-white p-6 rounded-lg shadow-lg w-96 bg-opacity-90">
-      <h1
-        class="bg-white rounded-md p-2 shadow-md border-t-[2px] mt-0 mb-4 border-[#36d887] text-[16px] font-bold leading-tight text-center tracking-tight text-gray-500 dark:text-white"
+  <div class="min-h-screen w-full flex font-sans transition-colors duration-700 selection:bg-indigo-500 selection:text-white overflow-hidden custom-scrolls"
+       :class="isDarkMode ? 'bg-[#050811] text-slate-200' : 'bg-[#FFFFFF] text-slate-900'">
+    
+    <button 
+      @click="toggleDarkMode" 
+      class="absolute top-5 left-6 z-50 w-10 h-10 rounded-full flex items-center justify-center border transition-all duration-300 hover:scale-110 active:rotate-180"
+      :class="isDarkMode ? 'bg-slate-900/50 border-slate-700 text-yellow-400' : 'bg-white border-slate-200 text-slate-600'"
+    >
+      <i class="fas" :class="isDarkMode ? 'fa-sun' : 'fa-moon'"></i>
+    </button>
+
+   <div class="w-full lg:w-[35%] flex flex-col justify-center items-center px-6 sm:px-12 relative z-20 transition-colors duration-500 border-r"
+       :class="isDarkMode ? 'bg-[#0B0F19] border-slate-800' : 'bg-white border-slate-100'">
+    
+    <div class="w-full max-w-[380px] animate-fade-in-up">
+      
+      <div class="text-center mb-10">
+         <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-600 to-violet-600 shadow-xl shadow-indigo-500/20 mb-5 p-[2px]">
+            <div class="w-full h-full bg-white dark:bg-[#0B0F19] rounded-[14px] overflow-hidden flex items-center justify-center">
+               <img  src="../../../public/eco_logo.jpg" alt="Eco" class="w-full h-full object-cover opacity-90" />
+            </div>
+         </div>
+         <h1 class="text-3xl font-black tracking-tight mb-1" 
+             :class="isDarkMode ? 'text-white' : 'text-indigo-500'">
+           Eco Water
+         </h1>
+         <p class="text-xs font-bold uppercase tracking-[0.2em] text-indigo-500">
+           Biznesingiz Avtopilotda
+         </p>
+      </div>
+
+      <el-form 
+        ref="formRef" 
+        :model="user" 
+        :rules="rules" 
+        label-position="top"
+        class="space-y-5"
+        @keyup.enter="LoginValidate(formRef)"
       >
-        Kirish
-      </h1>
+        
+        <el-form-item prop="username" class="!mb-0 w-full">
+           <template #label>
+              <span class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1 block pl-1">Login </span>
+           </template>
+           <div class="relative group w-full">
+              <el-input 
+                 v-model="user.username" 
+                 placeholder="loginingizni kiriting" 
+                 class="professional-input w-full h-12" 
+              />
+              <div class="absolute right-4 top-1/2 -translate-y-1/2 transition-all duration-300 pointer-events-none">
+                 <i class="fas fa-user text-slate-400 group-focus-within:text-indigo-500 transition-colors"></i>
+              </div>
+              <span v-if="user.username.length > 0" class="absolute right-10 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
+           </div>
+        </el-form-item>
 
-      <img
-        class="rounded-[50%] mx-auto"
-        src="../../../public/eco_logo.jpg"
-        width="90px"
-        height="90px"
-        alt="logo"
-      />
+        <el-form-item prop="password" class="!mb-2 w-full">
+           <template #label>
+              <div class="flex justify-between items-center w-full pl-1 mb-1">
+                 <span class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Parol</span>
+              </div>
+           </template>
+           <div class="relative group w-full">
+              <el-input 
+                 v-model="user.password" 
+                 type="password" 
+                 placeholder="parolingizni kiriting" 
+                 show-password 
+                 class="professional-input w-full h-12" 
+              />
+              <div class="absolute right-10 top-1/2 -translate-y-1/2 transition-all duration-300 pointer-events-none">
+                 <i class="fas fa-lock text-slate-400 group-focus-within:text-indigo-500 transition-colors"></i>
+              </div>
+           </div>
+        </el-form-item>
 
-      <el-alert
-        v-if="is_alert"
-        type="error"
-        :description="items.errors"
-        show-icon
-      ></el-alert>
+        <div class="flex items-center justify-between px-1">
+           <label class="flex items-center gap-2 cursor-pointer group select-none">
+              <div class="relative flex items-center justify-center w-4 h-4 rounded border border-slate-300 dark:border-slate-600 transition-colors group-hover:border-indigo-500">
+                 <input type="checkbox" class="peer appearance-none w-full h-full cursor-pointer absolute z-10" />
+                 <i class="fas fa-check text-[10px] text-indigo-500 opacity-0 peer-checked:opacity-100 transition-opacity"></i>
+              </div>
+              <span class="text-xs font-semibold text-slate-500 group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors">Eslab qolish</span>
+           </label>
+           
+           <router-link to="/forgot" class="text-xs font-bold text-indigo-500 hover:text-indigo-600 transition-colors">
+              Parolni unutdingizmi?
+           </router-link>
+        </div>
 
-      <!-- Tabs -->
-      <div class="flex justify-between mb-4 border-b pb-2">
-        <button
-          v-for="tab in tabs"
-          :key="tab.id"
-          @click="ActiveTab(tab.id)"
-          class="flex flex-col items-center px-2 py-1 transition"
-          :class="{
-            'text-black font-bold border-b-2 border-green-500':
-              activeTab === tab.id,
-            [tab.color]: true,
-          }"
+        <button 
+          @click.prevent="LoginValidate(formRef)"
+          class="w-full h-12 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold text-sm uppercase tracking-widest shadow-lg shadow-indigo-500/20 transition-all transform active:scale-[0.98] flex items-center justify-center gap-2 group relative overflow-hidden mt-6"
         >
-          <i :class="tab.icon + ' text-3xl'"></i>
-          <span class="text-sm">{{ tab.name }}</span>
+          <div class="absolute inset-0 bg-white/10 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-500 skew-x-12"></div>
+          <span>Tizimga Kirish</span>
+          <i class="fas fa-arrow-right group-hover:translate-x-1 transition-transform text-xs"></i>
         </button>
-      </div>
 
-      <div class="p-4 space-y-4 md:space-y-4 sm:p-6">
-        <el-form
-          v-if="activeTab === 'email'"
-          ref="formRef"
-          :model="user"
-          label-width="auto"
-          size="large"
-          label-position="top"
-          class="space-y-4 md:space-y-6 text-[13px]"
-        >
-          <el-form-item label="Email" prop="username" :rules="rules">
-            <el-input
-              clearable
-              v-model="user.username"
-              type="text"
-              placeholder="..."
-              required
-            />
-          </el-form-item>
-          <el-form-item label="Parol" prop="password" :rules="rules">
-            <el-input
-              clearable
-              v-model="user.password"
-              type="password"
-              placeholder="••••••••"
-              required
-            />
-          </el-form-item>
-          <el-form-item>
-            <el-button
-              @click="LoginValidate(formRef)"
-              style="
-                background-color: #36d887;
-                width: 100%;
-                color: white;
-                border: none;
-                cursor: pointer;
-              "
-            >
-              Tizimga kirish
-            </el-button>
-          </el-form-item>
-        </el-form>
+      </el-form>
 
-        <div v-if="activeTab === 'face'" class="text-center text-gray-600">
-          Face ID orqali autentifikatsiya qilish Agar telefoningizda myid
-          ilovasi o'rnatilmagan bo'lsa, uni o'rnating va ro'yxatdan o'ting.
-          Shundan so'ng siz shaxsiy kabinetingizga shu usulda kirishingiz mumkin
-          bo'ladi.
-        </div>
+   
 
-        <div v-if="activeTab === 'oneid'" class="text-center text-gray-600">
-          ONE ID orqali autentifikatsiya qilish Agar
-          <a class="text-green-500" href="https://id.egov.uz/">id.egov.uz</a>
-          sizda saytida akkauntingiz bo'lsa va siz bizning veb-saytimizda
-          ro'yxatdan o'tgan bo'lsangiz, O'zbekiston Respublikasi EX
-          foydalanuvchilarining Yagona identifikatsiya tizimining veb-saytidan
-          foydalanib shaxsiy kabinetingizga kirishingiz mumkin. Buning uchun
-          login tugmasini bosing va id.egov.uz saytiga kiring.
-        </div>
-
-        <div v-if="activeTab === 'eimzo'" class="text-center text-gray-600">
-          <ERI-LOGIN />
-        </div>
-
-        <div class="mt-2 text-[13px] text-center">
-          <router-link
-            to="/login/forget_password"
-            class="text-[#36d887] hover:underline dark:text-primary-500"
-          >
-            Parolingiz esdan chiqdimi?
-          </router-link>
-        </div>
-      </div>
     </div>
+  </div>
+    <div class="hidden lg:flex lg:w-[65%] relative overflow-hidden items-center justify-center transition-colors duration-500 perspective-container"
+         :class="isDarkMode ? 'bg-[#02040A]' : 'bg-[#F1F5F9]'">
+       
+       <div class="absolute inset-0 opacity-[0.04]" 
+            style="background-image: linear-gradient(#6366f1 1px, transparent 1px), linear-gradient(90deg, #6366f1 1px, transparent 1px); background-size: 60px 60px;">
+       </div>
+
+       <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-indigo-600/10 rounded-full blur-[120px] animate-pulse-slow"></div>
+
+       <div class="relative w-[800px] h-[800px] flex items-center justify-center scale-90 xl:scale-100 transform-style-3d rotate-x-12">
+          
+          <div class="absolute w-[700px] h-[700px] border border-dashed border-slate-400/20 rounded-full animate-spin-very-slow">
+             <div class="absolute top-1/2 -right-8 w-16 h-16 bg-white dark:bg-slate-800 rounded-2xl flex flex-col items-center justify-center shadow-2xl border border-slate-200 dark:border-slate-700 animate-counter-spin">
+                <i class="fas fa-truck-fast text-indigo-500 text-xl mb-1"></i>
+                <span class="text-[8px] font-bold uppercase">Logistika</span>
+             </div>
+             <div class="absolute bottom-20 left-20 w-14 h-14 bg-white dark:bg-slate-800 rounded-full flex items-center justify-center shadow-2xl border border-slate-200 dark:border-slate-700 animate-counter-spin">
+                <i class="fas fa-network-wired text-cyan-500 text-lg"></i>
+             </div>
+          </div>
+
+          <div class="absolute w-[500px] h-[500px] border border-indigo-500/20 rounded-full animate-spin-slow">
+             <div class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 bg-white dark:bg-slate-800 rounded-2xl flex flex-col items-center justify-center shadow-xl border border-indigo-100 dark:border-slate-700 animate-counter-spin">
+                <i class="fas fa-coins text-amber-500 text-xl mb-1"></i>
+                <span class="text-[8px] font-bold uppercase">Moliya</span>
+             </div>
+             <div class="absolute bottom-14 right-14 w-16 h-16 bg-white dark:bg-slate-800 rounded-2xl flex flex-col items-center justify-center shadow-xl border border-indigo-100 dark:border-slate-700 animate-counter-spin">
+                <i class="fas fa-industry text-rose-500 text-xl mb-1"></i>
+                <span class="text-[8px] font-bold uppercase">Ishlab Ch.</span>
+             </div>
+             <div class="absolute top-1/2 -left-8 w-16 h-16 bg-white dark:bg-slate-800 rounded-2xl flex flex-col items-center justify-center shadow-xl border border-indigo-100 dark:border-slate-700 animate-counter-spin">
+                <i class="fas fa-boxes-stacked text-emerald-500 text-xl mb-1"></i>
+                <span class="text-[8px] font-bold uppercase">Ombor</span>
+             </div>
+             
+          </div>
+
+          <div class="absolute w-[300px] h-[300px] border border-dashed border-indigo-400/30 rounded-full animate-spin-medium">
+             <div class="absolute top-4 right-8 w-3 h-3 bg-indigo-500 rounded-full shadow-[0_0_15px_currentColor]"></div>
+             <div class="absolute bottom-4 left-8 w-3 h-3 bg-purple-500 rounded-full shadow-[0_0_15px_currentColor]"></div>
+          </div>
+
+          <div class="relative z-10 w-40 h-40 bg-white dark:bg-[#0B0F19] rounded-full flex flex-col items-center justify-center shadow-2xl border-4 border-indigo-50 dark:border-slate-800 animate-float">
+             <div class="absolute -inset-6 bg-indigo-500/20 rounded-full blur-2xl animate-pulse"></div>
+             
+             <div class="w-16 h-16 mb-2 overflow-hidden rounded-xl">
+               <img  src="../../../public/eco_logo.jpg" alt="Core" class="w-full h-full object-cover" />
+             </div>
+             <span class="text-xs font-black uppercase tracking-widest text-slate-900 dark:text-white">Eco Water</span>
+             <span class="text-[8px] text-green-500 font-bold mt-1 animate-pulse">● SYSTEM ONLINE</span>
+          </div>
+
+          <div class="absolute top-20 right-20 p-4 bg-white/90 dark:bg-slate-800/90 backdrop-blur-md rounded-xl border border-slate-200 dark:border-slate-700 shadow-2xl w-48 animate-float-delay-1 z-20">
+             <div class="text-[10px] text-slate-400 font-bold uppercase mb-2">Oylik O'sish</div>
+             <div class="flex items-end gap-1 h-12">
+                <div class="w-1/5 bg-indigo-200 dark:bg-indigo-900 rounded-t-sm h-[40%]"></div>
+                <div class="w-1/5 bg-indigo-300 dark:bg-indigo-800 rounded-t-sm h-[60%]"></div>
+                <div class="w-1/5 bg-indigo-400 dark:bg-indigo-700 rounded-t-sm h-[50%]"></div>
+                <div class="w-1/5 bg-indigo-500 dark:bg-indigo-600 rounded-t-sm h-[80%]"></div>
+                <div class="w-1/5 bg-indigo-600 dark:bg-indigo-500 rounded-t-sm h-[100%] animate-pulse"></div>
+             </div>
+             <div class="text-right text-xs font-bold text-indigo-600 dark:text-indigo-400 mt-2">+24% 📈</div>
+          </div>
+
+          <div class="absolute bottom-20 left-10 p-4 bg-white/90 dark:bg-slate-800/90 backdrop-blur-md rounded-xl border border-slate-200 dark:border-slate-700 shadow-2xl w-52 animate-float-delay-2 z-20">
+             <div class="flex justify-between mb-1">
+                <span class="text-[10px] text-slate-400 font-bold uppercase">Resurslar</span>
+                <span class="text-[10px] font-bold text-slate-700 dark:text-white">85%</span>
+             </div>
+             <div class="w-full h-1.5 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
+                <div class="h-full bg-gradient-to-r from-indigo-500 to-purple-500 w-[85%] animate-slide-right"></div>
+             </div>
+             <div class="flex justify-between mt-3 mb-1">
+                <span class="text-[10px] text-slate-400 font-bold uppercase">Energiya</span>
+                <span class="text-[10px] font-bold text-slate-700 dark:text-white">42%</span>
+             </div>
+             <div class="w-full h-1.5 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
+                <div class="h-full bg-gradient-to-r from-emerald-500 to-teal-500 w-[42%] animate-slide-right delay-100"></div>
+             </div>
+          </div>
+
+       </div>
+
+     
+
+    </div>
+
   </div>
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { AuthStore } from "../../stores/Auth/auth.js";
+
 const store = AuthStore();
-import { storeToRefs } from "pinia";
-
-const { is_alert, items } = storeToRefs(store);
-const user = ref({
-  username: "",
-  password: "",
-});
+const user = ref({ username: "", password: "" });
 const formRef = ref();
-const activeTab = ref("email");
-const ActiveTab = (id) => {
-  activeTab.value = id;
+const isDarkMode = ref(false);
 
-  if (id === "eimzo") {
-    window.location.href = "login/eimzo";
+const toggleDarkMode = () => {
+  isDarkMode.value = !isDarkMode.value;
+  if (isDarkMode.value) {
+    document.documentElement.classList.add('dark');
+    localStorage.setItem('theme', 'dark');
+  } else {
+    document.documentElement.classList.remove('dark');
+    localStorage.setItem('theme', 'light');
   }
-  if (id === "oneid") {
-    window.location.href =
-      "https://id.egov.uz/?client_id=suvan-net&token_id=31d45abc-b2f2-4dce-a7fc-03a730b046ea&method=IDPW";
-  }
-  if (id === "face") {
-    window.location.href =
-      "https://signin.myid.uz/login/?client_id=ahost_reg_redirect-HymlCxPYpbY1okRTYhN7jRNItJax6NTz8I18Dkh9&response_type=code&redirect_uri=https%3A%2F%2Fclients.ahost.uz%2Fmyid%2Fcallback.php&scopes=address%2Ccontacts%2Cdoc_data%2Ccommon_data&auth_method=simple&status=0&state=eyJzdGF0ZSI6ImxvZ2luIiwib3JkZXJfaWQiOm51bGx9&oauth2_id=912017cf-7c95-400c-8a68-faa7a1c1af62";
-  }
-  store.ActiveTab = activeTab.value;
 };
-const tabs = ref([
-  {
-    id: "email",
-    name: "E-mail",
-    icon: "fas fa-envelope",
-    color: "text-orange-500 hover:text-orange-600",
-  },
-  {
-    id: "face",
-    name: "FACE ID",
-    icon: "fas fa-user-check",
-    color: "text-green-500 hover:text-green-600",
-  },
-  {
-    id: "oneid",
-    name: "ONE ID",
-    icon: "fas fa-id-card",
-    color: "text-purple-600 hover:text-purple-700",
-  },
-  {
-    id: "eimzo",
-    name: "e-imzo",
-    icon: "fas fa-key",
-    color: "text-blue-500 hover:text-blue-600",
-  },
-]);
 
 const LoginValidate = async (formRef) => {
+  if (!formRef) return;
   await formRef.validate((valid) => {
-    if (valid === true) {
-      Login();
-    } else {
-      return false;
-    }
+    if (valid) store.login(user.value);
   });
 };
 
-const Login = async () => {
-  try {
-    await store.login(user.value);
-  } catch (err) {
-    console.log(err.message);
-  }
+const rules = {
+  username: [{ required: true, message: "Majburiy", trigger: "blur" }],
+  password: [{ required: true, message: "Majburiy", trigger: "blur" }],
 };
 
-const rules = ref({
-  required: true,
-  message: `Maydon to'ldirilishi zarur!`,
-  trigger: "blur",
+onMounted(() => {
+  const savedTheme = localStorage.getItem('theme');
+  if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+    isDarkMode.value = true;
+    document.documentElement.classList.add('dark');
+  }
 });
 </script>
 
 <style scoped>
-button {
-  transition: all 0.3s ease-in-out;
+/* 🎨 INPUT STYLES (Solid & Strict) */
+:deep(.el-input__wrapper) {
+  background-color: transparent !important;
+  box-shadow: none !important;
+  border: 1.5px solid #E2E8F0; 
+  border-radius: 0.75rem; 
+  padding-left: 1rem;
+  transition: all 0.2s ease-in-out;
 }
+
+:deep(.dark .el-input__wrapper) {
+  border-color: #334155;
+  background-color: #0F172A !important;
+}
+
+:deep(.el-input__wrapper.is-focus) {
+  border-color: #4F46E5 !important;
+  box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1) !important;
+  background-color: #fff !important;
+}
+:deep(.dark .el-input__wrapper.is-focus) {
+  background-color: #1E293B !important;
+  box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.2) !important;
+}
+
+:deep(.el-input__inner) {
+  font-weight: 600;
+  color: inherit;
+  height: 100%;
+}
+
+/* 🌀 ORBIT & CHART ANIMATIONS */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.animate-spin-slow { animation: spin 25s linear infinite; }
+.animate-spin-medium { animation: spin 12s linear infinite; }
+.animate-spin-very-slow { animation: spin 60s linear infinite; }
+
+/* Counter Spin (Icons stay upright) */
+@keyframes counterSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(-360deg); }
+}
+.animate-counter-spin { animation: counterSpin 25s linear infinite; }
+
+/* Charts */
+@keyframes slideRight {
+  from { width: 0; }
+  to { width: var(--w); }
+}
+.animate-slide-right { animation: slideRight 1.5s ease-out forwards; }
+
+/* Float */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+.animate-float { animation: float 6s ease-in-out infinite; }
+.animate-float-delay-1 { animation: float 7s ease-in-out infinite 1s; }
+.animate-float-delay-2 { animation: float 8s ease-in-out infinite 2s; }
+
+.perspective-container { perspective: 1500px; }
+.transform-style-3d { transform-style: preserve-3d; }
+
 </style>
