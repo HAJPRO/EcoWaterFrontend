@@ -4,24 +4,22 @@ import vue from "@vitejs/plugin-vue";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  darkMode: "class",
+  darkMode: "class", // yoki 'media'
   server: {
     host: "0.0.0.0",
-    port: 5173,
+    port: 5173, // kerakli port
   },
-  // Barcha fayllar uchun nisbiy (relative) yo'l
-  base: "./", 
-
+  base: "/", // bu to‘g‘ri
   define: {
-    "process.env": {}, 
+    "process.env": {}, // yoki "import.meta.env" ni ishlatishingiz mumkin
   },
   plugins: [
-    vue(), 
+    vue(), // JSON uchun alohida plugin kerak emas
   ],
   resolve: {
     alias: [
       {
-        find: /^~(.*)/, 
+        find: /^~(.*)/, // ~ prefiksni olib tashlaydi
         replacement: (_, s1) => s1,
       },
       {
@@ -35,6 +33,7 @@ export default defineConfig({
       transformMixedEsModules: true,
     },
     rollupOptions: {
+      // katta JSON fayllarni external qilish mumkin
       external: ["emoji-mart-vue-fast/data/all.json"],
     },
   },
