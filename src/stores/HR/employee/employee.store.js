@@ -1,6 +1,7 @@
 import { EmployeeManagmentService } from "../../../ApiServices/HR/employee/employee.service";
 import { ToastifyService } from "../../../utils/Toastify";
 import { Loading } from "../../../utils/Loading";
+import {CustomerManagmentService} from "../../../ApiServices/Customers/c-managment/customer.service";
 const loading = Loading()
 import { defineStore } from "pinia";
 
@@ -148,5 +149,43 @@ export const EmployeeManagmentStore = defineStore("EmployeeManagmentStore", {
             loader.hide()
 
         },
+
+         async ExcelExportOrdersByCustomer(data) {
+              const loader = loading.show();
+              try {
+                const res = await CustomerManagmentService.ExcelExportOrdersByCustomer(data);
+            
+                // ✅ Fayl blob formatida res.data da
+                const blob = res.data;
+            
+                // Fayl nomini headers orqali olish (ixtiyoriy)
+                const contentDisposition = res.headers["content-disposition"];
+                const now = new Date();
+          const timestamp = now.toISOString().replace(/[:.-]/g, "");
+          let filename = `buyurtmalar_${timestamp}.xlsx`;
+            
+                if (contentDisposition && contentDisposition.includes("filename=")) {
+                  filename = contentDisposition
+                    .split("filename=")[1]
+                    .replace(/"/g, "")
+                    .trim();
+                }
+            
+                // Faylni brauzer orqali yuklab olish
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = filename;
+                a.click();
+                window.URL.revokeObjectURL(url);
+                ElMessage.success(`Fayl muvaffaqiyatli yuklandi. ${filename}`);
+        
+              } catch (error) {
+                console.error("Xatolik:", error);
+              } finally {
+                loader.hide();
+               
+              }
+            }
     },
 });

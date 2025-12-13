@@ -1,699 +1,169 @@
 <script setup>
-import { ElMessage } from "element-plus";
-import { onMounted, ref, computed } from "vue";
+import { ref, reactive } from "vue";
+import { storeToRefs } from "pinia";
 import { v4 as uuidv4 } from "uuid";
 import { ProductsManagmentStore } from "../../../stores/Sale/products/product.store";
+import { ElMessage } from "element-plus";
+
+// --- COMPONENTS ---
+import Modal from "../../../UI/Modal.vue"; // <--- YANGI MODAL
+import Button from "../../../UI/Button.vue"; 
+import Select from "../../../UI/Select.vue";
+
 const store_product = ProductsManagmentStore();
-import { storeToRefs } from "pinia";
 const { product_modal, model, TitleAction } = storeToRefs(store_product);
 
-const dialogWidth = ref("");
-window.addEventListener("devicemotion", () => {
-  dialogWidth.value =
-    window.innerWidth > 1400
-      ? "1300"
-      : window.innerWidth > 1000
-      ? "1000"
-      : window.innerWidth > 800
-      ? "800"
-      : window.innerWidth > 600
-      ? "600"
-      : "450";
-});
-window.addEventListener("resize", () => {
-  dialogWidth.value =
-    window.innerWidth > 1400
-      ? "1500"
-      : window.innerWidth > 1000
-      ? "1000"
-      : window.innerWidth > 800
-      ? "800"
-      : window.innerWidth > 600
-      ? "600"
-      : "450";
-});
-const formatPrice = (price) => {
-  return new Intl.NumberFormat("uz-UZ").format(price);
+// --- STATE (Select Options & Logic) ---
+const categoryes = ref([{ id: 1, name: "Gazli ichimliklar" }, { id: 2, name: "Gazsiz" }]);
+const saleTypes = ref([{ id: 1, name: "Dona" }, { id: 2, name: "Blok" }]);
+const packingTypes = ref([{ id: 1, name: "0.5 L" }, { id: 2, name: "1.0 L" }]);
+const errors = reactive({});
+
+// --- HELPERS ---
+const formatPrice = (p) => p ? new Intl.NumberFormat("uz-UZ").format(p) : "0";
+
+// --- ACTIONS ---
+const handleClose = () => {
+  store_product.product_modal = false;
+  errors.value = {};
 };
 
-const AddProductModal = () => {
-  store_product.AddProductModal();
-};
-const ChangeCustomerFullname = async (id) => {
-  model.value.fullname = id;
-  store_customers.GetById({ id, status: "order" });
-};
-const ChangeProductType = async (e) => {
-  model.value.model.pro_type = e;
-};
-const ChangeProductName = async (e) => {
-  model.value.model.pro_name = e;
-};
+const handleAddOption = (type) => ElMessage.info(`${type} qo'shish...`);
 
-const units = ref([
-  { id: 1, name: "Litr" },
-  { id: 2, name: "Dona" },
-  { id: 3, name: "Blok" },
-]);
-const products = ref([
-  { id: 1, type: "Gazli", name: "Kola" },
-  { id: 2, type: "Gazli", name: "Chortoq" },
-  { id: 3, type: "Gazli", name: "Fanta" },
-]);
-const categoryes = ref([
-  { id: 1, name: "Gazli" },
-  { id: 2, name: "Gazsiz" },
-  { id: 3, name: "Sharbatlar" },
-]);
-const packingTypes = ref([
-  { id: 1, name: "0.5 l" },
-  { id: 2, name: "1 l" },
-  { id: 3, name: "1.5 l" },
-  { id: 4, name: "2 l" },
-  { id: 6, name: "5 l" },
-  { id: 7, name: "10 l" },
-  { id: 8, name: "20 l" },
-]);
-
-const saleTypes = ref([
-  { id: 1, name: "Dona" },
-  { id: 2, name: "Blok" },
-  { id: 3, name: "Litr" },
-]);
 const PlusProduct = () => {
-  if (
-    model.value.packingType === "" ||
-    model.value.buying_price === "" ||
-    model.value.block_buying_price === ""
-  ) {
-    ElMessage.error("Iltimos barcha maydonlarni to'ldiring !");
-  } else {
-    const data = {
-      id: uuidv4(),
-      packingType: model.value.packingType,
-      buying_price: Number(model.value.buying_price),
-      block_buying_price: Number(model.value.block_buying_price),
-    };
-    model.value.products.push(data);
+  if (!model.value.packingType || !model.value.buying_price) {
+    ElMessage.warning("Qadoq va Narxni kiriting!");
+    return;
   }
-};
-const formRef = ref();
-const PlusValidate = async (formRef) => {
-  await formRef.validate((valid) => {
-    if (valid === true) {
-      if (TitleAction.value.action === `create`) {
-        store_product.Create({
-          action: TitleAction.value.action,
-          model: model.value,
-        });
-      }
-      if (TitleAction.value.action === `update`) {
-        store_product.Create({
-          action: TitleAction.value.action,
-          model: model.value,
-        });
-      }
-    } else {
-      ElMessage.error("Iltimos barcha maydonlarni to'ldiring !");
-      return false;
-    }
-  });
+  const data = {
+    id: uuidv4(),
+    packingType: model.value.packingType,
+    buying_price: Number(model.value.buying_price),
+    block_buying_price: Number(model.value.block_buying_price || 0),
+  };
+  if (!model.value.products) model.value.products = [];
+  model.value.products.push(data);
+  model.value.packingType = ""; model.value.buying_price = ""; model.value.block_buying_price = "";
 };
 
 const DeleteById = (id) => {
-  const filterLoad = model.value.products.filter((item) => {
-    return item.id !== id;
-  });
-  model.value.products = filterLoad;
+  model.value.products = model.value.products.filter(i => i.id !== id);
 };
-const rules = ref({
-  required: true,
-  message: `Maydon to'ldirilishi zarur !`,
-  trigger: "blur",
-});
 
-onMounted(async () => {
-  try {
-  } catch (error) {
-    console.log(error);
-  }
-});
+const SaveProduct = () => {
+  errors.code = !model.value.code;
+  errors.pro_name = !model.value.pro_name;
+  errors.pro_category = !model.value.pro_category;
+  
+  if (errors.code || errors.pro_name || errors.pro_category) return;
+
+  store_product.Create({ action: TitleAction.value.action, model: model.value });
+  handleClose();
+};
 </script>
+
 <template>
-  <div>
-    <el-dialog v-model="product_modal" :width="dialogWidth" class="mt-2">
-      <span>
-        <div
-          class="bg-slate-100 font-semibold text-[15px] p-1 mt-1 align-center text-center shadow rounded border-t-[1px] border-[#36d887]"
-        >
-          <i class="fa-solid fa-gift fa-md mr-3"></i> Mahsulot
-          {{ TitleAction.title }}
+  <Modal
+    v-model="product_modal"
+    :title="'Mahsulot ' + TitleAction.title"
+    subtitle="Ombor boshqaruvi"
+    icon="fa-solid fa-box-open"
+    width="max-w-4xl"
+    @close="handleClose"
+  >
+    
+    <div class="bg-white dark:bg-slate-800 rounded-xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm">
+      <h4 class="text-xs font-bold text-indigo-500 uppercase tracking-wider mb-4 border-b border-slate-100 dark:border-slate-700 pb-2">
+        Asosiy Ma'lumotlar
+      </h4>
+      <div class="grid grid-cols-12 gap-5">
+        <div class="col-span-12 sm:col-span-3">
+          <label class="form-label required">Kodi</label>
+          <input v-model="model.code" type="text" class="form-input" :class="{'!border-rose-500': errors.code}" placeholder="001" />
         </div>
-        <el-form
-          ref="formRef"
-          :model="model"
-          label-width="auto"
-          class="filter-box grid grid-cols-12 bg-[#e8eded] md:grid md:grid-cols-12 gap-1 sm:flex sm:flex-wrap rounded shadow-sm p-2 mt-2 text-[13px]"
-          size="small"
-          label-position="top"
-        >
-          <!-- //  Mahsulot ma'lumotlari -->
-          <div
-            class="mb-1 col-span-2 bg-[#e8eded] p-2 rounded-md border-[1px] border-[#36d887]"
-          >
-            <h1
-              class="bg-slate-100 font-semibold text-[13px] p-1 mt-1 align-center text-center rounded-md border-t-[1px] border-[#36d887]"
-            >
-              Mahsulot ma'lumotlari
-            </h1>
-            <div class="grid grid-cols-12 gap-1">
-              <div class="mb-1 col-span-12">
-                <el-form-item label="Kodi" prop="code">
-                  <el-input
-                    required
-                    v-model="model.code"
-                    clearable
-                    class="w-[100%]"
-                    size="smal"
-                    type="String"
-                    placeholder="..."
-                    maxlength="5"
-                  />
-                </el-form-item>
-              </div>
-              <div class="mb-1 col-span-12">
-                <el-form-item label="Nomi" prop="pro_name" :rules="rules">
-                  <el-input
-                    required
-                    v-model="model.pro_name"
-                    clearable
-                    class="w-[100%]"
-                    size="smal"
-                    type="String"
-                    placeholder="..."
-                  />
-                </el-form-item>
-              </div>
-
-              <div class="mb-1 col-span-12">
-                <el-form-item
-                  label="Kategoryasi"
-                  prop="pro_category"
-                  :rules="rules"
-                >
-                  <el-select
-                    v-model="model.pro_category"
-                    placeholder="..."
-                    size="smal"
-                    style="width: 100%"
-                    @click="Type({ type: `pro_category` })"
-                    @change="ChangeProductCategory($event)"
-                  >
-                    <template #prefix>
-                      <i
-                        @click.stop="
-                          Plus({
-                            title: `Buyurtmachi kategoryasini qo'shish`,
-                            state: `pro_category`,
-                          })
-                        "
-                        class="fa-solid fa-plus cursor-pointer"
-                      ></i>
-                    </template>
-                    <el-option
-                      v-for="item in categoryes"
-                      :key="item._id"
-                      :label="item.name"
-                      :value="item.name"
-                    >
-                      <template #default>
-                        <div class="flex justify-between items-center w-full">
-                          <span>{{ item.name }}</span>
-                          <i
-                            class="fa-solid fa-trash text-red-500 cursor-pointer fa-xs ml-8"
-                            @click.stop="RemoveItem(item._id)"
-                          ></i>
-                        </div>
-                      </template>
-                    </el-option>
-                  </el-select>
-                </el-form-item>
-              </div>
-              <!-- <div class="mb-1 col-span-4">
-                <el-form-item
-                  label="Sifat darajasi"
-                  prop="pro_quality"
-                  :rules="rules"
-                >
-                  <el-select
-                    v-model="model.pro_quality"
-                    placeholder="..."
-                    size="smal"
-                    style="width: 100%"
-                    @click="Type({ type: `pro_quality` })"
-                    @change="ChangeProductQuality($event)"
-                  >
-                    <template #prefix>
-                      <i
-                        @click.stop="
-                          Plus({
-                            title: `Buyurtmachi darajasini qo'shish`,
-                            state: `pro_quality`,
-                          })
-                        "
-                        class="fa-solid fa-plus cursor-pointer"
-                      ></i>
-                    </template>
-                    <el-option
-                      v-for="item in proQualityes"
-                      :key="item._id"
-                      :label="item.name"
-                      :value="item.name"
-                    >
-                      <template #default>
-                        <div class="flex justify-between items-center w-full">
-                          <span>{{ item.name }}</span>
-                          <i
-                            class="fa-solid fa-trash text-red-500 cursor-pointer fa-xs ml-8"
-                            @click.stop="RemoveItem(item._id)"
-                          ></i>
-                        </div>
-                      </template>
-                    </el-option>
-                  </el-select>
-                </el-form-item>
-              </div> -->
-              <div class="mb-1 col-span-12">
-                <el-form-item label="Sotuv turi" prop="sale_type">
-                  <el-select
-                    v-model="model.sale_type"
-                    placeholder="..."
-                    size="smal"
-                    style="width: 100%"
-                    @click="Type({ type: `sale_type ` })"
-                    @change="ChangeProductSaleType($event)"
-                  >
-                    <template #prefix>
-                      <i
-                        @click.stop="
-                          Plus({
-                            title: `Buyurtmachi kategoryasini qo'shish`,
-                            state: `sale_type`,
-                          })
-                        "
-                        class="fa-solid fa-plus cursor-pointer"
-                      ></i>
-                    </template>
-                    <el-option
-                      v-for="item in saleTypes"
-                      :key="item._id"
-                      :label="item.name"
-                      :value="item.name"
-                    >
-                      <template #default>
-                        <div class="flex justify-between items-center w-full">
-                          <span>{{ item.name }}</span>
-                          <i
-                            class="fa-solid fa-trash text-red-500 cursor-pointer fa-xs ml-8"
-                            @click.stop="RemoveItem(item._id)"
-                          ></i>
-                        </div>
-                      </template>
-                    </el-option>
-                  </el-select>
-                </el-form-item>
-              </div>
-              <!-- <div class="mb-1 col-span-4">
-                <el-form-item
-                  label="Ishlab chiqarish"
-                  prop="productionStarteddAt"
-                  :rules="rules"
-                >
-                  <el-date-picker
-                    required
-                    v-model="model.productionStarteddAt"
-                    style="width: 100%"
-                    clearable
-                    type="date"
-                    placeholder="..."
-                    size="smal"
-                  />
-                </el-form-item>
-              </div> -->
-              <!-- <div class="col-span-12 p-1 rounded-md">
-                <el-form-item label="Rasm" prop="pro_image_url">
-                  <el-upload
-                    class="w-full"
-                    v-model:file-list="ImagesList"
-                    list-type="picture-card"
-                    :before-upload="handleBeforeUpload"
-                    :on-preview="handlePictureCardPreview"
-                    :on-remove="handleRemove"
-                    :on-change="handleFileChange"
-                    :limit="limit"
-                    :on-exceed="handleExceed"
-                  >
-                    <i class="fa-solid fa-plus"></i>
-                  </el-upload>
-
-                  <el-dialog
-                    class="mt-16"
-                    v-model="dialogVisible"
-                    width="500"
-                    :style="{ height: '650px' }"
-                  >
-                    <img
-                      class="w-full h-[600px] rounded-md"
-                      :src="dialogImageUrl"
-                      alt="Preview Image"
-                    />
-                  </el-dialog>
-                </el-form-item>
-              </div> -->
-            </div>
-          </div>
-          <!-- //  Narx ma'lumotlari -->
-          <div
-            class="mb-1 col-span-10 bg-[#e8eded] p-2 rounded-md border-[1px] border-[#36d887]"
-          >
-            <h1
-              class="bg-slate-100 font-semibold text-[13px] p-1 mt-1 align-center text-center rounded-md border-t-[1px] border-[#36d887]"
-            >
-              Narx ma'lumotlari
-            </h1>
-            <div class="grid grid-cols-12 gap-1">
-              <div class="mb-1 col-span-4">
-                <el-form-item
-                  label="Qadoq turi"
-                  prop="packingType"
-                  :rules="TitleAction.action === `creat` ? rules : []"
-                >
-                  <el-select
-                    v-model="model.packingType"
-                    placeholder="..."
-                    size="smal"
-                    style="width: 100%"
-                    @click="Type({ type: `packingType` })"
-                    @change="ChangePackingType($event)"
-                  >
-                    <template #prefix>
-                      <i
-                        @click.stop="
-                          Plus({
-                            title: `Buyurtmachi kategoryasini qo'shish`,
-                            state: `packingType`,
-                          })
-                        "
-                        class="fa-solid fa-plus cursor-pointer"
-                      ></i>
-                    </template>
-                    <el-option
-                      v-for="item in packingTypes"
-                      :key="item.id"
-                      :label="item.name"
-                      :value="item.name"
-                    >
-                      <template #default>
-                        <div class="flex justify-between items-center w-full">
-                          <span>{{ item.name }}</span>
-                          <i
-                            class="fa-solid fa-trash text-red-500 cursor-pointer fa-xs ml-8"
-                            @click.stop="RemoveItem(item._id)"
-                          ></i>
-                        </div>
-                      </template>
-                    </el-option>
-                  </el-select>
-                </el-form-item>
-              </div>
-              <!-- <div class="mb-1 col-span-4">
-                <el-form-item
-                  label="Tan narxi dona (sum)"
-                  prop="cost_price"
-                  :rules="rules"
-                >
-                  <el-input
-                    required
-                    v-model="model.cost_price"
-                    clearable
-                    class="w-[100%]"
-                    size="smal"
-                    type="Number"
-                    maxlength="9"
-                    placeholder="..."
-                  />
-                </el-form-item>
-              </div>
-               -->
-              <!-- <div class="mb-1 col-span-6">
-                <el-form-item
-                  label="Tan narxi blokda (sum)"
-                  prop="block_cost_price"
-                  :rules="rules"
-                >
-                  <el-input
-                    required
-                    v-model="model.block_cost_price"
-                    clearable
-                    class="w-[100%]"
-                    size="smal"
-                    type="Number"
-                    maxlength="9"
-                    placeholder="..."
-                  />
-                </el-form-item>
-              </div> -->
-              <div class="mb-1 col-span-4">
-                <el-form-item
-                  label="Sotuv narxi dona (sum)"
-                  prop="buying_price"
-                  :rules="TitleAction.action === `creat` ? rules : []"
-                >
-                  <el-input
-                    required
-                    v-model="model.buying_price"
-                    clearable
-                    class="w-[100%]"
-                    size="smal"
-                    type="Number"
-                    maxlength="9"
-                    placeholder="..."
-                  />
-                </el-form-item>
-              </div>
-              <div class="mb-1 col-span-4">
-                <el-form-item
-                  label="Sotuv narxi blokda (sum)"
-                  prop="block_buying_price"
-                  :rules="TitleAction.action === `creat` ? rules : []"
-                >
-                  <el-input
-                    required
-                    v-model="model.block_buying_price"
-                    clearable
-                    class="w-[100%]"
-                    size="smal"
-                    type="Number"
-                    maxlength="9"
-                    placeholder="..."
-                  />
-                </el-form-item>
-              </div>
-            </div>
-            <div
-              class="col-span-12 cursor-pointer flex justify-end text-[12px] font-semibold border-b-[1px] border-purple-600"
-            >
-              <div
-                class="mb-3 mt-3 col-span-3 w-auto text-center text-white font-semibold bg-purple-600 rounded-sm px-5 py-1 hover:bg-purple-700"
-                @click="PlusProduct()"
-              >
-                <i class="fa-solid fa-plus mr-2 fa-md"></i> Qo'shish
-              </div>
-            </div>
-            <el-table
-              :header-cell-style="{
-                background: '#e8ed90',
-                border: '0.2px solid #e1e1e3',
-              }"
-              border
-              stripe
-              highlight-current-row
-              class="gradient-header-table rounded-none"
-              load
-              style="font-size: 12px"
-              size="small"
-              header-align="center"
-              empty-text="Mahsulot qo'shilmagan... "
-              height="200"
-              :data="model.products"
-            >
-              <el-table-column
-                header-align="center"
-                align="center"
-                type="index"
-                prop="index"
-                fixed="left"
-                label="№"
-                width="60"
-              />
-              <el-table-column
-                prop="packingType"
-                label="Turi"
-                :min-width="100"
-                :max-width="400"
-                header-align="center"
-                align="center"
-              >
-                <template #default="{ row }"
-                  ><div class="text-red-500">
-                    {{ row.packingType }}
-                  </div></template
-                ></el-table-column
-              >
-              <!-- <el-table-column
-                prop="cost_price"
-                label="Tan narxi dona (sum)"
-                :min-width="100"
-                :max-width="400"
-                header-align="center"
-                align="center"
-              >
-                <template #default="{ row }"
-                  ><div class="text-green-600">
-                    {{ row.cost_price ? formatPrice(row.cost_price) : 0 }}
-                  </div></template
-                ></el-table-column
-              > -->
-
-              <el-table-column
-                prop="buying_price"
-                label="Sotuv narxi dona (sum)"
-                :min-width="100"
-                :max-width="400"
-                header-align="center"
-                align="center"
-              >
-                <template #default="{ row }"
-                  ><div class="text-purple-600">
-                    {{ row.buying_price ? formatPrice(row.buying_price) : 0 }}
-                  </div></template
-                ></el-table-column
-              >
-              <!-- <el-table-column
-                prop="block_cost_price"
-                label="Tan narxi blok (sum)"
-                :min-width="100"
-                :max-width="400"
-                header-align="center"
-                align="center"
-              >
-                <template #default="{ row }"
-                  ><div class="text-green-600">
-                    {{
-                      row.block_cost_price
-                        ? formatPrice(row.block_cost_price)
-                        : 0
-                    }}
-                  </div></template
-                ></el-table-column
-              > -->
-
-              <el-table-column
-                prop="block_buying_price"
-                label="Sotuv narxi blok (sum)"
-                :min-width="100"
-                :max-width="400"
-                header-align="center"
-                align="center"
-              >
-                <template #default="{ row }"
-                  ><div class="text-purple-600">
-                    {{
-                      row.block_buying_price
-                        ? formatPrice(row.block_buying_price)
-                        : 0
-                    }}
-                  </div></template
-                ></el-table-column
-              >
-              <el-table-column
-                fixed="right"
-                prop="id"
-                label=""
-                :min-width="60"
-                :max-width="100"
-                header-align="center"
-                align="center"
-              >
-                <template #default="scope">
-                  <router-link
-                    to=""
-                    @click="DeleteById(scope.row.id)"
-                    class="inline-flex items-center mt-4 ml-2 text-white hover:bg-slate-300 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
-                  >
-                    <i class="text-black fa-sharp fa-solid fa-trash fa-xs"></i>
-                  </router-link>
-                </template>
-              </el-table-column>
-            </el-table>
-          </div>
-        </el-form>
-
-        <div class="flex justify-end bg-[#e8eded] p-2 rounded">
-          <el-button
-            @click="PlusValidate(formRef)"
-            style="
-              width: 190px;
-              background-color: #36d887;
-              color: white;
-              border: none;
-              cursor: pointer;
-              padding: 15px;
-            "
-          >
-            <i class="fa-solid fa-check mr-2 fa-md"></i>
-            {{ TitleAction.action === "create" ? "Saqlash" : "O'zgartirish" }}
-          </el-button>
+        <div class="col-span-12 sm:col-span-9">
+          <label class="form-label required">Nomi</label>
+          <input v-model="model.pro_name" type="text" class="form-input" :class="{'!border-rose-500': errors.pro_name}" placeholder="Coca Cola" />
         </div>
-      </span>
-    </el-dialog>
-  </div>
+        <div class="col-span-12 sm:col-span-6">
+          <label class="form-label required">Kategoriyasi</label>
+          <Select
+            v-model="model.pro_category"
+            :options="categoryes"
+            labelKey="name" valueKey="name"
+            placeholder="Tanlang..."
+            allowAdd searchable
+            :error="!!errors.pro_category"
+            @add="handleAddOption('pro_category')"
+          />
+        </div>
+        <div class="col-span-12 sm:col-span-6">
+          <label class="form-label">Sotuv turi</label>
+          <Select v-model="model.sale_type" :options="saleTypes" labelKey="name" valueKey="name" placeholder="Tanlang..." allowAdd @add="handleAddOption('sale_type')" />
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white dark:bg-slate-800 rounded-xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm">
+      <h4 class="text-xs font-bold text-emerald-500 uppercase tracking-wider mb-4 border-b border-slate-100 dark:border-slate-700 pb-2">
+        Narx va Qadoq
+      </h4>
+      <div class="grid grid-cols-12 gap-4 items-end">
+        <div class="col-span-12 sm:col-span-4">
+          <label class="form-label">Qadoq turi</label>
+          <Select v-model="model.packingType" :options="packingTypes" labelKey="name" valueKey="name" placeholder="0.5L..." allowAdd searchable @add="handleAddOption('packingType')" />
+        </div>
+        <div class="col-span-12 sm:col-span-3">
+          <label class="form-label">Narx (Dona)</label>
+          <div class="relative"><input v-model="model.buying_price" type="number" class="form-input pr-10" placeholder="0" /><span class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs font-bold">UZS</span></div>
+        </div>
+        <div class="col-span-12 sm:col-span-3">
+          <label class="form-label">Narx (Blok)</label>
+          <div class="relative"><input v-model="model.block_buying_price" type="number" class="form-input pr-10" placeholder="0" /><span class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs font-bold">UZS</span></div>
+        </div>
+        <div class="col-span-12 sm:col-span-2">
+          <Button variant="success" block left-icon="fa-solid fa-plus" @click="PlusProduct">Qo'shish</Button>
+        </div>
+      </div>
+
+      <div class="mt-6 border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden">
+        <table class="w-full text-sm text-left">
+          <thead class="bg-slate-50 dark:bg-slate-700/50 text-slate-500 font-bold uppercase text-[11px]">
+            <tr><th class="px-4 py-3 w-12">№</th><th class="px-4 py-3">Qadoq</th><th class="px-4 py-3 text-right">Dona</th><th class="px-4 py-3 text-right">Blok</th><th class="px-4 py-3 w-16"></th></tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 dark:divide-slate-700 bg-white dark:bg-slate-800">
+            <tr v-if="!model.products?.length"><td colspan="5" class="px-4 py-6 text-center text-slate-400">Narxlar yo'q</td></tr>
+            <tr v-for="(row, index) in model.products" :key="row.id" class="hover:bg-slate-50 dark:hover:bg-slate-700/50">
+              <td class="px-4 py-3 text-center text-slate-400">{{ index + 1 }}</td>
+              <td class="px-4 py-3 font-semibold">{{ row.packingType }}</td>
+              <td class="px-4 py-3 text-right font-mono text-emerald-600">{{ formatPrice(row.buying_price) }}</td>
+              <td class="px-4 py-3 text-right font-mono text-indigo-600">{{ formatPrice(row.block_buying_price) }}</td>
+              <td class="px-4 py-3 text-center">
+                <button @click="DeleteById(row.id)" class="text-slate-400 hover:text-rose-500 p-1.5"><i class="fa-solid fa-trash-can"></i></button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <template #footer>
+       <Button size="md" variant="danger" left-icon="fa fa-xmark" @click="handleClose">Bekor qilish</Button>
+       <Button
+       size="md" 
+         :variant="TitleAction.action === 'create' ? 'primary' : 'success'" 
+         left-icon="fa-solid fa-check" 
+         @click="SaveProduct"
+       >
+         {{ TitleAction.action === "create" ? "Saqlash" : "Yangilash" }}
+       </Button>
+    </template>
+
+  </Modal>
 </template>
 
 <style scoped>
-.image-uploader-card {
-  width: 100%;
-  max-width: 100%;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  padding: 20px;
-}
-
-.image-uploader {
-  width: 100%;
-  min-height: 200px;
-  border: 2px dashed #dcdfe6;
-  border-radius: 8px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-.upload-icon {
-  font-size: 32px;
-  color: #409eff;
-  margin-bottom: 10px;
-}
-#map {
-  height: 300px;
-  width: 100%;
-}
-.el-form-item {
-  width: 100%; /* El-form-item kengligini to'liq qilish */
-}
-
-.el-date-picker {
-  width: 100% !important; /* El-date-picker kengligini to'liq qilish */
-}
+.required::after { content: " *"; @apply text-rose-500; }
+.form-label { @apply block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1.5 uppercase tracking-wide; }
+.form-input { @apply w-full px-4 py-2.5 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-xl text-sm font-medium text-slate-700 dark:text-slate-200 placeholder-slate-400 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all outline-none; }
 </style>

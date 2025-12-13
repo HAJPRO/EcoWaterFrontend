@@ -1,779 +1,210 @@
 <script setup>
-import { ElMessage } from "element-plus";
-import { onMounted, ref, computed } from "vue";
-import { v4 as uuidv4 } from "uuid";
+import { ref, computed } from "vue";
+import { storeToRefs } from "pinia";
+import { ElMessage } from "element-plus"; // Faqat xabarlar uchun
 import moment from "moment-timezone";
 
+// --- STORES ---
 import { EmployeeManagmentStore } from "../../../stores/HR/employee/employee.store";
+
+// --- CUSTOM UI COMPONENTS ---
+import BaseModal from "../../../UI/Modal.vue";
+import DataTable from "../../../UI/DataTable.vue";
+import Button from "../../../UI/Button.vue";
+import ExportDropdown from "../../../UI/ExportDropdown.vue";
+
 const store_employee = EmployeeManagmentStore();
-import { storeToRefs } from "pinia";
-const { detail_employee_modal, orders } = storeToRefs(store_employee);
+const { detail_employee_modal, orders, all_length } = storeToRefs(store_employee);
 
-const dialogWidth = ref("");
-window.addEventListener("devicemotion", () => {
-  dialogWidth.value =
-    window.innerWidth > 1400
-      ? "1300"
-      : window.innerWidth > 1000
-      ? "1000"
-      : window.innerWidth > 800
-      ? "800"
-      : window.innerWidth > 600
-      ? "600"
-      : "450";
+// --- STATE ---
+const activeTab = ref('debitor'); // debitor | kreditor
+const expandedRows = ref([]); // Expand qilingan qatorlar
+
+// --- COLUMNS ---
+const columns = [
+  { key: 'index', label: '#', width: '50px', align: 'center' },
+  { key: 'orderNumber', label: 'Buyurtma №', width: '120px', sortable: true },
+  { key: 'customer', label: 'Mijoz', width: '180px' },
+  { key: 'createdAt', label: 'Sana', width: '140px', align: 'center' },
+  { key: 'totalAmount', label: 'Summa', width: '160px', align: 'right', sortable: true },
+  { key: 'status', label: 'Holat', width: '140px', align: 'center' },
+  { key: 'actions', label: '', width: '60px', align: 'center' }
+];
+
+// --- COMPUTED ---
+const modalTitle = computed(() => {
+  return orders.value[0]?.driverId?.fullname 
+    ? `${orders.value[0].driverId.fullname} - Buyurtmalar` 
+    : "Xodim Buyurtmalari";
 });
-window.addEventListener("resize", () => {
-  dialogWidth.value =
-    window.innerWidth > 1400
-      ? "1500"
-      : window.innerWidth > 1000
-      ? "1000"
-      : window.innerWidth > 800
-      ? "800"
-      : window.innerWidth > 600
-      ? "600"
-      : "450";
+
+const totalSum = computed(() => {
+  return orders.value.reduce((acc, row) => acc + (Number(row.totalAmount) || 0), 0);
 });
-const formatPrice = (num) => {
-  const val = Number(num);
-  return isNaN(val) ? "0" : val.toLocaleString("uz-UZ");
+
+// --- HELPERS ---
+const formatPrice = (price) => new Intl.NumberFormat("uz-UZ").format(price || 0);
+const formatDate = (date) => date ? moment(date).format("DD.MM.YYYY HH:mm") : "-";
+
+const getStatusBadge = (status) => {
+  const styles = {
+    'Yetkazib berildi': 'bg-emerald-50 text-emerald-700 border-emerald-200',
+    'Bekor qilingan': 'bg-rose-50 text-rose-700 border-rose-200',
+    'Yangi': 'bg-blue-50 text-blue-700 border-blue-200'
+  };
+  return styles[status] || 'bg-gray-50 text-gray-600 border-gray-200';
 };
 
-const isActive = ref(1);
-const Title = ref("Kiritilgan");
-const ActiveTabLink = (num) => {
-  if (num === 1) {
-    Title.value = "Kiritilgan";
-    isActive.value = 1;
-  }
-  if (num === 2) {
-    Title.value = "Chiqarlilgan";
-    isActive.value = 2;
+// --- ACTIONS ---
+const handleClose = () => {
+  store_employee.detail_employee_modal = false;
+  expandedRows.value = [];
+};
+
+const handleTabChange = (tab) => {
+  activeTab.value = tab;
+  // Store action chaqirilishi mumkin
+};
+
+const toggleExpand = (id) => {
+  if (expandedRows.value.includes(id)) {
+    expandedRows.value = expandedRows.value.filter(rowId => rowId !== id);
+  } else {
+    expandedRows.value.push(id);
   }
 };
-const transferModal = (id) => {
-  store_rw.TransferModal(id);
+
+const handleExport = (type) => {
+  store_employee.ExcelExportOrdersByCustomer(orders.value); // Store dagi funksiya
+  ElMessage.success(`${type} yuklanmoqda...`);
 };
-onMounted(async () => {
-  try {
-  } catch (error) {
-    console.log(error);
-  }
-});
-// Jami (sum) ni hisoblaydigan funksiya
-const getSummaries = ({ columns, data }) => {
-  const sums = [];
 
-  columns.forEach((column, index) => {
-    if (index === 0) {
-      sums[index] = "Jami:"; // 1-ustun nomiga yoziladi
-      return;
-    }
-
-    const prop = column.property;
-    if (prop === "totalAmount") {
-      const total = data.reduce((acc, row) => {
-        const val = Number(row[prop]);
-        return isNaN(val) ? acc : acc + val;
-      }, 0);
-
-      sums[index] = formatPrice(total) + " sum";
-    } else {
-      sums[index] = "";
-    }
-  });
-
-  return sums;
+const handlePrint = () => {
+  ElMessage.info("Chop etish...");
 };
 </script>
+
 <template>
-  <div>
-    <el-dialog
-      v-model="detail_employee_modal"
-      :width="dialogWidth"
-      :before-close="handleClose"
-      class="rounded-md p-4 shadow-lg custom-modal mt-2"
-    >
-      <template #header>
-        <div class="flex items-center justify-between border-b pb-1">
-          <div class="flex items-center gap-2">
-            <i class="fa-solid fa-box text-lg text-blue-500"></i>
-            <h3 class="text-xl font-semibold text-gray-500">
-              {{ orders[0] ? orders[0].driverId.fullname : "Xodim" }}
-            </h3>
-          </div>
-          <div>
-            <router-link
-              @click="ActiveTabLink(1)"
-              to=""
-              :class="{ activeTab: isActive === 1 }"
-              class="inline-flex text-[12px] items-center mr-2 px-4 py-1 mb-1 font-medium bg-[#e4e9e9] text-bold rounded"
-            >
-              <i class="fa-solid fa-comment-dollar mr-2 fa-lg"></i> Debitor
-              <div class="flex flex-shrink-0 ml-2">
-                <span
-                  :class="{ activeTabIcon: isActive === 1 }"
-                  class="inline-flex items-center justify-center h-5 text-[11px] font-medium text-white bg-red-500 px-3 py-2 rounded"
-                >
-                  {{ (all_length ? all_length.all : 0) || 0 }}</span
-                >
-              </div>
-            </router-link>
-            <router-link
-              @click="ActiveTabLink(2)"
-              to=""
-              :class="{ activeTab: isActive === 2 }"
-              class="inline-flex text-[12px] items-center mr-2 px-4 py-1 mb-1 font-medium bg-[#e4e9e9] text-bold rounded"
-            >
-              <i class="fa-solid fa-circle-dollar-to-slot mr-2 fa-lg"></i>
-              Kreditor
-              <div class="flex flex-shrink-0 ml-2">
-                <span
-                  :class="{ activeTabIcon: isActive === 2 }"
-                  class="inline-flex items-center justify-center h-5 text-[11px] font-medium text-white bg-[#36d887] px-3 py-2 rounded"
-                >
-                  {{ (all_length ? all_length.all : 0) || 0 }}</span
-                >
-              </div>
-            </router-link>
-          </div>
-        </div>
-      </template>
-
-      <div class="grid 2xl:grid-cols-12 xs:grid-cols-6 gap-2 mt-1 text-sm">
-        <!--  mahsulotlar jadvali-->
-        <div
-          class="col-span-12 bg-white border rounded-lg shadow-sm overflow-hidden"
+  <BaseModal
+    v-model="detail_employee_modal"
+    :title="modalTitle"
+    subtitle="Xodimning buyurtmalar tarixi"
+    icon="fa-solid fa-user-tie"
+    width="max-w-6xl"
+    @close="handleClose"
+  >
+    
+    <div class="grid grid-cols-12 gap-4 mb-6 relative z-10">
+      <div class="col-span-12 md:col-span-6 flex bg-slate-100 dark:bg-slate-800 p-1 rounded-xl">
+        <button 
+          @click="handleTabChange('debitor')"
+          class="flex-1 py-2.5 rounded-lg text-sm font-bold transition-all flex items-center justify-center gap-2"
+          :class="activeTab === 'debitor' ? 'bg-white dark:bg-slate-700 text-rose-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'"
         >
-          <div
-            class="bg-gradient-to-r from-green-500 to-indigo-500 text-white px-4 py-1 text-center"
-          >
-            <i class="fa-solid fa-calendar-days mr-2"></i>Xodim
-            {{ orders[0] ? orders[0].driverId.fullname : "Xodim" }} ning
-            buyurtmalar jadvali
-          </div>
-          <el-table
-            :header-cell-style="{
-              background: '#e8eded',
-              border: '0.2px solid #e1e1e3',
-            }"
-            show-summary
-            :summary-method="getSummaries"
-            :default-sort="[
-              { prop: 'status', order: 'descending' },
-              { prop: 'orderNumber', order: 'descending' },
-            ]"
-            stripe
-            highlight-current-row
-            load
-            style="font-size: 12px"
-            size="small"
-            class="w-full my-summary-table"
-            header-align="right"
-            :max-height="600"
-            empty-text="Mahsulot qo'shilmagan... "
-            :data="orders"
-            border
-          >
-            <el-table-column
-              header-align="center"
-              align="center"
-              type="index"
-              prop="index"
-              fixed="left"
-              label="№"
-              width="60"
-            />
-            <el-table-column
-              fixed="left"
-              prop="orderNumber"
-              label="Buyurtma nomeri"
-              :min-width="150"
-              :max-width="400"
-              sortable
-              header-align="center"
-              align="center"
-            >
-              <template #default="{ row }">
-                <el-tooltip
-                  placement="left"
-                  effect="light"
-                  popper-class="custom-tooltip"
-                >
-                  <template #content>
-                    <div
-                      class="bg-[#e8eded] text-white p-4 rounded-md text-left space-y-3"
-                      style="width: auto; max-height: 1200px; overflow-y: auto"
-                    >
-                      <div v-if="row.driverId.fullname">
-                        <el-table
-                          :header-cell-style="{
-                            background: '#e8ed90',
-                            border: '0.2px solid #e1e1e3',
-                          }"
-                          border
-                          stripe
-                          highlight-current-row
-                          class="gradient-header-table rounded-none"
-                          load
-                          style="font-size: 12px"
-                          size="small"
-                          header-align="center"
-                          empty-text="Mahsulot qo'shilmagan... "
-                          height="160"
-                          :data="row.products"
-                        >
-                          <el-table-column
-                            header-align="center"
-                            align="center"
-                            type="index"
-                            prop="index"
-                            fixed="left"
-                            label="№"
-                            width="60"
-                          />
-                          <el-table-column
-                            prop="pro_type"
-                            label="Turi"
-                            :min-width="100"
-                            :max-width="400"
-                            header-align="center"
-                            align="center"
-                          >
-                            <template #default="{ row }"
-                              ><div class="text-red-500">
-                                {{ row.pro_type }}
-                              </div></template
-                            ></el-table-column
-                          >
-                          <el-table-column
-                            prop="pro_name"
-                            label="Nomi"
-                            :min-width="100"
-                            :max-width="400"
-                            header-align="center"
-                            align="center"
-                          />
+          Debitor (Qarzdorlik)
+          <span class="ml-2 bg-rose-100 text-rose-600 text-xs px-2 py-0.5 rounded-full">{{ all_length?.debitor || 0 }}</span>
+        </button>
+        <button 
+          @click="handleTabChange('kreditor')"
+          class="flex-1 py-2.5 rounded-lg text-sm font-bold transition-all flex items-center justify-center gap-2"
+          :class="activeTab === 'kreditor' ? 'bg-white dark:bg-slate-700 text-emerald-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'"
+        >
+          Kreditor (Haqdorlik)
+          <span class="ml-2 bg-emerald-100 text-emerald-600 text-xs px-2 py-0.5 rounded-full">{{ all_length?.kreditor || 0 }}</span>
+        </button>
+      </div>
+    </div>
 
-                          <el-table-column
-                            prop="pro_quantity"
-                            label="Miqdori"
-                            :min-width="100"
-                            :max-width="400"
-                            header-align="center"
-                            align="center"
-                          >
-                            <template #default="{ row }"
-                              ><div class="text-green-600">
-                                {{ formatPrice(row.pro_quantity) }}
-                                {{ row.pro_unit }}
-                              </div></template
-                            ></el-table-column
-                          >
-                          <el-table-column
-                            prop="pro_price"
-                            label="Narxi (sum)"
-                            :min-width="100"
-                            :max-width="400"
-                            header-align="center"
-                            align="center"
-                          >
-                            <template #default="{ row }"
-                              ><div class="text-red-600">
-                                {{ formatPrice(row.pro_price) }} sum
-                              </div></template
-                            ></el-table-column
-                          >
+    <div class="border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden bg-white dark:bg-slate-800 shadow-sm relative z-0">
+      
+      <div class="bg-slate-50 dark:bg-slate-800/50 px-4 py-3 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center">
+         <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-2">
+            <i class="fa-solid fa-list-check text-indigo-500"></i> Barcha buyurtmalar
+             <span class="text-xs font-mono bg-slate-200 dark:bg-slate-700 px-2 py-1 rounded text-slate-600 dark:text-slate-300">
+            {{ orders.length }} ta
+         </span>
+         </h4>
+         <div v-if="orders.length > 0" class=" flex justify-end">
+       <div class="bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800 px-6 py-1 rounded-xl flex items-center gap-4">
+          <span class="text-xs font-bold text-indigo-400 uppercase tracking-widest">Jami Summa:</span>
+          <span class="text-xl font-extrabold text-indigo-600 dark:text-indigo-400">{{ formatPrice(totalSum) }} so'm</span>
+       </div>
+    </div>
+                   <ExportDropdown @select="handleExport" />
 
-                          <el-table-column
-                            prop="pro_total_price"
-                            label="Jami (sum)"
-                            :min-width="100"
-                            :max-width="400"
-                            header-align="center"
-                            align="center"
-                            ><template #default="{ row }"
-                              ><div class="text-purple-600">
-                                {{ formatPrice(row.pro_total_price) }} sum
-                              </div></template
-                            ></el-table-column
-                          >
-
-                          <!-- <el-table-column
-                            fixed="right"
-                            prop="id"
-                            label=""
-                            :min-width="60"
-                            :max-width="100"
-                            header-align="center"
-                            align="center"
-                          >
-                            <template #default="scope">
-                              <router-link
-                                to=""
-                                @click="DeleteById(scope.row.id)"
-                                class="inline-flex items-center mt-4 ml-2 text-white hover:bg-slate-300 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
-                              >
-                                <i
-                                  class="text-black fa-sharp fa-solid fa-trash fa-xs"
-                                ></i>
-                              </router-link>
-                            </template>
-                          </el-table-column> -->
-                        </el-table>
-                        <div class="bg-white p-2 rounded-md flex justify-end">
-                          <div
-                            class="mb-1 col-span-12 w-full flex justify-end text-purple-600 font-semibold bg-purple-100 rounded-md p-2"
-                          >
-                            Jami :
-                            {{ formatPrice(row.totalAmount) }} sum
-                          </div>
-                        </div>
-                      </div>
-                      <div
-                        class="text-center font-semibold text-gray-800"
-                        v-else
-                      >
-                        Topilmadi
-                      </div>
-                    </div>
-                  </template>
-
-                  <div class="text-red-500 cursor-pointer hover:underline">
-                    <router-link
-                      to=""
-                      class="cursor-pointer inline-flex items-center text-red bg-[#e4e9e9] hover:bg-[#d7ebeb] font-medium rounded-md text-[12px] w-ful p-[5px] sm:w-auto text-center"
-                    >
-                      {{ row.orderNumber }}
-                    </router-link>
-                  </div>
-                </el-tooltip>
-              </template></el-table-column
-            >
-            <el-table-column
-              prop="fullname"
-              label="F.I.O"
-              :min-width="100"
-              :max-width="400"
-              header-align="center"
-              align="center"
-            >
-              <template #default="{ row }">{{
-                row.customerId.fullname
-              }}</template></el-table-column
-            >
-            <el-table-column
-              align="center"
-              header-align="center"
-              prop="customerId.artikul"
-              label="Artikul"
-              :min-width="100"
-              :max-width="400"
-            />
-            <el-table-column
-              label="Kategoriyasi"
-              :min-width="150"
-              :max-width="400"
-              header-align="center"
-              align="center"
-              ><template #default="scope">{{
-                scope.row.customerId.category
-              }}</template></el-table-column
-            >
-            <el-table-column
-              align="center"
-              header-align="center"
-              prop="customerId.address.region"
-              label="Viloyat"
-              :min-width="100"
-              :max-width="400"
-            />
-            <el-table-column
-              align="center"
-              header-align="center"
-              prop="customerId.address.district"
-              label="Tuman"
-              :min-width="100"
-              :max-width="400"
-            />
-            <el-table-column
-              align="center"
-              header-align="center"
-              prop="customerId.address.neighborhood"
-              label="Mahalla"
-              :min-width="100"
-              :max-width="400"
-            />
-            <el-table-column
-              align="center"
-              header-align="center"
-              prop="customerId.address.street"
-              label="Ko'cha"
-              :min-width="100"
-              :max-width="400"
-            />
-            <el-table-column
-              align="center"
-              header-align="center"
-              prop="customerId.phoneNumber"
-              label="Telefon"
-              :min-width="100"
-              :max-width="400"
-            />
-
-            <el-table-column
-              label="Bonus ball"
-              :min-width="100"
-              header-align="center"
-              align="center"
-              ><template #default="scope">{{ 0 }}</template></el-table-column
-            >
-            <el-table-column
-              prop="totalAmount"
-              fixed="right"
-              label="Jami (sum)"
-              :min-width="200"
-              :max-width="400"
-              header-align="center"
-              align="center"
-              ><template #default="{ row }">
-                <div class="text-red-500 font-semibold">
-                  {{ row.totalAmount ? formatPrice(row.totalAmount) : 0 }} sum
-                </div></template
-              ></el-table-column
-            >
-            <el-table-column
-              label="🕒 Vaqt maydoni"
-              :min-width="150"
-              :max-width="400"
-              header-align="center"
-              align="center"
-            >
-              <el-table-column
-                label="Yaratilgan"
-                :min-width="150"
-                :max-width="400"
-                header-align="center"
-                align="center"
-                ><template #default="scope">
-                  <div class="text-gray-900 font-semibold">
-                    {{
-                      scope.row.createdAt
-                        ? moment
-                            .utc(scope.row.createdAt) // 🟢 UTC formatda olish
-                            .tz("Asia/Tashkent") // 🟢 UTC+5 ga aylantirish
-                            .format("DD.MM.YYYY HH:mm:ss") // 🟢 To‘g‘ri formatda chiqarish
-                        : "-"
-                    }}
-                  </div>
-                </template></el-table-column
-              >
-              <el-table-column
-                label="Yetkazish muddati"
-                :min-width="150"
-                :max-width="400"
-                header-align="center"
-                align="center"
-                ><template #default="scope">
-                  <div class="text-blue-600 font-semibold">
-                    {{
-                      scope.row.deliveryTime
-                        ? moment
-                            .utc(scope.row.deliveryTime) // 🟢 UTC formatda olish
-                            .tz("Asia/Tashkent") // 🟢 UTC+5 ga aylantirish
-                            .format("DD.MM.YYYY HH:mm:ss") // 🟢 To‘g‘ri formatda chiqarish
-                        : "-"
-                    }}
-                  </div>
-                </template></el-table-column
-              >
-              <el-table-column
-                label="Haydovchiga yuborildi"
-                :min-width="150"
-                :max-width="400"
-                header-align="center"
-                align="center"
-                ><template #default="scope">
-                  <div class="text-yellow-600 font-semibold">
-                    {{
-                      scope.row.driverSentToTime
-                        ? moment
-                            .utc(scope.row.driverSentToTime) // 🟢 UTC formatda olish
-                            .tz("Asia/Tashkent") // 🟢 UTC+5 ga aylantirish
-                            .format("DD.MM.YYYY HH:mm:ss") // 🟢 To‘g‘ri formatda chiqarish
-                        : "-"
-                    }}
-                  </div>
-                </template></el-table-column
-              >
-              <el-table-column
-                label="Haydovchi qabul qildi "
-                :min-width="150"
-                :max-width="400"
-                header-align="center"
-                align="center"
-                ><template #default="scope">
-                  <div class="text-purple-600 font-semibold">
-                    {{
-                      scope.row.driverAcceptedTime
-                        ? moment
-                            .utc(scope.row.driverAcceptedTime) // 🟢 UTC formatda olish
-                            .tz("Asia/Tashkent") // 🟢 UTC+5 ga aylantirish
-                            .format("DD.MM.YYYY HH:mm:ss") // 🟢 To‘g‘ri formatda chiqarish
-                        : "-"
-                    }}
-                  </div>
-                </template></el-table-column
-              >
-              <el-table-column
-                label="Yetkazib berildi"
-                :min-width="150"
-                :max-width="400"
-                header-align="center"
-                align="center"
-                ><template #default="scope">
-                  <div class="text-green-600 font-semibold">
-                    {{
-                      scope.row.driverArrivedTime
-                        ? moment
-                            .utc(scope.row.driverArrivedTime) // 🟢 UTC formatda olish
-                            .tz("Asia/Tashkent") // 🟢 UTC+5 ga aylantirish
-                            .format("DD.MM.YYYY HH:mm:ss") // 🟢 To‘g‘ri formatda chiqarish
-                        : "-"
-                    }}
-                  </div>
-                </template></el-table-column
-              >
-            </el-table-column>
-            <el-table-column
-              fixed="right"
-              label="Holati"
-              :min-width="170"
-              :max-width="400"
-              header-align="center"
-              sortable
-              align="center"
-            >
-              <template #default="{ row }">
-                <el-tooltip
-                  placement="left"
-                  effect="light"
-                  popper-class="custom-tooltip"
-                >
-                  <template #content>
-                    <div
-                      class="bg-[#e8eded] p-3 rounded text-left space-y-3"
-                      style="width: 300px; max-height: 1200px; overflow-y: auto"
-                    >
-                      <div v-if="row.driverId.fullname">
-                        <div class="bg-white p-2 rounded mb-2">
-                          <div
-                            class="text-center font-semibold text-[16px] text-white p-2 bg-purple-500 rounded mb-1"
-                          >
-                            {{ row.driverId.fullname }}
-                            {{ row.driverId.carNumber }}
-                          </div>
-                        </div>
-                      </div>
-                      <div
-                        class="text-center font-semibold text-gray-800"
-                        v-else
-                      >
-                        Rol topilmadi
-                      </div>
-                    </div>
-                  </template>
-
-                  <div class="text-purple-500 cursor-pointer hover:underline">
-                    <router-link
-                      to=""
-                      class="cursor-pointer inline-flex items-center text-red bg-[#e4e9e9] hover:bg-[#d7ebeb] font-medium rounded-md text-[12px] w-ful p-[5px] sm:w-auto text-center"
-                    >
-                      {{ row.status }}
-                    </router-link>
-                  </div>
-                </el-tooltip>
-              </template>
-            </el-table-column>
-            <el-table-column
-              fixed="right"
-              prop="id"
-              label=""
-              width="60"
-              header-align="center"
-              align="center"
-            >
-              <template #default="{ row }">
-                <!-- Dropdown -->
-                <el-dropdown
-                  trigger="click"
-                  class="relative"
-                  :popper-options="{
-                    modifiers: [
-                      {
-                        name: 'preventOverflow',
-                        options: { boundary: 'window' },
-                      },
-                    ],
-                  }"
-                >
-                  <el-button type="text" class="text-sm; text-gray-500">
-                    <i class="fa-solid fa-ellipsis-vertical"></i>
-                  </el-button>
-                  <template #dropdown>
-                    <el-dropdown-menu
-                      slot="dropdown"
-                      append-to-body
-                      class="z-50"
-                    >
-                      <el-dropdown-item
-                        class="text-[13px] text-green-600"
-                        @click="detailOrderModal(row._id)"
-                        ><template #default=""
-                          ><div>
-                            <i class="text-black fa-solid fa-eye fa-sm mr-2"></i
-                            >Batafsil
-                          </div>
-                        </template></el-dropdown-item
-                      >
-
-                      <el-dropdown-item
-                        class="text-[13px] text-yellow-500"
-                        @click="ExportExcel(row._id)"
-                        ><template #default="{}"
-                          ><div>
-                            <i
-                              class="text-black fa-solid fa-file-excel fa-sm mr-1"
-                            ></i>
-                            Excel
-                          </div>
-                        </template></el-dropdown-item
-                      >
-                      <el-dropdown-item
-                        class="text-[13px] text-indigo-600"
-                        @click="UpdateById(row._id)"
-                        ><template #default="{}"
-                          ><div>
-                            <i
-                              class="text-black fa-solid fa-pen fa-sm mr-1"
-                            ></i>
-                            O'zgatirish
-                          </div>
-                        </template></el-dropdown-item
-                      >
-                      <el-dropdown-item
-                        @click="deleteById(row._id)"
-                        class="text-red-500 text-[13px]"
-                      >
-                        <template #default=""
-                          ><div>
-                            <i
-                              class="text-black fa-solid fa-trash fa-sm mr-1"
-                            ></i>
-                            O'chirish
-                          </div>
-                        </template>
-                      </el-dropdown-item>
-                    </el-dropdown-menu>
-                  </template>
-                </el-dropdown>
-              </template>
-            </el-table-column>
-          </el-table>
-          <!-- <div
-            class="bg-white text-gray-600 text-[12px] font-semibold px-4 py-1 text-center flex items-center justify-between"
-          >
-            <div>Kiritilgan: 0</div>
-            <div>Skladda qoldi: 0</div>
-          </div> -->
-        </div>
+        
       </div>
 
-      <template #footer>
-        <div class="flex justify-between items-center mt-2 border-t pt-2">
-          <el-select placeholder="Export" class="w-32 my-2">
-            <el-option @click="ExportExcel()" label="Excel" value="excel">
-              <i class="fa-solid fa-file-excel mr-2 fa-xm"></i> Excel
-            </el-option>
-            <el-option label="Pdf" value="pdf">
-              <i class="fa-solid fa-file-pdf mr-2 fa-xm"></i> Pdf
-            </el-option>
-            <el-option label="Word" value="word">
-              <i class="fa-solid fa-file-word mr-2 fa-xm"></i> Word
-            </el-option>
-          </el-select>
+      <DataTable 
+        :items="orders" 
+        :columns="columns"
+        :show-index="false"
+        class="overflow-visible"
+      >
+        <template #index="{ index }">
+           <span class="text-slate-400 text-xs">{{ index + 1 }}</span>
+        </template>
 
-          <div class="flex gap-3">
-            <!-- <div
-              class="mb-1 col-span-3 w-auto text-center text-white text-[13px] font-semibold bg-red-600 rounded-[4px] px-4 py-[5px] hover:bg-red-700"
-              @click="driverBindingModal(order._id)"
-            >
-              <i class="fa-solid fa-xmark mr-2 fa-md"></i> Bekor qilish
-            </div> -->
-            <div
-              class="mb-1 col-span-3 w-auto text-center text-white text-[13px] font-semibold bg-green-500 rounded-[4px] px-4 py-[5px] hover:bg-green-600"
-              @click="printData()"
-            >
-              <i class="fa-solid fa-print mr-2 fa-md"></i> Chop etish
-            </div>
+        <template #orderNumber="{ row }">
+           <span class="font-mono font-bold text-indigo-600 dark:text-indigo-400 text-xs bg-indigo-50 dark:bg-indigo-900/20 px-2 py-1 rounded border border-indigo-100 dark:border-indigo-800">
+              {{ row.orderNumber }}
+           </span>
+        </template>
+
+        <template #customer="{ row }">
+           <div class="flex flex-col">
+              <span class="text-sm font-medium text-slate-700 dark:text-slate-200">{{ row.customerId?.fullname }}</span>
+              <span class="text-[10px] text-slate-400">{{ row.customerId?.phoneNumber }}</span>
+           </div>
+        </template>
+
+        <template #createdAt="{ row }">
+           <div class="text-xs text-slate-500 flex flex-col items-center">
+              <span class="font-medium text-slate-700 dark:text-slate-300">{{ formatDate(row.createdAt).split(' ')[0] }}</span>
+              <span class="text-[10px]">{{ formatDate(row.createdAt).split(' ')[1] }}</span>
+           </div>
+        </template>
+
+        <template #totalAmount="{ row }">
+           <span class="font-bold text-emerald-600 font-mono">{{ formatPrice(row.totalAmount) }}</span>
+        </template>
+
+        <template #status="{ row }">
+           <span class="px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase border" :class="getStatusBadge(row.status)">
+              {{ row.status }}
+           </span>
+        </template>
+
+        <template #actions="{ row }">
+           <button 
+             @click="toggleExpand(row._id)" 
+             class="w-7 h-7 flex items-center justify-center rounded-lg transition-all"
+             :class="expandedRows.includes(row._id) ? 'bg-indigo-100 text-indigo-600 rotate-180' : 'text-slate-400 hover:bg-slate-100 hover:text-slate-600'"
+           >
+              <i class="fa-solid fa-chevron-down text-xs"></i>
+           </button>
+        </template>
+
+      </DataTable>
+    </div>
+
+    
+
+    <div class="h-10"></div>
+
+    <template #footer>
+       <div class="flex justify-between w-full">
+        <div></div>
+          <div class="flex gap-2">
+             <Button variant="info" left-icon="fa-solid fa-print" @click="handlePrint">Chop etish</Button>
+             <Button variant="danger" left-icon="fas fa-xmark" @click="handleClose">Yopish</Button>
           </div>
-        </div>
-      </template>
-    </el-dialog>
-  </div>
+       </div>
+    </template>
+
+  </BaseModal>
 </template>
 
 <style scoped>
-.custom-modal {
-  background-color: #fefefe;
-  transition: all 0.3s ease;
-}
-
-.custom-modal .el-dialog__body {
-  padding: 20px 24px;
-}
-
-.custom-modal .el-dialog__footer {
-  padding: 20px 24px;
-}
-
-.el-tag {
-  font-size: 12px;
-}
-
-.el-table th {
-  background: #f4f7fa;
-  color: #333;
-  font-weight: 600;
-}
-
-.el-button {
-  transition: 0.2s ease-in-out;
-}
-
-.el-button:hover {
-  transform: translateY(-1px);
-}
-.activeTab {
-  transition-duration: 0.6s;
-  background: #36d887;
-  color: whitesmoke;
-  box-sizing: border-box;
-  font-size: 14px;
-  font-weight: bold;
-}
-.activeTabIcon {
-  background: whitesmoke;
-  color: black;
-}
-.my-summary-table .el-table__footer-wrapper {
-  background-color: #f0f9eb;
-  font-weight: 600;
-  color: #67c23a; /* yashil rang */
-}
-.custom-tooltip {
-  padding: 0; /* tooltip ichidagi bo‘sh joylarni olib tashlash */
-  background: transparent; /* fonni shaffof qilish */
-  box-shadow: none; /* soyani olib tashlash */
-}
+button { transition: all 0.2s ease-in-out; }
 </style>

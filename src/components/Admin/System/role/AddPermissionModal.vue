@@ -1,119 +1,114 @@
 <script setup>
-import { ref, onMounted } from "vue";
-import { PermissionStore } from "../../../../stores/Admin/permission.store";
-const store_permission = PermissionStore();
+import { ref, reactive } from "vue";
 import { storeToRefs } from "pinia";
-const { permission_modal, model, options } = storeToRefs(store_permission);
-const dialogWidth = ref("");
-window.addEventListener("devicemotion", () => {
-  dialogWidth.value =
-    window.innerWidth > 1400
-      ? "1300"
-      : window.innerWidth > 1000
-      ? "1000"
-      : window.innerWidth > 800
-      ? "800"
-      : window.innerWidth > 600
-      ? "600"
-      : "450";
-});
-window.addEventListener("resize", () => {
-  dialogWidth.value =
-    window.innerWidth > 1400
-      ? "1500"
-      : window.innerWidth > 1000
-      ? "1000"
-      : window.innerWidth > 800
-      ? "800"
-      : window.innerWidth > 600
-      ? "600"
-      : "450";
-});
-const formRef = ref();
-const Save = async (formRef) => {
-  await formRef.validate((valid) => {
-    if (valid === true) {
-      store_permission.CreatePermission(model.value);
-    } else {
-      return false;
-    }
-  });
+import { ElMessage } from "element-plus"; // Faqat xabarlar uchun
+
+// --- STORES ---
+import { PermissionStore } from "../../../../stores/Admin/permission.store";
+
+// --- CUSTOM UI COMPONENTS ---
+import BaseModal from "../../../../UI/Modal.vue";
+import Button from "../../../../UI/Button.vue";
+
+const store_permission = PermissionStore();
+const { permission_modal, model } = storeToRefs(store_permission);
+
+// --- STATE ---
+const errors = reactive({});
+
+// --- LOGIC ---
+
+const handleClose = () => {
+  store_permission.permission_modal = false;
+  errors.value = {};
+  // Modelni tozalash kerak bo'lsa:
+  // model.value = { name: '', value: '', description: '' };
 };
-const rules = ref({
-  required: true,
-  message: `Maydon to'ldirilishi zarur !`,
-  trigger: "blur",
-});
+
+const savePermission = () => {
+  // Oddiy validatsiya
+  errors.name = !model.value.name;
+  errors.value = !model.value.value;
+
+  if (errors.name || errors.value) {
+    ElMessage.warning("Majburiy maydonlarni to'ldiring!");
+    return;
+  }
+
+  store_permission.CreatePermission(model.value);
+  handleClose();
+};
 </script>
+
 <template>
-  <el-dialog v-model="permission_modal" :width="dialogWidth">
-    <span>
-      <div
-        class="bg-slate-100 font-semibold text-[15px] p-1 mt-1 align-center text-center shadow rounded border-t-[1px] border-[#36d887]"
-      >
-        <i class="fa-solid fa-unlock fa-md mr-3"></i> Ruxsat qo'shish
+  <BaseModal
+    v-model="permission_modal"
+    title="Ruxsat qo'shish"
+    subtitle="Tizimga yangi ruxsat (permission) kiritish"
+    icon="fa-solid fa-shield-halved"
+    width="max-w-2xl"
+    @close="handleClose"
+  >
+    
+    <div class="bg-white dark:bg-slate-800 rounded-xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm">
+      <div class="grid grid-cols-12 gap-5">
+        
+        <div class="col-span-12 sm:col-span-6">
+          <label class="form-label required">Ruxsat nomi</label>
+          <input 
+            v-model="model.name" 
+            type="text" 
+            class="form-input" 
+            :class="{'!border-rose-500': errors.name}"
+            placeholder="Masalan: Foydalanuvchilarni ko'rish" 
+          />
+          <span v-if="errors.name" class="text-[10px] text-rose-500 mt-1">Nom kiritilishi shart</span>
+        </div>
+
+        <div class="col-span-12 sm:col-span-6">
+          <label class="form-label required">Qiymat (Key)</label>
+          <input 
+            v-model="model.value" 
+            type="text" 
+            class="form-input font-mono text-indigo-600" 
+            :class="{'!border-rose-500': errors.value}"
+            placeholder="user:read" 
+          />
+          <span v-if="errors.value" class="text-[10px] text-rose-500 mt-1">Qiymat kiritilishi shart</span>
+        </div>
+
+        <div class="col-span-12">
+          <label class="form-label">Qo'shimcha ma'lumot</label>
+          <textarea 
+            v-model="model.description" 
+            rows="4" 
+            class="form-input resize-none" 
+            placeholder="Ushbu ruxsat nima uchun kerakligini yozing..."
+          ></textarea>
+        </div>
+
       </div>
-      <el-form
-        :model="model"
-        ref="formRef"
-        label-width="auto"
-        size="small"
-        label-position="top"
-        class="filter-box md:grid md:grid-cols-12 gap-2 sm:flex sm:flex-wrap rounded shadow-md bg-white p-2 mt-1 mb-1 text-[12px]"
-      >
-        <div class="mb-1 col-span-6">
-          <el-form-item label="Ruxsat nomi" prop="name" :rules="rules">
-            <el-input
-              required
-              v-model="model.name"
-              clearable
-              class="w-[100%]"
-              size="smal"
-              type="String"
-              placeholder="..."
-            />
-          </el-form-item>
-        </div>
-        <div class="mb-1 col-span-6">
-          <el-form-item label="Value" prop="value" :rules="rules">
-            <el-input
-              required
-              v-model="model.value"
-              clearable
-              class="w-[100%]"
-              size="smal"
-              type="String"
-              placeholder="..."
-            />
-          </el-form-item>
-        </div>
-        <div class="mb-1 col-span-12">
-          <el-form-item label="Qo'shimcha ma'lumot" prop="discription">
-            <el-input
-              type="textarea"
-              v-model="model.description"
-              placeholder="Bu yerga yozing..."
-              :rows="4"
-              clearable
-            />
-          </el-form-item>
-        </div>
-      </el-form>
-      <div class="flex justify-end bg-[#e8eded] p-2 rounded">
-        <el-button
-          @click="Save(formRef)"
-          style="
-            width: 190px;
-            background-color: #36d887;
-            color: white;
-            border: none;
-            cursor: pointer;
-            padding: 15px;
-          "
-        >
-          <i class="fa-solid fa-check mr-2 fa-md"></i>Saqlash
-        </el-button>
-      </div>
-    </span>
-  </el-dialog>
+    </div>
+
+    <template #footer>
+       <div class="flex justify-end gap-3 w-full">
+          <Button variant="danger" left-icon="fas fa-xmark" @click="handleClose">Bekor qilish</Button>
+          <Button 
+            variant="primary" 
+            left-icon="fa-solid fa-check" 
+            @click="savePermission"
+          >
+            Saqlash
+          </Button>
+       </div>
+    </template>
+
+  </BaseModal>
 </template>
+
+<style scoped>
+/* Utility Classes */
+.required::after { content: " *"; @apply text-rose-500; }
+.form-label { @apply block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1.5 uppercase tracking-wide; }
+.form-input { @apply w-full px-4 py-2.5 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-xl text-sm font-medium text-slate-700 dark:text-slate-200 placeholder-slate-400 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all outline-none; }
+</style>

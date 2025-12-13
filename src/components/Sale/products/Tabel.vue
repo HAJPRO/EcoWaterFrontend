@@ -1,137 +1,112 @@
 <script setup>
-import { ref, onMounted, reactive, watch } from "vue";
+import { ref, onMounted, onUnmounted, reactive, watch } from "vue"; // onMounted, onUnmounted qo'shildi
 import { storeToRefs } from "pinia";
 import { ElMessage } from "element-plus";
 import moment from "moment-timezone";
-
-// --- COMPONENTS ---
+import Button from '../../../UI/Button.vue';
+import ExportDropdown from '../../../UI/ExportDropdown.vue';
 import DataTable from "../../../UI/DataTable.vue"; 
 import AddProductModal from "../../../components/Sale/products/AddProductModal.vue";
 import DetailProductModal from "../../../components/Sale/products/DetailProductModal.vue";
-
-// --- STORE ---
 import { ProductsManagmentStore } from "../../../stores/Sale/products/product.store";
+
 const store_products = ProductsManagmentStore();
 const { products, all_length } = storeToRefs(store_products);
 
-// --- 1. CONFIGURATION (Jadval Ustunlari) ---
+// --- 1. CONFIGURATION ---
 const columns = [
   { key: 'code', label: 'Kodi', width: '140px', fixed: 'left', sortable: true },
   { key: 'pro_name', label: 'Nomi', width: '220px', sortable: true },
   { key: 'pro_category', label: 'Kategoriya', width: '180px' },
-  // Vaqt ustunlari
   { key: 'productionStarteddAt', label: 'Boshlangan', width: '160px', align: 'center' },
   { key: 'productionStoppedAt', label: 'To\'xtatilgan', width: '160px', align: 'center' },
-  
   { key: 'status', label: 'Holat', width: '120px', align: 'center' },
   { key: 'actions', label: '', width: '80px', fixed: 'right', align: 'center' }
 ];
 
 // --- 2. STATE ---
-// Qidiruv filtrlari
-const filter = reactive({
-  code: "",
-  name: ""
-});
-
+const filter = reactive({ code: "", name: "" });
 const selectedIds = ref([]);
-const activeDropdown = ref(null);
-const isExportDropdownOpen = ref(false);
+const activeDropdown = ref(null);      // Qator menyusi uchun ID
+const isExportDropdownOpen = ref(false); // Export menyusi uchun
 const currentPage = ref(1);
 
-// --- 3. METHODS (ACTIONS) ---
+// YANGI: Export menyusini ushlash uchun ref
+const exportDropdownRef = ref(null);
 
-// Ma'lumotlarni yuklash
-const loadData = () => {
-  // Store'dagi GetAll funksiyasiga filtrlarni yuborish kerak (agar API qo'llasa)
-  store_products.GetAll({ 
-    page: currentPage.value, 
-    limit: 10,
-    search: filter // Yoki alohida code/name parametrlari
-  });
+// --- 3. CLICK OUTSIDE LOGIC (YANGI) ---
+const handleClickOutside = (event) => {
+  // 1. Export menyusini yopish
+  if (isExportDropdownOpen.value && exportDropdownRef.value && !exportDropdownRef.value.contains(event.target)) {
+    isExportDropdownOpen.value = false;
+  }
+
+  // 2. Qator menyularini (Row Actions) yopish
+  // Agar ochiq bo'lsa VA bosilgan joy 'row-action-wrapper' klassiga ega element ichida bo'lmasa -> Yopamiz
+  if (activeDropdown.value !== null) {
+    const isClickInsideAction = event.target.closest('.row-action-wrapper');
+    if (!isClickInsideAction) {
+      activeDropdown.value = null;
+    }
+  }
 };
 
 onMounted(() => {
+  document.addEventListener('click', handleClickOutside);
   loadData();
 });
 
-// Qidiruvni kuzatish (Oddiy watch)
+onUnmounted(() => {
+  document.removeEventListener('click', handleClickOutside);
+});
+
+// --- METHODS ---
+const loadData = () => {
+  store_products.GetAll({ 
+    page: currentPage.value, 
+    limit: 10,
+    search: filter 
+  });
+};
+
 watch([() => filter.code, () => filter.name], () => {
-  // Bu yerda debounce ishlatsa yaxshi bo'ladi
   currentPage.value = 1;
   loadData();
 });
 
-// Modallar
 const openAddModal = () => {
-  store_products.AddProductModal({
-    title: `shakillantirish`,
-    action: `create`,
-  });
+  store_products.AddProductModal({ title: `shakillantirish`, action: `create` });
 };
 
 const handleExport = (type) => {
-  // Export funksiyasini ulash
   isExportDropdownOpen.value = false;
   ElMessage.success(`${type.toUpperCase()} yuklanmoqda...`);
 };
 
-// Row Actions
 const rowActions = [
-  { 
-    label: "Batafsil", 
-    action: 'view', 
-    icon: "fa-solid fa-eye", 
-    colorClass: "bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400" 
-  },
-  { 
-    label: "O'zgartirish", 
-    action: 'edit', 
-    icon: "fa-solid fa-pen-to-square", 
-    colorClass: "bg-indigo-50 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400" 
-  },
-  { 
-    label: "Excel", 
-    action: 'excel', 
-    icon: "fa-solid fa-file-excel", 
-    colorClass: "bg-green-50 text-green-600 dark:bg-green-900/30 dark:text-green-400" 
-  },
-  { 
-    label: "O'chirish", 
-    action: 'delete', 
-    icon: "fa-solid fa-trash", 
-    colorClass: "bg-rose-50 text-rose-600 dark:bg-rose-900/30 dark:text-rose-400" 
-  },
+  { label: "Batafsil", action: 'view', icon: "fa-solid fa-eye", colorClass: "bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400" },
+  { label: "O'zgartirish", action: 'edit', icon: "fa-solid fa-pen-to-square", colorClass: "bg-indigo-50 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400" },
+  { label: "Excel", action: 'excel', icon: "fa-solid fa-file-excel", colorClass: "bg-green-50 text-green-600 dark:bg-green-900/30 dark:text-green-400" },
+  { label: "O'chirish", action: 'delete', icon: "fa-solid fa-trash", colorClass: "bg-rose-50 text-rose-600 dark:bg-rose-900/30 dark:text-rose-400" },
 ];
 
 const handleAction = (actionName, row) => {
-  activeDropdown.value = null;
+  activeDropdown.value = null; // Amal bajarilganda menyuni yopish
   
   if (actionName === 'view') {
     store_products.DetailOrderModal({ id: row._id });
   } else if (actionName === 'edit') {
-    store_products.AddProductModal({
-      id: row._id,
-      title: `o'zgartirish`,
-      action: `update`,
-    });
+    store_products.AddProductModal({ id: row._id, title: `o'zgartirish`, action: `update` });
   } else if (actionName === 'excel') {
-    // Excel export logic
     console.log("Excel export:", row._id);
   } else if (actionName === 'delete') {
     store_products.DeleteById({ id: row._id });
   }
 };
 
-// Utils
 const formatDate = (date) => {
   if (!date) return "-";
   return moment.utc(date).tz("Asia/Tashkent").format("DD.MM.YYYY HH:mm:ss");
-};
-
-const handlePageChange = (page) => {
-  currentPage.value = page;
-  loadData();
 };
 </script>
 
@@ -143,61 +118,26 @@ const handlePageChange = (page) => {
     
     <div class="flex-none flex flex-col sm:flex-row justify-between items-center gap-2 bg-white dark:bg-slate-800 p-2 rounded-xl border border-indigo-100 dark:border-slate-700 shadow-sm transition-all hover:shadow-md z-10">
       
-      <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-          <div class="relative w-full sm:w-48 group">
-            <i class="fa-solid fa-qrcode absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors text-xs"></i>
-            <input 
-              v-model="filter.code" 
-              placeholder="Kodi bo'yicha..." 
-              class="w-full pl-9 pr-3 py-2 text-sm bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 outline-none transition-all shadow-sm"
-            >
-          </div>
-
-          <div class="relative w-full sm:w-64 group">
-            <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors text-xs"></i>
-            <input 
-              v-model="filter.name" 
-              placeholder="Nomi bo'yicha..." 
-              class="w-full pl-9 pr-3 py-2 text-sm bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 outline-none transition-all shadow-sm"
-            >
-          </div>
+      <div class="relative w-full sm:w-72 group">
+        <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors text-xs"></i>
+        <input 
+          v-model="filter.fullname" 
+          placeholder="F.I.O yoki Telefon orqali izlash..." 
+          class="w-full pl-9 pr-3 py-1.5 text-sm bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 outline-none transition-all shadow-sm"
+        >
       </div>
 
       <div class="flex gap-2 w-full sm:w-auto">
-         <div class="relative">
-            <button 
-              @click.stop="isExportDropdownOpen = !isExportDropdownOpen" 
-              class="btn-secondary w-full sm:w-auto group relative overflow-hidden"
-              :class="{'border-indigo-500 ring-1 ring-indigo-500/20': isExportDropdownOpen}"
-            >
-              <span class="relative z-40 flex items-center">
-                <i class="fa-solid fa-cloud-arrow-down mr-2.5 text-slate-400 group-hover:text-indigo-600 transition-colors text-lg"></i> 
-                <span class="font-semibold text-slate-600 dark:text-slate-300 group-hover:text-indigo-700 dark:group-hover:text-indigo-400 transition-colors">Export</span>
-                <i class="fa-solid fa-chevron-down ml-2.5 text-[10px] text-slate-400 transition-transform duration-300" :class="{'rotate-180 text-indigo-600': isExportDropdownOpen}"></i>
-              </span>
-            </button>
-            
-            <transition name="dropdown-zoom">
-              <div 
-                v-if="isExportDropdownOpen" 
-                class="absolute right-0 mt-2 w-48 bg-white dark:bg-slate-800 rounded-2xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.15)] border border-slate-100 dark:border-slate-700 z-40 overflow-hidden origin-top-right p-1"
-              >
-                 <button @click="handleExport('excel')" class="w-full text-left px-3 py-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 flex items-center gap-3 transition-colors text-xs font-medium text-slate-600 dark:text-slate-300">
-                    <i class="fa-solid fa-file-excel text-emerald-500"></i> Excel
-                 </button>
-                 <button @click="handleExport('pdf')" class="w-full text-left px-3 py-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 flex items-center gap-3 transition-colors text-xs font-medium text-slate-600 dark:text-slate-300">
-                    <i class="fa-solid fa-file-pdf text-rose-500"></i> PDF
-                 </button>
-                 <button @click="handleExport('word')" class="w-full text-left px-3 py-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 flex items-center gap-3 transition-colors text-xs font-medium text-slate-600 dark:text-slate-300">
-                    <i class="fa-solid fa-file-word text-blue-500"></i> Word
-                 </button>
-              </div>
-            </transition>
-         </div>
+       <ExportDropdown @select="handleExport" />
 
-         <button @click="openAddModal" class="btn-primary w-full sm:w-auto">
-            <i class="fa-solid fa-plus mr-2"></i> Mahsulot qo'shish
-         </button>
+        <Button 
+          @click="openAddModal"
+          variant="primary" 
+          size="sm" 
+          left-icon="fa-solid fa-plus"
+        >
+          Qo'shish
+        </Button>
       </div>
     </div>
 
@@ -214,9 +154,7 @@ const handlePageChange = (page) => {
       </template>
 
       <template #pro_name="{ row }">
-        <span class="font-medium text-slate-700 dark:text-slate-200 text-sm">
-           {{ row.pro_name }}
-        </span>
+        <span class="font-medium text-slate-700 dark:text-slate-200 text-sm">{{ row.pro_name }}</span>
       </template>
 
       <template #pro_category="{ row }">
@@ -245,7 +183,7 @@ const handlePageChange = (page) => {
       </template>
 
       <template #actions="{ row }">
-        <div class="relative flex items-center justify-center">
+        <div class="relative flex items-center justify-center row-action-wrapper">
           <button 
             @click.stop="activeDropdown = activeDropdown === row._id ? null : row._id" 
             class="w-8 h-8 flex items-center justify-center rounded-full transition-all duration-300 ease-out outline-none"
@@ -275,10 +213,7 @@ const handlePageChange = (page) => {
                   @click.stop="handleAction(btn.action, row)"
                   class="group w-full flex items-center gap-3 p-2 rounded-xl transition-all duration-200 hover:bg-slate-50 dark:hover:bg-slate-700/50"
                 >
-                  <div 
-                    class="w-7 h-7 rounded-lg flex items-center justify-center shadow-sm transition-transform duration-300 group-hover:scale-110"
-                    :class="btn.colorClass"
-                  >
+                  <div class="w-7 h-7 rounded-lg flex items-center justify-center shadow-sm transition-transform duration-300 group-hover:scale-110" :class="btn.colorClass">
                     <i :class="btn.icon" class="text-xs"></i>
                   </div>
                   <span class="text-xs font-bold text-slate-600 dark:text-slate-300 group-hover:text-indigo-600 dark:group-hover:text-white transition-colors">
@@ -293,13 +228,11 @@ const handlePageChange = (page) => {
       </template>
     </DataTable>
 
- 
-
   </div>
 </template>
 
 <style scoped>
-.btn-primary { @apply bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white px-4 py-2 rounded-xl text-sm font-semibold shadow-lg shadow-indigo-500/20 transition-all flex items-center justify-center; }
+/* Button styles */
 .btn-secondary { @apply bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 px-4 py-2 rounded-xl text-sm font-semibold hover:bg-slate-50 dark:hover:bg-slate-600 transition-all flex items-center justify-center active:scale-95 shadow-sm; }
 .no-scrollbar::-webkit-scrollbar { display: none; width: 0; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
