@@ -293,7 +293,12 @@
 
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount, reactive } from "vue"
+import { OrderManagmentStore } from "../../../stores/Sale/orders/orders.store";
+const store_orders = OrderManagmentStore();
 
+import { storeToRefs } from "pinia";
+const { order_modal, drivers, driver_binding_modal } =
+  storeToRefs(store_orders);
 // --- 🛠️ Data ---
 const categories = [
   { name: "Barchasi", icon: "fa-solid fa-border-all" },

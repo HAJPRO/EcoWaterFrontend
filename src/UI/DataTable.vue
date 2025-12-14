@@ -133,7 +133,7 @@ const changePage = (p) => {
             </th>
           </tr>
         </thead>
-        <tbody v-if="paginatedData.length > 0" class="text-sm font-medium divide-y divide-slate-100 dark:divide-slate-700">
+        <tbody v-if="paginatedData.length > 0" class="text-sm font-medium divide-y divide-slate-100 dark:divide-slate-700 min-h-[100px]">
           <tr v-for="(row, rowIndex) in paginatedData" :key="row.id || rowIndex" class="group transition-colors duration-150 ease-in-out bg-white dark:bg-slate-800 hover:bg-indigo-50/30" @click="$emit('row-click', row)">
             <td v-if="showIndex" class="td-fixed left-0 text-center font-bold text-slate-500 z-[30]" :class="{'!bg-indigo-50': hoveredColumn === 'index'}">
               {{ (currentPage - 1) * pageSize + rowIndex + 1 }}

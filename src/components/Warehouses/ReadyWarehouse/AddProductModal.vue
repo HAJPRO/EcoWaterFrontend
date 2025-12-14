@@ -1,992 +1,441 @@
 <script setup>
-import { ElMessage } from "element-plus";
-import { onMounted, ref, computed, watch } from "vue";
+import { ref, computed, watch, onMounted } from "vue";
 import { v4 as uuidv4 } from "uuid";
 import moment from "moment-timezone";
+import { storeToRefs } from "pinia";
+
+// --- COMPONENTS ---
+import Modal from "../../../UI/Modal.vue";
+import Button from "../../../UI/Button.vue";
+import Select from "../../../UI/Select.vue";
+import DataTable from "../../../UI/DataTable.vue"; 
+import { useToast } from "../../../UI/utils/useToast";
+
+// --- STORES ---
 import { ReadyWarehouseStore } from "../../../stores/Warehouses/r-warehouse/warehouse.store";
 import { ProductsManagmentStore } from "../../../stores/Sale/products/product.store";
 
+const { toast } = useToast();
 const store_rw = ReadyWarehouseStore();
 const store_pro = ProductsManagmentStore();
-import { storeToRefs } from "pinia";
-const { product_modal, product, model, ModalAction } = storeToRefs(store_rw);
-const { product: pro, products } = storeToRefs(store_pro);
+const { product_modal, model, ModalAction } = storeToRefs(store_rw);
+const { products } = storeToRefs(store_pro);
 
-const dialogWidth = ref("");
-const updateDialogWidth = () => {
-  const w = window.innerWidth;
-  dialogWidth.value =
-    w > 1600
-      ? 1400
-      : w > 1200
-      ? 1100
-      : w > 992
-      ? 980
-      : w > 768
-      ? 750
-      : w > 480
-      ? 470
-      : 350;
+// --- STATE ---
+const loading = ref(false);
+const isFetchingProduct = ref(false);
+const newDataArray = ref([]); 
+const packingOptions = ref([]); 
+const selectedProductObj = ref(null);
+
+// Static Data
+const manufacturersList = ref([{ id: 1, name: "Eco Water MCHJ" }]);
+const unitOptions = [
+  { label: "Dona", value: "Dona" }, 
+  { label: "Blok", value: "Blok" },
+  { label: "Kg", value: "Kg" }, 
+  { label: "Litr", value: "Litr" },
+  { label: "Quti", value: "Quti" }
+];
+
+// --- COLUMNS ---
+const tableColumns = [
+  { label: 'Mahsulot', key: 'product_details', width: '30%' },
+  { label: 'Qadoq', key: 'packing', width: '15%' },
+  { label: 'Narx', key: 'price', align: 'right', width: '15%' },
+  { label: 'Miqdor', key: 'quantity', align: 'center', width: '10%' },
+  { label: 'Jami', key: 'total', align: 'right', width: '15%' },
+  { label: 'Sana', key: 'dates', align: 'center', width: '10%' },
+  { label: '', key: 'actions', align: 'center', width: '5%' }
+];
+
+// --- COMPUTED (Ma'lumotlar shu yerdan selectga boradi) ---
+const manufacturerOptions = computed(() => {
+  if (!manufacturersList.value) return [];
+  return manufacturersList.value.map(m => ({ 
+    label: m.name || "Nomsiz", 
+    value: m.name 
+  }));
+});
+
+const productOptions = computed(() => {
+  // Agar products bo'sh bo'lsa, demak store hali yuklanmagan
+  if (!products.value || products.value.length === 0) return [];
+  
+  return products.value.map(p => ({ 
+    label: p.pro_name || "Nomsiz mahsulot", 
+    value: p.pro_name 
+  }));
+});
+
+const tableData = computed(() => {
+  return ModalAction.value.action === 'update' ? newDataArray.value : (model.value.products || []);
+});
+
+const currentPrice = computed(() => {
+    if(model.value.unit === 'Blok') {
+        return Number(model.value.blockCostPrice) || 0;
+    }
+    return Number(model.value.costPrice) || 0;
+});
+
+const currentLineTotal = computed(() => (Number(model.value.quantity) || 0) * currentPrice.value);
+
+const totalDocSum = computed(() => {
+    if (!tableData.value) return 0;
+    return tableData.value.reduce((acc, item) => {
+        const price = typeof item.totalPrice === 'object' ? Number(item.totalPrice.value || 0) : Number(item.totalPrice || 0);
+        return acc + price;
+    }, 0);
+});
+
+watch(totalDocSum, (val) => {
+    model.value.totalAmount = val;
+    model.value.totalRemainderPrice = val;
+});
+
+// --- ACTIONS ---
+
+const handlePlus = (field, title) => {
+  const val = prompt(`${title} nomini kiriting:`);
+  if (val && val.trim()) {
+      manufacturersList.value.push({ id: Date.now(), name: val });
+      model.value[field] = val;
+      toast.success("Qo'shildi");
+  }
 };
-const formatPrice = (price) => {
-  return new Intl.NumberFormat("uz-UZ").format(price);
+
+const onProductSelect = async (val) => {
+  if (!val) return;
+  const localProd = products.value.find(p => p.pro_name === val);
+  
+  if (!localProd) {
+      toast.warning("Mahsulot topilmadi");
+      return;
+  }
+
+  isFetchingProduct.value = true;
+  try {
+      // Bazadan to'liq ma'lumot olish
+      await store_pro.GetOne(localProd._id);
+      const freshData = store_pro.product || localProd; 
+
+      selectedProductObj.value = freshData;
+      model.value.category = freshData.pro_category;
+      model.value.code = freshData.code;
+      
+      if (freshData.products && Array.isArray(freshData.products)) {
+          packingOptions.value = freshData.products.map(p => ({ 
+              label: p.packingType, 
+              value: p.packingType 
+          }));
+      } else {
+          packingOptions.value = [];
+      }
+      
+      model.value.packagingType = "";
+      model.value.costPrice = "";
+      model.value.blockCostPrice = "";
+      model.value.quantity = "";
+      model.value.unit = "";
+      
+      toast.success("Mahsulot ma'lumotlari yuklandi");
+  } catch (e) { 
+      console.error(e);
+      toast.error("Xatolik yuz berdi"); 
+  } finally {
+      isFetchingProduct.value = false;
+  }
 };
-const totalPrice = computed(() => {
-  const quantity = model.value?.quantity ?? 0;
-  const salePrice = model.value?.salePrice ?? 0;
-  return quantity * salePrice;
-});
-const totalAmount = computed(() => {
-  const products = model.value.products || [];
-  return products.reduce((sum, item) => {
-    const price =
-      typeof item.totalPrice === "object" && "value" in item.totalPrice
-        ? Number(item.totalPrice.value || 0)
-        : Number(item.totalPrice || 0);
-    return sum + price;
-  }, 0);
-});
-// Watch qilish
-watch(totalAmount, (newVal) => {
-  model.value.totalAmount = newVal;
-  model.value.totalRemainderPrice = newVal;
-});
 
-const newDataArray = ref([]);
-const PlusProduct = () => {
-  // ✅ 1. Bo‘sh qiymatlar tekshiruvi
-  if (!model.value.product) {
-    ElMessage.error("Mahsulot nomi kiritilmagan");
-    return;
+const onPackingSelect = (val) => {
+  if (!selectedProductObj.value || !val) return;
+  const details = selectedProductObj.value.products.find(item => item.packingType === val);
+  
+  if (details) {
+      model.value.packagingType = details.packingType;
+      model.value.costPrice = details.buying_price;       
+      model.value.blockCostPrice = details.block_cost_price;
+      toast.info(`Narx: ${formatPrice(details.buying_price)}`);
   }
-  if (!model.value.quantity || isNaN(model.value.quantity)) {
-    ElMessage.error("Miqdor noto‘g‘ri yoki kiritilmagan");
-    return;
-  }
-  if (!model.value.unit) {
-    ElMessage.error("O‘lchov birligi tanlanmagan");
-    return;
-  }
-  if (
-    model.value.unit === "Blok" &&
-    (!model.value.blockCostPrice || isNaN(model.value.blockCostPrice))
-  ) {
-    ElMessage.error("Blok narxi noto‘g‘ri yoki kiritilmagan");
-    return;
-  }
-  if (
-    model.value.unit !== "Blok" &&
-    (!model.value.costPrice || isNaN(model.value.costPrice))
-  ) {
-    ElMessage.error("Narx noto‘g‘ri yoki kiritilmagan");
-    return;
-  }
-  if (!model.value.packagingType) {
-    ElMessage.error("Qadoqlash turi tanlanmagan");
-    return;
+};
+
+const addRow = () => {
+  if (!model.value.product || !model.value.quantity || !model.value.packagingType || !model.value.unit) {
+      return toast.error("Barcha maydonlarni to'ldiring!");
   }
 
-  // ✅ 2. Mahsulot obyektini yaratish
-  const product = {
+  const newItem = {
     id: uuidv4(),
     product: model.value.product,
-    code: model.value.code || "",
+    code: model.value.code,
     quantity: Number(model.value.quantity),
     packagingType: model.value.packagingType,
-    costPrice: Number(model.value.costPrice) || 0,
     unit: model.value.unit,
-    totalPrice:
-      model.value.unit === "Blok"
-        ? Number(model.value.quantity) * Number(model.value.blockCostPrice)
-        : Number(model.value.quantity) * Number(model.value.costPrice),
-    manufactureDate: model.value.manufactureDate || "",
-    expireDate: model.value.expireDate || "",
-    registeredAt: model.value.registeredAt || "",
-
-    status:
-      ModalAction.value.action === "update"
-        ? "Yangi qo'shilgan"
-        : "Dastlab qo'shilgan",
+    costPrice: Number(model.value.costPrice) || 0,
+    blockCostPrice: Number(model.value.blockCostPrice) || 0,
+    totalPrice: currentLineTotal.value,
+    manufactureDate: model.value.manufactureDate || moment().format("YYYY-MM-DD"),
+    expireDate: model.value.expireDate,
+    registeredAt: model.value.registeredAt || moment().format("YYYY-MM-DD"),
+    status: ModalAction.value.action === "update" ? "Yangi" : "Dastlabki",
   };
 
-  // ✅ 3. Qo‘shish
-  ModalAction.value.action === "update"
-    ? newDataArray.value.push(product)
-    : model.value.products.push(product);
-
-  // ✅ 4. Formani tozalash
-  model.value.quantity = "";
-  model.value.packagingType = "";
-  model.value.costPrice = "";
-  model.value.blockCostPrice = "";
-  model.value.unit = "";
-
-  ElMessage.success("Mahsulot muvaffaqiyatli qo‘shildi");
+  const target = ModalAction.value.action === "update" ? newDataArray.value : (model.value.products || (model.value.products = []));
+  target.unshift(newItem);
+  
+  toast.success("Qo'shildi");
+  model.value.quantity = ""; 
 };
 
-const formRef = ref(null);
-const SaveValidate = async () => {
-  if (!formRef.value) return;
-  await formRef.value.validate((valid) => {
-    if (valid === true) {
-      if (ModalAction.value.action === "update") {
-        const newData = {
-          newDataArray: newDataArray.value,
-          id: model.value._id,
-        };
-        store_rw.Create({
-          model: newData,
-          action: ModalAction.value.action,
-        });
-        newDataArray.value = [];
-      } else {
-        store_rw.Create({
-          model: model.value,
-          action: ModalAction.value.action,
-        });
-      }
-    } else {
-      ElMessage.error("Iltimos barcha maydonlarni to'ldiring !");
-      return false;
-    }
-  });
-};
-const DeleteById = (id) => {
-  if (ModalAction.value.action === `update`) {
-    const filterLoad = newDataArray.value.filter((item) => {
-      return item.id !== id;
-    });
-
-    newDataArray.value = filterLoad;
+const removeRow = (id) => {
+  if (!confirm("Rostdan ham o'chirmoqchimisiz?")) return;
+  if (ModalAction.value.action === 'update') {
+      newDataArray.value = newDataArray.value.filter(i => i.id !== id);
   } else {
-    const filterLoad = model.value.products.filter((item) => {
-      return item.id !== id;
-    });
-
-    model.value.products = filterLoad;
+      model.value.products = model.value.products.filter(i => i.id !== id);
   }
 };
-watch(
-  () => model.value.product,
-  (newValue) => {
-    ChangeName(newValue);
-    ChangePacking(newValue);
-  }
-);
-const pakings = ref();
-const SelectedProduct = ref();
-const ChangeName = (value) => {
-  const selectedProduct = products.value.find(
-    (item) => item.pro_name === value
-  );
-  if (selectedProduct) {
-    model.value.category = selectedProduct.pro_category;
-    model.value.code = selectedProduct.code;
-    pakings.value = selectedProduct.products;
-    SelectedProduct.value = selectedProduct;
-  }
-};
-const ChangePacking = (value) => {
-  const selectedProduct = products.value.find(
-    (item) => item.pro_name === value
-  );
-  if (SelectedProduct.value) {
-    const selectedPacking = SelectedProduct.value.products.find(
-      (item) => item.packingType === value
-    );
 
-    if (selectedPacking) {
-      model.value.packagingType = selectedPacking.packingType;
-      model.value.costPrice = selectedPacking.buying_price;
-      model.value.blockCostPrice = selectedPacking.block_cost_price;
+const save = async () => {
+    if (!model.value.partyNumber) return toast.error("Hujjat raqami yo'q!");
+    if (tableData.value.length === 0) return toast.error("Jadval bo'sh!");
+    
+    loading.value = true;
+    try {
+        const payload = {
+            action: ModalAction.value.action,
+            ...(ModalAction.value.action === "update" 
+                ? { newDataArray: newDataArray.value, id: model.value._id } 
+                : { model: model.value })
+        };
+        await store_rw.Create(payload);
+        toast.success("Saqlandi!");
+        store_rw.product_modal = false;
+        newDataArray.value = [];
+    } catch (e) { 
+        toast.error("Xatolik!"); 
+    } finally { 
+        loading.value = false; 
     }
-  }
-};
-const ChangeUnit = (value) => {
-  model.value.unit = value;
 };
 
-const categoryes = ref([
-  { id: 1, name: "Gazli" },
-  { id: 2, name: "Gazsiz" },
-  { id: 3, name: "Sharbatlar" },
-]);
-const suppliers = ref([{ id: 1, name: "Eco Water MCHJ" }]);
-const manufacturers = ref([{ id: 1, name: "Eco Water MCHJ" }]);
-const units = ref([
-  { id: 1, name: "Dona" },
-  { id: 2, name: "Blok" },
-  { id: 3, name: "Kg" },
-  { id: 4, name: "litr" },
-  { id: 5, name: "Metr" },
-  { id: 6, name: "Tona" },
-  { id: 7, name: "Quti" },
-  { id: 8, name: "Boshqa" },
-]);
-const rules = ref({
-  required: true,
-  message: `Maydon to'ldirilishi zarur !`,
-  trigger: "blur",
-});
+const formatPrice = (p) => new Intl.NumberFormat("uz-UZ").format(p || 0);
+const formatDate = (d) => d ? moment(d).format("DD.MM.YYYY") : "-";
 
-const total_amount = ref(0); // dona soni
-const total_price_amount = ref(0); // umumiy summa (totalPrice)
-const getSummaries = ({ columns, data }) => {
-  const sums = [];
-
-  columns.forEach((column, index) => {
-    if (index === 0) {
-      sums[index] = "Jami:";
-      return;
-    }
-
-    const prop = column.property;
-
-    if (prop === "quantity") {
-      const totalQty = data.reduce((acc, row) => {
-        const qty = Number(row.quantity);
-        return isNaN(qty) ? acc : acc + qty;
-      }, 0);
-
-      sums[index] = `${totalQty.toLocaleString()} dona`;
-      total_amount.value = totalQty;
-    } else if (prop === "totalPrice") {
-      const totalPrice = data.reduce((acc, row) => {
-        const price = Number(row.totalPrice);
-        return isNaN(price) ? acc : acc + price;
-      }, 0);
-
-      sums[index] = `${totalPrice.toLocaleString()} so'm`;
-      total_price_amount.value = totalPrice;
-    } else {
-      sums[index] = "";
-    }
-  });
-
-  return sums;
-};
-onMounted(() => {
-  updateDialogWidth();
-  window.addEventListener("resize", updateDialogWidth);
-  store_pro.GetAll({ status: 0 });
-});
+onMounted(() => { store_pro.GetAll({ status: 0 }); });
 </script>
+
 <template>
-  <div>
-    <el-dialog
-      v-model="product_modal"
-      :width="dialogWidth"
-      :before-close="handleClose"
-      class="rounded-md p-4 shadow-lg custom-modal mt-2"
-    >
-      <template #header>
-        <div class="flex items-center justify-between border-b pb-1">
-          <div class="flex items-center gap-2">
-            <i class="fa-solid fa-box text-lg text-blue-600"></i>
-            <h3 class="text-xl font-semibold text-gray-500">
-              {{ ModalAction.title }}
-            </h3>
-          </div>
-        </div>
-      </template>
-      <div>
-        <el-form
-          ref="formRef"
-          :model="model"
-          label-width="auto"
-          class="filter-box grid grid-cols-12 bg-[#e8eded] md:grid md:grid-cols-12 gap-1 sm:flex sm:flex-wrap rounded shadow-sm p-2 mt-2 text-[13px]"
-          size="small"
-          label-position="top"
-        >
-          <!-- //  Asosiy ma'lumotlari -->
-          <div
-            class="mb-1 col-span-3 bg-[#e8eded] p-2 rounded-md border-[1px] border-[#36d887]"
-          >
-            <h1
-              class="bg-slate-100 font-semibold text-[13px] p-1 mt-1 align-center text-center rounded-md border-t-[1px] border-[#36d887]"
-            >
-              Asosiy ma'lumotlari
-            </h1>
-            <div class="grid grid-cols-12 gap-1">
-              <div class="mb-1 col-span-12">
-                <el-form-item
-                  label="Partya nomer"
-                  prop="partyNumber"
-                  :rules="rules"
-                >
-                  <el-input
-                    disabled
-                    required
-                    v-model="model.partyNumber"
-                    clearable
-                    class="w-[100%]"
-                    size="smal"
-                    type="String"
-                    placeholder="..."
-                  />
-                </el-form-item>
-              </div>
-              <div class="mb-1 col-span-12">
-                <el-form-item label="Nomi" prop="product" :rules="rules">
-                  <el-select
-                    :disabled="model.products?.length > 0"
-                    v-model="model.product"
-                    placeholder="..."
-                    size="smal"
-                    style="width: 100%"
-                    @click="Type({ type: `product` })"
-                    @change="ChangeName($event)"
-                  >
-                    <template #prefix>
-                      <i
-                        @click.stop="
-                          Plus({
-                            title: `Buyurtmachi kategoryasini qo'shish`,
-                            state: `product`,
-                          })
-                        "
-                        class="fa-solid fa-plus cursor-pointer"
-                      ></i>
-                    </template>
-                    <el-option
-                      v-for="item in products"
-                      :key="item._id"
-                      :label="item.pro_name"
-                      :value="item.pro_name"
-                    >
-                      <template #default>
-                        <div class="flex justify-between items-center w-full">
-                          <span>{{ item.pro_name }}</span>
-                          <i
-                            class="fa-solid fa-trash text-red-500 cursor-pointer fa-xs ml-8"
-                            @click.stop="RemoveItem(item._id)"
-                          ></i>
-                        </div>
-                      </template>
-                    </el-option>
-                  </el-select>
-                </el-form-item>
-              </div>
-              <div class="mb-1 col-span-12">
-                <el-form-item
-                  label="Ishlab chiqaruvchi korxona"
-                  prop="manufacturer"
-                  :rules="rules"
-                >
-                  <el-select
-                    :disabled="model.products?.length > 0"
-                    v-model="model.manufacturer"
-                    placeholder="..."
-                    size="smal"
-                    style="width: 100%"
-                    @change="ChangeProductName($event)"
-                  >
-                    <template #prefix>
-                      <i
-                        @click.stop="AddProductNameModal()"
-                        class="fa-solid fa-plus cursor-pointer"
-                      ></i>
-                    </template>
-                    <el-option
-                      v-for="item in manufacturers"
-                      :key="item.id"
-                      :label="item.name"
-                      :value="item.name"
-                    >
-                      <template #default>
-                        <div class="flex justify-between items-center w-full">
-                          <span>{{ item.name }}</span>
-                          <i
-                            class="fa-solid fa-trash text-red-500 cursor-pointer fa-xs ml-8"
-                            @click.stop="RemoveItem(item._id)"
-                          ></i>
-                        </div>
-                      </template>
-                    </el-option>
-                  </el-select>
-                </el-form-item>
-              </div>
+  <Modal 
+    v-model="product_modal" 
+    title="Kirim Hujjati" 
+    subtitle="Omborga mahsulot qabul qilish"
+    icon="fa-solid fa-boxes-stacked"
+    width="max-w-[98vw]"
+  >
+    <div class="flex flex-col lg:flex-row h-[85vh] bg-slate-50 dark:bg-slate-900 font-sans text-slate-700 overflow-hidden">
+        
+      <div class="w-full lg:w-[320px] shrink-0 bg-white dark:bg-slate-800 border-r border-slate-200 dark:border-slate-700 flex flex-col z-40 relative shadow-[4px_0_24px_rgba(0,0,0,0.02)]">
+         
+         <div class="p-5 border-b border-slate-100 dark:border-slate-700 overflow-visible">
+            <div class="flex items-center justify-between mb-4">
+               <span class="text-xs font-bold uppercase text-slate-400 tracking-wider">Hujjat Ma'lumotlari</span>
+               <div class="bg-indigo-50 text-indigo-600 px-2 py-1 rounded text-xs font-mono font-bold">
+                 #{{ model.partyNumber || 'AUTO' }}
+               </div>
+            </div>
+            
+            <div class="space-y-4">
+               <div class="group relative z-50"> 
+                  <label class="text-[10px] font-bold text-slate-500 mb-1 block">Ishlab chiqaruvchi</label>
+                  <div class="flex gap-1">
+                     <Select 
+                        v-model="model.manufacturer" 
+                        :options="manufacturerOptions" 
+                        labelKey="label" valueKey="value"
+                        placeholder="Tanlang..." 
+                        class="w-full" 
+                        searchable
+                     />
+                   
+                  </div>
+               </div>
 
-              <div class="mb-1 col-span-12">
-                <el-form-item
-                  label="Mahsulotni jo'natgan xodim "
-                  prop="senderEmployee"
-                >
-                  <el-select
-                    :disabled="model.products?.length > 0"
-                    v-model="model.senderEmployee"
-                    placeholder="..."
-                    size="smal"
-                    style="width: 100%"
-                    @click="Type({ type: `senderEmployee` })"
-                    @change="ChangeProductCategory($event)"
-                  >
-                    <template #prefix>
-                      <i
-                        @click.stop="
-                          Plus({
-                            title: `Buyurtmachi kategoryasini qo'shish`,
-                            state: `senderEmployee`,
-                          })
-                        "
-                        class="fa-solid fa-plus cursor-pointer"
-                      ></i>
-                    </template>
-                    <el-option
-                      v-for="item in manufacturers"
-                      :key="item.id"
-                      :label="item.name"
-                      :value="item.name"
-                    >
-                      <template #default>
-                        <div class="flex justify-between items-center w-full">
-                          <span>{{ item.name }}</span>
-                          <i
-                            class="fa-solid fa-trash text-red-500 cursor-pointer fa-xs ml-8"
-                            @click.stop="RemoveItem(item.id)"
-                          ></i>
-                        </div>
-                      </template>
-                    </el-option>
-                  </el-select>
-                </el-form-item>
-              </div>
-              <div class="mb-1 col-span-12">
-                <el-form-item
-                  label="Mahsulotni qabul qiluvchi "
-                  prop="receivedBy"
-                >
-                  <el-select
-                    :disabled="model.products?.length > 0"
-                    v-model="model.receivedBy"
-                    placeholder="..."
-                    size="smal"
-                    style="width: 100%"
-                    @click="Type({ type: `receivedBy` })"
-                    @change="ChangeProductCategory($event)"
-                  >
-                    <template #prefix>
-                      <i
-                        @click.stop="
-                          Plus({
-                            title: `Buyurtmachi kategoryasini qo'shish`,
-                            state: `receivedBy`,
-                          })
-                        "
-                        class="fa-solid fa-plus cursor-pointer"
-                      ></i>
-                    </template>
-                    <el-option
-                      v-for="item in manufacturers"
-                      :key="item.id"
-                      :label="item.name"
-                      :value="item.name"
-                    >
-                      <template #default>
-                        <div class="flex justify-between items-center w-full">
-                          <span>{{ item.name }}</span>
-                          <i
-                            class="fa-solid fa-trash text-red-500 cursor-pointer fa-xs ml-8"
-                            @click.stop="RemoveItem(item.id)"
-                          ></i>
-                        </div>
-                      </template>
-                    </el-option>
-                  </el-select>
-                </el-form-item>
-              </div>
-            </div>
-          </div>
-          <!-- //   Mahsulot ma'lumotlari -->
-          <div
-            class="mb-1 col-span-9 bg-white p-2 rounded-md border-[1px] border-[#36d887]"
-          >
-            <h1
-              class="bg-slate-100 font-semibold text-[13px] p-1 mt-1 align-center text-center rounded-md border-t-[1px] border-[#36d887]"
-            >
-              Mahsulot ma'lumotlari
-            </h1>
-            <div class="grid grid-cols-12 gap-1">
-              <div class="mb-1 col-span-3">
-                <el-form-item label="Kodi" prop="code">
-                  <el-input
-                    disabled
-                    required
-                    v-model="model.code"
-                    clearable
-                    class="w-[100%]"
-                    size="smal"
-                    type="text"
-                    maxlength="9"
-                    placeholder="..."
-                  />
-                </el-form-item>
-              </div>
+               <div class="relative z-40">
+                  <label class="text-[10px] font-bold text-slate-500 mb-1 block">Jo'natuvchi</label>
+                  <Select v-model="model.senderEmployee" :options="manufacturerOptions" labelKey="label" valueKey="value" placeholder="Xodim tanlang" class="w-full" />
+               </div>
 
-              <div class="mb-1 col-span-3">
-                <el-form-item
-                  label="Ishlab chiqarilgan sana"
-                  prop="manufactureDate"
-                >
-                  <el-date-picker
-                    required
-                    v-model="model.manufactureDate"
-                    style="width: 100%"
-                    clearable
-                    type="date"
-                    placeholder="..."
-                    size="smal"
-                  />
-                </el-form-item>
-              </div>
-              <div class="mb-1 col-span-3">
-                <el-form-item label="Yaroqlilik muddati" prop="expireDate">
-                  <el-date-picker
-                    required
-                    v-model="model.expireDate"
-                    style="width: 100%"
-                    clearable
-                    type="date"
-                    placeholder="..."
-                    size="smal"
-                  />
-                </el-form-item>
-              </div>
-              <div class="mb-1 col-span-3">
-                <el-form-item label="Registratsiya sanasi" prop="registeredAt">
-                  <el-date-picker
-                    required
-                    v-model="model.registeredAt"
-                    style="width: 100%"
-                    clearable
-                    type="date"
-                    placeholder="..."
-                    size="smal"
-                  />
-                </el-form-item>
-              </div>
-              <div class="mb-1 col-span-3">
-                <el-form-item label="Qadoq turi" prop="packagingType">
-                  <el-select
-                    v-model="model.packagingType"
-                    placeholder="..."
-                    size="smal"
-                    style="width: 100%"
-                    @click="Type({ type: `packagingType` })"
-                    @change="ChangePacking($event)"
-                  >
-                    <template #prefix>
-                      <i
-                        @click.stop="
-                          Plus({
-                            title: `Buyurtmachi kategoryasini qo'shish`,
-                            state: `packagingType`,
-                          })
-                        "
-                        class="fa-solid fa-plus cursor-pointer"
-                      ></i>
-                    </template>
-                    <el-option
-                      v-for="item in pakings"
-                      :key="item.id"
-                      :label="item.packingType"
-                      :value="item.packingType"
-                    >
-                      <template #default>
-                        <div class="flex justify-between items-center w-full">
-                          <span>{{ item.packingType }}</span>
-                          <i
-                            class="fa-solid fa-trash text-red-500 cursor-pointer fa-xs ml-8"
-                            @click.stop="RemoveItem(item._id)"
-                          ></i>
-                        </div>
-                      </template>
-                    </el-option>
-                  </el-select>
-                </el-form-item>
-              </div>
-              <div class="mb-1 col-span-3">
-                <el-form-item label="Miqdori" prop="quantity">
-                  <el-input
-                    v-model="model.quantity"
-                    clearable
-                    class="w-[100%]"
-                    size="smal"
-                    type="Number"
-                    maxlength="9"
-                    placeholder="..."
-                  />
-                </el-form-item>
-              </div>
-              <div class="mb-1 col-span-3">
-                <el-form-item label="Birligi" prop="unit">
-                  <el-select
-                    v-model="model.unit"
-                    placeholder="..."
-                    size="smal"
-                    style="width: 100%"
-                    @click="Type({ type: `unit` })"
-                    @change="ChangeUnit($event)"
-                  >
-                    <template #prefix>
-                      <i
-                        @click.stop="
-                          Plus({
-                            title: `Buyurtmachi kategoryasini qo'shish`,
-                            state: `unit`,
-                          })
-                        "
-                        class="fa-solid fa-plus cursor-pointer"
-                      ></i>
-                    </template>
-                    <el-option
-                      v-for="item in units"
-                      :key="item.id"
-                      :label="item.name"
-                      :value="item.name"
-                    >
-                      <template #default>
-                        <div class="flex justify-between items-center w-full">
-                          <span>{{ item.name }}</span>
-                          <i
-                            class="fa-solid fa-trash text-red-500 cursor-pointer fa-xs ml-8"
-                            @click.stop="RemoveItem(item._id)"
-                          ></i>
-                        </div>
-                      </template>
-                    </el-option>
-                  </el-select>
-                </el-form-item>
-              </div>
-              <div class="mb-1 col-span-3">
-                <el-form-item label="Sotuv narxi dona (sum)" prop="costPrice">
-                  <el-input
-                    disabled
-                    required
-                    v-model="model.costPrice"
-                    clearable
-                    class="w-[100%]"
-                    size="smal"
-                    type="Number"
-                    maxlength="9"
-                    placeholder="..."
-                  />
-                </el-form-item>
-              </div>
+               <div class="relative z-30">
+                  <label class="text-[10px] font-bold text-slate-500 mb-1 block">Qabul qiluvchi</label>
+                  <Select v-model="model.receivedBy" :options="manufacturerOptions" labelKey="label" valueKey="value" placeholder="Xodim tanlang" class="w-full" />
+               </div>
+
+            
             </div>
-            <div class="flex justify-end items-center mt-2 border-t pt-2">
-              <div class="flex gap-3">
-                <div
-                  class="mb-1 col-span-3 w-auto text-center cursor-pointer text-white text-[13px] font-semibold bg-blue-500 rounded-[4px] px-4 py-[6px] hover:bg-blue-600"
-                  @click="PlusProduct()"
-                >
-                  <i class="fa-solid fa-plus mr-2 fa-md"></i>
-                  Qo'shish
-                </div>
-              </div>
-            </div>
-            <el-table
-              :header-cell-style="{
-                background: '#E3F4FB', // Soft, light cyan-blue
-                border: '1px solid #D1E3ED', // Very light border for separation
-                color: '#1E3A8A', // Deep indigo for strong text contrast
-                fontWeight: '600', // Semi-bold for emphasis
-                textAlign: 'center',
-                fontSize: '10px', // Optional: for tidiness
-              }"
-              :data="
-                ModalAction.action === 'update' ? newDataArray : model.products
-              "
-              show-summary
-              :summary-method="getSummaries"
-              stripe
-              highlight-current-row
-              load
-              style="font-size: 11px"
-              size="small"
-              class="el-table-custom w-full text-gray-700 bg-white rounded-md shadow-sm"
-              header-align="center"
-              empty-text="Mahsulot qo'shilmagan... "
-              border="true"
-              max-height="300"
-            >
-              <el-table-column
-                header-align="center"
-                align="center"
-                type="index"
-                prop="index"
-                fixed="left"
-                label="№"
-                width="60"
-              />
-              <el-table-column
-                label="Nomi"
-                :min-width="100"
-                :max-width="400"
-                header-align="center"
-                align="center"
-              >
-                <template #default="{ row }"
-                  ><div class="text-red-500">
-                    {{ row.product }}
-                  </div></template
-                ></el-table-column
-              >
-              <el-table-column
-                prop="code"
-                label="Kodi"
-                :min-width="100"
-                :max-width="400"
-                header-align="center"
-                align="center"
-              >
-                <template #default="{ row }"
-                  ><div class="text-red-500">
-                    {{ row.code }}
-                  </div></template
-                ></el-table-column
-              >
-              <el-table-column
-                label="🕒 Vaqt maydoni"
-                :min-width="150"
-                :max-width="400"
-                header-align="center"
-                align="center"
-              >
-                <el-table-column
-                  label="Ishlab chiqarilgan sana"
-                  :min-width="150"
-                  :max-width="400"
-                  header-align="center"
-                  align="center"
-                  ><template #default="scope">
-                    <div class="text-gray-900 font-semibold">
-                      {{
-                        scope.row.manufactureDate
-                          ? moment
-                              .utc(scope.row.manufactureDate) // 🟢 UTC formatda olish
-                              .tz("Asia/Tashkent") // 🟢 UTC+5 ga aylantirish
-                              .format("DD.MM.YYYY HH:mm:ss") // 🟢 To‘g‘ri formatda chiqarish
-                          : "-"
-                      }}
-                    </div>
-                  </template></el-table-column
-                >
-                <el-table-column
-                  label="Yaroqlilik muddati"
-                  :min-width="150"
-                  :max-width="400"
-                  header-align="center"
-                  align="center"
-                  ><template #default="scope">
-                    <div class="text-blue-600 font-semibold">
-                      {{
-                        scope.row.expireDate
-                          ? moment
-                              .utc(scope.row.expireDate) // 🟢 UTC formatda olish
-                              .tz("Asia/Tashkent") // 🟢 UTC+5 ga aylantirish
-                              .format("DD.MM.YYYY HH:mm:ss") // 🟢 To‘g‘ri formatda chiqarish
-                          : "-"
-                      }}
-                    </div>
-                  </template></el-table-column
-                >
-                <el-table-column
-                  label="Registratsiya"
-                  :min-width="150"
-                  :max-width="400"
-                  header-align="center"
-                  align="center"
-                  ><template #default="scope">
-                    <div class="text-blue-600 font-semibold">
-                      {{
-                        scope.row.registeredAt
-                          ? moment
-                              .utc(scope.row.registeredAt) // 🟢 UTC formatda olish
-                              .tz("Asia/Tashkent") // 🟢 UTC+5 ga aylantirish
-                              .format("DD.MM.YYYY HH:mm:ss") // 🟢 To‘g‘ri formatda chiqarish
-                          : "-"
-                      }}
-                    </div>
-                  </template></el-table-column
-                >
-              </el-table-column>
-              <el-table-column
-                fixed="right"
-                label="💵 Narx maydoni"
-                :min-width="150"
-                :max-width="400"
-                header-align="center"
-                align="center"
-              >
-                <el-table-column
-                  prop="costPrice"
-                  label="Sotuv narxi dona (sum)"
-                  :min-width="100"
-                  :max-width="400"
-                  header-align="center"
-                  align="center"
-                >
-                  <template #default="{ row }"
-                    ><div class="text-green-600">
-                      {{ row.costPrice ? formatPrice(row.costPrice) : 0 }}
-                    </div></template
-                  ></el-table-column
-                >
-                <el-table-column
-                  prop="quantity"
-                  label="Miqdori"
-                  :min-width="100"
-                  :max-width="400"
-                  header-align="center"
-                  align="center"
-                >
-                  <template #default="{ row }"
-                    ><div class="text-purple-600">
-                      {{ row.quantity ? formatPrice(row.quantity) : 0 }}
-                      {{ row.unit }}
-                    </div></template
-                  ></el-table-column
-                >
-                <el-table-column
-                  label="Qadoq turi"
-                  :min-width="100"
-                  :max-width="400"
-                  header-align="center"
-                  align="center"
-                >
-                  <template #default="{ row }"
-                    ><div class="text-red-500">
-                      {{ row.packagingType }}
-                    </div></template
-                  ></el-table-column
-                >
-                <el-table-column
-                  prop="totalPrice"
-                  label="Jami (sum)"
-                  :min-width="100"
-                  :max-width="400"
-                  header-align="center"
-                  align="center"
-                >
-                  <template #default="{ row }"
-                    ><div class="text-purple-600">
-                      {{
-                        row.quantity
-                          ? row.unit === "Blok"
-                            ? formatPrice(row.quantity * row.blockCostPrice)
-                            : formatPrice(row.quantity * row.costPrice)
-                          : 0
-                      }}
-                      sum
-                    </div></template
-                  ></el-table-column
-                >
-              </el-table-column>
-              <el-table-column
-                fixed="right"
-                prop="id"
-                label=""
-                :min-width="60"
-                :max-width="100"
-                header-align="center"
-                align="center"
-              >
-                <template #default="scope">
-                  <router-link
-                    to=""
-                    @click="DeleteById(scope.row.id)"
-                    class="inline-flex items-center mt-4 ml-2 text-white hover:bg-slate-300 font-medium rounded-md text-sm w-full sm:w-auto px-2 py-3 text-center"
-                  >
-                    <i class="text-black fa-sharp fa-solid fa-trash fa-xs"></i>
-                  </router-link>
-                </template>
-              </el-table-column>
-            </el-table>
-            <div
-              v-if="ModalAction.action !== `update`"
-              class="bg-white p-2 rounded-md flex justify-end"
-            >
-              <div
-                class="mb-1 col-span-12 w-full flex justify-end text-purple-600 font-semibold bg-purple-100 rounded-md p-2"
-              >
-                Jami :
-                {{
-                  ModalAction.action === `update`
-                    ? 0
-                    : formatPrice(model.totalAmount)
-                }}
-                so'm
-              </div>
-            </div>
-          </div>
-        </el-form>
+         </div>
+
+         <div class="mt-auto p-5 bg-slate-50/80 border-t border-slate-200">
+            <label class="text-[10px] font-bold uppercase text-slate-400 tracking-wider mb-2 block">Umumiy Summa</label>
+            <div class="text-3xl font-black text-slate-800 tracking-tighter">{{ formatPrice(totalDocSum) }}</div>
+            <div class="text-xs text-slate-400 font-medium mt-1">so'm</div>
+         </div>
       </div>
 
-      <template #footer>
-        <div class="flex justify-between items-center mt-1 border-t pt-2">
-          <el-select placeholder="Export" class="w-32">
-            <el-option @click="ExportExcel()" label="Excel" value="excel">
-              <i class="fa-solid fa-file-excel mr-2 fa-xm"></i> Excel
-            </el-option>
-            <el-option label="Pdf" value="pdf">
-              <i class="fa-solid fa-file-pdf mr-2 fa-xm"></i> Pdf
-            </el-option>
-            <el-option label="Word" value="word">
-              <i class="fa-solid fa-file-word mr-2 fa-xm"></i> Word
-            </el-option>
-          </el-select>
+      <div class="flex-1 flex flex-col min-w-0 bg-slate-50/50 dark:bg-slate-900 relative z-0">
+         
+         <div class="p-4 shrink-0 z-50 relative">
+            <div class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-3 flex flex-wrap xl:flex-nowrap gap-3 items-end overflow-visible">
+               
+               <div class="w-full xl:w-1/4 min-w-[200px] relative z-50">
+                  <label class=" required text-[10px] font-bold text-slate-400 mb-1 block pl-1 flex justify-between">
+                      Mahsulot 
+                      <span v-if="isFetchingProduct" class="text-indigo-500 animate-pulse"><i class="fa-solid fa-circle-notch fa-spin"></i> Yuklanmoqda...</span>
+                  </label>
+                  <Select 
+                     v-model="model.product" 
+                     :options="productOptions" 
+                     labelKey="label" valueKey="value"
+                     searchable 
+                     placeholder="Nomini yozing..." 
+                     @change="onProductSelect" 
+                     class="w-full"
+                     :loading="isFetchingProduct" 
+                  />
+               </div>
 
-          <div class="flex gap-3">
-            <div
-              class="mb-1 col-span-3 w-auto text-center text-white text-[13px] font-semibold bg-red-600 rounded-[4px] px-4 py-[6px] hover:bg-red-700 cursor-pointer"
-              @click="Cancel()"
-            >
-              <i class="fa-solid fa-xmark mr-2 fa-md"></i> Bekor qilish
+               <div class="w-24 shrink-0 hidden md:block">
+                  <label class="text-[10px] font-bold text-slate-400 mb-1 block pl-1">Kod</label>
+                  <div class="h-[38px] flex items-center justify-center bg-slate-50 border border-slate-200 rounded-lg text-xs font-mono text-slate-500">
+                     {{ model.code || '---' }}
+                  </div>
+               </div>
+
+               <div class="w-full md:w-1/3 xl:w-1/5 min-w-[150px] flex gap-2 relative z-40">
+                  <div class="w-1/2 relative z-50">
+                      <label class="required text-[10px] font-bold text-slate-400 mb-1 block pl-1">Qadoq</label>
+                      <Select v-model="model.packagingType" :options="packingOptions" labelKey="label" valueKey="value" placeholder="-" @change="onPackingSelect" class="w-full" />
+                  </div>
+                  <div class="w-1/2 relative z-40">
+                      <label class=" required text-[10px] font-bold text-slate-400 mb-1 block pl-1">Birlik</label>
+                      <Select v-model="model.unit" :options="unitOptions" labelKey="label" valueKey="value" placeholder="-" class="w-full" />
+                  </div>
+               </div>
+   <div class="grid grid-cols-2 gap-2 relative z-20">
+                   <div>
+                       <label class="text-[10px] font-bold text-slate-500 mb-1 block">I/Ch Sana</label>
+                       <input type="date" v-model="model.manufactureDate" class="w-full text-xs border border-slate-200 rounded-lg px-2 py-2 outline-none focus:border-indigo-500 bg-slate-50 h-[38px]">
+                   </div>
+                   <div>
+                       <label class="text-[10px] font-bold text-slate-500 mb-1 block">Yaroqlilik</label>
+                       <input type="date" v-model="model.expireDate" class="w-full text-xs border border-slate-200 rounded-lg px-2 py-2 outline-none focus:border-indigo-500 bg-slate-50 h-[38px]">
+                   </div>
+               </div>
+               <div class="w-full md:w-1/3 xl:w-1/4 flex gap-2 relative z-30">
+                   <div class="w-1/2">
+                      <label class=" required text-[10px] font-bold text-slate-400 mb-1 block pl-1">Narx</label>
+                      <div class="h-[38px] flex items-center px-3 bg-slate-50 border border-slate-200 rounded-lg text-xs font-bold text-slate-600 truncate">
+                         {{ formatPrice(currentPrice) }}
+                      </div>
+                   </div>
+                   <div class="w-1/2">
+                      <label class="requiredtext-[10px] font-bold text-indigo-400 mb-1 block pl-1">Miqdor</label>
+                      <input type="number" v-model="model.quantity" @keyup.enter="addRow" class="w-full h-[38px] border-2 border-indigo-100 rounded-lg px-3 text-center font-bold text-indigo-600 outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all placeholder-indigo-200" placeholder="0" min="0">
+                   </div>
+               </div>
+
+               <div class="w-full md:w-auto mt-2 md:mt-0 relative z-20">
+                  <button @click="addRow" class="w-full md:w-12 h-[38px] bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg shadow-lg shadow-indigo-500/30 flex items-center justify-center transition-all active:scale-95">
+                     <i class="fa-solid fa-plus text-sm"></i>
+                  </button>
+               </div>
             </div>
-            <div
-              class="mb-1 col-span-3 w-auto text-center cursor-pointer text-white text-[13px] font-semibold bg-green-500 rounded-[4px] px-4 py-[6px] hover:bg-green-600"
-              @click="SaveValidate()"
-            >
-              <i class="fa-solid fa-check mr-2 fa-md"></i>
-              {{ ModalAction.action === "create" ? "Saqlash" : "O'zgartirish" }}
+         </div>
+
+         <div class="flex-1 overflow-hidden px-4 pb-2 relative z-0">
+            <div class="h-full bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden flex flex-col">
+               
+               <DataTable :items="tableData" :columns="tableColumns" class="flex-1">
+                  <template #product_details="{ row }">
+                     <div class="flex flex-col">
+                        <span class="font-bold text-slate-700 text-xs">{{ row.product }}</span>
+                        <span class="text-[10px] text-slate-400 font-mono mt-0.5">{{ row.code }}</span>
+                     </div>
+                  </template>
+
+                  <template #packing="{ row }">
+                     <span class="inline-flex items-center px-2 py-1 rounded bg-slate-50 text-slate-600 text-[11px] border border-slate-100">
+                        {{ row.packagingType }} <span class="text-slate-300 mx-1">/</span> {{ row.unit }}
+                     </span>
+                  </template>
+
+                  <template #price="{ row }">
+                     <span class="text-xs font-medium text-slate-500 font-mono">
+                        {{ row.unit === 'Blok' ? formatPrice(row.blockCostPrice) : formatPrice(row.costPrice) }}
+                     </span>
+                  </template>
+
+                  <template #quantity="{ row }">
+                     <span class="font-bold text-xs bg-indigo-50 text-indigo-700 px-2 py-1 rounded-md">
+                        {{ row.quantity }}
+                     </span>
+                  </template>
+
+                  <template #total="{ row }">
+                     <span class="font-bold text-xs text-slate-800 font-mono">
+                       {{ typeof row.totalPrice === 'object' ? formatPrice(row.totalPrice.value) : formatPrice(row.totalPrice) }}
+                     </span>
+                  </template>
+
+                  <template #dates="{ row }">
+                     <div class="flex flex-col text-[9px] leading-tight">
+                        <span class="text-emerald-600" title="I/Ch Sana">{{ formatDate(row.manufactureDate) }}</span>
+                        <span class="text-rose-500" title="Yaroqlilik">{{ formatDate(row.expireDate) }}</span>
+                     </div>
+                  </template>
+
+                  <template #actions="{ row }">
+                     <button @click="removeRow(row.id)" class="w-7 h-7 flex items-center justify-center rounded hover:bg-rose-50 text-slate-300 hover:text-rose-500 transition-colors">
+                        <i class="fa-solid fa-trash-can text-xs"></i>
+                     </button>
+                  </template>
+
+               </DataTable>
+
             </div>
-          </div>
+         </div>
+
+      </div>
+    </div>
+
+    <template #footer>
+        <div class="flex justify-between items-center w-full px-2">
+            <div class="text-xs text-slate-400 hidden md:flex items-center gap-4">
+                <span><i class="fa-solid fa-keyboard mr-1.5"></i> <b>Enter</b> - Qo'shish</span>
+                <span>Jami: <b>{{ tableData.length }}</b> qator</span>
+            </div>
+            <div class="flex gap-3 w-full md:w-auto">
+                <Button variant="secondary" @click="store_rw.product_modal = false" class="flex-1 md:flex-none">Bekor qilish</Button>
+                <Button variant="primary" :loading="loading" @click="save" class="flex-1 md:flex-none !px-8 shadow-lg shadow-indigo-500/20">
+                   <i class="fa-solid fa-check-circle mr-2"></i> Tasdiqlash
+                </Button>
+            </div>
         </div>
-      </template>
-    </el-dialog>
-  </div>
+    </template>
+  </Modal>
 </template>
 
 <style scoped>
-.custom-modal {
-  background-color: #fefefe;
-  transition: all 0.3s ease;
-}
+.custom-scrollbar::-webkit-scrollbar { width: 4px; }
+.custom-scrollbar::-webkit-scrollbar-thumb { @apply bg-slate-300 rounded-full; }
+.form-group { @apply flex flex-col gap-1.5; }
+.form-label { @apply text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide ml-1; }
+.form-input { @apply w-full h-[40px] px-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-xl text-xs outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10 transition-all text-slate-700 dark:text-slate-200; }
 
-.custom-modal .el-dialog__body {
-  padding: 20px 24px;
-}
-
-.custom-modal .el-dialog__footer {
-  padding: 20px 24px;
-}
-
-.el-tag {
-  font-size: 12px;
-}
-
-.el-table th {
-  background: #f4f7fa;
-  color: #333;
-  font-weight: 600;
-}
-
-.el-button {
-  transition: 0.2s ease-in-out;
-}
-
-.el-button:hover {
-  transform: translateY(-1px);
+/* Majburiy yulduzcha */
+.required:after {
+  content: " *";
+  color: #ef4444; /* red-500 */
 }
 </style>

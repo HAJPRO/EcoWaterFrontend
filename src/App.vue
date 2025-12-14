@@ -1,6 +1,6 @@
 <template>
   <router-view />
-
+<ToastContainer/>
   <Transition
     enter-active-class="transition ease-out duration-300"
     enter-from-class="opacity-0 transform scale-95"
@@ -54,13 +54,14 @@
       </div>
     </div>
   </Transition>
+
 </template>
 
 <script setup>
 import { onMounted, onUnmounted, onBeforeUnmount, ref } from "vue";
 import Cookies from "js-cookie";
 import { UserSocketStore } from "./socket/store/user/user.store";
-
+import ToastContainer from "./UI/Toast.vue";
 // O'zgaruvchi nomini mantiqan to'g'irladik (isOnline -> isOffline)
 const isOffline = ref(false);
 const userSocketStore = UserSocketStore();
