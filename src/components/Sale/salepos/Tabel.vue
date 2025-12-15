@@ -1,8 +1,12 @@
 <template>
-  <div class="h-screen w-full bg-[#F1F5F9] dark:bg-[#020617] flex flex-col md:flex-row font-sans overflow-hidden text-slate-600 dark:text-slate-400 selection:bg-indigo-500 selection:text-white transition-colors duration-300">
+  <div class="h-screen w-full bg-[#F1F5F9] dark:bg-[#020617] flex flex-col lg:flex-row font-sans overflow-hidden text-slate-600 dark:text-slate-400 selection:bg-indigo-500 selection:text-white transition-colors duration-300">
     
-    <div class="flex-1 flex flex-col min-w-0 h-full relative z-0">
-       <header class="h-20 shrink-0 bg-white/80 dark:bg-[#0F172A]/90 backdrop-blur-2xl border-b border-slate-200/60 dark:border-slate-800 flex items-center justify-between px-6 z-50 sticky top-0 transition-all">
+    <div 
+        class="flex-1 flex-col min-w-0 h-full relative z-0 transition-all duration-300"
+        :class="mobileTab === 'catalog' ? 'flex' : 'hidden lg:flex'"
+    >
+      
+   <header class="h-20 shrink-0 bg-white/80 dark:bg-[#0F172A]/90 backdrop-blur-2xl border-b border-slate-200/60 dark:border-slate-800 flex items-center justify-between px-6 z-50 sticky top-0 transition-all">
         
         <div class="flex items-center gap-4">
           <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center text-white shadow-lg shadow-indigo-500/30 ring-1 ring-white/20">
@@ -55,36 +59,45 @@
         </div>
       </header>
 
-      <div class="px-5 py-4 flex gap-3 shrink-0 z-10 sticky top-0 bg-[#F1F5F9]/95 dark:bg-[#020617]/95 backdrop-blur-md border-b border-slate-200/50 dark:border-slate-800/50">
-        <div class="relative w-[240px]" ref="categoryMenuRef">
-          <button @click="showCategoryMenu = !showCategoryMenu" class="w-full h-12 bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-700 rounded-xl flex items-center justify-between px-4 hover:border-indigo-500 transition shadow-sm group active:scale-[0.98]">
+      <div class="px-5 py-4 flex gap-3 shrink-0 z-10 sticky top-16 bg-[#F1F5F9]/95 dark:bg-[#020617]/95 backdrop-blur-md border-b border-slate-200/50 dark:border-slate-800/50">
+        <div class="relative w-[50px] sm:w-[240px]" ref="categoryMenuRef">
+          <button @click="showCategoryMenu = !showCategoryMenu" class="w-full h-12 bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-700 rounded-xl flex items-center justify-center sm:justify-between px-0 sm:px-4 hover:border-indigo-500 transition shadow-sm group active:scale-[0.98]">
             <div class="flex items-center gap-3 overflow-hidden">
-              <div class="w-7 h-7 rounded-lg bg-indigo-50 dark:bg-slate-800 flex items-center justify-center text-indigo-500 text-xs group-hover:bg-indigo-600 group-hover:text-white transition-colors"><i :class="selectedCategoryIcon"></i></div>
-              <span class="text-xs font-bold text-slate-700 dark:text-slate-200 truncate">{{ activeCategory }}</span>
+              <div class="w-7 h-7 rounded-lg bg-indigo-50 dark:bg-slate-800 flex items-center justify-center text-indigo-500 text-xs group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+                <i :class="selectedCategoryIcon"></i>
+              </div>
+              <span class="hidden sm:block text-xs font-bold text-slate-700 dark:text-slate-200 truncate">{{ activeCategory }}</span>
             </div>
-            <i class="fa-solid fa-chevron-down text-[10px] text-slate-400 transition-transform duration-200" :class="{'rotate-180': showCategoryMenu}"></i>
+            <i class="hidden sm:block fa-solid fa-chevron-down text-[10px] text-slate-400 transition-transform duration-200" :class="{'rotate-180': showCategoryMenu}"></i>
           </button>
+          
           <transition name="dropdown">
-            <div v-if="showCategoryMenu" class="absolute top-[calc(100%+6px)] left-0 w-full bg-white dark:bg-[#0F172A] rounded-xl shadow-xl border border-slate-200 dark:border-slate-700 overflow-hidden z-30 p-2">
-              <input v-model="categorySearch" type="text" placeholder="Kategoriya izlash..." class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-xs outline-none focus:border-indigo-500 mb-1">
+            <div v-if="showCategoryMenu" class="absolute top-[calc(100%+6px)] left-0 w-[250px] sm:w-full bg-white dark:bg-[#0F172A] rounded-xl shadow-xl border border-slate-200 dark:border-slate-700 overflow-hidden z-30 p-2">
+              <input v-model="categorySearch" type="text" placeholder="Kategoriya..." class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-xs outline-none focus:border-indigo-500 mb-1">
               <div class="max-h-60 overflow-y-auto thin-scroll space-y-0.5">
-                <button v-for="cat in filteredCategories" :key="cat.name" @click="selectCategory(cat)" class="w-full flex items-center gap-2 px-3 py-2.5 rounded-lg text-xs hover:bg-indigo-50 dark:hover:bg-slate-800 transition" :class="activeCategory === cat.name ? 'text-indigo-600 font-bold bg-indigo-50 dark:bg-slate-800' : 'text-slate-600 dark:text-slate-400'"><i :class="cat.icon"></i> {{ cat.name }}</button>
+                <button v-for="cat in filteredCategories" :key="cat.name" @click="selectCategory(cat)" class="w-full flex items-center gap-2 px-3 py-2.5 rounded-lg text-xs hover:bg-indigo-50 dark:hover:bg-slate-800 transition" :class="activeCategory === cat.name ? 'text-indigo-600 font-bold bg-indigo-50 dark:bg-slate-800' : 'text-slate-600 dark:text-slate-400'">
+                  <i :class="cat.icon"></i> {{ cat.name }}
+                </button>
               </div>
             </div>
           </transition>
         </div>
+
         <div class="relative flex-1 group">
           <i class="fa-solid fa-barcode absolute left-4 top-4 text-slate-400 group-focus-within:text-indigo-500 transition-colors"></i>
-          <input v-model="productSearch" type="text" placeholder="Mahsulot nomi yoki shtrix kodi..." class="w-full h-12 pl-11 pr-4 bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-medium focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all shadow-sm outline-none text-slate-800 dark:text-white">
+          <input v-model="productSearch" type="text" placeholder="Qidiruv..." class="w-full h-12 pl-11 pr-4 bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-medium focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all shadow-sm outline-none text-slate-800 dark:text-white">
         </div>
       </div>
 
-      <div class="flex-1 overflow-y-auto px-5 pb-24 md:pb-5 custom-scroll">
-        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
+      <div class="flex-1 overflow-y-auto px-5 pb-24 lg:pb-5 custom-scroll">
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
           <div v-for="product in filteredProducts" :key="product.id" @click="addToCart(product)" class="group relative bg-white dark:bg-[#0F172A] rounded-2xl p-2.5 shadow-sm border border-slate-200 dark:border-slate-800 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer flex flex-col overflow-hidden" :class="{'ring-2 ring-indigo-500 ring-offset-2 dark:ring-offset-[#020617] border-indigo-500': getItemQty(product.id) > 0}">
             <div class="aspect-[4/3] bg-slate-100 dark:bg-slate-900 rounded-xl overflow-hidden relative mb-2.5">
                <img :src="product.image" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
                <div class="absolute top-2 left-2 bg-black/60 backdrop-blur-md px-2 py-1 rounded-lg text-[9px] font-bold text-white border border-white/10 shadow-sm flex items-center gap-1"><i class="fa-solid fa-layer-group text-[8px] opacity-70"></i> {{ product.stock }}</div>
+               <div class="absolute inset-0 bg-indigo-900/10 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                   <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center text-indigo-600 shadow-xl transform scale-0 group-hover:scale-100 transition-transform duration-300"><i class="fa-solid fa-plus text-lg"></i></div>
+               </div>
                <transition name="pop"><div v-if="getItemQty(product.id) > 0" class="absolute bottom-2 right-2 min-w-[28px] h-7 px-1.5 bg-indigo-600 rounded-full flex items-center justify-center text-white font-bold text-xs shadow-lg border-2 border-white dark:border-[#0F172A] z-10">{{ getItemQty(product.id) }}</div></transition>
             </div>
             <div class="px-1 flex-1 flex flex-col">
@@ -100,12 +113,13 @@
     </div>
 
     <div 
-        class="fixed inset-0 z-50 md:static md:z-auto bg-white dark:bg-[#111827] flex flex-col shadow-2xl md:border-l border-slate-200 dark:border-slate-800 transition-transform duration-300 md:w-[480px] lg:w-[550px]"
-        :class="showMobileCart ? 'translate-y-0' : 'translate-y-full md:translate-y-0'"
+        class="bg-white dark:bg-[#111827] flex-col shadow-2xl lg:border-l border-slate-200 dark:border-slate-800 lg:w-[450px] xl:w-[500px]"
+        :class="mobileTab === 'cart' ? 'flex fixed inset-0 z-50' : 'hidden lg:flex lg:static'"
     >
       
       <div class="shrink-0 bg-slate-50 dark:bg-[#0B1120] border-b border-slate-200 dark:border-slate-700 px-3 pt-3 flex items-end gap-1 overflow-x-auto no-scrollbar">
-        <button @click="showMobileCart = false" class="md:hidden w-10 h-10 mb-1 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center mr-2 text-slate-500 shadow-sm"><i class="fa-solid fa-chevron-down"></i></button>
+        <button @click="mobileTab = 'catalog'" class="lg:hidden w-10 h-10 mb-1 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center mr-2 text-slate-500 shadow-sm"><i class="fa-solid fa-arrow-left"></i></button>
+        
         <button v-for="session in sessions" :key="session.id" @click="activeSessionId = session.id" class="relative px-4 py-3 rounded-t-xl text-[11px] font-bold transition-all min-w-[110px] flex items-center justify-between gap-2 border-t border-x border-transparent" :class="activeSessionId === session.id ? 'bg-white dark:bg-[#111827] text-indigo-600 dark:text-indigo-400 border-slate-200 dark:border-slate-800 !border-b-transparent z-10 shadow-[0_-2px_5px_rgba(0,0,0,0.02)]' : 'text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800'">
           <span>{{ session.name }}</span>
           <span v-if="sessions.length > 1" @click.stop="removeSession(session.id)" class="hover:text-red-500 w-5 h-5 flex items-center justify-center rounded-full hover:bg-rose-100 transition"><i class="fa-solid fa-xmark"></i></span>
@@ -115,18 +129,25 @@
 
       <div class="shrink-0 p-4 bg-white dark:bg-[#111827] border-b border-slate-100 dark:border-slate-800 z-10 grid grid-cols-2 gap-3">
         <div class="relative" ref="customerDropdownRef">
-          <button @click="showCustomerList = !showCustomerList" class="w-full p-3 bg-slate-50 dark:bg-slate-900 border transition-all rounded-xl flex items-center justify-between group shadow-sm hover:border-indigo-400" :class="!activeSessionData.customerId ? 'border-rose-300 dark:border-rose-900/50' : 'border-slate-200 dark:border-slate-700'">
+          <label class="text-[9px] font-extrabold text-slate-400 uppercase tracking-widest mb-1 block pl-1">Mijoz</label>
+          <button @click="showCustomerList = !showCustomerList" class="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border transition-all rounded-xl flex items-center justify-between group shadow-sm hover:border-indigo-400" :class="!activeSessionData.customerId ? 'border-rose-300 dark:border-rose-900/50' : 'border-slate-200 dark:border-slate-700'">
             <div class="flex items-center gap-2 overflow-hidden">
               <div class="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-xs shrink-0"><i class="fa-solid fa-user"></i></div>
               <div class="flex flex-col text-left truncate">
-                <span class="text-[10px] text-slate-400 font-bold uppercase">Mijoz</span>
-                <span class="text-xs font-bold text-slate-800 dark:text-white truncate">{{ activeCustomer ? activeCustomer.name : 'Tanlanmagan' }}</span>
+                <span class="text-xs font-bold text-slate-800 dark:text-white leading-none mb-0.5 truncate">{{ activeCustomer ? activeCustomer.name : 'Tanlanmagan' }}</span>
+                <div class="flex items-center gap-2 text-[10px]" v-if="activeCustomer">
+                   <span class="font-mono text-slate-500">{{ activeCustomer.phone }}</span>
+                   <span class="w-px h-2 bg-slate-300 dark:bg-slate-600"></span>
+                   <span class="font-bold" :class="activeCustomer.balance >= 0 ? 'text-emerald-500' : 'text-rose-500'">{{ formatPrice(activeCustomer.balance) }}</span>
+                </div>
+                <span v-else class="text-[9px] text-rose-500 font-bold uppercase">Majburiy</span>
               </div>
             </div>
+            <i class="fa-solid fa-chevron-down text-xs text-slate-400 transition-transform" :class="{'rotate-180': showCustomerList}"></i>
           </button>
           <transition name="dropdown">
             <div v-if="showCustomerList" class="absolute top-[calc(100%+4px)] left-0 w-[200%] bg-white dark:bg-slate-800 rounded-xl shadow-2xl border border-slate-100 dark:border-slate-700 z-50 p-2">
-              <input v-model="customerSearch" type="text" placeholder="Mijoz izlash..." class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-xs outline-none focus:border-indigo-500 mb-1">
+              <input v-model="customerSearch" type="text" placeholder="Izlash..." class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-xs outline-none focus:border-indigo-500 mb-1">
               <div class="max-h-40 overflow-y-auto thin-scroll">
                 <button v-for="c in filteredCustomers" :key="c.id" @click="selectCustomer(c)" class="w-full p-2.5 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-lg flex items-center justify-between transition text-left border-b border-slate-50 dark:border-slate-700 last:border-0 group">
                   <div class="text-xs font-bold text-slate-700 dark:text-slate-200 group-hover:text-indigo-600">{{ c.name }}</div>
@@ -138,18 +159,20 @@
         </div>
 
         <div class="relative" ref="supplierDropdownRef">
-          <button @click="showSupplierList = !showSupplierList" class="w-full p-3 bg-slate-50 dark:bg-slate-900 border transition-all rounded-xl flex items-center justify-between group shadow-sm hover:border-orange-400" :class="!activeSessionData.supplierId ? 'border-slate-200 dark:border-slate-700' : 'border-orange-200 dark:border-slate-700'">
+          <label class="text-[9px] font-extrabold text-slate-400 uppercase tracking-widest mb-1 block pl-1">Agent</label>
+          <button @click="showSupplierList = !showSupplierList" class="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border transition-all rounded-xl flex items-center justify-between group shadow-sm hover:border-orange-400" :class="!activeSessionData.supplierId ? 'border-slate-200 dark:border-slate-700' : 'border-orange-200 dark:border-slate-700'">
             <div class="flex items-center gap-2 overflow-hidden">
               <div class="w-8 h-8 rounded-lg bg-orange-100 text-orange-600 flex items-center justify-center font-bold text-xs shrink-0"><i class="fa-solid fa-truck"></i></div>
               <div class="flex flex-col text-left truncate">
-                <span class="text-[10px] text-slate-400 font-bold uppercase">Agent</span>
-                <span class="text-xs font-bold text-slate-800 dark:text-white truncate">{{ activeSupplier ? activeSupplier.company : 'Do\'kon' }}</span>
+                <span class="text-xs font-bold text-slate-800 dark:text-white leading-none mb-0.5 truncate">{{ activeSupplier ? activeSupplier.company : 'Zaxiradan' }}</span>
+                <span class="text-[10px] text-slate-400 font-mono">{{ activeSupplier ? activeSupplier.phone : 'Standart' }}</span>
               </div>
             </div>
+            <i class="fa-solid fa-chevron-down text-xs text-slate-400 transition-transform" :class="{'rotate-180': showSupplierList}"></i>
           </button>
           <transition name="dropdown">
             <div v-if="showSupplierList" class="absolute top-[calc(100%+4px)] right-0 w-[200%] bg-white dark:bg-slate-800 rounded-xl shadow-2xl border border-slate-100 dark:border-slate-700 z-50 p-2 overflow-hidden">
-              <input v-model="supplierSearch" type="text" placeholder="Agent izlash..." class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-xs outline-none focus:border-orange-500 mb-1">
+              <input v-model="supplierSearch" type="text" placeholder="Izlash..." class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-xs outline-none focus:border-orange-500 mb-1">
               <div class="max-h-40 overflow-y-auto thin-scroll">
                 <button @click="selectSupplier(null)" class="w-full text-left px-3 py-2 text-xs font-bold text-indigo-500 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-lg border-b border-slate-50 dark:border-slate-700">Do'kon zaxirasidan</button>
                 <button v-for="s in filteredSuppliers" :key="s.id" @click="selectSupplier(s)" class="w-full p-2.5 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-lg flex items-center justify-between transition text-left border-b border-slate-50 dark:border-slate-700 last:border-0 group">
@@ -161,25 +184,21 @@
         </div>
       </div>
 
-      <div class="flex-1 overflow-y-auto p-4 custom-scroll bg-white dark:bg-[#111827] relative">
+      <div class="flex-1 overflow-y-auto p-4 custom-scroll bg-white dark:bg-[#111827] relative pb-32 lg:pb-4">
           <div v-if="activeSessionData.cart.length === 0" class="absolute inset-0 flex flex-col items-center justify-center text-slate-300 dark:text-slate-600 select-none">
-             <i class="fa-solid fa-cart-arrow-down text-5xl mb-4 opacity-40"></i>
+             <i class="fa-solid fa-basket-shopping text-4xl mb-4 opacity-40"></i>
              <p class="text-sm font-bold uppercase tracking-wider opacity-70">Savat bo'sh</p>
           </div>
 
           <transition-group name="list" tag="div" class="space-y-3">
-             <div 
-               v-for="item in activeSessionData.cart" :key="item.id" 
-               class="group relative flex items-center gap-3 p-3 bg-white dark:bg-[#151E32] rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm hover:border-indigo-400 dark:hover:border-indigo-700 transition-all"
-             >
-                 <img :src="item.image" class="w-16 h-16 rounded-xl object-cover bg-slate-100 dark:bg-slate-800 shrink-0 border border-slate-100 dark:border-slate-700">
+             <div v-for="item in activeSessionData.cart" :key="item.id" class="group relative flex items-center gap-3 p-3 bg-white dark:bg-[#151E32] rounded-2xl border border-slate-100 dark:border-slate-700/60 shadow-sm hover:border-indigo-300 dark:hover:border-indigo-700 transition-all">
+                 <img :src="item.image" class="w-14 h-14 rounded-xl object-cover bg-slate-100 dark:bg-slate-800 shrink-0 border border-slate-100 dark:border-slate-700">
                  
                  <div class="flex-1 min-w-0 py-0.5">
                      <div class="flex justify-between items-start">
                          <h4 class="text-xs font-bold text-slate-800 dark:text-white line-clamp-1 pr-6 mb-1">{{ item.name }}</h4>
-                         <button @click="removeItem(item.id)" class="text-slate-300 hover:text-rose-500 transition"><i class="fa-solid fa-trash-can text-sm"></i></button>
+                         <button @click="removeItem(item.id)" class="text-slate-300 hover:text-rose-500 transition"><i class="fa-solid fa-trash-can text-xs"></i></button>
                      </div>
-                     
                      <div class="flex items-center justify-between">
                          <div class="flex flex-col">
                              <span class="text-[10px] text-slate-400 font-mono">Dona: {{ formatPrice(item.price) }}</span>
@@ -189,15 +208,9 @@
                  </div>
 
                  <div class="flex items-center bg-slate-50 dark:bg-[#020617] rounded-xl border border-slate-200 dark:border-slate-700 h-12 p-1 select-none shrink-0 shadow-inner">
-                     <button @click="changeQty(item, -1)" class="w-10 h-full flex items-center justify-center text-slate-400 hover:text-rose-500 bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-100 dark:border-slate-600 transition active:scale-90"><i class="fa-solid fa-minus text-sm"></i></button>
-                     
-                     <input 
-                        v-model.number="item.qty" 
-                        type="number" 
-                        class="w-28 h-full bg-transparent text-center text-xl font-black text-indigo-600 dark:text-indigo-400 outline-none appearance-none"
-                     >
-                     
-                     <button @click="changeQty(item, 1)" class="w-10 h-full flex items-center justify-center text-slate-400 hover:text-emerald-500 bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-100 dark:border-slate-600 transition active:scale-90"><i class="fa-solid fa-plus text-sm"></i></button>
+                     <button @click="changeQty(item, -1)" class="w-10 h-full flex items-center justify-center text-slate-400 hover:text-rose-500 bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-100 dark:border-slate-600 transition active:scale-90"><i class="fa-solid fa-minus text-xs"></i></button>
+                     <input v-model.number="item.qty" type="number" class="w-24 h-full bg-transparent text-center text-xl font-black text-indigo-600 dark:text-indigo-400 outline-none appearance-none">
+                     <button @click="changeQty(item, 1)" class="w-10 h-full flex items-center justify-center text-slate-400 hover:text-emerald-500 bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-100 dark:border-slate-600 transition active:scale-90"><i class="fa-solid fa-plus text-xs"></i></button>
                  </div>
              </div>
           </transition-group>
@@ -259,14 +272,31 @@
 
     </div>
 
-    <div v-if="activeSessionData.cart.length > 0 && !showMobileCart" class="md:hidden fixed bottom-4 left-4 right-4 z-40">
-        <button @click="showMobileCart = true" class="w-full h-14 bg-slate-900 dark:bg-indigo-600 text-white rounded-2xl shadow-2xl flex items-center justify-between px-5 active:scale-95 transition-transform ring-4 ring-white/20 dark:ring-black/20">
+    <div v-if="activeSessionData.cart.length > 0 && !showMobileCart" class="lg:hidden fixed bottom-4 left-4 right-4 z-40">
+        <button @click="mobileTab = 'cart'" class="w-full h-14 bg-slate-900 dark:bg-indigo-600 text-white rounded-2xl shadow-2xl flex items-center justify-between px-5 active:scale-95 transition-transform ring-4 ring-white/20 dark:ring-black/20">
             <div class="flex items-center gap-3">
                 <div class="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center font-bold text-xs animate-bounce-in">{{ activeSessionData.cart.length }}</div>
                 <span class="text-xs font-bold uppercase tracking-wider">Savatni ochish</span>
             </div>
             <span class="text-lg font-black">{{ formatPrice(grandTotal) }}</span>
         </button>
+    </div>
+
+    <div class="lg:hidden fixed bottom-0 left-0 w-full bg-white dark:bg-[#0F172A] border-t border-slate-200 dark:border-slate-700 z-50 flex pb-safe" v-if="!showMobileCart">
+      <button @click="mobileTab = 'catalog'" class="flex-1 py-3 flex flex-col items-center justify-center gap-1 transition-colors" :class="mobileTab === 'catalog' ? 'text-indigo-600' : 'text-slate-400 hover:text-slate-600'">
+        <i class="fa-solid fa-boxes-stacked text-xl"></i>
+        <span class="text-[10px] font-bold">Katalog</span>
+      </button>
+      
+      <button @click="mobileTab = 'cart'" class="flex-1 py-3 flex flex-col items-center justify-center gap-1 transition-colors relative" :class="mobileTab === 'cart' ? 'text-indigo-600' : 'text-slate-400 hover:text-slate-600'">
+        <div class="relative">
+            <i class="fa-solid fa-cart-shopping text-xl"></i>
+            <span v-if="activeSessionData.cart.length > 0" class="absolute -top-2 -right-3 bg-rose-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full border-2 border-white dark:border-[#0F172A] animate-bounce-in">
+                {{ activeSessionData.cart.length }}
+            </span>
+        </div>
+        <span class="text-[10px] font-bold">Savat</span>
+      </button>
     </div>
 
     <transition name="toast">
@@ -280,16 +310,22 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, reactive } from "vue"
+import { ref, computed, onMounted, reactive, watch } from "vue"
 
 const isDark = ref(false)
+const mobileTab = ref('catalog')
 const productSearch = ref("")
 const activeCategory = ref("Barchasi")
-const showMobileCart = ref(false)
 const discountPercent = ref(0)
 const taxEnabled = ref(false)
 const paymentType = ref("naqd")
 const currentTime = ref("")
+
+// Mobile Cart Logic
+const showMobileCart = computed({
+    get: () => mobileTab.value === 'cart',
+    set: (val) => { mobileTab.value = val ? 'cart' : 'catalog' }
+})
 
 // Dropdown States
 const showCategoryMenu = ref(false)
@@ -331,10 +367,10 @@ const suppliers = ref([
 ])
 
 const paymentMethods = [
-    { value: "naqd", label: "Naqd", icon: "fa-solid fa-money-bill-1-wave", color: "emerald" },
-    { value: "karta", label: "Karta", icon: "fa-regular fa-credit-card", color: "blue" },
-    { value: "click", label: "Click", icon: "fa-solid fa-mobile-screen", color: "sky" },
-    { value: "qarz", label: "Nasiya", icon: "fa-solid fa-file-invoice", color: "rose" }
+    { value: "naqd", label: "Naqd", icon: "fa-solid fa-money-bill-1-wave" },
+    { value: "karta", label: "Karta", icon: "fa-regular fa-credit-card" },
+    { value: "click", label: "Click", icon: "fa-solid fa-mobile-screen" },
+    { value: "qarz", label: "Nasiya", icon: "fa-solid fa-file-invoice" }
 ]
 
 // Session Management
@@ -405,7 +441,7 @@ const processSale = () => {
     if (!activeSessionData.value.customerId) return showToast("Mijozni tanlang!", "error")
     showToast(`To'lov qabul qilindi: ${formatPrice(grandTotal.value)}`)
     activeSessionData.value.cart = []
-    showMobileCart.value = false
+    mobileTab.value = 'catalog'
 }
 
 const toggleTheme = () => { isDark.value = !isDark.value; document.documentElement.classList.toggle("dark", isDark.value) }
@@ -435,4 +471,5 @@ onMounted(() => {
 .list-enter-from, .list-leave-to { opacity: 0; transform: translateX(-10px); }
 .pop-enter-active { transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1); }
 .pop-enter-from { transform: scale(0); }
+.pb-safe { padding-bottom: env(safe-area-inset-bottom); }
 </style>
