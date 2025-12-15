@@ -1,7 +1,7 @@
 <template>
     <Title>
       <template v-slot:title>
-        <h3><i class="fa-solid fa-file-circle-question mr-3 fa-lg"></i>Riviziya qilish</h3> 
+        <h3><i class="fa-solid fa-file-circle-question mr-3 fa-lg"></i>Riviziya</h3> 
       </template>
     </Title>
     <HeaderTabLink/>

@@ -1,7 +1,7 @@
 <template>
     <Title>
       <template v-slot:title>
-        <h3><i class="fa-solid fa-calculator mr-3 fa-lg"></i>Kirim qilish</h3> 
+        <h3><i class="fa-solid fa-calculator mr-3 fa-lg"></i>Kirim</h3> 
       </template>
     </Title>
     <HeaderTabLink/>
