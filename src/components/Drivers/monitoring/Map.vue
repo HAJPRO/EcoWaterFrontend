@@ -1,17 +1,35 @@
 <template>
-  <div>
-    <div
-      class="mb-1 mt-2 col-span-3 w-auto fixed top-36 z-30 text-center text-white font-semibold rounded-[4px] px-4 py-[5px] cursor-pointer"
-      @click="toggleSatellite"
-      :class="{
-        'bg-green-500 hover:bg-green-600': !isSatellite,
-        'bg-purple-500 hover:bg-purple-600': isSatellite,
-      }"
-    >
-      <i v-if="!isSatellite" class="fa-solid fa-earth-africa fa-lg"></i>
-      <i v-else class="fa-solid fa-map fa-lg"></i>
+  <div class="relative h-screen w-full overflow-hidden bg-gray-100">
+    <div id="map" class="h-full w-full z-10"></div>
+
+    <div class="absolute top-4 right-4 z-20 flex flex-col gap-3">
+      <button
+        @click="toggleSatellite"
+        class="w-12 h-12 bg-white rounded-xl shadow-lg flex items-center justify-center transition-all duration-300 hover:bg-gray-50 active:scale-95 group"
+        :class="{ 'ring-2 ring-indigo-500': isSatellite }"
+        title="Xarita turi"
+      >
+        <i
+          class="fa-solid text-xl transition-colors duration-300"
+          :class="isSatellite ? 'fa-map text-indigo-600' : 'fa-earth-americas text-gray-600'"
+        ></i>
+      </button>
+
+      <button
+        @click="recenterMap"
+        class="w-12 h-12 bg-white rounded-xl shadow-lg flex items-center justify-center transition-all duration-300 hover:bg-gray-50 active:scale-95"
+        title="Mening joylashuvim"
+      >
+        <i class="fa-solid fa-location-crosshairs text-xl text-gray-600"></i>
+      </button>
     </div>
-    <div id="map" class="h-screen w-full rounded-xl shadow-xl z-20"></div>
+
+    <div class="absolute top-4 left-4 z-20 bg-white/90 backdrop-blur-sm px-4 py-3 rounded-xl shadow-lg border border-white/20">
+      <div class="flex items-center gap-3">
+        <div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+        <span class="text-sm font-bold text-gray-700">Online: {{ drivers.length }} ta</span>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -27,138 +45,163 @@ const socket_driver = MonitoringSocketStore();
 const { drivers } = storeToRefs(socket_driver);
 
 const user = Cookies.get("account") ? JSON.parse(Cookies.get("account")) : null;
-const token = Cookies.get("token") || null;
 
 const isSatellite = ref(false);
-const currentMarker = ref(null);
-const currentTrajectory = ref(null);
+const userLocation = ref(null); // Foydalanuvchi joylashuvi
 
 let map = null;
-const osmLayer = L.tileLayer(
-  "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-  {
-    attribution: "© OpenStreetMap contributors",
-  }
-);
+const osmLayer = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+});
 const satelliteLayer = L.tileLayer(
   "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-  {
-    attribution: "Tiles © Esri",
-  }
+  { attribution: "Tiles &copy; Esri" }
 );
 
 let driverMarkers = {};
 let driverTrajectories = {};
 
-// Foydalanuvchi koordinatalarini saqlash (oldingi)
-let prevLat = null;
-let prevLng = null;
-
 onMounted(() => {
-  map = L.map("map").setView([40.1006, 64.6834], 14);
-  osmLayer.addTo(map);
+  // Xaritani boshlash
+  map = L.map("map", {
+    zoomControl: false, // Standart zoom tugmalarini o'chiramiz (o'zimiznikini qo'yish mumkin yoki scroll yetarli)
+  }).setView([40.1006, 64.6834], 14);
 
-  // Foydalanuvchi geolokatsiyasini kuzatish
+  osmLayer.addTo(map);
+  L.control.zoom({ position: 'bottomright' }).addTo(map); // Zoom pastki o'ngda
+
+  // Geolokatsiya
   navigator.geolocation.watchPosition(
     (position) => {
-      const lat = position.coords.latitude;
-      const lng = position.coords.longitude;
-
-      // // Xarita markazini foydalanuvchi joylashuviga o'rnatish
-      // if (map) {
-      //   map.setView([lat, lng], 13);
-      // }
-
-      socket_driver.connectSocket({ ...user, lat, lng });
+      const { latitude, longitude } = position.coords;
+      userLocation.value = [latitude, longitude];
+      socket_driver.connectSocket({ ...user, lat: latitude, lng: longitude });
     },
     (err) => console.error("Geolokatsiya xatosi:", err),
-    { enableHighAccuracy: true, maximumAge: 10000, timeout: 10000 }
+    { enableHighAccuracy: true }
   );
 
-  // Haydovchilar o'zgarishini kuzatish va markerlarni boshqarish
-  watch(
-    drivers,
-    (newDrivers) => {
-      console.log("Backenddan kelayotgan haydovchilar:", newDrivers);
-
-      // Eski marker va trayektoriyalarni olib tashlash
-      Object.values(driverMarkers).forEach((marker) => map.removeLayer(marker));
-      Object.values(driverTrajectories).forEach((polyline) =>
-        map.removeLayer(polyline)
-      );
-
-      driverMarkers = {};
-      driverTrajectories = {};
-
-      newDrivers.forEach((driver) => {
-        if (!driver.lat || !driver.lng) return;
-
-        const icon = L.icon({
-          iconUrl:
-            "https://cdn3.iconfinder.com/data/icons/map-and-navigation-25/50/49-512.png",
-          iconSize: [80, 80], // kattaroq icon o'lchami
-          iconAnchor: [40, 80], // markazni iconning pastki o‘rtasiga sozlash
-          popupAnchor: [0, -80], // pop-up uchun mos joylashuv
-          className: "rounded-full",
-        });
-
-        const marker = L.marker([driver.lat, driver.lng], { icon }).addTo(map);
-
-        marker.bindPopup(
-          `
-        <div class="custom-popup">
-          <img src="${
-            driver.avatar
-              ? driver.avatar
-              : "https://img.freepik.com/free-vector/blue-circle-with-white-user_78370-4707.jpg?semt=ais_hybrid&w=740"
-          }" alt="Avatar" style="width: 100%; height: 220px; border-radius: 10%; object-fit: cover; margin-bottom: 10px;">
-          <p class="text-center font-semibold text-[16px]">${
-            driver.fullname
-          }</p>
-          <p class="text-[12px]">Yoshi: ${
-            driver.age ? driver.age : 0
-          } | Jinsi: ${driver.gender ? driver.gender : "-"} | Zakazlar: ${
-            driver.orders ? driver.orders : "0"
-          }</p>
-          <hr />
-          <p>Mashina: ${driver.car_name ? driver.car_name : "-"}</p>
-          <p>Raqami: ${driver.car_number ? driver.car_number : "-"}</p>
-          <p>Rangi: ${driver.car_color ? driver.car_color : "-"}</p>
-          <p>Manzili: ${driver.address.region},  ${driver.address.district}</p>
-          <p>Koordinatalar: ${driver.lat}, ${driver.lng}</p>
-        </div>`,
-          {
-            closeButton: false,
-            autoClose: false,
-            className: "custom-popup",
-          }
-        );
-
-        driverMarkers[driver.id] = marker;
-        driverTrajectories[driver.id] = L.polyline([[driver.lat, driver.lng]], {
-          color: "green",
-          weight: 4,
-        }).addTo(map);
-      });
-      // Xarita hududini barcha haydovchilar joylashgan joyga markazlashtirish
-      // if (newDrivers.length > 0) {
-      //   const latitudes = newDrivers.map((d) => d.lat);
-      //   const longitudes = newDrivers.map((d) => d.lng);
-
-      //   const southWest = [Math.min(...latitudes), Math.min(...longitudes)];
-      //   const northEast = [Math.max(...latitudes), Math.max(...longitudes)];
-      //   const bounds = L.latLngBounds(southWest, northEast);
-
-      //   map.fitBounds(bounds.pad(0.1));
-      // }
-    },
-    { immediate: true, deep: true }
-  );
+  // Haydovchilarni kuzatish
+  watch(drivers, (newDrivers) => {
+    updateMapMarkers(newDrivers);
+  }, { deep: true });
 });
 
+// Xaritani yangilash funksiyasi
+const updateMapMarkers = (newDrivers) => {
+  // O'chirilgan haydovchilarni tozalash
+  const currentDriverIds = newDrivers.map(d => d.id);
+  Object.keys(driverMarkers).forEach(id => {
+    if (!currentDriverIds.includes(parseInt(id))) {
+      map.removeLayer(driverMarkers[id]);
+      delete driverMarkers[id];
+      if (driverTrajectories[id]) {
+        map.removeLayer(driverTrajectories[id]);
+        delete driverTrajectories[id];
+      }
+    }
+  });
+
+  newDrivers.forEach((driver) => {
+    if (!driver.lat || !driver.lng) return;
+
+    // Custom HTML Marker yaratish (Avatar + Pulse effekti)
+    const avatarUrl = driver.avatar || "https://img.freepik.com/free-vector/blue-circle-with-white-user_78370-4707.jpg";
+    
+    const customIcon = L.divIcon({
+      className: "custom-driver-marker",
+      html: `
+        <div class="marker-container">
+          <div class="marker-pulse"></div>
+          <div class="marker-avatar">
+            <img src="${avatarUrl}" alt="driver" />
+          </div>
+          <div class="marker-arrow"></div>
+        </div>
+      `,
+      iconSize: [48, 48],
+      iconAnchor: [24, 54], // Markerni to'g'ri joylashtirish
+      popupAnchor: [0, -60],
+    });
+
+    // Marker mavjud bo'lsa yangilaymiz, bo'lmasa yaratamiz
+    if (driverMarkers[driver.id]) {
+      const marker = driverMarkers[driver.id];
+      const oldLatLng = marker.getLatLng();
+      const newLatLng = [driver.lat, driver.lng];
+
+      // Joylashuvni silliq o'zgartirish (Leaflet o'zida birdan o'tadi, silliqlash uchun CSS transition yoki plugin kerak, hozircha oddiy setLatLng)
+      marker.setLatLng(newLatLng);
+      marker.setPopupContent(createPopupContent(driver)); // Popup ma'lumotini yangilash
+
+      // Trayektoriya chizish
+      if (!driverTrajectories[driver.id]) {
+        driverTrajectories[driver.id] = L.polyline([oldLatLng, newLatLng], { color: '#6366f1', weight: 4, opacity: 0.7 }).addTo(map);
+      } else {
+        driverTrajectories[driver.id].addLatLng(newLatLng);
+      }
+
+    } else {
+      // Yangi marker
+      const marker = L.marker([driver.lat, driver.lng], { icon: customIcon }).addTo(map);
+      marker.bindPopup(createPopupContent(driver), {
+        className: "driver-popup-card",
+        closeButton: false,
+        maxWidth: 280,
+        minWidth: 280
+      });
+      driverMarkers[driver.id] = marker;
+    }
+  });
+};
+
+// Chiroyli Popup HTML generatsiyasi
+const createPopupContent = (driver) => {
+  const avatarUrl = driver.avatar || "https://img.freepik.com/free-vector/blue-circle-with-white-user_78370-4707.jpg";
+  
+  return `
+    <div class="flex flex-col overflow-hidden bg-white rounded-xl shadow-sm font-sans">
+      <div class="h-16 bg-gradient-to-r from-indigo-500 to-purple-500 relative"></div>
+      
+      <div class="px-4 pb-4 -mt-8 relative z-10">
+        <div class="flex justify-center">
+          <img src="${avatarUrl}" class="w-16 h-16 rounded-full border-4 border-white shadow-md object-cover bg-white" />
+        </div>
+        
+        <div class="text-center mt-2">
+          <h3 class="font-bold text-gray-800 text-lg leading-tight">${driver.fullname}</h3>
+          <span class="inline-block mt-1 px-2 py-0.5 bg-green-100 text-green-700 text-xs font-medium rounded-full">
+            Online
+          </span>
+        </div>
+
+        <div class="mt-4 grid grid-cols-2 gap-2 text-sm">
+          <div class="bg-gray-50 p-2 rounded-lg border border-gray-100">
+            <p class="text-gray-400 text-xs uppercase font-bold">Mashina</p>
+            <p class="text-gray-700 font-medium truncate">${driver.car_name || '-'}</p>
+          </div>
+          <div class="bg-gray-50 p-2 rounded-lg border border-gray-100">
+            <p class="text-gray-400 text-xs uppercase font-bold">Raqam</p>
+            <p class="text-gray-700 font-medium truncate">${driver.car_number || '-'}</p>
+          </div>
+          <div class="bg-gray-50 p-2 rounded-lg border border-gray-100 col-span-2">
+            <p class="text-gray-400 text-xs uppercase font-bold">Manzil</p>
+            <p class="text-gray-700 font-medium truncate">${driver.address?.district || '-'}, ${driver.address?.region || '-'}</p>
+          </div>
+        </div>
+        
+        <div class="mt-3 pt-3 border-t border-gray-100 flex justify-between text-xs text-gray-500">
+           <span>Buyurtmalar: <b>${driver.orders || 0}</b></span>
+           <span>Yosh: <b>${driver.age || 0}</b></span>
+        </div>
+      </div>
+    </div>
+  `;
+};
+
+// Xarita turini o'zgartirish
 function toggleSatellite() {
   if (!map) return;
-
   if (isSatellite.value) {
     map.removeLayer(satelliteLayer);
     map.addLayer(osmLayer);
@@ -168,15 +211,103 @@ function toggleSatellite() {
   }
   isSatellite.value = !isSatellite.value;
 }
+
+// Xaritani foydalanuvchiga qaytarish
+function recenterMap() {
+  if (map && userLocation.value) {
+    map.flyTo(userLocation.value, 15, { duration: 1.5 });
+  }
+}
 </script>
 
-<style scoped>
-.leaflet-marker-icon {
-  border-radius: 50%;
-  object-fit: cover;
-  overflow: hidden;
+<style>
+/* Leaflet Marker uchun Custom CSS (Scoped ishlamaydi chunki HTML Leaflet ichida render bo'ladi) */
+
+.marker-container {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
-.custom-popup {
-  max-width: 220px;
+
+/* Puls effekti */
+.marker-pulse {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: rgba(99, 102, 241, 0.4); /* Indigo rang */
+  animation: pulse-ring 2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+}
+
+.marker-pulse::after {
+  content: '';
+  position: absolute;
+  left: 0; 
+  top: 0;
+  width: 100%; 
+  height: 100%;
+  border-radius: 50%;
+  background: rgba(99, 102, 241, 0.4);
+  animation: pulse-dot 2s cubic-bezier(0.455, 0.03, 0.515, 0.955) -0.4s infinite;
+}
+
+/* Avatar konteyneri */
+.marker-avatar {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid white;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  background: white;
+  overflow: hidden;
+  z-index: 2;
+}
+
+.marker-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Marker ostidagi strelka */
+.marker-arrow {
+  position: absolute;
+  bottom: 0px;
+  width: 0; 
+  height: 0; 
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 8px solid white;
+  z-index: 1;
+}
+
+@keyframes pulse-ring {
+  0% { transform: scale(0.8); opacity: 0.8; }
+  80%, 100% { transform: scale(2); opacity: 0; }
+}
+
+@keyframes pulse-dot {
+  0% { transform: scale(0.8); }
+  50% { transform: scale(1); }
+  100% { transform: scale(0.8); }
+}
+
+/* Popupni tozalash */
+.driver-popup-card .leaflet-popup-content-wrapper {
+  background: transparent;
+  box-shadow: none;
+  padding: 0;
+  border-radius: 0;
+}
+.driver-popup-card .leaflet-popup-content {
+  margin: 0;
+  width: 100% !important;
+}
+.driver-popup-card .leaflet-popup-tip {
+  background: white;
 }
 </style>

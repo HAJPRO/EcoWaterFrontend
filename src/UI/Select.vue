@@ -1,297 +1,298 @@
 <script setup>
-import { ref, computed, watch, onMounted, onUnmounted, nextTick } from 'vue';
+import { ref, computed, nextTick, onMounted, onUnmounted, useSlots, watch } from 'vue';
 
 const props = defineProps({
   modelValue: [String, Number, Object],
   options: { type: Array, default: () => [] },
-  placeholder: { type: String, default: 'Tanlang...' },
-  labelKey: { type: String, default: 'name' },
-  valueKey: { type: String, default: 'name' },
+  placeholder: { type: String, default: '' }, // Label bor bo'lsa, placeholder shart emas
+  labelKey: { type: String, default: 'label' },
+  valueKey: { type: String, default: 'value' },
+  
+  // 🟢 SIZE
+  size: { 
+    type: String, 
+    default: 'middle',
+    validator: (v) => ['small', 'middle', 'large'].includes(v)
+  },
+
+  // Content
+  label: { type: String, default: '' },
+  
+  // Features
+  clearable: { type: Boolean, default: false },
   allowAdd: { type: Boolean, default: false },
+  searchable: { type: Boolean, default: false },
+  
+  // States
+  loading: { type: Boolean, default: false },
+  disabled: { type: Boolean, default: false },
   error: { type: Boolean, default: false },
-  loading: { type: Boolean, default: false }
+  required: { type: Boolean, default: false },
+  
+  // Icons
+  iconPre: { type: String, default: '' },
 });
 
-// 🟢 O'ZGARISH: 'change' eventi qo'shildi
-const emit = defineEmits(['update:modelValue', 'add', 'change']);
+const emit = defineEmits(['update:modelValue', 'change', 'add', 'clear']);
+const slots = useSlots();
 
+// Refs
 const isOpen = ref(false);
-const containerRef = ref(null);
+const triggerRef = ref(null);
+const dropdownRef = ref(null);
 const searchInputRef = ref(null);
+const listRef = ref(null);
+const dropdownStyle = ref({});
 const searchQuery = ref('');
 const activeIndex = ref(-1);
 
-// --- COMPUTED ---
+// --- LOGIC ---
+const hasValue = computed(() => props.modelValue !== null && props.modelValue !== undefined && props.modelValue !== '');
+
+// Label qachon tepaga chiqishi kerak? (Fokus bo'lganda yoki qiymat bo'lganda)
+const isFloating = computed(() => isOpen.value || hasValue.value);
+
 const selectedLabel = computed(() => {
-  if (!props.options) return null;
-  const selected = props.options.find(opt => opt[props.valueKey] === props.modelValue);
-  return selected ? selected[props.labelKey] : null;
+  if (!hasValue.value) return null;
+  const item = props.options.find(opt => opt[props.valueKey] === props.modelValue);
+  return item ? item[props.labelKey] : props.modelValue;
 });
 
 const filteredOptions = computed(() => {
-  if (!props.options) return [];
-  if (!searchQuery.value) return props.options;
-  
-  return props.options.filter(opt => {
-    const text = opt[props.labelKey] ? String(opt[props.labelKey]) : "";
-    return text.toLowerCase().includes(searchQuery.value.toLowerCase());
-  });
+  if (!props.searchable || !searchQuery.value) return props.options;
+  return props.options.filter(opt => 
+    String(opt[props.labelKey]).toLowerCase().includes(searchQuery.value.toLowerCase())
+  );
 });
 
-const highlightMatch = (text) => {
-  if (!text) return "";
-  const safeText = String(text);
-  if (!searchQuery.value) return safeText;
-  
-  const regex = new RegExp(`(${searchQuery.value})`, 'gi');
-  return safeText.replace(regex, '<span class="text-indigo-600 font-bold bg-indigo-50 rounded-sm px-0.5">$1</span>');
-};
-
-// --- ACTIONS ---
-const toggle = () => {
-  if (isOpen.value) close();
-  else open();
-};
-
-const open = () => {
-  if (props.loading) return;
-  isOpen.value = true;
-  searchQuery.value = '';
-  activeIndex.value = -1;
-  
-  nextTick(() => {
-    searchInputRef.value?.focus();
-  });
-};
-
-const close = () => {
-  isOpen.value = false;
-  activeIndex.value = -1;
-  searchQuery.value = '';
-};
-
-// 🟢 O'ZGARISH: Qiymat tanlanganda 'change' eventi ham yuboriladi
-const selectOption = (option) => {
-  const newValue = option[props.valueKey];
-  
-  // Modelni yangilash
-  emit('update:modelValue', newValue);
-  
-  // Change eventini yuborish (Parent komponent eshita olishi uchun)
-  emit('change', newValue);
-  
-  close();
-};
-
-// 🟢 O'ZGARISH: Tozalash funksiyasi alohida olindi
-const handleClear = () => {
-  emit('update:modelValue', null);
-  emit('change', null); // Tozalanganda ham change ishlaydi
-};
-
-const handleAdd = () => {
-  if (searchQuery.value.trim()) {
-    emit('add', searchQuery.value);
-    close();
-  }
-};
-
-// --- KEYBOARD NAVIGATION ---
-const onKeydown = (e) => {
-  if (!isOpen.value) {
-    if (e.key === 'Enter' || e.key === 'ArrowDown' || e.key === ' ') {
-      e.preventDefault();
-      open();
+// --- SIZE CONFIG ---
+const sizeConfig = computed(() => {
+  const configs = {
+    small: {
+      height: 'h-[38px]',
+      padding: 'px-2.5',
+      fontSize: 'text-xs',
+      iconSize: 'text-xs',
+      labelActive: '-top-2 left-2 text-[9px]',
+      labelInactive: 'top-1/2 -translate-y-1/2 text-xs',
+      radius: 'rounded-lg'
+    },
+    middle: { 
+      height: 'h-[48px]',
+      padding: 'px-3.5',
+      fontSize: 'text-[14px]',
+      iconSize: 'text-sm',
+      labelActive: '-top-2.5 left-3 text-[11px]',
+      labelInactive: 'top-1/2 -translate-y-1/2 text-[14px]',
+      radius: 'rounded-xl'
+    },
+    large: {
+      height: 'h-[56px]',
+      padding: 'px-4',
+      fontSize: 'text-base',
+      iconSize: 'text-lg',
+      labelActive: '-top-3 left-4 text-xs',
+      labelInactive: 'top-1/2 -translate-y-1/2 text-base',
+      radius: 'rounded-2xl'
     }
-    return;
-  }
+  };
+  return configs[props.size] || configs.middle;
+});
 
-  switch (e.key) {
-    case 'ArrowDown':
-      e.preventDefault();
-      if (activeIndex.value < filteredOptions.value.length - 1) {
-        activeIndex.value++;
-        scrollIntoView(activeIndex.value);
-      }
-      break;
-    case 'ArrowUp':
-      e.preventDefault();
-      if (activeIndex.value > 0) {
-        activeIndex.value--;
-        scrollIntoView(activeIndex.value);
-      }
-      break;
-    case 'Enter':
-      e.preventDefault();
-      if (activeIndex.value >= 0 && filteredOptions.value[activeIndex.value]) {
-        selectOption(filteredOptions.value[activeIndex.value]);
-      } else if (props.allowAdd && searchQuery.value) {
-        handleAdd();
-      }
-      break;
-    case 'Escape':
-      e.preventDefault();
-      close();
-      break;
-    case 'Tab':
-      close();
-      break;
+// --- STYLES ---
+
+// Trigger (Input qutisi)
+const triggerClasses = computed(() => [
+  'relative flex items-center justify-between w-full transition-all duration-200 ease-out border cursor-pointer select-none outline-none group/trigger',
+  'bg-white dark:bg-[#0f172a]', // Background muhim
+  
+  sizeConfig.value.radius,
+  sizeConfig.value.height,
+  sizeConfig.value.padding,
+  
+  props.error 
+    ? 'border-rose-300 dark:border-rose-500/50 text-rose-600' 
+    : props.disabled
+      ? 'bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-800 opacity-60 cursor-not-allowed'
+      : isOpen.value
+        ? 'border-indigo-500 ring-2 ring-indigo-500/20'
+        : 'border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600'
+]);
+
+// Label (Suzuvchi)
+const labelClasses = computed(() => {
+  const base = 'absolute px-1 font-medium transition-all duration-200 pointer-events-none z-10 truncate max-w-[80%]';
+  
+  // Agar tepaga chiqsa, orqa foni oq bo'lishi kerak (chiziqni yopish uchun)
+  const activeStyle = `bg-white dark:bg-[#0f172a] ${sizeConfig.value.labelActive}`;
+  
+  // Agar pastda tursa
+  const leftPos = (slots.prefix || props.iconPre) 
+    ? (props.size === 'small' ? 'left-8' : props.size === 'large' ? 'left-11' : 'left-9') 
+    : 'left-3';
+  const inactiveStyle = `${sizeConfig.value.labelInactive} ${leftPos} text-slate-400`;
+
+  // Ranglar
+  const color = props.error 
+    ? 'text-rose-500' 
+    : isOpen.value 
+      ? 'text-indigo-600 dark:text-indigo-400' 
+      : hasValue.value ? 'text-slate-500 dark:text-slate-400' : 'text-slate-400';
+
+  return [
+    base,
+    color,
+    isFloating.value ? activeStyle : inactiveStyle
+  ];
+});
+
+// --- ACTIONS --- (O'zgarishsiz)
+const updatePosition = () => {
+  if (!triggerRef.value || !isOpen.value) return;
+  const rect = triggerRef.value.getBoundingClientRect();
+  dropdownStyle.value = { position: 'fixed', top: `${rect.bottom + 6}px`, left: `${rect.left}px`, width: `${rect.width}px`, zIndex: 9999 };
+};
+
+const handleSelect = (option) => { emit('update:modelValue', option[props.valueKey]); emit('change', option); close(); };
+const handleClear = () => { emit('update:modelValue', null); emit('change', null); emit('clear'); };
+const handleAdd = () => { if (searchQuery.value.trim()) { emit('add', searchQuery.value); close(); searchQuery.value = ''; } };
+
+const open = () => { if (props.disabled || props.loading) return; isOpen.value = true; searchQuery.value = ''; activeIndex.value = -1; updatePosition(); window.addEventListener('scroll', updatePosition, true); window.addEventListener('resize', updatePosition); if (props.searchable) nextTick(() => searchInputRef.value?.focus()); };
+const close = () => { isOpen.value = false; window.removeEventListener('scroll', updatePosition, true); window.removeEventListener('resize', updatePosition); };
+const toggle = () => isOpen.value ? close() : open();
+
+const onKeydown = (e) => {
+  if (props.disabled) return;
+  if (!isOpen.value && ['Enter','ArrowDown',' '].includes(e.key)) { e.preventDefault(); open(); return; }
+  if (isOpen.value) {
+    const len = filteredOptions.value.length;
+    if (e.key === 'ArrowDown') { e.preventDefault(); if (activeIndex.value < len - 1) activeIndex.value++; scrollToItem(activeIndex.value); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); if (activeIndex.value > 0) activeIndex.value--; scrollToItem(activeIndex.value); }
+    else if (e.key === 'Enter') { e.preventDefault(); if (activeIndex.value >= 0) handleSelect(filteredOptions.value[activeIndex.value]); else if (props.allowAdd && searchQuery.value) handleAdd(); }
+    else if (e.key === 'Escape') { e.preventDefault(); close(); }
+    else if (e.key === 'Tab') close();
   }
 };
 
-const scrollIntoView = (index) => {
-  const list = document.getElementById('options-list');
-  const element = list?.children[index];
-  if (element) {
-    element.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
-  }
-};
-
-const handleClickOutside = (e) => {
-  if (containerRef.value && !containerRef.value.contains(e.target)) {
-    close();
-  }
-};
+const scrollToItem = (index) => { if (!listRef.value) return; const items = listRef.value.children; if (items[index]) items[index].scrollIntoView({ block: 'nearest', behavior: 'smooth' }); };
+const handleClickOutside = (e) => { if (triggerRef.value && triggerRef.value.contains(e.target)) return; if (dropdownRef.value && dropdownRef.value.contains(e.target)) return; close(); };
 
 onMounted(() => document.addEventListener('mousedown', handleClickOutside));
-onUnmounted(() => document.removeEventListener('mousedown', handleClickOutside));
+onUnmounted(() => { document.removeEventListener('mousedown', handleClickOutside); window.removeEventListener('scroll', updatePosition, true); });
 </script>
 
 <template>
-  <div class="relative w-full text-sm z-50" ref="containerRef" @keydown="onKeydown">
+  <div class="relative w-full" ref="containerRef" @keydown="onKeydown">
     
     <div 
+      ref="triggerRef"
       @click="toggle"
-      class="group relative w-full bg-white dark:bg-slate-800 border rounded-xl px-4 py-2.5 flex items-center justify-between cursor-pointer transition-all duration-200 select-none shadow-sm"
-      :class="[
-        isOpen 
-          ? 'border-indigo-500 ring-4 ring-indigo-500/10' 
-          : 'border-slate-300 dark:border-slate-600 hover:border-indigo-400 dark:hover:border-indigo-500',
-        error ? '!border-rose-500' : ''
-      ]"
-      tabindex="0"
+      :class="triggerClasses"
+      tabindex="0" 
     >
-      <div class="flex-1 truncate pr-2">
-        <span v-if="selectedLabel" class="font-medium text-slate-700 dark:text-slate-200">
+      <label v-if="label" :class="labelClasses">
+        {{ label }} <span v-if="required" class="text-rose-500 ml-0.5">*</span>
+      </label>
+
+      <div v-if="slots.prefix || iconPre" class="mr-2 text-slate-400">
+         <slot name="prefix"><i :class="iconPre"></i></slot>
+      </div>
+
+      <div class="flex-1 truncate pr-2 transition-opacity duration-200" :class="hasValue ? 'opacity-100' : 'opacity-0'">
+        <span class="font-medium text-slate-900 dark:text-white" :class="sizeConfig.fontSize">
           {{ selectedLabel }}
-        </span>
-        <span v-else class="text-slate-400">
-          {{ placeholder }}
         </span>
       </div>
 
-      <div class="flex items-center gap-2">
-        <button 
-          v-if="modelValue && !isOpen && !loading"
-          @click.stop="handleClear"
-          class="hidden group-hover:flex w-5 h-5 items-center justify-center text-slate-300 hover:text-rose-500 rounded-full transition-all"
-        >
-          <i class="fa-solid fa-xmark text-xs"></i>
-        </button>
+      <div class="flex items-center gap-2 text-slate-400">
+        <i v-if="loading" :class="sizeConfig.iconSize" class="fa-solid fa-circle-notch fa-spin text-indigo-500"></i>
 
-        <i v-if="loading" class="fa-solid fa-circle-notch fa-spin text-indigo-500"></i>
+        <transition name="scale">
+          <button 
+            v-if="clearable && hasValue && !disabled"
+            @click.stop="handleClear"
+            type="button"
+            class="flex items-center justify-center rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-400 hover:text-rose-500 transition-all w-5 h-5 z-20"
+            tabindex="-1"
+          >
+            <i class="fa-solid fa-xmark text-[10px]"></i>
+          </button>
+        </transition>
+
         <i 
-          v-else
-          class="fa-solid fa-chevron-down text-slate-400 text-[10px] transition-transform duration-300"
-          :class="{'rotate-180 text-indigo-500': isOpen}"
+          class="fa-solid fa-chevron-down transition-transform duration-300"
+          :class="[
+            sizeConfig.iconSize,
+            isOpen ? 'rotate-180 text-indigo-500' : '',
+            (clearable && hasValue && !disabled) ? 'hidden' : ''
+          ]"
         ></i>
       </div>
     </div>
 
-    <transition name="dropdown-scale">
-      <div 
-        v-if="isOpen"
-        class="absolute left-0 top-full mt-2 w-full bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-700 rounded-xl shadow-2xl shadow-slate-300/50 dark:shadow-black/50 z-[100] overflow-hidden flex flex-col origin-top"
-      >
-        
-        <div class="p-2 border-b border-slate-100 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-800/80 backdrop-blur-sm">
-          <div class="relative">
-            <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
-            <input 
-              ref="searchInputRef"
-              v-model="searchQuery"
-              type="text"
-              class="w-full pl-9 pr-3 py-2 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-700 dark:text-slate-200 placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all"
-              placeholder="Qidirish..."
-              @click.stop
-            />
+    <Teleport to="body">
+      <transition name="zoom">
+        <div 
+          v-if="isOpen"
+          ref="dropdownRef"
+          :style="dropdownStyle"
+          class="fixed bg-white dark:bg-[#18181b] border border-slate-100 dark:border-slate-800 rounded-xl shadow-2xl shadow-slate-200/50 dark:shadow-black/50 overflow-hidden flex flex-col max-h-60"
+        >
+          <div v-if="searchable" class="p-2 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/50">
+             <div class="relative">
+               <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+               <input 
+                 ref="searchInputRef"
+                 v-model="searchQuery"
+                 type="text" 
+                 class="w-full pl-8 pr-3 py-1.5 text-xs bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-indigo-500 text-slate-700 dark:text-slate-200 transition-colors placeholder-slate-400"
+                 placeholder="Qidirish..."
+                 @click.stop
+               />
+             </div>
           </div>
+
+          <ul ref="listRef" class="overflow-y-auto custom-scrollbar p-1.5 flex-1">
+             <li v-if="filteredOptions.length === 0" class="py-4 px-2 text-center flex flex-col items-center gap-2">
+                <span class="text-xs text-slate-400">Ma'lumot topilmadi</span>
+                <button 
+                  v-if="allowAdd && searchQuery"
+                  @click.stop="handleAdd"
+                  class="flex items-center gap-1.5 px-3 py-1.5 bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 text-xs font-bold rounded-lg hover:bg-indigo-100 dark:hover:bg-indigo-900/40 transition-colors border border-indigo-200 dark:border-indigo-800"
+                >
+                  <i class="fa-solid fa-plus"></i> "{{ searchQuery }}" qo'shish
+                </button>
+             </li>
+
+             <li 
+               v-else
+               v-for="(option, index) in filteredOptions" 
+               :key="option[valueKey]"
+               @click="handleSelect(option)"
+               @mouseenter="activeIndex = index"
+               class="px-3 py-2 text-sm rounded-lg cursor-pointer transition-colors flex items-center justify-between group"
+               :class="[
+                 modelValue === option[valueKey] ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 font-bold' : 'text-slate-600 dark:text-slate-300',
+                 activeIndex === index && modelValue !== option[valueKey] ? 'bg-slate-50 dark:bg-slate-800' : ''
+               ]"
+             >
+               <span>{{ option[labelKey] }}</span>
+               <i v-if="modelValue === option[valueKey]" class="fa-solid fa-check text-xs"></i>
+             </li>
+          </ul>
         </div>
+      </transition>
+    </Teleport>
 
-        <ul id="options-list" class="max-h-60 overflow-y-auto custom-scrollbar p-1.5 space-y-0.5">
-          <li v-if="loading" class="py-4 text-center text-slate-400">
-             <i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Yuklanmoqda...
-          </li>
-
-          <li v-else-if="filteredOptions.length === 0" class="flex flex-col items-center justify-center py-6 px-4 text-center">
-            <div class="w-12 h-12 bg-slate-50 dark:bg-slate-800 rounded-full flex items-center justify-center text-slate-300 mb-2">
-              <i class="fa-solid fa-box-open text-xl"></i>
-            </div>
-            <p class="text-xs text-slate-500 dark:text-slate-400 mb-3">
-              "<span class="font-bold text-slate-800 dark:text-slate-200">{{ searchQuery }}</span>" bo'yicha ma'lumot yo'q.
-            </p>
-            <button 
-              v-if="allowAdd && searchQuery"
-              @click.stop="handleAdd"
-              class="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-lg shadow-md shadow-indigo-500/30 transition-all active:scale-95"
-            >
-              <i class="fa-solid fa-plus"></i> Qo'shish
-            </button>
-          </li>
-
-          <li 
-            v-else
-            v-for="(option, index) in filteredOptions" 
-            :key="option[valueKey] || index"
-            @click="selectOption(option)"
-            @mouseenter="activeIndex = index"
-            class="group px-3 py-2.5 rounded-lg cursor-pointer transition-all flex items-center justify-between border border-transparent"
-            :class="{
-              'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300': modelValue === option[valueKey],
-              'bg-slate-50 dark:bg-slate-800': activeIndex === index && modelValue !== option[valueKey]
-            }"
-          >
-            <div class="flex items-center gap-3">
-               <div 
-                 class="w-6 h-6 rounded flex items-center justify-center text-[10px] font-bold uppercase transition-colors shrink-0"
-                 :class="modelValue === option[valueKey] ? 'bg-indigo-200 text-indigo-700' : 'bg-slate-100 dark:bg-slate-700 text-slate-500'"
-               >
-                 {{ String(option[labelKey] || '?').charAt(0) }}
-               </div>
-               
-               <span class="font-medium" v-html="highlightMatch(option[labelKey])"></span>
-            </div>
-
-            <i v-if="modelValue === option[valueKey]" class="fa-solid fa-check text-indigo-600 text-sm"></i>
-          </li>
-        </ul>
-
-        <div v-if="allowAdd && !loading && filteredOptions.length > 0" class="border-t border-slate-100 dark:border-slate-800 p-2 bg-slate-50/50 dark:bg-slate-900">
-           <button 
-              @click.stop="emit('add')"
-              class="w-full py-2 flex items-center justify-center gap-2 text-xs font-bold text-indigo-600 hover:bg-white dark:hover:bg-slate-800 hover:shadow-sm border border-transparent hover:border-slate-200 dark:hover:border-slate-700 rounded-lg transition-all"
-           >
-              <i class="fa-solid fa-plus"></i> Yangi element qo'shish
-           </button>
-        </div>
-
-      </div>
-    </transition>
   </div>
 </template>
 
 <style scoped>
-.dropdown-scale-enter-active,
-.dropdown-scale-leave-active {
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.dropdown-scale-enter-from,
-.dropdown-scale-leave-to {
-  opacity: 0;
-  transform: translateY(-10px) scale(0.95);
-}
-
-.custom-scrollbar::-webkit-scrollbar { width: 5px; }
+.custom-scrollbar::-webkit-scrollbar { width: 4px; }
 .custom-scrollbar::-webkit-scrollbar-thumb { @apply bg-slate-300 dark:bg-slate-600 rounded-full; }
-.custom-scrollbar::-webkit-scrollbar-track { @apply bg-transparent; }
+
+.zoom-enter-active, .zoom-leave-active { transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1); }
+.zoom-enter-from, .zoom-leave-to { opacity: 0; transform: translateY(-8px) scale(0.95); }
+.scale-enter-active, .scale-leave-active { transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1); }
+.scale-enter-from, .scale-leave-to { opacity: 0; transform: scale(0.5); }
 </style>

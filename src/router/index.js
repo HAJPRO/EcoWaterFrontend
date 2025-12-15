@@ -135,6 +135,16 @@ const routes = [
         name: "ReadyWarehouse",
         component: () => import("../pages/Explore/Warehouses/r-warehouse/index.vue"),
       },
+       {
+        path: "warehouses/input",
+        name: "Kirim qilish",
+        component: () => import("../pages/Explore/Warehouses/input/index.vue"),
+      },
+       {
+        path: "warehouses/inventory",
+        name: "Rivizya",
+        component: () => import("../pages/Explore/Warehouses/inventory/index.vue"),
+      },
     ],
     beforeEnter(to, from, next) {
       if (!Cookies.get("token")) {

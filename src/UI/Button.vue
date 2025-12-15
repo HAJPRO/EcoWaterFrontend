@@ -64,11 +64,9 @@ const baseClasses = `
 
 // 2. O'lchamlar
 const sizeClasses = {
-  xs: 'px-2.5 py-[5px] text-xs gap-x-1.5',
-  sm: 'px-5 py-[5px] text-[13px] gap-x-2',
-  md: 'px-5 py-2.5 text-sm gap-x-2',
-  lg: 'px-6 py-3 text-base gap-x-2.5',
-  xl: 'px-7 py-3.5 text-lg gap-x-3',
+ sm:  'h-[38px] px-4 text-xs gap-x-1.5 rounded-lg',      // Input small: 38px
+  md: 'h-[48px] px-6 text-[13px] gap-x-2 rounded-xl',    // Input middle: 48px
+  lg:  'h-[58px] px-8 text-sm gap-x-2.5 rounded-2xl',
 };
 
 // 3. RANG PALITRASI (Solid vs Outline)
