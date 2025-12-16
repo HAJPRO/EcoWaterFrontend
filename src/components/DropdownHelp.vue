@@ -11,6 +11,7 @@
       <span class="sr-only">Info</span>
       <i class="fa-solid fa-users-line"></i>
     </button>
+    
     <transition
       enter-active-class="transition ease-out duration-200 transform"
       enter-from-class="opacity-0 -translate-y-2"
@@ -27,9 +28,10 @@
         <div
           class="text-xs flex gap-2 font-semibold text-slate-400 dark:text-slate-500 uppercase pt-1.5 pb-2 px-3"
         >
-          <div class="w-4 h-4 rounded-full bg-green-500"></div>
+          <div class="w-4 h-4 rounded-full bg-green-500"></div> 
           Online xodimlar
         </div>
+
         <ul
           ref="dropdown"
           @focusin="dropdownOpen = true"
@@ -50,6 +52,12 @@
               }}</span>
             </router-link>
           </li>
+          
+          <li v-if="!onlineUsers || onlineUsers.length === 0">
+             <div class="py-2 px-3 text-center text-xs text-slate-500 dark:text-slate-400">
+               Hozirda online foydalanuvchilar yo'q.
+             </div>
+          </li>
         </ul>
       </div>
     </transition>
@@ -58,33 +66,42 @@
 
 <script>
 import { ref, onMounted, onUnmounted } from "vue";
-import { UserSocketStore } from "../socket/store/user/user.store";
-import { storeToRefs } from "pinia";
+// Pinia va Socket importlari olib tashlandi
 
 export default {
-  name: "DropdownHelp",
-  props: ["align"],
-  setup() {
-    const store_socket = UserSocketStore();
-    const { onlineUsers } = storeToRefs(store_socket);
+  name: "DropdownOnlineUsers", // Nomi aniqroq qilib o'zgartirildi
+  props: {
+    align: { // Dropdown joylashuvi (chap/o'ng)
+        type: String,
+        default: 'right',
+        validator: (value) => ['left', 'right'].includes(value)
+    },
+    onlineUsers: { // Endi bu ma'lumot Prop orqali kiritiladi
+        type: Array,
+        default: () => [],
+    }
+  },
+  setup(props) {
     const dropdownOpen = ref(false);
     const trigger = ref(null);
     const dropdown = ref(null);
 
     // close on click outside
     const clickHandler = ({ target }) => {
-      if (
-        !dropdownOpen.value ||
-        dropdown.value.contains(target) ||
-        trigger.value.contains(target)
-      )
-        return;
+      // Shartni oddiyroq qildik, null tekshiruvi shart emas
+      if (!dropdownOpen.value) return; 
+      
+      const isClickInsideTrigger = trigger.value && trigger.value.contains(target);
+      const isClickInsideDropdown = dropdown.value && dropdown.value.contains(target);
+
+      if (isClickInsideTrigger || isClickInsideDropdown) return;
+      
       dropdownOpen.value = false;
     };
 
     // close if the esc key is pressed
     const keyHandler = ({ keyCode }) => {
-      if (!dropdownOpen.value || keyCode !== 27) return;
+      if (!dropdownOpen.value || keyCode !== 27) return; // 27 = ESC
       dropdownOpen.value = false;
     };
 
@@ -102,7 +119,7 @@ export default {
       dropdownOpen,
       trigger,
       dropdown,
-      onlineUsers,
+      // onlineUsers prop sifatida props.onlineUsers orqali mavjud bo'ladi.
     };
   },
 };

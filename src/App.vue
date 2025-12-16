@@ -1,6 +1,7 @@
 <template>
   <router-view />
-<ToastContainer/>
+  <ToastContainer/>
+  
   <Transition
     enter-active-class="transition ease-out duration-300"
     enter-from-class="opacity-0 transform scale-95"
@@ -60,30 +61,19 @@
 <script setup>
 import { onMounted, onUnmounted, onBeforeUnmount, ref } from "vue";
 import Cookies from "js-cookie";
-import { UserSocketStore } from "./socket/store/user/user.store";
 import ToastContainer from "./UI/Toast.vue";
-// O'zgaruvchi nomini mantiqan to'g'irladik (isOnline -> isOffline)
+
+
 const isOffline = ref(false);
-const userSocketStore = UserSocketStore();
 
 // Holatni yangilash funksiyasi
 const updateNetworkStatus = () => {
+  // navigator.onLine API yordamida internet holatini tekshirish
   isOffline.value = !navigator.onLine;
 };
 
 onMounted(() => {
-  // 🟢 Cookies orqali foydalanuvchi ma'lumotlarini olish
-  try {
-    const user = Cookies.get("account") ? JSON.parse(Cookies.get("account")) : null;
-    const token = Cookies.get("token");
-
-    if (user && user.id && token) {
-      userSocketStore.SocketConnect(user); // 🔗 Socket connection
-    }
-  } catch (error) {
-    console.error("❌ Cookies error:", error);
-  }
-
+  
   // Network listenerlari
   window.addEventListener("online", updateNetworkStatus);
   window.addEventListener("offline", updateNetworkStatus);
@@ -92,12 +82,11 @@ onMounted(() => {
   updateNetworkStatus();
 });
 
-onUnmounted(() => {
-  // Agar boshqa sidebar listenerlaringiz bo'lsa, shu yerda o'chirasiz
-  // window.removeEventListener("toggle-edo-sidebar", ...);
-});
+// onUnmounted hooki bo'sh edi, o'chirilmasligi kerak bo'lgan boshqa listenerlar uchun qoldirildi
+// yoki to'liq olib tashlandi, ammo onBeforeUnmount mavjud bo'lgani uchun mantiqiy jihatdan qoldirish shart emas.
 
 onBeforeUnmount(() => {
+  // Listenerlarni to'g'ri tozalash
   window.removeEventListener("online", updateNetworkStatus);
   window.removeEventListener("offline", updateNetworkStatus);
 });

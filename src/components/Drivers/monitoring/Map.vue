@@ -35,19 +35,42 @@
 
 <script setup>
 import { ref, onMounted, watch } from "vue";
-import { storeToRefs } from "pinia";
-import Cookies from "js-cookie";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import { MonitoringSocketStore } from "../../../socket/store/drivers/monitoring/monitoring.store";
 
-const socket_driver = MonitoringSocketStore();
-const { drivers } = storeToRefs(socket_driver);
+// Socket.IO va Pinia'ga oid importlar olib tashlandi
 
-const user = Cookies.get("account") ? JSON.parse(Cookies.get("account")) : null;
+// 🟢 MOCK/LOKAL MA'LUMOT
+const drivers = ref([
+    { 
+        id: 1, 
+        fullname: 'Alijon Sobirov', 
+        lat: 40.0950, 
+        lng: 64.6750, 
+        car_name: 'Lacetti', 
+        car_number: '77 K 777 KA',
+        orders: 5, 
+        age: 30,
+        address: { district: 'Markaziy', region: 'Buxoro' },
+        avatar: "https://via.placeholder.com/150/0000FF/808080?text=AS"
+    },
+    { 
+        id: 2, 
+        fullname: 'Sardor Azimov', 
+        lat: 40.1050, 
+        lng: 64.6890, 
+        car_name: 'Cobalt', 
+        car_number: '01 A 123 AA',
+        orders: 12, 
+        age: 25,
+        address: { district: 'Yangi', region: 'Buxoro' },
+        avatar: null
+    },
+    // Va hokazo... (Bu ro'yxat endi API chaqiruvi orqali yangilanishi kerak)
+]);
 
 const isSatellite = ref(false);
-const userLocation = ref(null); // Foydalanuvchi joylashuvi
+const userLocation = ref(null); 
 
 let map = null;
 const osmLayer = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -62,34 +85,43 @@ let driverMarkers = {};
 let driverTrajectories = {};
 
 onMounted(() => {
-  // Xaritani boshlash
+  // Xaritani boshlash (Buxoro atrofida)
   map = L.map("map", {
-    zoomControl: false, // Standart zoom tugmalarini o'chiramiz (o'zimiznikini qo'yish mumkin yoki scroll yetarli)
+    zoomControl: false, 
   }).setView([40.1006, 64.6834], 14);
 
   osmLayer.addTo(map);
-  L.control.zoom({ position: 'bottomright' }).addTo(map); // Zoom pastki o'ngda
+  L.control.zoom({ position: 'bottomright' }).addTo(map); 
 
-  // Geolokatsiya
+  // Geolokatsiya - faqat foydalanuvchi joylashuvini olish uchun qoldirildi
   navigator.geolocation.watchPosition(
     (position) => {
       const { latitude, longitude } = position.coords;
       userLocation.value = [latitude, longitude];
-      socket_driver.connectSocket({ ...user, lat: latitude, lng: longitude });
+      // map.setView([latitude, longitude], 14); // Agar o'rtaga avtomatik olib kelish shart bo'lmasa, kommentariyada qoldirish mumkin
     },
     (err) => console.error("Geolokatsiya xatosi:", err),
     { enableHighAccuracy: true }
   );
 
-  // Haydovchilarni kuzatish
+  // Haydovchilar ro'yxatini kuzatish (Lokal ref yangilansa, xaritani yangilaydi)
   watch(drivers, (newDrivers) => {
     updateMapMarkers(newDrivers);
-  }, { deep: true });
+  }, { deep: true, immediate: true }); // immediate: true - birdaniga ishga tushirish
+
+  // Mock ma'lumotlarni simulyatsiya qilish (API dan keladigan yangilanishga o'xshash)
+  // Bu qism faqat test uchun kiritildi, keyinchalik o'chirilishi kerak.
+  // setInterval(() => {
+  //     drivers.value = drivers.value.map(d => ({
+  //         ...d,
+  //         lat: d.lat + (Math.random() - 0.5) * 0.001,
+  //         lng: d.lng + (Math.random() - 0.5) * 0.001,
+  //     }));
+  // }, 5000);
 });
 
-// Xaritani yangilash funksiyasi
+// Xaritani yangilash funksiyasi (O'zgarishsiz)
 const updateMapMarkers = (newDrivers) => {
-  // O'chirilgan haydovchilarni tozalash
   const currentDriverIds = newDrivers.map(d => d.id);
   Object.keys(driverMarkers).forEach(id => {
     if (!currentDriverIds.includes(parseInt(id))) {
@@ -105,7 +137,6 @@ const updateMapMarkers = (newDrivers) => {
   newDrivers.forEach((driver) => {
     if (!driver.lat || !driver.lng) return;
 
-    // Custom HTML Marker yaratish (Avatar + Pulse effekti)
     const avatarUrl = driver.avatar || "https://img.freepik.com/free-vector/blue-circle-with-white-user_78370-4707.jpg";
     
     const customIcon = L.divIcon({
@@ -120,21 +151,18 @@ const updateMapMarkers = (newDrivers) => {
         </div>
       `,
       iconSize: [48, 48],
-      iconAnchor: [24, 54], // Markerni to'g'ri joylashtirish
+      iconAnchor: [24, 54],
       popupAnchor: [0, -60],
     });
 
-    // Marker mavjud bo'lsa yangilaymiz, bo'lmasa yaratamiz
     if (driverMarkers[driver.id]) {
       const marker = driverMarkers[driver.id];
       const oldLatLng = marker.getLatLng();
       const newLatLng = [driver.lat, driver.lng];
 
-      // Joylashuvni silliq o'zgartirish (Leaflet o'zida birdan o'tadi, silliqlash uchun CSS transition yoki plugin kerak, hozircha oddiy setLatLng)
       marker.setLatLng(newLatLng);
-      marker.setPopupContent(createPopupContent(driver)); // Popup ma'lumotini yangilash
+      marker.setPopupContent(createPopupContent(driver)); 
 
-      // Trayektoriya chizish
       if (!driverTrajectories[driver.id]) {
         driverTrajectories[driver.id] = L.polyline([oldLatLng, newLatLng], { color: '#6366f1', weight: 4, opacity: 0.7 }).addTo(map);
       } else {
@@ -142,7 +170,6 @@ const updateMapMarkers = (newDrivers) => {
       }
 
     } else {
-      // Yangi marker
       const marker = L.marker([driver.lat, driver.lng], { icon: customIcon }).addTo(map);
       marker.bindPopup(createPopupContent(driver), {
         className: "driver-popup-card",
@@ -155,7 +182,7 @@ const updateMapMarkers = (newDrivers) => {
   });
 };
 
-// Chiroyli Popup HTML generatsiyasi
+// Chiroyli Popup HTML generatsiyasi (O'zgarishsiz)
 const createPopupContent = (driver) => {
   const avatarUrl = driver.avatar || "https://img.freepik.com/free-vector/blue-circle-with-white-user_78370-4707.jpg";
   
@@ -191,15 +218,15 @@ const createPopupContent = (driver) => {
         </div>
         
         <div class="mt-3 pt-3 border-t border-gray-100 flex justify-between text-xs text-gray-500">
-           <span>Buyurtmalar: <b>${driver.orders || 0}</b></span>
-           <span>Yosh: <b>${driver.age || 0}</b></span>
+            <span>Buyurtmalar: <b>${driver.orders || 0}</b></span>
+            <span>Yosh: <b>${driver.age || 0}</b></span>
         </div>
       </div>
     </div>
   `;
 };
 
-// Xarita turini o'zgartirish
+// Xarita turini o'zgartirish (O'zgarishsiz)
 function toggleSatellite() {
   if (!map) return;
   if (isSatellite.value) {
@@ -212,7 +239,7 @@ function toggleSatellite() {
   isSatellite.value = !isSatellite.value;
 }
 
-// Xaritani foydalanuvchiga qaytarish
+// Xaritani foydalanuvchiga qaytarish (O'zgarishsiz)
 function recenterMap() {
   if (map && userLocation.value) {
     map.flyTo(userLocation.value, 15, { duration: 1.5 });
@@ -221,7 +248,7 @@ function recenterMap() {
 </script>
 
 <style>
-/* Leaflet Marker uchun Custom CSS (Scoped ishlamaydi chunki HTML Leaflet ichida render bo'ladi) */
+/* Leaflet Marker uchun Custom CSS (O'zgarishsiz qoldirildi) */
 
 .marker-container {
   position: relative;
@@ -238,7 +265,7 @@ function recenterMap() {
   width: 100%;
   height: 100%;
   border-radius: 50%;
-  background: rgba(99, 102, 241, 0.4); /* Indigo rang */
+  background: rgba(99, 102, 241, 0.4); 
   animation: pulse-ring 2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
 }
 
