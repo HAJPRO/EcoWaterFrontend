@@ -103,7 +103,7 @@
             <div class="aspect-[4/3] bg-slate-100 dark:bg-slate-900 rounded-xl overflow-hidden relative mb-2.5">
                <img :src="product.image" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" loading="lazy">
                <div class="absolute top-2 left-2 bg-black/60 backdrop-blur-md px-2 py-1 rounded-lg text-[9px] font-bold text-white border border-white/10 shadow-sm flex items-center gap-1">
-                   <i class="fa-solid fa-layer-group text-[8px] opacity-70"></i> {{ product.stock }}
+                   <i class="fa-solid fa-layer-group text-[8px] opacity-70"></i> {{ product.stock }} {{ product.unit }}
                </div>
                
                <div v-if="product.stock <= 0" class="absolute inset-0 bg-black/40 flex items-center justify-center">
@@ -118,7 +118,7 @@
             <div class="px-1 flex-1 flex flex-col">
                <h3 class="text-xs font-bold text-slate-800 dark:text-white leading-tight line-clamp-2 mb-2 min-h-[2rem]">{{ product.name }}</h3>
                <div class="mt-auto border-t border-slate-100 dark:border-slate-800 pt-2 flex justify-between items-center">
-                   <span class="text-[10px] text-slate-400 font-bold uppercase">{{ product.category }}</span>
+                   <span class="text-[10px] text-slate-400">{{ product.category }}</span>
                    <span class="text-sm font-black text-slate-800 dark:text-slate-100">{{ formatPriceCompact(product.price) }}</span>
                </div>
             </div>
@@ -149,10 +149,10 @@
             <div class="flex items-center gap-2 overflow-hidden">
               <div class="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-xs shrink-0"><i class="fa-solid fa-user"></i></div>
               <div class="flex flex-col text-left truncate">
-                <span class="text-xs font-bold text-slate-800 dark:text-white leading-none mb-0.5 truncate">{{ activeCustomer ? activeCustomer.name : 'Tanlanmagan' }}</span>
-                <div class="flex items-center gap-2 text-[10px]" v-if="activeCustomer">
-                   <span class="font-bold" :class="activeCustomer.balance >= 0 ? 'text-emerald-500' : 'text-rose-500'">{{ formatPrice(activeCustomer.balance) }}</span>
-                </div>
+                <span class="text-xs font-bold text-slate-800 dark:text-white leading-none mb-0.5 truncate">{{ activeCustomer ? activeCustomer.fullname : 'Tanlanmagan' }}</span>
+               <div class="flex items-center gap-2 text-[10px]" v-if="activeCustomer">
+                   <span class="font-bold text-slate-500">{{ activeCustomer.phoneNumber }}</span>
+                </div>
                 <span v-else class="text-[9px] text-rose-500 font-bold uppercase">Majburiy</span>
               </div>
             </div>
@@ -162,9 +162,9 @@
             <div v-if="showCustomerList" class="absolute top-[calc(100%+4px)] left-0 w-[200%] bg-white dark:bg-slate-800 rounded-xl shadow-2xl border border-slate-100 dark:border-slate-700 z-50 p-2">
               <input v-model="customerSearch" type="text" placeholder="Mijoz izlash..." class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-xs outline-none focus:border-indigo-500 mb-1">
               <div class="max-h-40 overflow-y-auto thin-scroll">
-                <button v-for="c in filteredCustomers" :key="c.id" @click="selectCustomer(c)" class="w-full p-2.5 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-lg flex items-center justify-between transition text-left border-b border-slate-50 dark:border-slate-700 last:border-0 group">
-                  <div class="text-xs font-bold text-slate-700 dark:text-slate-200 group-hover:text-indigo-600">{{ c.name }}</div>
-                  <div class="text-[10px] font-bold" :class="c.balance >= 0 ? 'text-emerald-500' : 'text-rose-500'">{{ formatPrice(c.balance) }}</div>
+                <button v-for="c in filteredCustomers" :key="c._id" @click="selectCustomer(c)" class="w-full p-2.5 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-lg flex items-center justify-between transition text-left border-b border-slate-50 dark:border-slate-700 last:border-0 group">
+                  <div class="text-xs font-bold text-slate-700 dark:text-slate-200 group-hover:text-indigo-600">{{ c.fullname }}</div>
+                  <div class="text-[10px] font-bold" :class="(c.balance || 0) >= 0 ? 'text-emerald-500' : 'text-rose-500'">{{ formatPrice(c.balance || 0) }}</div>
                 </button>
               </div>
             </div>
@@ -172,24 +172,24 @@
         </div>
 
         <div class="relative" ref="supplierDropdownRef">
-          <label class="text-[9px] font-extrabold text-slate-400 uppercase tracking-widest mb-1 block pl-1">Agent</label>
-          <button @click="showSupplierList = !showSupplierList" class="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border transition-all rounded-xl flex items-center justify-between group shadow-sm hover:border-orange-400" :class="!activeSessionData.supplierId ? 'border-slate-200 dark:border-slate-700' : 'border-orange-200 dark:border-slate-700'">
+          <label class="text-[9px] font-extrabold text-slate-400 uppercase tracking-widest mb-1 block pl-1">Haydovchilar</label>
+          <button @click="showDriverList = !showDriverList" class="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border transition-all rounded-xl flex items-center justify-between group shadow-sm hover:border-orange-400" :class="!activeSessionData.supplierId ? 'border-slate-200 dark:border-slate-700' : 'border-orange-200 dark:border-slate-700'">
             <div class="flex items-center gap-2 overflow-hidden">
               <div class="w-8 h-8 rounded-lg bg-orange-100 text-orange-600 flex items-center justify-center font-bold text-xs shrink-0"><i class="fa-solid fa-truck"></i></div>
               <div class="flex flex-col text-left truncate">
-                <span class="text-xs font-bold text-slate-800 dark:text-white leading-none mb-0.5 truncate">{{ activeSupplier ? activeSupplier.company : 'Zaxiradan' }}</span>
-                <span class="text-[10px] text-slate-400 font-mono">{{ activeSupplier ? activeSupplier.phone : 'Standart' }}</span>
+                <span class="text-xs font-bold text-slate-800 dark:text-white leading-none mb-0.5 truncate">{{ activeDriver ? (activeDriver.company || activeDriver.fullname) : 'Zaxiradan' }}</span>
+                <span class="text-[10px] text-slate-400 font-mono">{{ activeDriver ? activeDriver.phone : 'Standart' }}</span>
               </div>
             </div>
-            <i class="fa-solid fa-chevron-down text-xs text-slate-400 transition-transform" :class="{'rotate-180': showSupplierList}"></i>
+            <i class="fa-solid fa-chevron-down text-xs text-slate-400 transition-transform" :class="{'rotate-180': showDriverList}"></i>
           </button>
           <transition name="dropdown">
-            <div v-if="showSupplierList" class="absolute top-[calc(100%+4px)] right-0 w-[200%] bg-white dark:bg-slate-800 rounded-xl shadow-2xl border border-slate-100 dark:border-slate-700 z-50 p-2 overflow-hidden">
-              <input v-model="supplierSearch" type="text" placeholder="Izlash..." class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-xs outline-none focus:border-orange-500 mb-1">
+            <div v-if="showDriverList" class="absolute top-[calc(100%+4px)] right-0 w-[200%] bg-white dark:bg-slate-800 rounded-xl shadow-2xl border border-slate-100 dark:border-slate-700 z-50 p-2 overflow-hidden">
+              <input v-model="driverSearch" type="text" placeholder="Izlash..." class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-xs outline-none focus:border-orange-500 mb-1">
               <div class="max-h-40 overflow-y-auto thin-scroll">
-                <button @click="selectSupplier(null)" class="w-full text-left px-3 py-2 text-xs font-bold text-indigo-500 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-lg border-b border-slate-50 dark:border-slate-700">Do'kon zaxirasidan</button>
-                <button v-for="s in filteredSuppliers" :key="s.id" @click="selectSupplier(s)" class="w-full p-2.5 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-lg flex items-center justify-between transition text-left border-b border-slate-50 dark:border-slate-700 last:border-0 group">
-                  <div class="text-xs font-bold text-slate-700 dark:text-slate-200 group-hover:text-orange-600">{{ s.company }}</div>
+                <button @click="selectDriver(null)" class="w-full text-left px-3 py-2 text-xs font-bold text-indigo-500 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-lg border-b border-slate-50 dark:border-slate-700">Do'kon zaxirasidan</button>
+                <button v-for="s in filteredSuppliers" :key="s._id" @click="selectDriver(s)" class="w-full p-2.5 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-lg flex items-center justify-between transition text-left border-b border-slate-50 dark:border-slate-700 last:border-0 group">
+                  <div class="text-xs font-bold text-slate-700 dark:text-slate-200 group-hover:text-orange-600">{{ s.company || s.fullname }}</div>
                 </button>
               </div>
             </div>
@@ -214,7 +214,8 @@
                      </div>
                      <div class="flex items-center justify-between">
                          <div class="flex flex-col">
-                             <span class="text-[10px] text-slate-400 font-mono">Dona: {{ formatPrice(item.price) }}</span>
+                             <span class="text-[10px] text-slate-400 font-mono">{{ item.unit}}: {{ item.stock}}</span>
+                             <span class="text-[10px] text-slate-400 font-mono">Narx: {{ item.price }}</span>
                              <span class="text-sm font-black text-slate-900 dark:text-white">{{ formatPrice(item.price * item.qty) }}</span>
                          </div>
                      </div>
@@ -316,19 +317,43 @@
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount, reactive } from "vue"
 import { storeToRefs } from 'pinia';
+// --- PINIA STORES ---
+import { SaleposManagmentStore } from "../../../stores/Sale/salepos/salepos.store"
 import { ReadyWarehouseStore } from "../../../stores/Warehouses/r-warehouse/warehouse.store"
+import { CustomerManagmentStore } from "../../../stores/Customers/c-managment/customer.store"
+import { EmployeeManagmentStore } from "../../../stores/HR/employee/employee.store" // EmployeeManagmentStore dan Haydovchilarni olamiz
 
+// --- INSTANTIATE STORES ---
 const store_warehouse = ReadyWarehouseStore()
-const { products: rawProducts } = storeToRefs(store_warehouse)
+const store_customer = CustomerManagmentStore()
+const store_drivers = EmployeeManagmentStore()
+const store_salepos = SaleposManagmentStore()
 
-// --- State ---
+// --- STORE TO REFS (HOLATLARNI ULASH) ---
+const { products: rawProducts } = storeToRefs(store_warehouse)
+const { customers } = storeToRefs(store_customer) 
+const { employees: drivers } = storeToRefs(store_drivers)
+
+const { 
+    sessions, 
+    activeSessionId, 
+    // State'ni Pinia'dan ulash
+    discountPercent, 
+    taxEnabled, 
+    paymentType,
+    // Getters/Computed Pinia'dan ulash
+    activeSessionData, 
+    activeCustomer, 
+    activeDriver, 
+    grandTotal 
+} = storeToRefs(store_salepos)
+
+
+// --- MAHALLIY HOLATLAR ---
 const isDark = ref(false)
 const mobileTab = ref('catalog')
 const productSearch = ref("")
 const activeCategory = ref("Barchasi")
-const discountPercent = ref(0)
-const taxEnabled = ref(false)
-const paymentType = ref("naqd")
 const currentTime = ref("")
 
 // Dropdown States
@@ -336,13 +361,23 @@ const showCategoryMenu = ref(false)
 const categorySearch = ref("")
 const categoryMenuRef = ref(null)
 const showCustomerList = ref(false)
-const customerSearch = ref("")
+const customerSearch = ref("") 
 const customerDropdownRef = ref(null)
-const showSupplierList = ref(false)
-const supplierSearch = ref("")
+const showDriverList = ref(false)
+const driverSearch = ref("") 
 const supplierDropdownRef = ref(null)
 
-// --- Data ---
+// Toast State
+const toast = reactive({ show: false, message: "", type: "success" })
+let toastTimer
+const showToast = (msg, type="success") => {
+    toast.message = msg; toast.type = type; toast.show = true
+    clearTimeout(toastTimer)
+    toastTimer = setTimeout(() => toast.show = false, 2500)
+}
+
+
+// --- ASOSIY STATIK/MAHALLIY DATA ---
 const categories = [
     { name: "Barchasi", icon: "fa-solid fa-layer-group" },
     { name: "Elektronika", icon: "fa-solid fa-microchip" },
@@ -351,7 +386,17 @@ const categories = [
     { name: "Sport", icon: "fa-solid fa-person-running" }
 ]
 
-// 2. LOGIKA: Backenddan kelgan ma'lumotni UI ga moslash
+const paymentMethods = [
+    { value: "naqd", label: "Naqd", icon: "fa-solid fa-money-bill-1-wave", color: "emerald" },
+    { value: "karta", label: "Karta", icon: "fa-regular fa-credit-card", color: "blue" },
+    { value: "click", label: "Click", icon: "fa-solid fa-mobile-screen", color: "sky" },
+    { value: "qarz", label: "Nasiya", icon: "fa-solid fa-file-invoice", color: "rose" }
+]
+
+
+// --- COMPUTED PROPERTIES ---
+
+// 1. Mahsulot ma'lumotlarini formatlash (stock ma'lumoti bilan)
 const products = computed(() => {
     if (!rawProducts.value || !Array.isArray(rawProducts.value)) return [];
 
@@ -360,46 +405,49 @@ const products = computed(() => {
         
         return {
             id: item._id || item.id,
-            name: productName,
+            name: item.product?.name || item.name || 'Nomsiz mahsulot',
             image: item.image || `https://picsum.photos/200/200?random=${index + 1}`,
-            price: item.salePrice || item.price || 0,
-            stock: 2,
+            price: item.salePrice|| item.salePrice || 0,
+            stock: item.product.totalStock || 0, // Real stock ma'lumoti
+            unit: item.product.unit || 0, // Real stock ma'lumoti
             category: item.product?.category || item.category || 'Barchasi'
         }
     })
 })
 
-const customers = ref([
-  { id: 1, name: "Ali Valiyev", balance: 1200000, phone: "+998 90 123 45 67" },
-  { id: 2, name: "Maftuna Z.", balance: -300000, phone: "+998 93 987 65 43" }
-])
-
-const suppliers = ref([
-  { id: 1, company: "Mega Distribution", phone: "+998 90 123 00 00" },
-  { id: 2, company: "Local Farmer", phone: "+998 93 999 88 77" }
-])
-
-const paymentMethods = [
-    { value: "naqd", label: "Naqd", icon: "fa-solid fa-money-bill-1-wave", color: "emerald" },
-    { value: "karta", label: "Karta", icon: "fa-regular fa-credit-card", color: "blue" },
-    { value: "click", label: "Click", icon: "fa-solid fa-mobile-screen", color: "sky" },
-    { value: "qarz", label: "Nasiya", icon: "fa-solid fa-file-invoice", color: "rose" }
-]
-
-// Session Management
-const sessions = ref([{ id: 1, name: "Chek #1", cart: [], customerId: null, supplierId: null }])
-const activeSessionId = ref(1)
-const activeSessionData = computed(() => sessions.value.find(s => s.id === activeSessionId.value) || sessions.value[0])
-const activeCustomer = computed(() => customers.value.find(c => c.id === activeSessionData.value.customerId) || null)
-const activeSupplier = computed(() => suppliers.value.find(s => s.id === activeSessionData.value.supplierId) || null)
-
-// Computed
 const selectedCategoryIcon = computed(() => categories.find(c => c.name === activeCategory.value)?.icon || 'fa-solid fa-layer-group')
 const filteredCategories = computed(() => categorySearch.value ? categories.filter(c => c.name.toLowerCase().includes(categorySearch.value.toLowerCase())) : categories)
-const filteredCustomers = computed(() => customerSearch.value ? customers.value.filter(c => c.name.toLowerCase().includes(customerSearch.value.toLowerCase()) || c.phone.includes(customerSearch.value)) : customers.value)
-const filteredSuppliers = computed(() => supplierSearch.value ? suppliers.value.filter(s => s.company.toLowerCase().includes(supplierSearch.value.toLowerCase())) : suppliers.value)
 
-// 🔍 FILTERLASH
+// 2. Mijozlarni Filtrlash (fullname va phoneNumber bo'yicha)
+const filteredCustomers = computed(() => {
+    if (!customerSearch.value) {
+        return customers.value;
+    }
+
+    const search = customerSearch.value.toLowerCase();
+    
+    return customers.value.filter(c => 
+        c.fullname?.toLowerCase().includes(search) || 
+        c.phoneNumber?.includes(search)
+    );
+});
+
+// 3. Agentlarni Filtrlash (company/fullname va phone bo'yicha)
+const filteredSuppliers = computed(() => {
+    if (!driverSearch.value) {
+        return drivers.value;
+    }
+
+    const search = driverSearch.value.toLowerCase();
+    
+    return drivers.value.filter(s => 
+        (s.company || s.fullname)?.toLowerCase().includes(search) || 
+        s.phoneNumber?.includes(search)
+    );
+});
+
+
+// 4. Mahsulotlarni Filtrlash
 const filteredProducts = computed(() => {
     let list = products.value;
     
@@ -414,26 +462,40 @@ const filteredProducts = computed(() => {
     return list
 })
 
-const subtotal = computed(() => activeSessionData.value.cart.reduce((s, i) => s + (i.price * i.qty), 0))
-const discountAmount = computed(() => subtotal.value * (discountPercent.value / 100))
-const taxAmount = computed(() => taxEnabled.value ? (subtotal.value - discountAmount.value) * 0.12 : 0)
-const grandTotal = computed(() => Math.max(0, subtotal.value - discountAmount.value + taxAmount.value))
-
 const showMobileCart = computed({
     get: () => mobileTab.value === 'cart',
     set: (val) => { mobileTab.value = val ? 'cart' : 'catalog' }
 })
 
-// Actions
-const selectCategory = (cat) => { activeCategory.value = cat.name; showCategoryMenu.value = false; categorySearch.value = "" }
-const selectCustomer = (c) => { activeSessionData.value.customerId = c.id; showCustomerList.value = false; customerSearch.value = "" }
-const selectSupplier = (s) => { activeSessionData.value.supplierId = s ? s.id : null; showSupplierList.value = false; supplierSearch.value = "" }
 
+// --- ACTIONS / METHODS ---
+
+// Session management (Pinia'dan ulangan)
+const addSession = store_salepos.addSession 
+const removeSession = store_salepos.removeSession 
+
+// Selector actions
+const selectCategory = (cat) => { activeCategory.value = cat.name; showCategoryMenu.value = false; categorySearch.value = "" }
+
+const selectCustomer = (c) => { 
+    // MongoDB IDsi: c._id dan foydalanish
+    store_salepos.activeSessionData.customerId = c._id 
+    showCustomerList.value = false
+    customerSearch.value = "" 
+}
+
+const selectDriver = (s) => { 
+    // MongoDB IDsi: s._id dan foydalanish
+    store_salepos.activeSessionData.supplierId = s ? s._id : null
+    showDriverList.value = false 
+    driverSearch.value = "" 
+}
+
+// Cart actions
 const getItemQty = (id) => activeSessionData.value.cart.find(i => i.id === id)?.qty || 0
 
-// 🌟 2. UPDATE: Add to Cart with Stock Check
+// Zaxira tekshiruvlari mavjud bo'lgan local cart actions
 const addToCart = (p) => {
-    // A. Zaxira 0 bo'lsa
     if (p.stock <= 0) {
         showToast("Mahsulot tugagan!", "error")
         return
@@ -441,35 +503,37 @@ const addToCart = (p) => {
 
     const item = activeSessionData.value.cart.find(i => i.id === p.id)
     if (item) {
-        // B. Zaxiradan oshib ketsa
         if (item.qty < p.stock) {
             item.qty++
         } else {
             showToast(`Omborda faqat ${p.stock} dona bor`, "error")
         }
     } else {
-        activeSessionData.value.cart.push({ ...p, qty: 1 })
+        // IDni Pinia modeliga moslash uchun _id/id o'tkaziladi
+        activeSessionData.value.cart.push({ ...p, qty: 1, id: p.id }) 
     }
 }
 
-// 🌟 3. UPDATE: Change Qty with Stock Check
 const changeQty = (item, delta) => {
-    if (delta > 0) {
-        if (item.qty >= item.stock) {
-            showToast(`Zaxira yetarli emas!`, "error")
-            return
-        }
+    const product = products.value.find(p => p.id === item.id)
+    const maxStock = product ? product.stock : item.stock
+    
+    if (delta > 0 && item.qty >= maxStock) {
+        showToast(`Zaxira yetarli emas! Maksimum: ${maxStock}`, "error")
+        return
     }
 
     if (item.qty + delta > 0) item.qty += delta
     else removeItem(item.id)
 }
 
-// 🌟 4. UPDATE: Manual Input Validation
 const validateInput = (item) => {
-    if (item.qty > item.stock) {
-        item.qty = item.stock
-        showToast(`Maksimum ${item.stock} dona bor!`, "error")
+    const product = products.value.find(p => p.id === item.id)
+    const maxStock = product ? product.stock : item.stock
+    
+    if (item.qty > maxStock) {
+        item.qty = maxStock
+        showToast(`Maksimum ${maxStock} dona bor!`, "error")
     }
     if (item.qty < 1 && item.qty !== "") {
         item.qty = 1
@@ -482,42 +546,31 @@ const checkEmpty = (item) => {
 
 const removeItem = (id) => { activeSessionData.value.cart = activeSessionData.value.cart.filter(i => i.id !== id) }
 
-const addSession = () => {
-    const id = Date.now()
-    sessions.value.push({ id, name: `Chek #${sessions.value.length + 1}`, cart: [], customerId: null, supplierId: null })
-    activeSessionId.value = id
+
+// Process Sale (Pinia Actionni chaqirish)
+const processSale = async () => {
+    // 1. Pinia actionni chaqirish
+    const success = await store_salepos.CreateSaleTransaction('process')
+
+    // 2. Muvaffaqiyatli bo'lsa UI feedback berish
+    if (success) { 
+        showToast(`To'lov qabul qilindi: ${formatPrice(store_salepos.grandTotal)}`, 'success')
+        mobileTab.value = 'catalog'
+    } 
+    // Xato xabari (zaxira, mijoz tanlanmagan) Pinia ichidan chiqariladi.
 }
 
-const removeSession = (id) => {
-    if (sessions.value.length <= 1) return
-    const idx = sessions.value.findIndex(s => s.id === id)
-    sessions.value = sessions.value.filter(s => s.id !== id)
-    if (activeSessionId.value === id) activeSessionId.value = sessions.value[Math.max(0, idx - 1)].id
-}
 
-const toast = reactive({ show: false, message: "", type: "success" })
-let toastTimer
-const showToast = (msg, type="success") => {
-    toast.message = msg; toast.type = type; toast.show = true
-    clearTimeout(toastTimer)
-    toastTimer = setTimeout(() => toast.show = false, 2500)
-}
-
-const processSale = () => {
-    if (!activeSessionData.value.customerId) return showToast("Mijozni tanlang!", "error")
-    showToast(`To'lov qabul qilindi: ${formatPrice(grandTotal.value)}`)
-    activeSessionData.value.cart = []
-    mobileTab.value = 'catalog'
-}
-
+// Utility functions
 const toggleTheme = () => { isDark.value = !isDark.value; document.documentElement.classList.toggle("dark", isDark.value) }
 const formatPrice = (v) => new Intl.NumberFormat('uz-UZ').format(v) + " so'm"
 const formatPriceCompact = (v) => new Intl.NumberFormat('uz-UZ', { notation: "compact", compactDisplay: "short" }).format(v)
 
+// Click Outside Logic
 const handleClickOutside = (e) => {
     if (categoryMenuRef.value && !categoryMenuRef.value.contains(e.target)) showCategoryMenu.value = false
     if (customerDropdownRef.value && !customerDropdownRef.value.contains(e.target)) showCustomerList.value = false
-    if (supplierDropdownRef.value && !supplierDropdownRef.value.contains(e.target)) showSupplierList.value = false
+    if (supplierDropdownRef.value && !supplierDropdownRef.value.contains(e.target)) showDriverList.value = false
 }
 
 // Lifecycle
@@ -528,7 +581,11 @@ onMounted(() => {
         const d = new Date()
         currentTime.value = d.toLocaleTimeString('uz-UZ', {hour:'2-digit', minute:'2-digit'})
     }, 1000)
+    
+    // API ma'lumotlarini yuklash
     store_warehouse.GetAll()
+    store_customer.GetAll()
+    store_drivers.GetAll() // EmployeeManagmentStore dan Driverlarni yuklash
 })
 
 onBeforeUnmount(() => {
