@@ -100,9 +100,9 @@ const removeItem = (id) => inputStore.removeItem(id);
 const changeQty = (item, delta) => { 
     const newQty = item.qty + delta;
     if (newQty > 0) {
-      inputStore.updateItem(item.productId, { qty: newQty });
+      inputStore.updateItem(item._id, { qty: newQty });
     } else {
-      inputStore.removeItem(item.productId);
+      inputStore.removeItem(item._id);
     }
 }
 
@@ -265,7 +265,7 @@ onUnmounted(() => document.removeEventListener('click', handleClickOutside))
               :class="{'ring-2 ring-teal-500 ring-offset-2 dark:ring-offset-[#020617] border-teal-500': isAdded(product)}"
             >
               <div class="aspect-[4/3] bg-slate-100 dark:bg-slate-900 rounded-xl overflow-hidden relative mb-2">
-                 <img :src="product.image || 'https://via.placeholder.com/150'" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 grayscale-[0.1] group-hover:grayscale-0">
+                 <img :src="product.image || '../../../../public/eco_bg_logo.jpg'" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 grayscale-[0.1] group-hover:grayscale-0">
                  
                  <div class="absolute top-2 left-2 bg-white/90 dark:bg-black/60 backdrop-blur-md px-2 py-1 rounded-lg flex items-center gap-1.5 shadow-sm border border-white/20">
                      <i class="fa-solid fa-warehouse text-[9px] text-teal-500"></i>
@@ -290,7 +290,7 @@ onUnmounted(() => document.removeEventListener('click', handleClickOutside))
                  <div class="mt-auto border-t border-slate-100 dark:border-slate-800 pt-2 flex flex-col gap-1">
                      <div class="flex justify-between items-center text-[10px]">
                          <span class="text-slate-400">Oxirgi kelish:</span>
-                         <span class="font-mono font-bold text-slate-600 dark:text-slate-300">{{ formatPriceCompact(product.costPrice) }}</span>
+                         <span class="font-mono font-bold text-slate-600 dark:text-slate-300">{{ formatPriceCompact(product.salePrice) }}</span>
                      </div>
                  </div>
               </div>
@@ -362,7 +362,7 @@ onUnmounted(() => document.removeEventListener('click', handleClickOutside))
             >
               <div class="flex justify-between items-center mb-3">
                   <div class="flex items-center gap-3">
-                      <img :src="item.image" class="w-10 h-10 rounded-lg bg-slate-100 object-cover border border-slate-100 dark:border-slate-700">
+                      <img :src="item.image || '../../../../public/eco_bg_logo.jpg'" class="w-10 h-10 rounded-lg bg-slate-100 object-cover border border-slate-100 dark:border-slate-700">
                       <h4 class="text-xs font-bold text-slate-800 dark:text-white line-clamp-1 w-40">{{ item.name }}</h4>
                   </div>
                   <button @click="removeItem(item.id)" class="text-slate-300 hover:text-rose-500 transition px-2"><i class="fa-solid fa-trash-can text-sm"></i></button>
@@ -385,7 +385,7 @@ onUnmounted(() => document.removeEventListener('click', handleClickOutside))
                           Sotuv <span :class="getMargin(item) > 0 ? 'text-emerald-500' : 'text-rose-500'">{{ getMargin(item) }}%</span>
                       </label>
                       <input 
-                          v-model.number="item.sellingPrice" 
+                          v-model.number="item.salePrice" 
                           type="number" 
                           class="w-full h-10 px-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold text-teal-600 focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none transition-all"
                           placeholder="0"

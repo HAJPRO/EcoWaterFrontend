@@ -73,7 +73,7 @@ export const WarehouseInputStore = defineStore("WarehouseInputStore", {
     },
 
     removeItem(productId) {
-      this.document.items = this.document.items.filter(i => i.productId !== productId);
+      this.document.items = this.document.items.filter(i => i._id !== _id);
     },
 
     updateItem(productId, payload) {
