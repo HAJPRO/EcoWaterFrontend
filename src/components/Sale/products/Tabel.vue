@@ -151,7 +151,7 @@ const formatNumber = (value) => {
       <template #name="{ row }">
         <div class="flex items-center gap-2">
             <div class="w-8 h-8 rounded bg-slate-100 flex-shrink-0 overflow-hidden">
-                <img :src="row.image || '../../../../public/eco_bg_logo.jpg'" class="w-full h-full object-cover">
+                <img :src="row.image || 'https://ecowater.company-erp.uz/eco_bg_logo.jpg'" class="w-full h-full object-cover">
             </div>
             <span class="font-medium text-slate-700 dark:text-slate-200 text-sm leading-tight line-clamp-2">{{ row.name }}</span>
         </div>

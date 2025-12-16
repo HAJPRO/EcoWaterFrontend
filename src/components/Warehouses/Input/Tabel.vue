@@ -265,7 +265,7 @@ onUnmounted(() => document.removeEventListener('click', handleClickOutside))
               :class="{'ring-2 ring-teal-500 ring-offset-2 dark:ring-offset-[#020617] border-teal-500': isAdded(product)}"
             >
               <div class="aspect-[4/3] bg-slate-100 dark:bg-slate-900 rounded-xl overflow-hidden relative mb-2">
-                 <img :src="product.image || '../../../../public/eco_bg_logo.jpg'" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 grayscale-[0.1] group-hover:grayscale-0">
+                 <img :src="product.image || 'https://ecowater.company-erp.uz/eco_bg_logo.jpg'" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 grayscale-[0.1] group-hover:grayscale-0">
                  
                  <div class="absolute top-2 left-2 bg-white/90 dark:bg-black/60 backdrop-blur-md px-2 py-1 rounded-lg flex items-center gap-1.5 shadow-sm border border-white/20">
                      <i class="fa-solid fa-warehouse text-[9px] text-teal-500"></i>
@@ -362,7 +362,7 @@ onUnmounted(() => document.removeEventListener('click', handleClickOutside))
             >
               <div class="flex justify-between items-center mb-3">
                   <div class="flex items-center gap-3">
-                      <img :src="item.image || '../../../../public/eco_bg_logo.jpg'" class="w-10 h-10 rounded-lg bg-slate-100 object-cover border border-slate-100 dark:border-slate-700">
+                      <img :src="item.image || 'https://ecowater.company-erp.uz/eco_bg_logo.jpg'" class="w-10 h-10 rounded-lg bg-slate-100 object-cover border border-slate-100 dark:border-slate-700">
                       <h4 class="text-xs font-bold text-slate-800 dark:text-white line-clamp-1 w-40">{{ item.name }}</h4>
                   </div>
                   <button @click="removeItem(item.id)" class="text-slate-300 hover:text-rose-500 transition px-2"><i class="fa-solid fa-trash-can text-sm"></i></button>
