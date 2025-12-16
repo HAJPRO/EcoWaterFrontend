@@ -1,26 +1,53 @@
 import api from "@/helpers/api";
-// import $api from "../../helpers/$api";
+
+// Backenddagi asosiy marshrut (Routerdagi prefix)
+// Agar backendda app.use('/api/sale/products', router) qilingan bo'lsa:
+const RESOURCE = "sale/products"; 
 
 export const ProductManagmentService = {
-   
-    Create(state) {
-        let url = "sale/products/managment/create";
-        return api.post(url, state);
+    
+    /**
+     * Barcha mahsulotlarni olish
+     * Method: GET
+     * Parametrlar (page, limit, search) URLda ketadi (?page=1&search=...)
+     */
+    GetAll(queryParams) {
+        // Axios-da GET so'rovida body bo'lmaydi, parametrlar 'params' ichida beriladi
+        return api.get(RESOURCE, { params: queryParams });
     },
-    UpdateById(state) {
-        let url = "sale/managment/update";
-        return api.post(url, state);
+
+    /**
+     * Bitta mahsulotni olish
+     * Method: GET
+     * URL: /sale/products/:id
+     */
+    GetOne(id) {
+        return api.get(`${RESOURCE}/${id}`);
     },
-    GetAll(status) {
-        let url = "sale/products/managment/all";
-        return api.post(url, status);
+
+    /**
+     * Yangi mahsulot yaratish
+     * Method: POST
+     */
+    Create(data) {
+        return api.post(RESOURCE, data);
     },
+
+    /**
+     * Mahsulotni o'zgartirish
+     * Method: PUT
+     * URL: /sale/products/:id
+     */
+    UpdateById(id, data) {
+        return api.put(`${RESOURCE}/${id}`, data);
+    },
+
+    /**
+     * Mahsulotni o'chirish
+     * Method: DELETE
+     * URL: /sale/products/:id
+     */
     DeleteById(id) {
-        let url = "sale/products/managment/delete";
-        return api.post(url, id);
-    },
-   GetOne(id) {
-        let url = "sale/products/managment/getone";
-        return api.post(url, id);
+        return api.delete(`${RESOURCE}/${id}`);
     },
 };

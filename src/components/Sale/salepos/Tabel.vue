@@ -6,8 +6,7 @@
         :class="mobileTab === 'catalog' ? 'flex' : 'hidden lg:flex'"
     >
       
-   <header class="h-20 shrink-0 bg-white/80 dark:bg-[#0F172A]/90 backdrop-blur-2xl border-b border-slate-200/60 dark:border-slate-800 flex items-center justify-between px-6 z-50 sticky top-0 transition-all">
-        
+      <header class="h-20 shrink-0 bg-white/80 dark:bg-[#0F172A]/90 backdrop-blur-2xl border-b border-slate-200/60 dark:border-slate-800 flex items-center justify-between px-6 z-50 sticky top-0 transition-all">
         <div class="flex items-center gap-4">
           <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center text-white shadow-lg shadow-indigo-500/30 ring-1 ring-white/20">
             <i class="fa-solid fa-cash-register text-xl"></i>
@@ -50,9 +49,7 @@
                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" alt="User">
                </div>
            </div>
-
            <div class="w-px h-8 bg-slate-200 dark:bg-slate-700 mx-1 hidden md:block"></div>
-
            <button @click="toggleTheme" class="w-11 h-11 rounded-2xl bg-white dark:bg-slate-800 hover:bg-slate-50 border border-slate-200 dark:border-slate-700 text-slate-500 hover:text-amber-500 transition-all flex items-center justify-center shadow-sm active:scale-95">
               <i :class="isDark ? 'fa-solid fa-sun text-lg' : 'fa-solid fa-moon text-lg'"></i>
            </button>
@@ -91,13 +88,31 @@
 
       <div class="flex-1 overflow-y-auto px-5 pb-24 lg:pb-5 custom-scroll">
         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
-          <div v-for="product in filteredProducts" :key="product.id" @click="addToCart(product)" class="group relative bg-white dark:bg-[#0F172A] rounded-2xl p-2.5 shadow-sm border border-slate-200 dark:border-slate-800 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer flex flex-col overflow-hidden" :class="{'ring-2 ring-indigo-500 ring-offset-2 dark:ring-offset-[#020617] border-indigo-500': getItemQty(product.id) > 0}">
+          <div 
+            v-for="product in filteredProducts" 
+            :key="product.id" 
+            @click="product.stock > 0 ? addToCart(product) : null"
+            class="group relative bg-white dark:bg-[#0F172A] rounded-2xl p-2.5 shadow-sm border border-slate-200 dark:border-slate-800 transition-all duration-300 cursor-pointer flex flex-col overflow-hidden"
+            :class="[
+                product.stock <= 0 
+                    ? 'opacity-60 cursor-not-allowed grayscale bg-slate-50 dark:bg-slate-900' 
+                    : 'hover:shadow-xl hover:-translate-y-1',
+                {'ring-2 ring-indigo-500 ring-offset-2 dark:ring-offset-[#020617] border-indigo-500': getItemQty(product.id) > 0 && product.stock > 0}
+            ]"
+          >
             <div class="aspect-[4/3] bg-slate-100 dark:bg-slate-900 rounded-xl overflow-hidden relative mb-2.5">
-               <img :src="product.image" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
-               <div class="absolute top-2 left-2 bg-black/60 backdrop-blur-md px-2 py-1 rounded-lg text-[9px] font-bold text-white border border-white/10 shadow-sm flex items-center gap-1"><i class="fa-solid fa-layer-group text-[8px] opacity-70"></i> {{ product.stock }}</div>
-               <div class="absolute inset-0 bg-indigo-900/10 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+               <img :src="product.image" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" loading="lazy">
+               <div class="absolute top-2 left-2 bg-black/60 backdrop-blur-md px-2 py-1 rounded-lg text-[9px] font-bold text-white border border-white/10 shadow-sm flex items-center gap-1">
+                   <i class="fa-solid fa-layer-group text-[8px] opacity-70"></i> {{ product.stock }}
+               </div>
+               
+               <div v-if="product.stock <= 0" class="absolute inset-0 bg-black/40 flex items-center justify-center">
+                   <span class="border-2 border-white px-2 py-1 text-white font-black text-[10px] uppercase tracking-widest rotate-[-12deg]">Tugadi</span>
+               </div>
+               <div v-else class="absolute inset-0 bg-indigo-900/10 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                    <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center text-indigo-600 shadow-xl transform scale-0 group-hover:scale-100 transition-transform duration-300"><i class="fa-solid fa-plus text-lg"></i></div>
                </div>
+
                <transition name="pop"><div v-if="getItemQty(product.id) > 0" class="absolute bottom-2 right-2 min-w-[28px] h-7 px-1.5 bg-indigo-600 rounded-full flex items-center justify-center text-white font-bold text-xs shadow-lg border-2 border-white dark:border-[#0F172A] z-10">{{ getItemQty(product.id) }}</div></transition>
             </div>
             <div class="px-1 flex-1 flex flex-col">
@@ -136,8 +151,6 @@
               <div class="flex flex-col text-left truncate">
                 <span class="text-xs font-bold text-slate-800 dark:text-white leading-none mb-0.5 truncate">{{ activeCustomer ? activeCustomer.name : 'Tanlanmagan' }}</span>
                 <div class="flex items-center gap-2 text-[10px]" v-if="activeCustomer">
-                   <span class="font-mono text-slate-500">{{ activeCustomer.phone }}</span>
-                   <span class="w-px h-2 bg-slate-300 dark:bg-slate-600"></span>
                    <span class="font-bold" :class="activeCustomer.balance >= 0 ? 'text-emerald-500' : 'text-rose-500'">{{ formatPrice(activeCustomer.balance) }}</span>
                 </div>
                 <span v-else class="text-[9px] text-rose-500 font-bold uppercase">Majburiy</span>
@@ -147,7 +160,7 @@
           </button>
           <transition name="dropdown">
             <div v-if="showCustomerList" class="absolute top-[calc(100%+4px)] left-0 w-[200%] bg-white dark:bg-slate-800 rounded-xl shadow-2xl border border-slate-100 dark:border-slate-700 z-50 p-2">
-              <input v-model="customerSearch" type="text" placeholder="Izlash..." class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-xs outline-none focus:border-indigo-500 mb-1">
+              <input v-model="customerSearch" type="text" placeholder="Mijoz izlash..." class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-xs outline-none focus:border-indigo-500 mb-1">
               <div class="max-h-40 overflow-y-auto thin-scroll">
                 <button v-for="c in filteredCustomers" :key="c.id" @click="selectCustomer(c)" class="w-full p-2.5 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-lg flex items-center justify-between transition text-left border-b border-slate-50 dark:border-slate-700 last:border-0 group">
                   <div class="text-xs font-bold text-slate-700 dark:text-slate-200 group-hover:text-indigo-600">{{ c.name }}</div>
@@ -209,7 +222,15 @@
 
                  <div class="flex items-center bg-slate-50 dark:bg-[#020617] rounded-xl border border-slate-200 dark:border-slate-700 h-12 p-1 select-none shrink-0 shadow-inner">
                      <button @click="changeQty(item, -1)" class="w-10 h-full flex items-center justify-center text-slate-400 hover:text-rose-500 bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-100 dark:border-slate-600 transition active:scale-90"><i class="fa-solid fa-minus text-xs"></i></button>
-                     <input v-model.number="item.qty" type="number" class="w-24 h-full bg-transparent text-center text-xl font-black text-indigo-600 dark:text-indigo-400 outline-none appearance-none">
+                     
+                     <input 
+                        v-model.number="item.qty" 
+                        type="number" 
+                        @input="validateInput(item)"
+                        @blur="checkEmpty(item)"
+                        class="w-24 h-full bg-transparent text-center text-xl font-black text-indigo-600 dark:text-indigo-400 outline-none appearance-none"
+                     >
+                     
                      <button @click="changeQty(item, 1)" class="w-10 h-full flex items-center justify-center text-slate-400 hover:text-emerald-500 bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-100 dark:border-slate-600 transition active:scale-90"><i class="fa-solid fa-plus text-xs"></i></button>
                  </div>
              </div>
@@ -217,7 +238,6 @@
       </div>
 
       <div class="shrink-0 bg-white dark:bg-[#111827] border-t border-slate-200 dark:border-slate-800 p-5 shadow-[0_-5px_30px_rgba(0,0,0,0.08)] z-50">
-          
           <div class="flex items-center justify-between mb-4">
               <div class="flex gap-2">
                   <button @click="taxEnabled = !taxEnabled" class="h-10 px-3 rounded-xl border flex items-center gap-2 transition-all active:scale-95" :class="taxEnabled ? 'bg-indigo-50 border-indigo-200 text-indigo-700 dark:bg-indigo-900/30 dark:border-indigo-700 dark:text-indigo-300' : 'bg-slate-50 border-slate-200 text-slate-500 dark:bg-slate-900 dark:border-slate-700'">
@@ -238,15 +258,8 @@
           </div>
 
           <div class="grid grid-cols-4 gap-3 mb-4">
-              <button 
-                v-for="pm in paymentMethods" :key="pm.value" 
-                @click="paymentType = pm.value" 
-                class="flex items-center gap-3 p-3 rounded-xl border-2 transition-all active:scale-[0.98] relative overflow-hidden" 
-                :class="paymentType === pm.value ? `bg-${pm.color}-50 border-${pm.color}-500 text-${pm.color}-700 dark:bg-${pm.color}-900/20 dark:text-${pm.color}-300` : 'bg-white border-slate-200 text-slate-500 hover:bg-slate-50 dark:bg-slate-800 dark:border-slate-700'"
-              >
-                  <div class="w-10 h-10 rounded-lg flex items-center justify-center text-lg" :class="paymentType === pm.value ? `bg-${pm.color}-100 dark:bg-${pm.color}-800` : 'bg-slate-100 dark:bg-slate-700 text-slate-400'">
-                      <i :class="pm.icon"></i>
-                  </div>
+              <button v-for="pm in paymentMethods" :key="pm.value" @click="paymentType = pm.value" class="flex items-center gap-3 p-3 rounded-xl border-2 transition-all active:scale-[0.98] relative overflow-hidden" :class="paymentType === pm.value ? `bg-${pm.color}-50 border-${pm.color}-500 text-${pm.color}-700 dark:bg-${pm.color}-900/20 dark:text-${pm.color}-300` : 'bg-white border-slate-200 text-slate-500 hover:bg-slate-50 dark:bg-slate-800 dark:border-slate-700'">
+                  <div class="w-10 h-10 rounded-lg flex items-center justify-center text-lg" :class="paymentType === pm.value ? `bg-${pm.color}-100 dark:bg-${pm.color}-800` : 'bg-slate-100 dark:bg-slate-700 text-slate-400'"><i :class="pm.icon"></i></div>
                   <div class="flex flex-col text-left">
                       <span class="text-xs font-bold uppercase">{{ pm.label }}</span>
                       <span class="text-[10px] opacity-70">To'lov</span>
@@ -255,25 +268,19 @@
               </button>
           </div>
 
-          <button 
-              @click="processSale"
-              class="w-full h-14 bg-gradient-to-r from-slate-800 to-slate-900 dark:from-indigo-600 dark:to-indigo-700 text-white rounded-2xl font-bold text-base uppercase tracking-widest shadow-xl shadow-slate-300 dark:shadow-indigo-900/30 active:scale-[0.98] transition-all flex items-center justify-between px-6 disabled:opacity-50 disabled:cursor-not-allowed group"
-              :disabled="activeSessionData.cart.length === 0"
-          >
+          <button @click="processSale" class="w-full h-14 bg-gradient-to-r from-slate-800 to-slate-900 dark:from-indigo-600 dark:to-indigo-700 text-white rounded-2xl font-bold text-base uppercase tracking-widest shadow-xl shadow-slate-300 dark:shadow-indigo-900/30 active:scale-[0.98] transition-all flex items-center justify-between px-6 disabled:opacity-50 disabled:cursor-not-allowed group" :disabled="activeSessionData.cart.length === 0">
               <div class="flex flex-col items-start">
                   <span class="text-[10px] font-normal opacity-70">Yakunlash</span>
                   <span>To'lov Qilish</span>
               </div>
-              <div class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center group-hover:bg-white/20 transition">
-                  <i class="fa-solid fa-arrow-right"></i>
-              </div>
+              <div class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center group-hover:bg-white/20 transition"><i class="fa-solid fa-arrow-right"></i></div>
           </button>
       </div>
 
     </div>
 
     <div v-if="activeSessionData.cart.length > 0 && !showMobileCart" class="lg:hidden fixed bottom-4 left-4 right-4 z-40">
-        <button @click="mobileTab = 'cart'" class="w-full h-14 bg-slate-900 dark:bg-indigo-600 text-white rounded-2xl shadow-2xl flex items-center justify-between px-5 active:scale-95 transition-transform ring-4 ring-white/20 dark:ring-black/20">
+        <button @click="showMobileCart = true" class="w-full h-14 bg-slate-900 dark:bg-indigo-600 text-white rounded-2xl shadow-2xl flex items-center justify-between px-5 active:scale-95 transition-transform ring-4 ring-white/20 dark:ring-black/20">
             <div class="flex items-center gap-3">
                 <div class="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center font-bold text-xs animate-bounce-in">{{ activeSessionData.cart.length }}</div>
                 <span class="text-xs font-bold uppercase tracking-wider">Savatni ochish</span>
@@ -287,13 +294,10 @@
         <i class="fa-solid fa-boxes-stacked text-xl"></i>
         <span class="text-[10px] font-bold">Katalog</span>
       </button>
-      
       <button @click="mobileTab = 'cart'" class="flex-1 py-3 flex flex-col items-center justify-center gap-1 transition-colors relative" :class="mobileTab === 'cart' ? 'text-indigo-600' : 'text-slate-400 hover:text-slate-600'">
         <div class="relative">
             <i class="fa-solid fa-cart-shopping text-xl"></i>
-            <span v-if="activeSessionData.cart.length > 0" class="absolute -top-2 -right-3 bg-rose-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full border-2 border-white dark:border-[#0F172A] animate-bounce-in">
-                {{ activeSessionData.cart.length }}
-            </span>
+            <span v-if="activeSessionData.cart.length > 0" class="absolute -top-2 -right-3 bg-rose-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full border-2 border-white dark:border-[#0F172A] animate-bounce-in">{{ activeSessionData.cart.length }}</span>
         </div>
         <span class="text-[10px] font-bold">Savat</span>
       </button>
@@ -310,8 +314,14 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, reactive, watch } from "vue"
+import { ref, computed, onMounted, onBeforeUnmount, reactive } from "vue"
+import { storeToRefs } from 'pinia';
+import { ReadyWarehouseStore } from "../../../stores/Warehouses/r-warehouse/warehouse.store"
 
+const store_warehouse = ReadyWarehouseStore()
+const { products: rawProducts } = storeToRefs(store_warehouse)
+
+// --- State ---
 const isDark = ref(false)
 const mobileTab = ref('catalog')
 const productSearch = ref("")
@@ -320,12 +330,6 @@ const discountPercent = ref(0)
 const taxEnabled = ref(false)
 const paymentType = ref("naqd")
 const currentTime = ref("")
-
-// Mobile Cart Logic
-const showMobileCart = computed({
-    get: () => mobileTab.value === 'cart',
-    set: (val) => { mobileTab.value = val ? 'cart' : 'catalog' }
-})
 
 // Dropdown States
 const showCategoryMenu = ref(false)
@@ -338,7 +342,7 @@ const showSupplierList = ref(false)
 const supplierSearch = ref("")
 const supplierDropdownRef = ref(null)
 
-// Data
+// --- Data ---
 const categories = [
     { name: "Barchasi", icon: "fa-solid fa-layer-group" },
     { name: "Elektronika", icon: "fa-solid fa-microchip" },
@@ -347,14 +351,23 @@ const categories = [
     { name: "Sport", icon: "fa-solid fa-person-running" }
 ]
 
-const products = ref(Array.from({ length: 40 }, (_, i) => ({
-  id: i + 1,
-  name: `Mahsulot ${i + 1} Premium`,
-  price: Math.floor(Math.random() * 500) * 100 + 1000,
-  category: categories[Math.floor(Math.random() * (categories.length - 1)) + 1].name,
-  image: `https://picsum.photos/200/200?random=${i + 100}`,
-  stock: Math.floor(Math.random() * 50) + 5
-})))
+// 2. LOGIKA: Backenddan kelgan ma'lumotni UI ga moslash
+const products = computed(() => {
+    if (!rawProducts.value || !Array.isArray(rawProducts.value)) return [];
+
+    return rawProducts.value.map((item, index) => {
+        const productName = item.product?.name || item.name || 'Nomsiz mahsulot';
+        
+        return {
+            id: item._id || item.id,
+            name: productName,
+            image: item.image || `https://picsum.photos/200/200?random=${index + 1}`,
+            price: item.salePrice || item.price || 0,
+            stock: 2,
+            category: item.product?.category || item.category || 'Barchasi'
+        }
+    })
+})
 
 const customers = ref([
   { id: 1, name: "Ali Valiyev", balance: 1200000, phone: "+998 90 123 45 67" },
@@ -367,10 +380,10 @@ const suppliers = ref([
 ])
 
 const paymentMethods = [
-    { value: "naqd", label: "Naqd", icon: "fa-solid fa-money-bill-1-wave" },
-    { value: "karta", label: "Karta", icon: "fa-regular fa-credit-card" },
-    { value: "click", label: "Click", icon: "fa-solid fa-mobile-screen" },
-    { value: "qarz", label: "Nasiya", icon: "fa-solid fa-file-invoice" }
+    { value: "naqd", label: "Naqd", icon: "fa-solid fa-money-bill-1-wave", color: "emerald" },
+    { value: "karta", label: "Karta", icon: "fa-regular fa-credit-card", color: "blue" },
+    { value: "click", label: "Click", icon: "fa-solid fa-mobile-screen", color: "sky" },
+    { value: "qarz", label: "Nasiya", icon: "fa-solid fa-file-invoice", color: "rose" }
 ]
 
 // Session Management
@@ -386,10 +399,18 @@ const filteredCategories = computed(() => categorySearch.value ? categories.filt
 const filteredCustomers = computed(() => customerSearch.value ? customers.value.filter(c => c.name.toLowerCase().includes(customerSearch.value.toLowerCase()) || c.phone.includes(customerSearch.value)) : customers.value)
 const filteredSuppliers = computed(() => supplierSearch.value ? suppliers.value.filter(s => s.company.toLowerCase().includes(supplierSearch.value.toLowerCase())) : suppliers.value)
 
+// 🔍 FILTERLASH
 const filteredProducts = computed(() => {
-    let list = products.value
-    if (activeCategory.value !== 'Barchasi') list = list.filter(p => p.category === activeCategory.value)
-    if (productSearch.value) list = list.filter(p => p.name.toLowerCase().includes(productSearch.value.toLowerCase()))
+    let list = products.value;
+    
+    if (activeCategory.value !== 'Barchasi') {
+        list = list.filter(p => p.category === activeCategory.value)
+    }
+    
+    if (productSearch.value) {
+        const search = productSearch.value.toLowerCase()
+        list = list.filter(p => String(p.name).toLowerCase().includes(search) || String(p.price).includes(search))
+    }
     return list
 })
 
@@ -398,6 +419,11 @@ const discountAmount = computed(() => subtotal.value * (discountPercent.value / 
 const taxAmount = computed(() => taxEnabled.value ? (subtotal.value - discountAmount.value) * 0.12 : 0)
 const grandTotal = computed(() => Math.max(0, subtotal.value - discountAmount.value + taxAmount.value))
 
+const showMobileCart = computed({
+    get: () => mobileTab.value === 'cart',
+    set: (val) => { mobileTab.value = val ? 'cart' : 'catalog' }
+})
+
 // Actions
 const selectCategory = (cat) => { activeCategory.value = cat.name; showCategoryMenu.value = false; categorySearch.value = "" }
 const selectCustomer = (c) => { activeSessionData.value.customerId = c.id; showCustomerList.value = false; customerSearch.value = "" }
@@ -405,15 +431,53 @@ const selectSupplier = (s) => { activeSessionData.value.supplierId = s ? s.id : 
 
 const getItemQty = (id) => activeSessionData.value.cart.find(i => i.id === id)?.qty || 0
 
+// 🌟 2. UPDATE: Add to Cart with Stock Check
 const addToCart = (p) => {
+    // A. Zaxira 0 bo'lsa
+    if (p.stock <= 0) {
+        showToast("Mahsulot tugagan!", "error")
+        return
+    }
+
     const item = activeSessionData.value.cart.find(i => i.id === p.id)
-    if (item) item.qty++
-    else activeSessionData.value.cart.push({ ...p, qty: 1 })
+    if (item) {
+        // B. Zaxiradan oshib ketsa
+        if (item.qty < p.stock) {
+            item.qty++
+        } else {
+            showToast(`Omborda faqat ${p.stock} dona bor`, "error")
+        }
+    } else {
+        activeSessionData.value.cart.push({ ...p, qty: 1 })
+    }
 }
 
+// 🌟 3. UPDATE: Change Qty with Stock Check
 const changeQty = (item, delta) => {
+    if (delta > 0) {
+        if (item.qty >= item.stock) {
+            showToast(`Zaxira yetarli emas!`, "error")
+            return
+        }
+    }
+
     if (item.qty + delta > 0) item.qty += delta
     else removeItem(item.id)
+}
+
+// 🌟 4. UPDATE: Manual Input Validation
+const validateInput = (item) => {
+    if (item.qty > item.stock) {
+        item.qty = item.stock
+        showToast(`Maksimum ${item.stock} dona bor!`, "error")
+    }
+    if (item.qty < 1 && item.qty !== "") {
+        item.qty = 1
+    }
+}
+
+const checkEmpty = (item) => {
+    if (!item.qty) item.qty = 1
 }
 
 const removeItem = (id) => { activeSessionData.value.cart = activeSessionData.value.cart.filter(i => i.id !== id) }
@@ -432,9 +496,11 @@ const removeSession = (id) => {
 }
 
 const toast = reactive({ show: false, message: "", type: "success" })
+let toastTimer
 const showToast = (msg, type="success") => {
     toast.message = msg; toast.type = type; toast.show = true
-    setTimeout(() => toast.show = false, 2500)
+    clearTimeout(toastTimer)
+    toastTimer = setTimeout(() => toast.show = false, 2500)
 }
 
 const processSale = () => {
@@ -454,12 +520,20 @@ const handleClickOutside = (e) => {
     if (supplierDropdownRef.value && !supplierDropdownRef.value.contains(e.target)) showSupplierList.value = false
 }
 
+// Lifecycle
+let timer
 onMounted(() => {
     document.addEventListener('click', handleClickOutside)
-    setInterval(() => {
+    timer = setInterval(() => {
         const d = new Date()
         currentTime.value = d.toLocaleTimeString('uz-UZ', {hour:'2-digit', minute:'2-digit'})
     }, 1000)
+    store_warehouse.GetAll()
+})
+
+onBeforeUnmount(() => {
+    document.removeEventListener('click', handleClickOutside)
+    clearInterval(timer)
 })
 </script>
 

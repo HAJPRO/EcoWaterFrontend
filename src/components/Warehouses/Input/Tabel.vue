@@ -1,3 +1,173 @@
+<script setup>
+import { ref, computed, onMounted, onUnmounted, reactive, watch } from "vue"
+import { storeToRefs } from "pinia"
+// Store va Service importlari (Yo'llarni loyihangizga qarab tekshiring)
+import { ProductsManagmentStore } from "../../../stores/Sale/products/product.store"
+import { WarehouseInputStore } from "../../../stores/Warehouses/input/input.store" // Yangi Store
+
+// --- STORE BOSHQARUVI ---
+const productStore = ProductsManagmentStore()
+const inputStore = WarehouseInputStore()
+// Katalog va qidiruv uchun
+const { products } = storeToRefs(productStore)
+
+// Kirim hujjatining holati uchun (Store dan to'g'ridan-to'g'ri bog'lanish)
+const { 
+    document: documents, // documents.value ichida partyNumber, items, supplierId bor
+    isSubmitting, 
+    totalSum, // Store'dagi getter
+    isValid: isValidInbound 
+} = storeToRefs(inputStore)
+
+
+// --- LOKAL STATE ---
+const isDark = ref(false)
+const mobileTab = ref('catalog')
+const productSearch = ref("")
+const showAddDocModal = ref(false)
+const newDocName = ref("")
+const showCategoryDropdown = ref(false)
+const categoryDropdownRef = ref(null)
+const showSupplierList = ref(false)
+const supplierDropdownRef = ref(null)
+const activeCategory = ref("All")
+const currentTime = ref("")
+
+// Static/Mock Data
+const categories = ["All", "Gazli ichimliklar", "Gazsiz ichimliklar", "Sharbatlar", "Sneklar", "Xo'jalik"]
+const suppliers = ref([
+    { id: "sup_001", company: "Mega Distribution", phone: "+998 90 123 00 00" }, 
+    { id: "sup_002", company: "Local Farmer LLC", phone: "+998 93 999 88 77" }
+])
+const paymentTypes = [
+    { value: "debt", label: "Nasiya", icon: "fa-solid fa-file-contract" }, 
+    { value: "cash", label: "Naqd", icon: "fa-solid fa-money-bill" }
+]
+const selectedPaymentType = ref("debt") // Lokal UI holati
+const toast = reactive({ show: false, message: "" }) // Lokal toast
+
+// --- COMPUTED / GETTERS ---
+// Store'da bitta document bor. Uni "Active Document" deb chaqiramiz.
+const activeDocument = computed(() => documents.value) 
+const activeSupplier = computed(() => suppliers.value.find(s => s.id === activeDocument.value.supplierId) || null)
+const grandTotal = computed(() => totalSum.value) // Store getteridan foydalanish
+
+// Katalog filtrlash (Store ma'lumotlari asosida)
+const filteredProducts = computed(() => {
+    let list = products.value || []
+    if (activeCategory.value !== 'All') {
+        list = list.filter(p => p.category === activeCategory.value)
+    }
+    // Search store tomonidan serverda filtrlanadi, shuning uchun bu yerda productSearch ishlatilmaydi
+    return list
+})
+
+const isAdded = (p) => activeDocument.value.items.some(i => i.productId === p._id)
+
+// --- WATCHERS ---
+// Qidiruv o'zgarganda Store ga so'rov yuborish
+let searchTimeout;
+watch(productSearch, (val) => {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => {
+        productStore.setSearch(val);
+    }, 400); // Debounce
+})
+
+// --- ACTIONS ---
+
+// 1. UI Actions
+const selectCategory = (cat) => { 
+    activeCategory.value = cat; 
+    showCategoryDropdown.value = false 
+    // Agar Store category filterini qilsa, bu yerda uni chaqirish kerak
+    // productStore.GetAll({ category: cat }) 
+}
+const selectSupplier = (s) => { 
+    inputStore.document.supplierId = s.id; 
+    showSupplierList.value = false 
+}
+
+// 2. Mahsulotni "Kirim" ro'yxatiga qo'shish
+const addToInbound = (p) => { 
+    inputStore.addItem(p);
+}
+
+// 3. Mahsulotni ro'yxatdan o'chirish (Store chaqiruvi)
+const removeItem = (id) => inputStore.removeItem(id);
+
+// 4. Miqdorni o'zgartirish (Store chaqiruvi)
+const changeQty = (item, delta) => { 
+    const newQty = item.qty + delta;
+    if (newQty > 0) {
+      inputStore.updateItem(item.productId, { qty: newQty });
+    } else {
+      inputStore.removeItem(item.productId);
+    }
+}
+
+// Marja hisoblash (Foyda foizi)
+const getMargin = (item) => { 
+    if(!item.costPrice || item.costPrice === 0) return 100; 
+    if(!item.sellingPrice) return 0;
+    return Math.round(((item.sellingPrice - item.costPrice) / item.sellingPrice) * 100) 
+}
+
+// 5. Document Management (Store logicga o'tkazilmagan UI)
+const createNewDocument = () => {
+    if (newDocName.value.trim()) {
+        const id = Date.now()
+        // Bu yerda yangi document yaratish logikasi lokal qoldi (Agar tabs kerak bo'lsa)
+        documents.value.push({ id, name: newDocName.value, items: [], supplierId: null })
+        activeDocId.value = id; newDocName.value = ""; showAddDocModal.value = false
+    }
+}
+const deleteDocument = (id) => {
+    if(confirm("Hujjatni o'chirmoqchimisiz?")) {
+        documents.value = documents.value.filter(s => s.id !== id)
+        activeDocId.value = documents.value[0]?.id || null
+        if(documents.value.length === 0) inputStore.clearDocument() // Bo'sh bo'lsa tozalash
+    }
+}
+
+// 6. API ACTIONS (SAVE)
+const processInbound = async () => {
+    // Store ichidagi saqlash funksiyasini chaqiramiz
+    await inputStore.saveInput();
+
+    // Muvaffaqiyatli saqlangandan so'ng Store o'zi tozalaydi, 
+    // Faqat lokal Toastni ko'rsatishimiz kerak (Agar Store o'zi ko'rsatmasa).
+    // Store da ToastifyService ishlatilgan, shuning uchun bu yerda faqat UI animatsiyasi qoladi.
+    
+    if (!inputStore.isSubmitting) { // Store saqlab bo'lgan bo'lsa
+        toast.message = `Kirim muvaffaqiyatli!`; // Aniq summani Store qaytarishi kerak
+        toast.show = true
+        setTimeout(() => toast.show = false, 3000)
+    }
+}
+
+// --- UTILS ---
+const toggleTheme = () => { isDark.value = !isDark.value; document.documentElement.classList.toggle("dark", isDark.value) }
+const formatPrice = (v) => new Intl.NumberFormat('uz-UZ').format(v) + " so'm"
+const formatPriceCompact = (v) => new Intl.NumberFormat('uz-UZ', { notation: "compact" }).format(v)
+
+const handleClickOutside = (e) => {
+    if (categoryDropdownRef.value && !categoryDropdownRef.value.contains(e.target)) showCategoryDropdown.value = false
+    if (supplierDropdownRef.value && !supplierDropdownRef.value.contains(e.target)) showSupplierList.value = false
+}
+
+// --- LIFECYCLE ---
+onMounted(() => {
+    document.addEventListener('click', handleClickOutside)
+    // Vaqt
+    setInterval(() => { currentTime.value = new Date().toLocaleTimeString('uz-UZ', {hour:'2-digit', minute:'2-digit'}) }, 1000)
+    // Mahsulotlarni yuklash
+    inputStore.fetchCatalog(); 
+})
+
+onUnmounted(() => document.removeEventListener('click', handleClickOutside))
+</script>
+
 <template>
   <div class="h-screen w-full bg-[#F0FDFA] dark:bg-[#020617] flex flex-col font-sans overflow-hidden text-slate-600 dark:text-slate-400 selection:bg-teal-500 selection:text-white transition-colors duration-300">
     
@@ -47,13 +217,13 @@
         <div class="px-5 py-4 sticky top-0 z-30 bg-[#F0FDFA]/95 dark:bg-[#020617]/95 backdrop-blur-md border-b border-teal-100/50 dark:border-slate-800/50 flex gap-3">
            
            <div class="relative group flex-1">
-              <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3.5 text-slate-400 group-focus-within:text-teal-600 transition-colors text-sm"></i>
-              <input 
-                  v-model="productSearch" 
-                  type="text" 
-                  placeholder="Mahsulot qidirish..." 
-                  class="block w-full h-11 pl-10 pr-4 bg-white dark:bg-[#0F172A] border border-teal-100 dark:border-slate-700 rounded-xl text-sm font-semibold shadow-sm outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all text-slate-800 dark:text-white"
-              >
+             <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3.5 text-slate-400 group-focus-within:text-teal-600 transition-colors text-sm"></i>
+             <input 
+                 v-model="productSearch" 
+                 type="text" 
+                 placeholder="Mahsulot qidirish..." 
+                 class="block w-full h-11 pl-10 pr-4 bg-white dark:bg-[#0F172A] border border-teal-100 dark:border-slate-700 rounded-xl text-sm font-semibold shadow-sm outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all text-slate-800 dark:text-white"
+             >
            </div>
 
            <div class="relative" ref="categoryDropdownRef">
@@ -89,17 +259,17 @@
             
             <div
               v-for="product in filteredProducts"
-              :key="product.id"
+              :key="product._id"
               @click="addToInbound(product)"
               class="group relative bg-white dark:bg-[#0F172A] rounded-2xl p-2 border border-teal-50 dark:border-slate-800 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer flex flex-col overflow-hidden"
               :class="{'ring-2 ring-teal-500 ring-offset-2 dark:ring-offset-[#020617] border-teal-500': isAdded(product)}"
             >
               <div class="aspect-[4/3] bg-slate-100 dark:bg-slate-900 rounded-xl overflow-hidden relative mb-2">
-                 <img :src="product.image" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 grayscale-[0.1] group-hover:grayscale-0">
+                 <img :src="product.image || 'https://via.placeholder.com/150'" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 grayscale-[0.1] group-hover:grayscale-0">
                  
                  <div class="absolute top-2 left-2 bg-white/90 dark:bg-black/60 backdrop-blur-md px-2 py-1 rounded-lg flex items-center gap-1.5 shadow-sm border border-white/20">
                      <i class="fa-solid fa-warehouse text-[9px] text-teal-500"></i>
-                     <span class="text-[10px] font-black text-slate-800 dark:text-white">{{ product.currentStock }}</span>
+                     <span class="text-[10px] font-black text-slate-800 dark:text-white">{{ product.totalStock }}</span>
                  </div>
 
                  <div class="absolute inset-0 bg-teal-900/10 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
@@ -120,7 +290,7 @@
                  <div class="mt-auto border-t border-slate-100 dark:border-slate-800 pt-2 flex flex-col gap-1">
                      <div class="flex justify-between items-center text-[10px]">
                          <span class="text-slate-400">Oxirgi kelish:</span>
-                         <span class="font-mono font-bold text-slate-600 dark:text-slate-300">{{ formatPriceCompact(product.lastCostPrice) }}</span>
+                         <span class="font-mono font-bold text-slate-600 dark:text-slate-300">{{ formatPriceCompact(product.costPrice) }}</span>
                      </div>
                  </div>
               </div>
@@ -139,27 +309,9 @@
             <div class="flex items-center gap-1 overflow-x-auto no-scrollbar">
                 <button @click="mobileTab = 'catalog'" class="lg:hidden w-9 h-9 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center mr-2 text-slate-500 shadow-sm"><i class="fa-solid fa-arrow-left"></i></button>
 
-                <div 
-                    v-for="doc in documents" :key="doc.id"
-                    @click="activeDocId = doc.id"
-                    class="group relative pl-3 pr-7 py-2 rounded-t-lg text-[11px] font-bold border-t border-x cursor-pointer select-none min-w-[120px] transition-all bg-white dark:bg-[#1E293B]"
-                    :class="activeDocId === doc.id 
-                        ? 'border-teal-500 text-teal-600 shadow-sm ring-1 ring-teal-500/20 z-10' 
-                        : 'border-slate-200 dark:border-slate-700 text-slate-500 hover:border-slate-300 dark:hover:border-slate-600 opacity-70 hover:opacity-100'"
-                >
-                    <span class="block truncate max-w-[90px]">{{ doc.name }}</span>
-                    <button 
-                        v-if="documents.length > 1"
-                        @click.stop="deleteDocument(doc.id)" 
-                        class="absolute right-1 top-2 w-5 h-5 flex items-center justify-center rounded hover:bg-rose-100 text-slate-400 hover:text-rose-500 transition"
-                    >
-                        <i class="fa-solid fa-times text-[10px]"></i>
-                    </button>
+                <div class="group relative pl-3 pr-7 py-2 rounded-t-lg text-[11px] font-bold border-t border-x cursor-pointer select-none min-w-[120px] transition-all bg-white dark:bg-[#1E293B] border-teal-500 text-teal-600 shadow-sm ring-1 ring-teal-500/20 z-10">
+                    <span class="block truncate max-w-[90px]">{{ activeDocument.partyNumber || 'Yangi Faktura' }}</span>
                 </div>
-
-                <button @click="showAddDocModal = true" class="w-8 h-8 flex shrink-0 items-center justify-center rounded-lg border border-dashed border-slate-300 dark:border-slate-600 text-slate-400 hover:text-teal-600 hover:border-teal-400 hover:bg-teal-50 transition ml-1">
-                    <i class="fa-solid fa-plus"></i>
-                </button>
             </div>
         </div>
 
@@ -283,7 +435,8 @@
                 :disabled="!isValidInbound"
                 class="w-full h-11 bg-teal-600 hover:bg-teal-700 text-white rounded-xl font-bold text-xs uppercase tracking-widest shadow-lg active:translate-y-0.5 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-                <i class="fa-solid fa-check-circle"></i> Tasdiqlash
+                <span v-if="isSubmitting"><i class="fa-solid fa-spinner fa-spin"></i> Saqlanmoqda...</span>
+                <span v-else><i class="fa-solid fa-check-circle"></i> Tasdiqlash</span>
             </button>
         </div>
 
@@ -334,99 +487,6 @@
 
   </div>
 </template>
-
-<script setup>
-import { ref, computed, onMounted, onUnmounted, reactive } from "vue"
-
-const isDark = ref(false)
-const mobileTab = ref('catalog')
-const productSearch = ref("")
-const showAddDocModal = ref(false)
-const newDocName = ref("")
-const showCategoryDropdown = ref(false)
-const categoryDropdownRef = ref(null)
-const showSupplierList = ref(false)
-const supplierDropdownRef = ref(null)
-const activeCategory = ref("All")
-const currentTime = ref("")
-
-// Data
-const categories = ["All", "Oziq-ovqat", "Ichimlik", "Non", "Shirinlik", "Xo'jalik"]
-const suppliers = [{id:1, company:"Mega Distribution", phone:"+998 90 123 00 00"}, {id:2, company:"Local Farmer", phone:"+998 93 999 88 77"}]
-const products = ref(Array.from({ length: 40 }, (_, i) => ({
-  id: i + 1,
-  name: `Mahsulot ${i + 1} Premium`,
-  lastCostPrice: Math.floor(Math.random() * 400) * 100 + 1000,
-  sellingPrice: Math.floor(Math.random() * 600) * 100 + 5000,
-  image: `https://picsum.photos/200/200?random=${i + 100}`,
-  currentStock: Math.floor(Math.random() * 100),
-  category: categories[Math.floor(Math.random() * (categories.length - 1)) + 1]
-})))
-
-const documents = ref([{ id: 1, name: "Kirim #1", items: [], supplierId: null }])
-const activeDocId = ref(1)
-const selectedPaymentType = ref("debt")
-const paymentTypes = [{ value: "debt", label: "Nasiya", icon: "fa-solid fa-file-contract" }, { value: "cash", label: "Naqd", icon: "fa-solid fa-money-bill" }]
-
-// Computed
-const activeDocument = computed(() => documents.value.find(d => d.id === activeDocId.value) || documents.value[0])
-const activeSupplier = computed(() => suppliers.find(s => s.id === activeDocument.value.supplierId) || null)
-const filteredProducts = computed(() => {
-    let list = products.value
-    if (activeCategory.value !== 'All') list = list.filter(p => p.category === activeCategory.value)
-    if (productSearch.value) list = list.filter(p => p.name.toLowerCase().includes(productSearch.value.toLowerCase()))
-    return list
-})
-
-const isAdded = (p) => activeDocument.value.items.some(i => i.id === p.id)
-const grandTotal = computed(() => activeDocument.value.items.reduce((sum, item) => sum + (item.costPrice * item.qty), 0))
-const isValidInbound = computed(() => activeDocument.value.items.length > 0 && activeDocument.value.supplierId)
-
-// Actions
-const selectCategory = (cat) => { activeCategory.value = cat; showCategoryDropdown.value = false }
-const selectSupplier = (s) => { activeDocument.value.supplierId = s.id; showSupplierList.value = false }
-const addToInbound = (p) => { if (!isAdded(p)) { activeDocument.value.items.push({ ...p, qty: 1, costPrice: p.lastCostPrice }) } }
-const removeItem = (id) => activeDocument.value.items = activeDocument.value.items.filter(i => i.id !== id)
-const changeQty = (item, delta) => { if (item.qty + delta > 0) item.qty += delta; else removeItem(item.id) }
-const getMargin = (item) => { if(!item.costPrice) return 100; return Math.round(((item.sellingPrice - item.costPrice) / item.sellingPrice) * 100) }
-
-const createNewDocument = () => {
-    if (newDocName.value.trim()) {
-        const id = Date.now()
-        documents.value.push({ id, name: newDocName.value, items: [], supplierId: null })
-        activeDocId.value = id; newDocName.value = ""; showAddDocModal.value = false
-    }
-}
-const deleteDocument = (id) => {
-     if(confirm("Hujjatni o'chirmoqchimisiz?")) {
-        documents.value = documents.value.filter(s => s.id !== id)
-        activeDocId.value = documents.value[0]?.id || null
-        if(documents.value.length === 0) documents.value.push({ id: Date.now(), name: "Yangi Kirim", items: [], supplierId: null })
-    }
-}
-
-const toast = reactive({ show: false, message: "" })
-const processInbound = () => {
-    toast.message = `Kirim muvaffaqiyatli saqlandi! Jami: ${formatPrice(grandTotal.value)}`; toast.show = true
-    setTimeout(() => toast.show = false, 3000)
-    activeDocument.value.items = []; activeDocument.value.supplierId = null
-}
-
-const toggleTheme = () => { isDark.value = !isDark.value; document.documentElement.classList.toggle("dark", isDark.value) }
-const formatPrice = (v) => new Intl.NumberFormat('uz-UZ').format(v) + " so'm"
-const formatPriceCompact = (v) => new Intl.NumberFormat('uz-UZ', { notation: "compact" }).format(v)
-
-const handleClickOutside = (e) => {
-    if (categoryDropdownRef.value && !categoryDropdownRef.value.contains(e.target)) showCategoryDropdown.value = false
-    if (supplierDropdownRef.value && !supplierDropdownRef.value.contains(e.target)) showSupplierList.value = false
-}
-
-onMounted(() => {
-    document.addEventListener('click', handleClickOutside)
-    setInterval(() => { currentTime.value = new Date().toLocaleTimeString('uz-UZ', {hour:'2-digit', minute:'2-digit'}) }, 1000)
-})
-onUnmounted(() => document.removeEventListener('click', handleClickOutside))
-</script>
 
 <style scoped>
 .custom-scroll-teal::-webkit-scrollbar { width: 5px; }

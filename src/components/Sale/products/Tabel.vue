@@ -1,8 +1,10 @@
 <script setup>
-import { ref, onMounted, onUnmounted, reactive, watch } from "vue"; // onMounted, onUnmounted qo'shildi
+import { ref, onMounted, onUnmounted, reactive, watch } from "vue";
 import { storeToRefs } from "pinia";
 import { ElMessage } from "element-plus";
-import moment from "moment-timezone";
+// Moment kerak emas, chunki narx va sonni chiqaramiz
+// import moment from "moment-timezone"; 
+
 import Button from '../../../UI/Button.vue';
 import ExportDropdown from '../../../UI/ExportDropdown.vue';
 import DataTable from "../../../UI/DataTable.vue"; 
@@ -10,39 +12,33 @@ import AddProductModal from "../../../components/Sale/products/AddProductModal.v
 import DetailProductModal from "../../../components/Sale/products/DetailProductModal.vue";
 import { ProductsManagmentStore } from "../../../stores/Sale/products/product.store";
 
-const store_products = ProductsManagmentStore();
-const { products, all_length } = storeToRefs(store_products);
+const store = ProductsManagmentStore();
+// pagination va products ni olamiz
+const { products, pagination } = storeToRefs(store);
 
-// --- 1. CONFIGURATION ---
+// --- 1. CONFIGURATION (Yangi Modelga moslash) ---
 const columns = [
   { key: 'code', label: 'Kodi', width: '140px', fixed: 'left', sortable: true },
-  { key: 'pro_name', label: 'Nomi', width: '220px', sortable: true },
-  { key: 'pro_category', label: 'Kategoriya', width: '180px' },
-  { key: 'productionStarteddAt', label: 'Boshlangan', width: '160px', align: 'center' },
-  { key: 'productionStoppedAt', label: 'To\'xtatilgan', width: '160px', align: 'center' },
+  { key: 'name', label: 'Nomi', width: '220px', sortable: true }, // pro_name -> name
+  { key: 'category', label: 'Kategoriya', width: '150px' }, // pro_category -> category
+  { key: 'salePrice', label: 'Sotuv Narxi', width: '160px', align: 'right' }, // Yangi
+  { key: 'totalStock', label: 'Jami Qoldiq', width: '160px', align: 'center' }, // Yangi
   { key: 'status', label: 'Holat', width: '120px', align: 'center' },
   { key: 'actions', label: '', width: '80px', fixed: 'right', align: 'center' }
 ];
 
 // --- 2. STATE ---
-const filter = reactive({ code: "", name: "" });
+const searchQuery = ref(""); // Qidiruv uchun yagona o'zgaruvchi
 const selectedIds = ref([]);
-const activeDropdown = ref(null);      // Qator menyusi uchun ID
-const isExportDropdownOpen = ref(false); // Export menyusi uchun
-const currentPage = ref(1);
-
-// YANGI: Export menyusini ushlash uchun ref
+const activeDropdown = ref(null);
+const isExportDropdownOpen = ref(false);
 const exportDropdownRef = ref(null);
 
-// --- 3. CLICK OUTSIDE LOGIC (YANGI) ---
+// --- 3. CLICK OUTSIDE LOGIC (O'zgarishsiz) ---
 const handleClickOutside = (event) => {
-  // 1. Export menyusini yopish
   if (isExportDropdownOpen.value && exportDropdownRef.value && !exportDropdownRef.value.contains(event.target)) {
     isExportDropdownOpen.value = false;
   }
-
-  // 2. Qator menyularini (Row Actions) yopish
-  // Agar ochiq bo'lsa VA bosilgan joy 'row-action-wrapper' klassiga ega element ichida bo'lmasa -> Yopamiz
   if (activeDropdown.value !== null) {
     const isClickInsideAction = event.target.closest('.row-action-wrapper');
     if (!isClickInsideAction) {
@@ -53,7 +49,8 @@ const handleClickOutside = (event) => {
 
 onMounted(() => {
   document.addEventListener('click', handleClickOutside);
-  loadData();
+  // Dastlabki yuklash
+  store.GetAll();
 });
 
 onUnmounted(() => {
@@ -61,21 +58,14 @@ onUnmounted(() => {
 });
 
 // --- METHODS ---
-const loadData = () => {
-  store_products.GetAll({ 
-    page: currentPage.value, 
-    limit: 10,
-    search: filter 
-  });
-};
 
-watch([() => filter.code, () => filter.name], () => {
-  currentPage.value = 1;
-  loadData();
+// Qidiruvni kuzatish (Debounce qilish tavsiya etiladi, lekin hozircha oddiy watch)
+watch(searchQuery, (val) => {
+  store.setSearch(val);
 });
 
 const openAddModal = () => {
-  store_products.AddProductModal({ title: `shakillantirish`, action: `create` });
+  store.openAddModal(); // Store ichidagi methodni chaqiramiz
 };
 
 const handleExport = (type) => {
@@ -83,6 +73,7 @@ const handleExport = (type) => {
   ElMessage.success(`${type.toUpperCase()} yuklanmoqda...`);
 };
 
+// Actions Konfiguratsiyasi
 const rowActions = [
   { label: "Batafsil", action: 'view', icon: "fa-solid fa-eye", colorClass: "bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400" },
   { label: "O'zgartirish", action: 'edit', icon: "fa-solid fa-pen-to-square", colorClass: "bg-indigo-50 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400" },
@@ -91,22 +82,26 @@ const rowActions = [
 ];
 
 const handleAction = (actionName, row) => {
-  activeDropdown.value = null; // Amal bajarilganda menyuni yopish
+  activeDropdown.value = null;
   
   if (actionName === 'view') {
-    store_products.DetailOrderModal({ id: row._id });
+    store.GetOne(row._id); // Detal modalni store ichida ochadi yoki state yangilaydi
   } else if (actionName === 'edit') {
-    store_products.AddProductModal({ id: row._id, title: `o'zgartirish`, action: `update` });
+    store.openEditModal(row._id);
   } else if (actionName === 'excel') {
     console.log("Excel export:", row._id);
   } else if (actionName === 'delete') {
-    store_products.DeleteById({ id: row._id });
+    store.DeleteById(row._id);
   }
 };
 
-const formatDate = (date) => {
-  if (!date) return "-";
-  return moment.utc(date).tz("Asia/Tashkent").format("DD.MM.YYYY HH:mm:ss");
+// Formatlash yordamchilari
+const formatPrice = (value) => {
+  return new Intl.NumberFormat('uz-UZ', { style: 'currency', currency: 'UZS', maximumFractionDigits: 0 }).format(value);
+};
+
+const formatNumber = (value) => {
+  return new Intl.NumberFormat('uz-UZ').format(value);
 };
 </script>
 
@@ -121,8 +116,8 @@ const formatDate = (date) => {
       <div class="relative w-full sm:w-72 group">
         <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors text-xs"></i>
         <input 
-          v-model="filter.fullname" 
-          placeholder="F.I.O yoki Telefon orqali izlash..." 
+          v-model="searchQuery" 
+          placeholder="Nomi yoki kodi orqali izlash..." 
           class="w-full pl-9 pr-3 py-1.5 text-sm bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 outline-none transition-all shadow-sm"
         >
       </div>
@@ -147,37 +142,48 @@ const formatDate = (date) => {
       v-model:selected="selectedIds"
     >
       <template #code="{ row }">
-        <span class="font-mono text-xs font-semibold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded cursor-pointer hover:underline hover:text-indigo-700" @click="console.log('Open detail')">
+        <span class="font-mono text-xs font-semibold text-indigo-600 bg-indigo-50 dark:bg-indigo-900/20 px-2 py-0.5 rounded cursor-pointer hover:underline hover:text-indigo-700">
           <i class="fa-solid fa-qrcode mr-1 text-[10px]"></i>
           {{ row.code }}
         </span>
       </template>
 
-      <template #pro_name="{ row }">
-        <span class="font-medium text-slate-700 dark:text-slate-200 text-sm">{{ row.pro_name }}</span>
+      <template #name="{ row }">
+        <div class="flex items-center gap-2">
+            <div class="w-8 h-8 rounded bg-slate-100 flex-shrink-0 overflow-hidden">
+                <img :src="row.image || 'https://via.placeholder.com/40'" class="w-full h-full object-cover">
+            </div>
+            <span class="font-medium text-slate-700 dark:text-slate-200 text-sm leading-tight line-clamp-2">{{ row.name }}</span>
+        </div>
       </template>
 
-      <template #pro_category="{ row }">
-         <span class="text-xs bg-slate-100 dark:bg-slate-700 px-2 py-0.5 rounded text-slate-600 dark:text-slate-300">{{ row.pro_category }}</span>
+      <template #category="{ row }">
+         <span class="text-xs bg-slate-100 dark:bg-slate-700 px-2 py-0.5 rounded text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-600">{{ row.category }}</span>
       </template>
 
-      <template #productionStarteddAt="{ row }">
-         <span class="text-[10px] text-slate-500 font-mono block">{{ formatDate(row.productionStarteddAt) }}</span>
+      <template #salePrice="{ row }">
+         <span class="text-xs font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/20 px-2 py-1 rounded block text-right">
+             {{ formatPrice(row.salePrice) }}
+         </span>
       </template>
-      <template #productionStoppedAt="{ row }">
-         <span class="text-[10px] text-blue-500 font-mono block">{{ formatDate(row.productionStoppedAt) }}</span>
+
+      <template #totalStock="{ row }">
+         <div class="flex flex-col items-center">
+             <span class="text-xs font-black text-slate-700 dark:text-white">{{ formatNumber(row.totalStock) }}</span>
+             <span class="text-[9px] text-slate-400 uppercase">{{ row.unit }}</span>
+         </div>
       </template>
 
       <template #status="{ row }">
         <div class="flex justify-center">
             <span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase border shadow-sm flex items-center gap-1.5"
             :class="[
-                row.status === 'Active'
-                ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                : 'bg-rose-50 text-rose-700 border-rose-200'
+                row.status === 'active'
+                ? 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-800'
+                : 'bg-slate-50 text-slate-500 border-slate-200 dark:bg-slate-800 dark:text-slate-400'
             ]">
-            <i :class="row.status === 'Active' ? 'fa-solid fa-circle-check' : 'fa-solid fa-hourglass-start'"></i>
-            {{ row.status }}
+            <i :class="row.status === 'active' ? 'fa-solid fa-circle-check' : 'fa-solid fa-archive'"></i>
+            {{ row.status === 'active' ? 'Aktiv' : 'Arxiv' }}
             </span>
         </div>
       </template>

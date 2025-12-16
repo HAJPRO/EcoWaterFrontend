@@ -1,156 +1,169 @@
 <script setup>
-import { ref, reactive } from "vue";
+import { ref, reactive, computed } from "vue";
 import { storeToRefs } from "pinia";
-import { v4 as uuidv4 } from "uuid";
 import { ProductsManagmentStore } from "../../../stores/Sale/products/product.store";
 import { ElMessage } from "element-plus";
 
 // --- COMPONENTS ---
-import Modal from "../../../UI/Modal.vue"; // <--- YANGI MODAL
+import Modal from "../../../UI/Modal.vue";
 import Button from "../../../UI/Button.vue"; 
 import Select from "../../../UI/Select.vue";
 
 const store_product = ProductsManagmentStore();
 const { product_modal, model, TitleAction } = storeToRefs(store_product);
 
-// --- STATE (Select Options & Logic) ---
-const categoryes = ref([{ id: 1, name: "Gazli ichimliklar" }, { id: 2, name: "Gazsiz" }]);
-const saleTypes = ref([{ id: 1, name: "Dona" }, { id: 2, name: "Blok" }]);
-const packingTypes = ref([{ id: 1, name: "0.5 L" }, { id: 2, name: "1.0 L" }]);
+// --- STATE (Select Options) ---
+// Kategoriyalar (Buni ham keyinchalik storedan olish mumkin)
+const categoryes = ref([
+    { id: 1, name: "Gazli ichimliklar" }, 
+    { id: 2, name: "Gazsiz ichimliklar" },
+    { id: 3, name: "Sharbatlar" },
+    { id: 4, name: "Sneklar" }
+]);
+
+// O'lchov birliklari (Yangi Schema bo'yicha)
+const units = ref([
+    { id: 'dona', name: 'Dona' },
+    { id: 'kg', name: 'Kilogram (kg)' },
+    { id: 'litr', name: 'Litr (l)' },
+    { id: 'blok', name: 'Blok/Upakovka' },
+    { id: 'metr', name: 'Metr' },
+    { id: 'qop', name: 'Qop' }
+]);
+
 const errors = reactive({});
 
 // --- HELPERS ---
-const formatPrice = (p) => p ? new Intl.NumberFormat("uz-UZ").format(p) : "0";
+const handleClose = () => {
+  store_product.closeModal();
+  Object.keys(errors).forEach(key => delete errors[key]);
+};
+
+const handleAddOption = (type) => ElMessage.info(`${type} yangi varianti qo'shilmoqda...`);
 
 // --- ACTIONS ---
-const handleClose = () => {
-  store_product.product_modal = false;
-  errors.value = {};
-};
-
-const handleAddOption = (type) => ElMessage.info(`${type} qo'shish...`);
-
-const PlusProduct = () => {
-  if (!model.value.packingType || !model.value.buying_price) {
-    ElMessage.warning("Qadoq va Narxni kiriting!");
-    return;
-  }
-  const data = {
-    id: uuidv4(),
-    packingType: model.value.packingType,
-    buying_price: Number(model.value.buying_price),
-    block_buying_price: Number(model.value.block_buying_price || 0),
-  };
-  if (!model.value.products) model.value.products = [];
-  model.value.products.push(data);
-  model.value.packingType = ""; model.value.buying_price = ""; model.value.block_buying_price = "";
-};
-
-const DeleteById = (id) => {
-  model.value.products = model.value.products.filter(i => i.id !== id);
-};
-
-const SaveProduct = () => {
+const SaveProduct = async () => {
+  // 1. Validatsiya
   errors.code = !model.value.code;
-  errors.pro_name = !model.value.pro_name;
-  errors.pro_category = !model.value.pro_category;
+  errors.name = !model.value.name;
+  errors.category = !model.value.category;
+  errors.salePrice = !model.value.salePrice || model.value.salePrice <= 0;
   
-  if (errors.code || errors.pro_name || errors.pro_category) return;
+  if (errors.code || errors.name || errors.category || errors.salePrice) {
+      ElMessage.warning("Iltimos, majburiy maydonlarni to'ldiring!");
+      return;
+  }
 
-  store_product.Create({ action: TitleAction.value.action, model: model.value });
-  handleClose();
+  // 2. Store orqali saqlash (Create yoki Update avtomatik aniqlanadi)
+  await store_product.SaveProduct();
 };
 </script>
 
 <template>
   <Modal
     v-model="product_modal"
-    :title="'Mahsulot ' + TitleAction.title"
-    subtitle="Ombor boshqaruvi"
+    :title="TitleAction.title"
+    subtitle="Ombor va Savdo boshqaruvi"
     icon="fa-solid fa-box-open"
-    width="max-w-4xl"
+    width="max-w-3xl"
     @close="handleClose"
   >
     
-    <div class="bg-white dark:bg-slate-800 rounded-xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm">
+    <div class="bg-white dark:bg-slate-800 rounded-xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm mb-4">
       <h4 class="text-xs font-bold text-indigo-500 uppercase tracking-wider mb-4 border-b border-slate-100 dark:border-slate-700 pb-2">
         Asosiy Ma'lumotlar
       </h4>
       <div class="grid grid-cols-12 gap-5">
-        <div class="col-span-12 sm:col-span-3">
-          <label class="form-label required">Kodi</label>
-          <input v-model="model.code" type="text" class="form-input" :class="{'!border-rose-500': errors.code}" placeholder="001" />
+        <div class="col-span-12 sm:col-span-4">
+          <label class="form-label required">Shtrix Kod</label>
+          <div class="relative">
+              <i class="fa-solid fa-qrcode absolute right-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+              <input v-model="model.code" type="text" class="form-input pl-9 font-mono" :class="{'!border-rose-500': errors.code}" placeholder="Masalan: 47800..." />
+          </div>
         </div>
-        <div class="col-span-12 sm:col-span-9">
-          <label class="form-label required">Nomi</label>
-          <input v-model="model.pro_name" type="text" class="form-input" :class="{'!border-rose-500': errors.pro_name}" placeholder="Coca Cola" />
+        
+        <div class="col-span-12 sm:col-span-8">
+          <label class="form-label required">Mahsulot Nomi</label>
+          <input v-model="model.name" type="text" class="form-input" :class="{'!border-rose-500': errors.name}" placeholder="Masalan: Coca Cola 1.5L" />
         </div>
+        
         <div class="col-span-12 sm:col-span-6">
           <label class="form-label required">Kategoriyasi</label>
           <Select
-            v-model="model.pro_category"
+            v-model="model.category"
             :options="categoryes"
             labelKey="name" valueKey="name"
             placeholder="Tanlang..."
             allowAdd searchable
-            :error="!!errors.pro_category"
-            @add="handleAddOption('pro_category')"
+            :error="!!errors.category"
+            @add="handleAddOption('Kategoriya')"
           />
         </div>
-        <div class="col-span-12 sm:col-span-6">
-          <label class="form-label">Sotuv turi</label>
-          <Select v-model="model.sale_type" :options="saleTypes" labelKey="name" valueKey="name" placeholder="Tanlang..." allowAdd @add="handleAddOption('sale_type')" />
+        
+        <div class="col-span-12 sm:col-span-3">
+          <label class="form-label required">O'lchov Birligi</label>
+          <Select 
+            v-model="model.unit" 
+            :options="units" 
+            labelKey="name" valueKey="id" 
+            placeholder="Dona" 
+          />
+        </div>
+
+        <div class="col-span-12 sm:col-span-3">
+            <label class="form-label">Qadoq Hajmi</label>
+            <div class="relative">
+                <input v-model.number="model.packSize" type="number" min="1" class="form-input text-center" placeholder="1" />
+                <span class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-[10px] font-bold">x</span>
+            </div>
         </div>
       </div>
     </div>
 
     <div class="bg-white dark:bg-slate-800 rounded-xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm">
-      <h4 class="text-xs font-bold text-emerald-500 uppercase tracking-wider mb-4 border-b border-slate-100 dark:border-slate-700 pb-2">
-        Narx va Qadoq
+      <h4 class="text-xs font-bold text-emerald-500 uppercase tracking-wider mb-4 border-b border-slate-100 dark:border-slate-700 pb-2 flex justify-between">
+        <span>Moliya va Zaxira</span>
+        <i class="fa-solid fa-coins opacity-50"></i>
       </h4>
-      <div class="grid grid-cols-12 gap-4 items-end">
+      
+      <div class="grid grid-cols-12 gap-5">
+        
         <div class="col-span-12 sm:col-span-4">
-          <label class="form-label">Qadoq turi</label>
-          <Select v-model="model.packingType" :options="packingTypes" labelKey="name" valueKey="name" placeholder="0.5L..." allowAdd searchable @add="handleAddOption('packingType')" />
+          <label class="form-label text-slate-500">Kelish Narxi (Tan narx)</label>
+          <div class="relative group">
+              <input v-model.number="model.costPrice" type="number" class="form-input pr-12 group-focus-within:border-slate-400" placeholder="0" />
+              <span class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs font-bold bg-slate-100 dark:bg-slate-700 px-1.5 py-0.5 rounded">UZS</span>
+          </div>
         </div>
-        <div class="col-span-12 sm:col-span-3">
-          <label class="form-label">Narx (Dona)</label>
-          <div class="relative"><input v-model="model.buying_price" type="number" class="form-input pr-10" placeholder="0" /><span class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs font-bold">UZS</span></div>
-        </div>
-        <div class="col-span-12 sm:col-span-3">
-          <label class="form-label">Narx (Blok)</label>
-          <div class="relative"><input v-model="model.block_buying_price" type="number" class="form-input pr-10" placeholder="0" /><span class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs font-bold">UZS</span></div>
-        </div>
-        <div class="col-span-12 sm:col-span-2">
-          <Button variant="success" block left-icon="fa-solid fa-plus" @click="PlusProduct">Qo'shish</Button>
-        </div>
-      </div>
 
-      <div class="mt-6 border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden">
-        <table class="w-full text-sm text-left">
-          <thead class="bg-slate-50 dark:bg-slate-700/50 text-slate-500 font-bold uppercase text-[11px]">
-            <tr><th class="px-4 py-3 w-12">№</th><th class="px-4 py-3">Qadoq</th><th class="px-4 py-3 text-right">Dona</th><th class="px-4 py-3 text-right">Blok</th><th class="px-4 py-3 w-16"></th></tr>
-          </thead>
-          <tbody class="divide-y divide-slate-100 dark:divide-slate-700 bg-white dark:bg-slate-800">
-            <tr v-if="!model.products?.length"><td colspan="5" class="px-4 py-6 text-center text-slate-400">Narxlar yo'q</td></tr>
-            <tr v-for="(row, index) in model.products" :key="row.id" class="hover:bg-slate-50 dark:hover:bg-slate-700/50">
-              <td class="px-4 py-3 text-center text-slate-400">{{ index + 1 }}</td>
-              <td class="px-4 py-3 font-semibold">{{ row.packingType }}</td>
-              <td class="px-4 py-3 text-right font-mono text-emerald-600">{{ formatPrice(row.buying_price) }}</td>
-              <td class="px-4 py-3 text-right font-mono text-indigo-600">{{ formatPrice(row.block_buying_price) }}</td>
-              <td class="px-4 py-3 text-center">
-                <button @click="DeleteById(row.id)" class="text-slate-400 hover:text-rose-500 p-1.5"><i class="fa-solid fa-trash-can"></i></button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        <div class="col-span-12 sm:col-span-4">
+          <label class="form-label required text-emerald-600 dark:text-emerald-400">Sotuv Narxi</label>
+          <div class="relative group">
+              <input v-model.number="model.salePrice" type="number" class="form-input pr-12 border-emerald-200 focus:border-emerald-500 focus:ring-emerald-500/10 font-bold text-emerald-700 dark:text-emerald-400" :class="{'!border-rose-500': errors.salePrice}" placeholder="0" />
+              <span class="absolute right-3 top-1/2 -translate-y-1/2 text-emerald-600 dark:text-emerald-400 text-xs font-black">UZS</span>
+          </div>
+        </div>
+
+        <div class="col-span-12 sm:col-span-4">
+          <label class="form-label">Boshlang'ich Qoldiq</label>
+          <div class="relative">
+              <input v-model.number="model.totalStock" type="number" class="form-input pr-12 text-center" placeholder="0" />
+              <span class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs font-bold uppercase">{{ model.unit || 'dona' }}</span>
+          </div>
+        </div>
+
+        <div class="col-span-12">
+            <label class="form-label">Qo'shimcha ma'lumot (Opsional)</label>
+            <textarea v-model="model.description" rows="2" class="form-input resize-none" placeholder="Mahsulot haqida qisqacha..."></textarea>
+        </div>
+
       </div>
     </div>
 
     <template #footer>
-       <Button size="md" variant="danger" left-icon="fa fa-xmark" @click="handleClose">Bekor qilish</Button>
+       <Button size="md" variant="secondary" left-icon="fa fa-xmark" @click="handleClose">Bekor qilish</Button>
        <Button
-       size="md" 
+         size="md" 
          :variant="TitleAction.action === 'create' ? 'primary' : 'success'" 
          left-icon="fa-solid fa-check" 
          @click="SaveProduct"
@@ -164,6 +177,13 @@ const SaveProduct = () => {
 
 <style scoped>
 .required::after { content: " *"; @apply text-rose-500; }
-.form-label { @apply block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1.5 uppercase tracking-wide; }
-.form-input { @apply w-full px-4 py-2.5 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-xl text-sm font-medium text-slate-700 dark:text-slate-200 placeholder-slate-400 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all outline-none; }
+.form-label { @apply block text-[11px] font-bold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wide; }
+.form-input { @apply w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-medium text-slate-700 dark:text-slate-200 placeholder-slate-400 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all outline-none focus:bg-white dark:focus:bg-slate-950; }
+
+/* Raqamli inputlarda strelkalarni yo'qotish */
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+  -webkit-appearance: none; 
+  margin: 0; 
+}
 </style>
