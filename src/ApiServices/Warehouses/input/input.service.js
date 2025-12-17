@@ -4,7 +4,9 @@ import api from "@/helpers/api";
 const RESOURCE = "warehouses/input";
 
 export const InputWarehouseService = {
-    
+    clearDocumentAll() {
+        return api.post(`${RESOURCE}/clear-all`);
+    },
     /**
      * Yangi model shablonini olish
      * Method: GET

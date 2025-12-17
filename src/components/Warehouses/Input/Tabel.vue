@@ -150,6 +150,9 @@ onUnmounted(() => {
     document.removeEventListener('click', handleClickOutside)
     clearInterval(timeInterval); // Memory leak oldini olish
 })
+const ClearAll = () => {
+    inputStore.clearDocumentAll();
+}
 </script>
 
 <template>
@@ -170,6 +173,13 @@ onUnmounted(() => {
              <span class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Kirim Bo'limi</span>
           </div>
         </div>
+      <button 
+    @click="ClearAll()"
+    class="ml-4 flex items-center gap-2 px-4 py-2 bg-red-500 hover:bg-red-600 active:scale-95 text-white font-semibold rounded-md shadow-md transition-all duration-200 cursor-pointer"
+  >
+    <i class="fa-solid fa-trash-can text-sm"></i>
+    <span>Tozalash</span>
+  </button>
       </div>
       <div class="hidden xl:flex items-center gap-6 bg-slate-50 dark:bg-slate-800/50 px-4 py-1.5 rounded-full border border-slate-200 dark:border-slate-700">
           <div class="flex items-center gap-2 border-r border-slate-200 dark:border-slate-600 pr-4">

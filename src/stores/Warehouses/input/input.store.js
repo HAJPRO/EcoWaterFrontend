@@ -46,6 +46,15 @@ export const WarehouseInputStore = defineStore("WarehouseInputStore", {
   },
 
   actions: {
+    async clearDocumentAll() {
+      try {
+      const data = await InputWarehouseService.clearDocumentAll();
+      toast.success(data.data.msg);
+      } catch (error) {
+        toast.error(error.msg); 
+      }
+    
+    },
     // --- 1. LOCAL CART OPERATIONS ---
 // --- Session Actions (o'zgarishsiz) ---
     addSession() {
