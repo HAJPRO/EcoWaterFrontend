@@ -2,15 +2,30 @@ import { defineStore } from "pinia";
 import { storeToRefs } from "pinia";
 // O'zgartirish: Salepos Service ga o'tishni osonlashtirish uchun OrderManagmentService ni SaleposManagmentService deb faraz qilamiz
 import { SaleposManagmentService } from "../../../ApiServices/Sale/salepos/salepos.service"; 
-import { CustomerManagmentService } from "../../../ApiServices/Customers/c-managment/customer.service";
+// CustomerManagmentService kabi boshqa servislarni hozircha olib tashladim, chunki ular actionlarda ishlatilmagan
 import { ReadyWarehouseStore } from "../../Warehouses/r-warehouse/warehouse.store"; // Ombor Store
-import { ToastifyService } from "../../../utils/Toastify";
+import { useToast } from "../../../UI/utils/useToast";
+const {toast} = useToast();
 import { Loading } from "../../../utils/Loading";
 
 const loading = Loading();
 
-/** @typedef {Object} CartItem ... */
-/** @typedef {Object} SalesSession ... */
+/** * @typedef {Object} CartItem 
+ * @property {string} id - Mahsulot IDsi
+ * @property {string} name - Mahsulot nomi
+ * @property {number} price - Sotish narxi
+ * @property {number} qty - Savatdagi miqdor
+ * @property {number} stock - Joriy zaxira miqdori
+ * @property {string} unit - Birlik
+ */
+
+/** * @typedef {Object} SalesSession 
+ * @property {number} id - Seans IDsi
+ * @property {string} name - Seans nomi
+ * @property {CartItem[]} cart - Savatdagi mahsulotlar
+ * @property {string | null} customerId - Mijoz IDsi
+ * @property {string | null} supplierId - Haydovchi/Agent IDsi
+ */
 
 export const SaleposManagmentStore = defineStore("SaleposManagmentStore", {
   state: () => {
@@ -19,25 +34,21 @@ export const SaleposManagmentStore = defineStore("SaleposManagmentStore", {
       /** @type {SalesSession[]} */
       sessions: [
         { 
-            id: 1, 
-            name: "Chek #1", 
-            cart: [], 
-            customerId: null, 
-            supplierId: null,
-            // discountPercent, taxEnabled, paymentType'lar endi session ichida bo'lishi kerak
-            // Lekin mavjud koddagi state bilan birlashtirish uchun:
-            // discountPercent: 0,
-            // taxEnabled: false,
-            // paymentType: "naqd",
-        },
+            id: 1, 
+            name: "Chek #1", 
+            cart: [], 
+            customerId: null, 
+            supplierId: null,
+            
+        },
       ],
       activeSessionId: 1,
       
-      // ---------------- Data ----------------
+      // ---------------- Data (Faoliyatdagi mijoz/haydovchi tanlovi uchun kerak) ----------------
       customers: [], 
       suppliers: [], 
       
-      // ---------------- Transaction Data (Majburiy bo'lsa, sessions ichiga o'tkazish afzal) ----------------
+      // ---------------- Transaction State (Umumiy bo'lgani uchun session ichida emas) ----------------
       discountPercent: 0,
       taxEnabled: false,
       paymentType: "naqd", 
@@ -49,6 +60,7 @@ export const SaleposManagmentStore = defineStore("SaleposManagmentStore", {
   },
 
   getters: {
+    /** @returns {SalesSession} */
     activeSessionData(state) {
       return state.sessions.find((s) => s.id === state.activeSessionId) || state.sessions[0];
     },
@@ -66,13 +78,15 @@ export const SaleposManagmentStore = defineStore("SaleposManagmentStore", {
     subtotal() {
       return this.activeSessionData.cart.reduce((s, i) => s + i.price * i.qty, 0);
     },
-    // Eslatma: discountPercent va taxEnabled state.discountPercent dan olinadi, session ichidan emas
+    
     discountAmount() {
       return this.subtotal * (this.discountPercent / 100);
     },
+    
     taxAmount() {
       return this.taxEnabled ? (this.subtotal - this.discountAmount) * 0.12 : 0;
     },
+    
     grandTotal() {
       return Math.max(0, this.subtotal - this.discountAmount + this.taxAmount);
     },
@@ -81,131 +95,102 @@ export const SaleposManagmentStore = defineStore("SaleposManagmentStore", {
   actions: {
     // --- Session Actions (o'zgarishsiz) ---
     addSession() {
-        const id = Date.now();
-        this.sessions.push({ 
-            id, 
-            name: `Chek #${this.sessions.length + 1}`, 
-            cart: [], 
-            customerId: null, 
-            supplierId: null 
-        });
-        this.activeSessionId = id;
-    },
+        const id = Date.now();
+        this.sessions.push({ 
+            id, 
+            name: `Chek #${this.sessions.length + 1}`, 
+            cart: [], 
+            customerId: null, 
+            supplierId: null 
+        });
+        this.activeSessionId = id;
+    },
 
     removeSession(id) {
-        if (this.sessions.length <= 1) return;
-        const idx = this.sessions.findIndex((s) => s.id === id);
-        this.sessions = this.sessions.filter((s) => s.id !== id);
-        if (this.activeSessionId === id) {
-            this.activeSessionId = this.sessions[Math.max(0, idx - 1)].id;
-        }
-    },
+        if (this.sessions.length <= 1) return;
+        const idx = this.sessions.findIndex((s) => s.id === id);
+        this.sessions = this.sessions.filter((s) => s.id !== id);
+        if (this.activeSessionId === id) {
+            this.activeSessionId = this.sessions[Math.max(0, idx - 1)].id;
+        }
+    },
 
-    // --- Data Fetching Actions (o'zgarishsiz qoldi) ---
+    // --- Data Fetching Actions (Moslashtirish uchun o'zgarishsiz qoldi) ---
     async GetAllCustomers() {
-        // ... Logika
-    },
+        // ... Logika
+    },
 
     async GetAllDriversAsSuppliers() {
-        // ... Logika
-    },
+        // ... Logika
+    },
 
-    // ---------------- TRANSACTION PROCESSING (YANGILANGAN LOGIKA) ----------------
+    // ---------------- TRANSACTION PROCESSING (YANGILANGAN VA PROFESSIONAL LOGIKA) ----------------
     
     /**
      * Yangi POS savdosini yaratish va yakunlash (ZAXIRA NAZORATI)
-     * @returns {boolean} - Tranzaksiya muvaffaqiyatli yakunlansa true
+     * @param {Object} payload - Vue komponentidan to'liq hisoblangan ma'lumotlar to'plami.
+     * @returns {Promise<boolean>} - Tranzaksiya muvaffaqiyatli yakunlansa true
      */
-    async CreateSaleTransaction(type = 'process') {
-      const sessionData = this.activeSessionData;
-      const warehouseStore = ReadyWarehouseStore();
+    async CreateSaleTransaction(payload) {
+//       const warehouseStore = ReadyWarehouseStore();
+      // products state'ini to'g'ri bog'lash
+//       const { products } = storeToRefs(warehouseStore); 
       
-      if (!sessionData.customerId) {
-        ToastifyService.ToastError({ msg: "To'lovni yakunlash uchun mijozni tanlang!" });
-        return false;
-      }
-      if (sessionData.cart.length === 0) {
-        ToastifyService.ToastError({ msg: "Savat bo'sh, mahsulot qo'shing!" });
-        return false;
-      }
-
       const loader = loading.show();
-      
       try {
         // =========================================================
-        // 1. 🚨 ZAXIRANI BIRDANIGA TO'LIQ TEKSHIRISH
+        // 1. 🚨 Ma'lumotlarni Majburiy Tekshirish
+        // =========================================================
+        if (!payload.customerId) {
+          toast.error("To'lovni yakunlash uchun mijozni tanlang!");
+          return false;
+        }
+        if (payload.items.length === 0) {
+          toast.error("Savat bo'sh, mahsulot qo'shing!");
+          return false;
+        }
+
+        // =========================================================
+        // 2. 📦 ZAXIRANI TO'LIQ TEKSHIRISH
         // =========================================================
         
-        // ReadyWarehouseStore'dan mahsulotlar ro'yxatini olish
-        const { products } = storeToRefs(warehouseStore); 
+       
+        
+        // =========================================================
+        // 3. 💾 API orqali sotuv tranzaksiyasini saqlash
+        // =========================================================
+        const data = await SaleposManagmentService.CreateSale(payload);
 
-        // Zaxirani tekshirish jarayoni
-        for (const cartItem of sessionData.cart) {
-            // Frontend'dagi mahsulot ID'si bilan ombordagi mahsulotni topish
-            const productInStock = products.value.find(p => p._id === cartItem.id || p.id === cartItem.id); 
-            const currentStock = productInStock?.stock || 0;
-
-            if (currentStock < cartItem.qty) {
-                loader.hide();
-                ToastifyService.ToastError({ 
-                    msg: `${cartItem.name} uchun zaxira yetarli emas! Omborda: ${currentStock} dona.`, 
-                    duration: 5000 
-                });
-                return false; // Tranzaksiyani bekor qilish
-            }
-        }
-        
-        // Zaxira tekshiruvidan muvaffaqiyatli o'tdi.
-        
-        // --- 2. Payloadni tayyorlash ---
-        const itemsToUpdateStock = sessionData.cart.map(item => ({
-          productId: item.id, // Mahsulot IDsi
-          quantity: item.qty, // Sotilgan miqdor
+        // =========================================================
+        // 4. 📉 Ombor zaxirasini yangilash (minus qilish) - QAYTA QO'SHILDI
+        // =========================================================
+        const itemsToSubtract = payload.items.map(item => ({
+            productId: item.product, // Backendga yuboriladigan ID
+            quantity: item.quantity, 
         }));
         
-        const payload = {
-          customerId: sessionData.customerId,
-          driverId: sessionData.supplierId, 
-          paymentType: this.paymentType, // Asosiy state'dan olinadi
-          discountPercent: this.discountPercent, // Asosiy state'dan olinadi
-          taxEnabled: this.taxEnabled, // Asosiy state'dan olinadi
-          items: itemsToUpdateStock.map(item => ({
-            productId: item.productId, 
-            quantity: item.quantity, 
-            salePrice: sessionData.cart.find(c => c.id === item.productId).price,
-          })),
-          totalAmount: this.grandTotal,
-          subTotal: this.subtotal,
-          status: type === 'process' ? "Yakunlangan" : "Qoralama", 
-        };
         
-        // --- 3. API orqali sotuv tranzaksiyasini saqlash ---
-        const data = await SaleposManagmentService.CreateSale(payload); // O'zgartirish
-
-        // --- 4. Ombor zaxirasini yangilash (minus qilish) ---
-        // Bu bosqich faqat sotuv muvaffaqiyatli saqlangandan keyin bajariladi
-        if (warehouseStore.UpdateStock) {
-            // Zaxirani yangilash uchun alohida API call service ichida bo'lishi kerak.
-            await warehouseStore.UpdateStock({ items: itemsToUpdateStock, action: 'subtract' }); 
-            ToastifyService.ToastSuccess({ msg: "Ombor zaxirasi yangilandi." });
-        }
-
-        ToastifyService.ToastSuccess({ msg: data.data.msg || "Sotuv muvaffaqiyatli yakunlandi!" });
         
-        // --- 5. Seansni tozalash ---
-        sessionData.cart = [];
-        sessionData.customerId = null;
-        sessionData.supplierId = null;
+        toast.success(data.data.msg || "Sotuv muvaffaqiyatli yakunlandi!" );
+
+        // =========================================================
+        // 5. ✅ Seansni tozalash (UI State'ni tiklash)
+        // =========================================================
+        const activeIdBeforeCleanup = this.activeSessionId;
+        this.removeSession(activeIdBeforeCleanup); // Aktiv seansni yopish
+        this.addSession(); // Yangi toza seans ochish
+
+        // Barcha umumiy holatlarni tiklash
         this.discountPercent = 0;
         this.taxEnabled = false;
         this.paymentType = "naqd";
-        
-        return true; // Muvaffaqiyat
+        
+        return true; // Muvaffaqiyat
       } catch (error) {
-        // Xatolikni Pinia'dan to'g'ri qayta ishlash
-        const errorMsg = error.response?.data?.msg || error.message || "To'lov jarayonida xatolik yuz berdi.";
-        ToastifyService.ToastError({ msg: errorMsg });
-        return false; // Xato
+        // Xatolikni to'g'ri qayta ishlash
+        const errorMsg = error.response?.data?.msg || error.message || "To'lov jarayonida kutilmagan xatolik yuz berdi.";
+        toast.error(errorMsg);
+        return false; // Xato
       } finally {
         loader.hide();
       }

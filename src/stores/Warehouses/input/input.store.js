@@ -13,12 +13,21 @@ const loading = Loading();
 export const WarehouseInputStore = defineStore("WarehouseInputStore", {
   state: () => ({
     // Kirim hujjati (Faktura)
+     sessions: [
+        { 
+            id: 1, 
+            name: "Chek #1", 
+            
+        },
+      ],
+      activeSessionId: 1,
     document: {
       partyNumber: "", // Umumiy faktura raqami (agar kiritilsa)
       supplierId: null,
       date: new Date(),
       items: [], // Kirim qilinayotgan tovarlar ro'yxati
-      note: ""
+      note: "",
+      branchId: null
     },
     
     // Yordamchi
@@ -38,7 +47,27 @@ export const WarehouseInputStore = defineStore("WarehouseInputStore", {
 
   actions: {
     // --- 1. LOCAL CART OPERATIONS ---
+// --- Session Actions (o'zgarishsiz) ---
+    addSession() {
+        const id = Date.now();
+        this.sessions.push({ 
+            id, 
+            name: `Chek #${this.sessions.length + 1}`, 
+            cart: [], 
+            customerId: null, 
+            supplierId: null 
+        });
+        this.activeSessionId = id;
+    },
 
+    removeSession(id) {
+        if (this.sessions.length <= 1) return;
+        const idx = this.sessions.findIndex((s) => s.id === id);
+        this.sessions = this.sessions.filter((s) => s.id !== id);
+        if (this.activeSessionId === id) {
+            this.activeSessionId = this.sessions[Math.max(0, idx - 1)].id;
+        }
+    },
     // Katalogni yuklash
     async fetchCatalog() {
       try {
@@ -93,73 +122,69 @@ export const WarehouseInputStore = defineStore("WarehouseInputStore", {
     // --- 2. API OPERATIONS (SAVE) ---
 
     async saveInput() {
-      if (!this.isValid) {
-        toast.error("Yetkazib beruvchi va mahsulotlarni tanlang!");
-        return;
-      }
+      if (!this.isValid) {
+        toast.error("Yetkazib beruvchi va mahsulotlarni tanlang!");
+        return;
+      }
 
-      const loader = loading.show();
-      this.isSubmitting = true;
+      const loader = loading.show();
+      this.isSubmitting = true;
 
-      try {
-        // Asosiy faktura prefiksi
-        const mainPartyPrefix = this.document.partyNumber || `FKT-${new Date().toISOString().substring(0, 10)}`; 
-        let hasError = false;
+      try {
+        const mainPartyPrefix = this.document.partyNumber || `FKT-${new Date().toISOString().substring(0, 10)}`; 
+        
+        // 1. Kirim tovarlarini bitta yagona arrayga yig'ish (Arrayni serverga yuborish uchun tayyorlash)
+        const itemsPayload = this.document.items.map((item, index) => {
+          
+            // Har bir partiyaga (tovarga) unikal raqam berish muhim
+            const uniquePartyNumber = `${mainPartyPrefix}-${index}-${Math.floor(Math.random() * 10000)}`;
+          
+            return {
+                product: item.productId,
+                supplier: this.document.supplierId, // Barcha partiyalar uchun umumiy
+                initialQuantity: item.qty,
+                currentQuantity: item.qty,
+                unit: item.unit,
+                costPrice: item.costPrice,
+                salePrice: item.salePrice,
+                partyNumber: uniquePartyNumber, // Unikal bo'lib qolishi shart
+                status: 'active',
+            };
+        });
 
-        // Har bir item uchun Promise qurish
-        const promises = this.document.items.map((item, index) => {
-          
-          // 💡 E11000 XATOSINI YECHIMI: Har bir database yozuvi uchun unikal partyNumber
-          const uniquePartyNumber = `${mainPartyPrefix}-${index}-${Math.floor(Math.random() * 10000)}`;
-          
-          const payload = {
-            product: item.productId,
-            supplier: this.document.supplierId,
-            initialQuantity: item.qty,
-            currentQuantity: item.qty,
-            unit: item.unit,
-            costPrice: item.costPrice,
-            salePrice: item.salePrice,
-            partyNumber: uniquePartyNumber, // <--- UNIQUE ID YUBORISH
-            status: 'active',
-            action: 'create' // Backendda yaratish amali
-          };
-          
-          return InputWarehouseService.Create(payload);
-        });
-
-        // Hamma so'rovlarni parallel yuborish
-        const results = await Promise.all(promises);
-
-        // Natijalarni tekshirish
-        for (const result of results) {
-            // Service faqat 201/200 status yoki error qaytarishi kerak.
-            // Agar result.success bo'lmasa yoki status 400 dan yuqori bo'lsa
-            if (result.success === false || (result.status && result.status >= 400)) {
-                console.error("Backend xatosi:", result.msg);
-                toast.error(`Kirimlarning bir qismi saqlanmadi: ${result.msg || "Noma'lum xato"}`);
-                hasError = true;
-                break;
-            }
-        }
-        
-        if (!hasError) {
-             toast.success(`Kirim muvaffaqiyatli! Jami: ${this.document.items.length} xil tovar.`);
-             this.clearDocument();
-             
-             // Katalogni yangilash (Qoldiqlar o'zgarishi uchun)
-             const productStore = ProductsManagmentStore();
-             productStore.GetAll();
+        // 2. Yagona asosiy so'rov obyektini yaratish
+        const bulkRequestPayload = {
+            supplierId: this.document.supplierId,
+            branchId: this.document.branchId,
+            partyNumber: mainPartyPrefix, // Umumiy kirim raqami
+            note: this.document.note,
+            items: itemsPayload,
+            action: 1 // <--- Barcha tovarlar arrayi shu yerda
         }
 
-      } catch (error) {
-        // Asosiy network xatosi
-        console.error("Input Network Error:", error);
-        toast.error("Server bilan aloqa uzildi yoki jiddiy xatolik yuz berdi.");
-      } finally {
-        this.isSubmitting = false;
-        loader.hide();
-      }
-    }
+        // 3. Bitta API chaqiruvini bajarish (InputWarehouseService ichida CreateBulk bo'lishi kerak)
+        const result = await InputWarehouseService.Create(bulkRequestPayload); // Bitta so'rov
+
+        // 4. Natijani tekshirish
+        if (result.success === false || (result.status && result.status >= 400)) {
+            console.error("Backend xatosi:", result.msg);
+            toast.error(`Kirim saqlanmadi: ${result.msg || "Noma'lum xato"}`);
+        } else {
+            toast.success(`Kirim muvaffaqiyatli! Jami: ${this.document.items.length} xil tovar.`);
+            this.clearDocument();
+            
+            // Katalogni yangilash
+            const productStore = ProductsManagmentStore();
+            productStore.GetAll();
+        }
+
+      } catch (error) {
+        console.error("Input Network Error:", error);
+        toast.error("Server bilan aloqa uzildi yoki jiddiy xatolik yuz berdi.");
+      } finally {
+        this.isSubmitting = false;
+        loader.hide();
+      }
+    }
   }
 });

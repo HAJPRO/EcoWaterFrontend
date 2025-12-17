@@ -84,7 +84,6 @@ export const ProductsManagmentStore = defineStore("ProductsManagmentStore", {
         
         // Backenddan kelgan javobni o'qish (response.data.data yoki response.data.products ga qarab)
         this.products = response.data.products || [];
-        
         // Pagination ma'lumotlarini yangilash
         if (response.data.pagination) {
           this.pagination = response.data.pagination;
@@ -134,11 +133,7 @@ export const ProductsManagmentStore = defineStore("ProductsManagmentStore", {
         const { _id, ...payload } = this.model;
         
         const response = await ProductManagmentService.Create(payload);
-        
         this.closeModal();
-        
-        // O'ZGARISH: Ro'yxatni yangilashda 1-sahifaga qaytarish
-        // Agar pagination storeda saqlansa:
         this.pagination.page = 1; 
         this.searchQuery = ""; // Ixtiyoriy: Qidiruvni ham tozalash
         await this.GetAll(); 

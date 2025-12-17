@@ -1,5 +1,5 @@
 <script setup>
-import { ref, reactive, computed } from "vue";
+import { ref, reactive, computed, watch } from "vue";
 import { storeToRefs } from "pinia";
 import { ProductsManagmentStore } from "../../../stores/Sale/products/product.store";
 import { ElMessage } from "element-plus";
@@ -13,7 +13,6 @@ const store_product = ProductsManagmentStore();
 const { product_modal, model, TitleAction } = storeToRefs(store_product);
 
 // --- STATE (Select Options) ---
-// Kategoriyalar (Buni ham keyinchalik storedan olish mumkin)
 const categoryes = ref([
     { id: 1, name: "Gazli ichimliklar" }, 
     { id: 2, name: "Gazsiz ichimliklar" },
@@ -21,7 +20,6 @@ const categoryes = ref([
     { id: 4, name: "Sneklar" }
 ]);
 
-// O'lchov birliklari (Yangi Schema bo'yicha)
 const units = ref([
     { id: 'dona', name: 'Dona' },
     { id: 'kg', name: 'Kilogram (kg)' },
@@ -33,29 +31,98 @@ const units = ref([
 
 const errors = reactive({});
 
+
+// --- HISOBLASH MANTIQI FUNKSIYALARI ---
+
+// Sotuv Narxini (Sale Price) hisoblash: SP = CP * (1 + M/100)
+const calculateSalePrice = (cost, margain) => {
+    if (cost > 0) {
+        const newSale = cost * (1 + margain / 100);
+        return parseFloat(newSale.toFixed(2)); 
+    }
+    return 0;
+};
+
+// Ustamani (Margain) hisoblash: M = ((SP - CP) / CP) * 100
+const calculateMargain = (cost, sale) => {
+    if (cost > 0) {
+        const newMargain = ((sale - cost) / cost) * 100;
+        return parseFloat(newMargain.toFixed(2));
+    }
+    return 0;
+};
+
+
+// --- NARXLARNI KUZATUVCHILAR (WATCHERS) ---
+
+// 1. Cost Price (Tan narx) o'zgarganda: Sale Price va Margainni sinxronlash
+watch(() => model.value.costPrice, (newCost) => {
+    const sale = model.value.salePrice || 0;
+    const margain = model.value.margainPercent || 0;
+
+    if (newCost > 0) {
+        // Agar Ustama mavjud bo'lsa, Sotuv narxini Ustamadan hisoblash (bu Ustama maydonining ustuvorligini bildiradi)
+        if (margain !== 0) {
+             model.value.salePrice = calculateSalePrice(newCost, margain);
+        } else if (sale > 0) {
+             // Aks holda, agar Sotuv Narxi kiritilgan bo'lsa, Ustamani qayta hisoblash
+             model.value.margainPercent = calculateMargain(newCost, sale);
+        }
+    } else {
+        // Tannarx 0 bo'lsa, barchasini 0 ga tenglash
+        model.value.margainPercent = 0;
+        model.value.salePrice = 0;
+    }
+}, { immediate: true });
+
+
+// 2. Margain Percent (Ustama %) o'zgarganda: Sotuv Narxini avtomat hisoblash (Sizning 1-talabingiz)
+watch(() => model.value.margainPercent, (newMargain) => {
+    const cost = model.value.costPrice || 0;
+    
+    // Faqat tannarx kiritilgan bo'lsagina hisoblaymiz
+    if (cost > 0) {
+        model.value.salePrice = calculateSalePrice(cost, newMargain);
+    }
+});
+
+
+// 3. Sale Price (Sotuv Narxi) o'zgarganda: Ustamani avtomat hisoblash (Sizning 2-talabingiz)
+watch(() => model.value.salePrice, (newSale) => {
+    const cost = model.value.costPrice || 0;
+
+    // Faqat tannarx kiritilgan bo'lsagina hisoblaymiz
+    if (cost > 0) {
+        model.value.margainPercent = calculateMargain(cost, newSale);
+    } else {
+        model.value.margainPercent = 0;
+    }
+});
+
+
 // --- HELPERS ---
 const handleClose = () => {
-  store_product.closeModal();
-  Object.keys(errors).forEach(key => delete errors[key]);
+    store_product.closeModal();
+    Object.keys(errors).forEach(key => delete errors[key]);
 };
 
 const handleAddOption = (type) => ElMessage.info(`${type} yangi varianti qo'shilmoqda...`);
 
 // --- ACTIONS ---
 const SaveProduct = async () => {
-  // 1. Validatsiya
-  errors.code = !model.value.code;
-  errors.name = !model.value.name;
-  errors.category = !model.value.category;
-  errors.salePrice = !model.value.salePrice || model.value.salePrice <= 0;
-  
-  if (errors.code || errors.name || errors.category || errors.salePrice) {
-      ElMessage.warning("Iltimos, majburiy maydonlarni to'ldiring!");
-      return;
-  }
+    // 1. Validatsiya
+    errors.code = !model.value.code;
+    errors.name = !model.value.name;
+    errors.category = !model.value.category;
+    errors.salePrice = !model.value.salePrice || model.value.salePrice <= 0;
+    
+    if (errors.code || errors.name || errors.category || errors.salePrice) {
+        ElMessage.warning("Iltimos, majburiy maydonlarni to'ldiring!");
+        return;
+    }
 
-  // 2. Store orqali saqlash (Create yoki Update avtomatik aniqlanadi)
-  await store_product.SaveProduct();
+    // 2. Store orqali saqlash (Create yoki Update avtomatik aniqlanadi)
+    await store_product.SaveProduct();
 };
 </script>
 
@@ -65,7 +132,7 @@ const SaveProduct = async () => {
     :title="TitleAction.title"
     subtitle="Ombor va Savdo boshqaruvi"
     icon="fa-solid fa-box-open"
-    width="max-w-3xl"
+    width="max-w-[85vw]" 
     @close="handleClose"
   >
     
@@ -78,7 +145,7 @@ const SaveProduct = async () => {
           <label class="form-label required">Shtrix Kod</label>
           <div class="relative">
               <i class="fa-solid fa-qrcode absolute right-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
-              <input v-model="model.code" type="text" class="form-input pl-9 font-mono" :class="{'!border-rose-500': errors.code}" placeholder="Masalan: 47800..." />
+              <input v-model.number="model.code" type="number" class="form-input pl-9 font-mono" :class="{'!border-rose-500': errors.code}" placeholder="Masalan: 47800..." />
           </div>
         </div>
         
@@ -128,15 +195,21 @@ const SaveProduct = async () => {
       
       <div class="grid grid-cols-12 gap-5">
         
-        <div class="col-span-12 sm:col-span-4">
+        <div class="col-span-12 sm:col-span-3">
           <label class="form-label text-slate-500">Kelish Narxi (Tan narx)</label>
           <div class="relative group">
               <input v-model.number="model.costPrice" type="number" class="form-input pr-12 group-focus-within:border-slate-400" placeholder="0" />
               <span class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs font-bold bg-slate-100 dark:bg-slate-700 px-1.5 py-0.5 rounded">UZS</span>
           </div>
         </div>
-
-        <div class="col-span-12 sm:col-span-4">
+   <div class="col-span-12 sm:col-span-3">
+          <label class="form-label required text-emerald-600 dark:text-emerald-400">Ustama (%)</label>
+          <div class="relative group">
+              <input v-model.number="model.margainPercent" type="number" class="form-input pr-12 border-emerald-200 focus:border-emerald-500 focus:ring-emerald-500/10 font-bold text-emerald-700 dark:text-emerald-400" :class="{'!border-rose-500': errors.salePrice}" placeholder="0" />
+              <span class="absolute right-3 top-1/2 -translate-y-1/2 text-emerald-600 dark:text-emerald-400 text-xs font-black">%</span>
+          </div>
+        </div>
+        <div class="col-span-12 sm:col-span-3">
           <label class="form-label required text-emerald-600 dark:text-emerald-400">Sotuv Narxi</label>
           <div class="relative group">
               <input v-model.number="model.salePrice" type="number" class="form-input pr-12 border-emerald-200 focus:border-emerald-500 focus:ring-emerald-500/10 font-bold text-emerald-700 dark:text-emerald-400" :class="{'!border-rose-500': errors.salePrice}" placeholder="0" />
@@ -144,7 +217,7 @@ const SaveProduct = async () => {
           </div>
         </div>
 
-        <div class="col-span-12 sm:col-span-4">
+        <div class="col-span-12 sm:col-span-3">
           <label class="form-label">Boshlang'ich Qoldiq</label>
           <div class="relative">
               <input v-model.number="model.totalStock" type="number" class="form-input pr-12 text-center" placeholder="0" />

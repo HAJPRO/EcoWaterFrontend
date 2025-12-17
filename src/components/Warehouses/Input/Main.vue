@@ -4,7 +4,7 @@
         <h3><i class="fa-solid fa-calculator mr-3 fa-lg"></i>Kirim</h3> 
       </template>
     </Title>
-    <HeaderTabLink/>
+    <!-- <HeaderTabLink/> -->
     <Tabel/>
  
 </template>

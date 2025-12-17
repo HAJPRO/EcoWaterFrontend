@@ -320,32 +320,35 @@ import { storeToRefs } from 'pinia';
 // --- PINIA STORES ---
 import { SaleposManagmentStore } from "../../../stores/Sale/salepos/salepos.store"
 import { ReadyWarehouseStore } from "../../../stores/Warehouses/r-warehouse/warehouse.store"
+import { ProductsManagmentStore } from "../../../stores/Sale/products/product.store"
 import { CustomerManagmentStore } from "../../../stores/Customers/c-managment/customer.store"
 import { EmployeeManagmentStore } from "../../../stores/HR/employee/employee.store" // EmployeeManagmentStore dan Haydovchilarni olamiz
 
 // --- INSTANTIATE STORES ---
+const store_product = ProductsManagmentStore()
+
 const store_warehouse = ReadyWarehouseStore()
 const store_customer = CustomerManagmentStore()
 const store_drivers = EmployeeManagmentStore()
 const store_salepos = SaleposManagmentStore()
 
 // --- STORE TO REFS (HOLATLARNI ULASH) ---
-const { products: rawProducts } = storeToRefs(store_warehouse)
+const { products:rawProducts } = storeToRefs(store_product)
 const { customers } = storeToRefs(store_customer) 
 const { employees: drivers } = storeToRefs(store_drivers)
 
 const { 
-    sessions, 
-    activeSessionId, 
-    // State'ni Pinia'dan ulash
-    discountPercent, 
-    taxEnabled, 
-    paymentType,
-    // Getters/Computed Pinia'dan ulash
-    activeSessionData, 
-    activeCustomer, 
-    activeDriver, 
-    grandTotal 
+    sessions, 
+    activeSessionId, 
+    // State'ni Pinia'dan ulash
+    discountPercent, 
+    taxEnabled, 
+    paymentType,
+    // Getters/Computed Pinia'dan ulash
+    activeSessionData, 
+    activeCustomer, 
+    activeDriver, 
+    grandTotal 
 } = storeToRefs(store_salepos)
 
 
@@ -371,26 +374,26 @@ const supplierDropdownRef = ref(null)
 const toast = reactive({ show: false, message: "", type: "success" })
 let toastTimer
 const showToast = (msg, type="success") => {
-    toast.message = msg; toast.type = type; toast.show = true
-    clearTimeout(toastTimer)
-    toastTimer = setTimeout(() => toast.show = false, 2500)
+    toast.message = msg; toast.type = type; toast.show = true
+    clearTimeout(toastTimer)
+    toastTimer = setTimeout(() => toast.show = false, 2500)
 }
 
 
 // --- ASOSIY STATIK/MAHALLIY DATA ---
 const categories = [
-    { name: "Barchasi", icon: "fa-solid fa-layer-group" },
-    { name: "Elektronika", icon: "fa-solid fa-microchip" },
-    { name: "Oziq-ovqat", icon: "fa-solid fa-burger" },
-    { name: "Kiyim", icon: "fa-solid fa-shirt" },
-    { name: "Sport", icon: "fa-solid fa-person-running" }
+    { name: "Barchasi", icon: "fa-solid fa-layer-group" },
+    { name: "Elektronika", icon: "fa-solid fa-microchip" },
+    { name: "Oziq-ovqat", icon: "fa-solid fa-burger" },
+    { name: "Kiyim", icon: "fa-solid fa-shirt" },
+    { name: "Sport", icon: "fa-solid fa-person-running" }
 ]
 
 const paymentMethods = [
-    { value: "naqd", label: "Naqd", icon: "fa-solid fa-money-bill-1-wave", color: "emerald" },
-    { value: "karta", label: "Karta", icon: "fa-regular fa-credit-card", color: "blue" },
-    { value: "click", label: "Click", icon: "fa-solid fa-mobile-screen", color: "sky" },
-    { value: "qarz", label: "Nasiya", icon: "fa-solid fa-file-invoice", color: "rose" }
+    { value: "naqd", label: "Naqd", icon: "fa-solid fa-money-bill-1-wave", color: "emerald" },
+    { value: "karta", label: "Karta", icon: "fa-regular fa-credit-card", color: "blue" },
+    { value: "click", label: "Click", icon: "fa-solid fa-mobile-screen", color: "sky" },
+    { value: "qarz", label: "Nasiya", icon: "fa-solid fa-file-invoice", color: "rose" }
 ]
 
 
@@ -398,21 +401,21 @@ const paymentMethods = [
 
 // 1. Mahsulot ma'lumotlarini formatlash (stock ma'lumoti bilan)
 const products = computed(() => {
-    if (!rawProducts.value || !Array.isArray(rawProducts.value)) return [];
+    if (!rawProducts.value || !Array.isArray(rawProducts.value)) return [];
 
-    return rawProducts.value.map((item, index) => {
-        const productName = item.product?.name || item.name || 'Nomsiz mahsulot';
-        
-        return {
-            id: item._id || item.id,
-            name: item.product?.name || item.name || 'Nomsiz mahsulot',
-            image: item.image || `https://picsum.photos/200/200?random=${index + 1}`,
-            price: item.salePrice|| item.salePrice || 0,
-            stock: item.product.totalStock || 0, // Real stock ma'lumoti
-            unit: item.product.unit || 0, // Real stock ma'lumoti
-            category: item.product?.category || item.category || 'Barchasi'
-        }
-    })
+    return rawProducts.value.map((item, index) => {
+        const productName = item.name || 'Nomsiz mahsulot';
+        
+        return {
+            id: item._id ,
+            name: item.name || item.name || 'Nomsiz mahsulot',
+            image: item.image || `https://picsum.photos/200/200?random=${index + 1}`,
+            price: item.salePrice|| 0,
+            stock: item.totalStock || 0, // Real stock ma'lumoti
+            unit: item.unit || 0, // Real stock ma'lumoti
+            category: item.category  || 'Barchasi'
+        }
+    })
 })
 
 const selectedCategoryIcon = computed(() => categories.find(c => c.name === activeCategory.value)?.icon || 'fa-solid fa-layer-group')
@@ -420,51 +423,51 @@ const filteredCategories = computed(() => categorySearch.value ? categories.filt
 
 // 2. Mijozlarni Filtrlash (fullname va phoneNumber bo'yicha)
 const filteredCustomers = computed(() => {
-    if (!customerSearch.value) {
-        return customers.value;
-    }
+    if (!customerSearch.value) {
+        return customers.value;
+    }
 
-    const search = customerSearch.value.toLowerCase();
-    
-    return customers.value.filter(c => 
-        c.fullname?.toLowerCase().includes(search) || 
-        c.phoneNumber?.includes(search)
-    );
+    const search = customerSearch.value.toLowerCase();
+    
+    return customers.value.filter(c => 
+        c.fullname?.toLowerCase().includes(search) || 
+        c.phoneNumber?.includes(search)
+    );
 });
 
 // 3. Agentlarni Filtrlash (company/fullname va phone bo'yicha)
 const filteredSuppliers = computed(() => {
-    if (!driverSearch.value) {
-        return drivers.value;
-    }
+    if (!driverSearch.value) {
+        return drivers.value;
+    }
 
-    const search = driverSearch.value.toLowerCase();
-    
-    return drivers.value.filter(s => 
-        (s.company || s.fullname)?.toLowerCase().includes(search) || 
-        s.phoneNumber?.includes(search)
-    );
+    const search = driverSearch.value.toLowerCase();
+    
+    return drivers.value.filter(s => 
+        (s.company || s.fullname)?.toLowerCase().includes(search) || 
+        s.phoneNumber?.includes(search)
+    );
 });
 
 
 // 4. Mahsulotlarni Filtrlash
 const filteredProducts = computed(() => {
-    let list = products.value;
-    
-    if (activeCategory.value !== 'Barchasi') {
-        list = list.filter(p => p.category === activeCategory.value)
-    }
-    
-    if (productSearch.value) {
-        const search = productSearch.value.toLowerCase()
-        list = list.filter(p => String(p.name).toLowerCase().includes(search) || String(p.price).includes(search))
-    }
-    return list
+    let list = products.value;
+    
+    if (activeCategory.value !== 'Barchasi') {
+        list = list.filter(p => p.category === activeCategory.value)
+    }
+    
+    if (productSearch.value) {
+        const search = productSearch.value.toLowerCase()
+        list = list.filter(p => String(p.name).toLowerCase().includes(search) || String(p.price).includes(search))
+    }
+    return list
 })
 
 const showMobileCart = computed({
-    get: () => mobileTab.value === 'cart',
-    set: (val) => { mobileTab.value = val ? 'cart' : 'catalog' }
+    get: () => mobileTab.value === 'cart',
+    set: (val) => { mobileTab.value = val ? 'cart' : 'catalog' }
 })
 
 
@@ -478,17 +481,17 @@ const removeSession = store_salepos.removeSession
 const selectCategory = (cat) => { activeCategory.value = cat.name; showCategoryMenu.value = false; categorySearch.value = "" }
 
 const selectCustomer = (c) => { 
-    // MongoDB IDsi: c._id dan foydalanish
-    store_salepos.activeSessionData.customerId = c._id 
-    showCustomerList.value = false
-    customerSearch.value = "" 
+    // MongoDB IDsi: c._id dan foydalanish
+    store_salepos.activeSessionData.customerId = c._id 
+    showCustomerList.value = false
+    customerSearch.value = "" 
 }
 
 const selectDriver = (s) => { 
-    // MongoDB IDsi: s._id dan foydalanish
-    store_salepos.activeSessionData.supplierId = s ? s._id : null
-    showDriverList.value = false 
-    driverSearch.value = "" 
+    // MongoDB IDsi: s._id dan foydalanish
+    store_salepos.activeSessionData.supplierId = s ? s._id : null
+    showDriverList.value = false 
+    driverSearch.value = "" 
 }
 
 // Cart actions
@@ -496,68 +499,128 @@ const getItemQty = (id) => activeSessionData.value.cart.find(i => i.id === id)?.
 
 // Zaxira tekshiruvlari mavjud bo'lgan local cart actions
 const addToCart = (p) => {
-    if (p.stock <= 0) {
-        showToast("Mahsulot tugagan!", "error")
-        return
-    }
+    if (p.stock <= 0) {
+        showToast("Mahsulot tugagan!", "error")
+        return
+    }
 
-    const item = activeSessionData.value.cart.find(i => i.id === p.id)
-    if (item) {
-        if (item.qty < p.stock) {
-            item.qty++
-        } else {
-            showToast(`Omborda faqat ${p.stock} dona bor`, "error")
-        }
-    } else {
-        // IDni Pinia modeliga moslash uchun _id/id o'tkaziladi
-        activeSessionData.value.cart.push({ ...p, qty: 1, id: p.id }) 
-    }
+    const item = activeSessionData.value.cart.find(i => i.id === p.id)
+    if (item) {
+        if (item.qty < p.stock) {
+            item.qty++
+        } else {
+            showToast(`Omborda faqat ${p.stock} dona bor`, "error")
+        }
+    } else {
+        // IDni Pinia modeliga moslash uchun _id/id o'tkaziladi
+        activeSessionData.value.cart.push({ ...p, qty: 1, id: p.id }) 
+    }
 }
 
 const changeQty = (item, delta) => {
-    const product = products.value.find(p => p.id === item.id)
-    const maxStock = product ? product.stock : item.stock
-    
-    if (delta > 0 && item.qty >= maxStock) {
-        showToast(`Zaxira yetarli emas! Maksimum: ${maxStock}`, "error")
-        return
-    }
+    const product = products.value.find(p => p.id === item.id)
+    const maxStock = product ? product.stock : item.stock
+    
+    if (delta > 0 && item.qty >= maxStock) {
+        showToast(`Zaxira yetarli emas! Maksimum: ${maxStock}`, "error")
+        return
+    }
 
-    if (item.qty + delta > 0) item.qty += delta
-    else removeItem(item.id)
+    if (item.qty + delta > 0) item.qty += delta
+    else removeItem(item.id)
 }
 
 const validateInput = (item) => {
-    const product = products.value.find(p => p.id === item.id)
-    const maxStock = product ? product.stock : item.stock
-    
-    if (item.qty > maxStock) {
-        item.qty = maxStock
-        showToast(`Maksimum ${maxStock} dona bor!`, "error")
-    }
-    if (item.qty < 1 && item.qty !== "") {
-        item.qty = 1
-    }
+    const product = products.value.find(p => p.id === item.id)
+    const maxStock = product ? product.stock : item.stock
+    
+    if (item.qty > maxStock) {
+        item.qty = maxStock
+        showToast(`Maksimum ${maxStock} dona bor!`, "error")
+    }
+    if (item.qty < 1 && item.qty !== "") {
+        item.qty = 1
+    }
 }
 
 const checkEmpty = (item) => {
-    if (!item.qty) item.qty = 1
+    if (!item.qty) item.qty = 1
 }
 
 const removeItem = (id) => { activeSessionData.value.cart = activeSessionData.value.cart.filter(i => i.id !== id) }
 
 
-// Process Sale (Pinia Actionni chaqirish)
+/**
+ * Yakunlash bosilganda Pinia Store'ga jo'natiladigan ma'lumotlarni shakllantiradi
+ * va tranzaksiyani boshlaydi.
+ * * Eslatma: Backendga yuborish uchun tayyorlanadigan yakuniy ma'lumotlar to'plami (payload) 
+ * shu yerda Pinia Store actionga uzatiladi.
+ */
 const processSale = async () => {
-    // 1. Pinia actionni chaqirish
-    const success = await store_salepos.CreateSaleTransaction('process')
+    // 1. Payloadni shakllantirish uchun zaruriy hisob-kitoblar va ma'lumotlarni yig'ish
 
-    // 2. Muvaffaqiyatli bo'lsa UI feedback berish
-    if (success) { 
-        showToast(`To'lov qabul qilindi: ${formatPrice(store_salepos.grandTotal)}`, 'success')
-        mobileTab.value = 'catalog'
-    } 
-    // Xato xabari (zaxira, mijoz tanlanmagan) Pinia ichidan chiqariladi.
+    // Savatdagi ma'lumotlarni server qabul qiladigan formatga o'tkazish
+    const cartItems = activeSessionData.value.cart.map(item => ({
+        productId: item.id, // Mahsulot IDsi (Backendga yuboriladigan ID)
+        quantity: item.qty,
+        salePrice: item.price,
+        totalAmount: item.price * item.qty,
+        unit: item.unit
+    }));
+
+    // Hisoblangan qiymatlar
+    const subtotal = cartItems.reduce((sum, item) => sum + item.total, 0);
+    const calculatedDiscountAmount = (subtotal * discountPercent.value) / 100;
+    const totalAfterDiscount = subtotal - calculatedDiscountAmount;
+    const taxRate = taxEnabled.value ? 0.12 : 0;
+    const calculatedTaxAmount = taxEnabled.value ? totalAfterDiscount * taxRate : 0;
+
+    // 2. Yakuniy Payloadni tuzish
+    const payload = {
+        // Asosiy ma'lumotlar
+        type: 'sale', 
+        branchId: 1, // Joriy filial IDsi (dynamic bo'lishi kerak)
+
+        // Savat ma'lumotlari
+        items: cartItems,
+        
+        // Mijoz va Haydovchi/Yetkazib beruvchi IDlari
+        customerId: activeSessionData.value.customerId || null,
+        driverId: activeSessionData.value.supplierId || null, 
+        
+        // Narx va To'lov hisobi (Bu Pinia'dan olingan grandTotal bilan mos kelishi shart)
+        subtotal: subtotal, 
+        discountPercent: discountPercent.value,
+        discountAmount: calculatedDiscountAmount,
+        totalAfterDiscount: totalAfterDiscount,
+        taxEnabled: taxEnabled.value,
+        taxRate: taxRate,
+        taxAmount: calculatedTaxAmount,
+        grandTotal: grandTotal.value,
+        
+        // To'lov turi
+        paymentType: paymentType.value,
+        paymentStatus: paymentType.value === 'qarz' ? 'pending' : 'cash',
+
+        // Vaqt tamg'asi
+        date: new Date().toISOString()
+    };
+
+    // Professional: Payloadni tekshirish uchun konsolga chiqarish
+    console.groupCollapsed(`🚀 To'lov Yakunlash Payload - Seans ID: ${activeSessionId.value}`);
+
+    // 3. Pinia actionni chaqirish va payloadni uzatish
+    // store_salepos.CreateSaleTransaction endi to'g'ridan-to'g'ri payloadni qabul qiladi
+    const success = await store_salepos.CreateSaleTransaction(payload);
+
+    // 4. Muvaffaqiyatli bo'lsa UI feedback berish
+    if (success) { 
+        showToast(`To'lov qabul qilindi: ${formatPrice(store_salepos.grandTotal)}`, 'success');
+        mobileTab.value = 'catalog';
+    } else {
+        // Xato xabari Pinia Store ichidan keladi, agar kerak bo'lsa
+        showToast("Tranzaksiya muvaffaqiyatsiz tugadi (Pinia tekshiruvi)", 'error');
+    }
 }
 
 
@@ -568,29 +631,29 @@ const formatPriceCompact = (v) => new Intl.NumberFormat('uz-UZ', { notation: "co
 
 // Click Outside Logic
 const handleClickOutside = (e) => {
-    if (categoryMenuRef.value && !categoryMenuRef.value.contains(e.target)) showCategoryMenu.value = false
-    if (customerDropdownRef.value && !customerDropdownRef.value.contains(e.target)) showCustomerList.value = false
-    if (supplierDropdownRef.value && !supplierDropdownRef.value.contains(e.target)) showDriverList.value = false
+    if (categoryMenuRef.value && !categoryMenuRef.value.contains(e.target)) showCategoryMenu.value = false
+    if (customerDropdownRef.value && !customerDropdownRef.value.contains(e.target)) showCustomerList.value = false
+    if (supplierDropdownRef.value && !supplierDropdownRef.value.contains(e.target)) showDriverList.value = false
 }
 
 // Lifecycle
 let timer
 onMounted(() => {
-    document.addEventListener('click', handleClickOutside)
-    timer = setInterval(() => {
-        const d = new Date()
-        currentTime.value = d.toLocaleTimeString('uz-UZ', {hour:'2-digit', minute:'2-digit'})
-    }, 1000)
-    
-    // API ma'lumotlarini yuklash
-    store_warehouse.GetAll()
-    store_customer.GetAll()
-    store_drivers.GetAll() // EmployeeManagmentStore dan Driverlarni yuklash
+    document.addEventListener('click', handleClickOutside)
+    timer = setInterval(() => {
+        const d = new Date()
+        currentTime.value = d.toLocaleTimeString('uz-UZ', {hour:'2-digit', minute:'2-digit'})
+    }, 1000)
+    // API ma'lumotlarini yuklash
+    store_product.GetAll()
+    store_warehouse.GetAll()
+    store_customer.GetAll()
+    store_drivers.GetAll() // EmployeeManagmentStore dan Driverlarni yuklash
 })
 
 onBeforeUnmount(() => {
-    document.removeEventListener('click', handleClickOutside)
-    clearInterval(timer)
+    document.removeEventListener('click', handleClickOutside)
+    clearInterval(timer)
 })
 </script>
 
