@@ -314,27 +314,29 @@ const removeItem = (id) => {
     activeSessionData.value.cart = activeSessionData.value.cart.filter(i => i.id !== id);
 }
 
-// const processSale = async () => {
-//     const payload = {
-//         items: activeSessionData.value.cart.map(i => ({
-//             product: i.id,
-//             quantity: i.qty,
-//             salePrice: i.price
-//         })),
-//         customerId: activeSessionData.value.customerId,
-//         supplierId: activeSessionData.value.supplierId,
-//         discountPercent: discountPercent.value,
-//         taxEnabled: taxEnabled.value,
-//         paymentType: paymentType.value,
-//         grandTotal: grandTotal.value
-//     };
+const validateInput = (item) => {
+    // 1. Asosiy katalogdan ushbu mahsulotning haqiqiy qoldig'ini topamiz
+    const product = products.value.find(p => p.id === item.id);
+    const maxStock = product ? product.stock : item.stock;
 
-//     const success = await store_salepos.CreateSaleTransaction(payload);
-//     if (success) {
-//         mobileTab.value = 'catalog';
-//         store_product.GetAll(); // Qoldiqlarni yangilash
-//     }
-// }
+    // 2. Agar foydalanuvchi kiritgan son qoldiqdan katta bo'lsa
+    if (item.qty > maxStock) {
+        item.qty = maxStock; // Miqdorni maksimal qoldiqqa tenglashtiramiz
+        toast.error(`Omborda faqat ${maxStock} dona mahsulot bor!`);
+    }
+
+    // 3. Agar foydalanuvchi 0 yoki manfiy son kiritsa
+    if (item.qty < 1 && item.qty !== "") {
+        item.qty = 1;
+    }
+}
+
+const checkEmpty = (item) => {
+    // Input bo'sh qolib ketgan bo'lsa (fokus yo'qolganda), uni 1 ga qaytaramiz
+    if (!item.qty || item.qty < 1) {
+        item.qty = 1;
+    }
+}
 
 const processSale = async () => {
     // 1. Payloadni shakllantirish uchun zaruriy hisob-kitoblar va ma'lumotlarni yig'ish
