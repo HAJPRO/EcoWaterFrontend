@@ -1,9 +1,9 @@
 <template>
-    <Title>
+    <!-- <Title>
       <template v-slot:title>
         <h3><i class="fa-solid fa-calculator mr-3 fa-lg"></i>Sotuv (POS)</h3> 
       </template>
-    </Title>
+    </Title> -->
     <Tabel/>
  
 </template>

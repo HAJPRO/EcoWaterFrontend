@@ -9,10 +9,10 @@
       <header class="h-20 shrink-0 bg-white/80 dark:bg-[#0F172A]/90 backdrop-blur-2xl border-b border-slate-200/60 dark:border-slate-800 flex items-center justify-between px-6 z-50 sticky top-0 transition-all">
         <div class="flex items-center gap-4">
           <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center text-white shadow-lg shadow-indigo-500/30 ring-1 ring-white/20">
-            <i class="fa-solid fa-cash-register text-xl"></i>
+            <i class="fa-solid fa-calculator text-xl"></i>
           </div>
           <div class="flex flex-col">
-            <h1 class="text-xl font-black tracking-tight text-slate-800 dark:text-white leading-none">Smart<span class="text-indigo-600 dark:text-indigo-400">POS</span></h1>
+            <h1 class="text-xl font-black tracking-tight text-slate-800 dark:text-white leading-none">Sotuv<span class="text-indigo-600 dark:text-indigo-400">POS</span></h1>
             <div class="flex items-center gap-2 mt-1.5">
                <span class="relative flex h-2 w-2">
                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
@@ -57,28 +57,33 @@
       </header>
 
       <div class="px-5 py-4 flex gap-3 shrink-0 z-10 sticky top-16 bg-[#F1F5F9]/95 dark:bg-[#020617]/95 backdrop-blur-md border-b border-slate-200/50 dark:border-slate-800/50">
-        <div class="relative w-[50px] sm:w-[240px]" ref="categoryMenuRef">
-          <button @click="showCategoryMenu = !showCategoryMenu" class="w-full h-12 bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-700 rounded-xl flex items-center justify-center sm:justify-between px-0 sm:px-4 hover:border-indigo-500 transition shadow-sm group active:scale-[0.98]">
-            <div class="flex items-center gap-3 overflow-hidden">
-              <div class="w-7 h-7 rounded-lg bg-indigo-50 dark:bg-slate-800 flex items-center justify-center text-indigo-500 text-xs group-hover:bg-indigo-600 group-hover:text-white transition-colors">
-                <i :class="selectedCategoryIcon"></i>
-              </div>
-              <span class="hidden sm:block text-xs font-bold text-slate-700 dark:text-slate-200 truncate">{{ activeCategory }}</span>
-            </div>
-            <i class="hidden sm:block fa-solid fa-chevron-down text-[10px] text-slate-400 transition-transform duration-200" :class="{'rotate-180': showCategoryMenu}"></i>
-          </button>
-          
-          <transition name="dropdown">
-            <div v-if="showCategoryMenu" class="absolute top-[calc(100%+6px)] left-0 w-[250px] sm:w-full bg-white dark:bg-[#0F172A] rounded-xl shadow-xl border border-slate-200 dark:border-slate-700 overflow-hidden z-30 p-2">
-              <input v-model="categorySearch" type="text" placeholder="Kategoriya..." class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-xs outline-none focus:border-indigo-500 mb-1">
-              <div class="max-h-60 overflow-y-auto thin-scroll space-y-0.5">
-                <button v-for="cat in filteredCategories" :key="cat.name" @click="selectCategory(cat)" class="w-full flex items-center gap-2 px-3 py-2.5 rounded-lg text-xs hover:bg-indigo-50 dark:hover:bg-slate-800 transition" :class="activeCategory === cat.name ? 'text-indigo-600 font-bold bg-indigo-50 dark:bg-slate-800' : 'text-slate-600 dark:text-slate-400'">
-                  <i :class="cat.icon"></i> {{ cat.name }}
-                </button>
-              </div>
-            </div>
-          </transition>
+      <Select 
+  v-model="searchCategoryData"
+  :options="categories"
+  placeholder="Mahsulot kategoryasi bo'yicha"
+  searchable
+  clearable
+  size="middle"
+  iconPre="fa-solid fa-layer-group"
+  labelKey="name"
+  valueKey="_id"
+  allowAdd
+  @add="addNewCity"
+  style="width: 40%;"
+  
+    
+><template #option="{ option }">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-600">
+           <i class="fas fa-type"></i>
         </div>
+        
+        <div class="flex flex-col">
+           <span class="font-black text-sm">{{ option.name }}</span>
+          
+        </div>
+      </div>
+    </template></Select>
 
         <div class="relative flex-1 group">
           <i class="fa-solid fa-barcode absolute left-4 top-4 text-slate-400 group-focus-within:text-indigo-500 transition-colors"></i>
@@ -119,7 +124,7 @@
                <h3 class="text-xs font-bold text-slate-800 dark:text-white leading-tight line-clamp-2 mb-2 min-h-[2rem]">{{ product.name }}</h3>
                <div class="mt-auto border-t border-slate-100 dark:border-slate-800 pt-2 flex justify-between items-center">
                    <span class="text-[10px] text-slate-400">{{ product.category }}</span>
-                   <span class="text-sm font-black text-slate-800 dark:text-slate-100">{{ formatPriceCompact(product.price) }}</span>
+                   <span class="text-sm font-black text-slate-800 dark:text-slate-100">{{ (product.price) }}</span>
                </div>
             </div>
           </div>
@@ -143,58 +148,73 @@
       </div>
 
       <div class="shrink-0 p-4 bg-white dark:bg-[#111827] border-b border-slate-100 dark:border-slate-800 z-10 grid grid-cols-2 gap-3">
-        <div class="relative" ref="customerDropdownRef">
-          <label class="text-[9px] font-extrabold text-slate-400 uppercase tracking-widest mb-1 block pl-1">Mijoz</label>
-          <button @click="showCustomerList = !showCustomerList" class="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border transition-all rounded-xl flex items-center justify-between group shadow-sm hover:border-indigo-400" :class="!activeSessionData.customerId ? 'border-rose-300 dark:border-rose-900/50' : 'border-slate-200 dark:border-slate-700'">
-            <div class="flex items-center gap-2 overflow-hidden">
-              <div class="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-xs shrink-0"><i class="fa-solid fa-user"></i></div>
-              <div class="flex flex-col text-left truncate">
-                <span class="text-xs font-bold text-slate-800 dark:text-white leading-none mb-0.5 truncate">{{ activeCustomer ? activeCustomer.fullname : 'Tanlanmagan' }}</span>
-               <div class="flex items-center gap-2 text-[10px]" v-if="activeCustomer">
-                   <span class="font-bold text-slate-500">{{ activeCustomer.phoneNumber }}</span>
-                </div>
-                <span v-else class="text-[9px] text-rose-500 font-bold uppercase">Majburiy</span>
-              </div>
-            </div>
-            <i class="fa-solid fa-chevron-down text-xs text-slate-400 transition-transform" :class="{'rotate-180': showCustomerList}"></i>
-          </button>
-          <transition name="dropdown">
-            <div v-if="showCustomerList" class="absolute top-[calc(100%+4px)] left-0 w-[200%] bg-white dark:bg-slate-800 rounded-xl shadow-2xl border border-slate-100 dark:border-slate-700 z-50 p-2">
-              <input v-model="customerSearch" type="text" placeholder="Mijoz izlash..." class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-xs outline-none focus:border-indigo-500 mb-1">
-              <div class="max-h-40 overflow-y-auto thin-scroll">
-                <button v-for="c in filteredCustomers" :key="c._id" @click="selectCustomer(c)" class="w-full p-2.5 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-lg flex items-center justify-between transition text-left border-b border-slate-50 dark:border-slate-700 last:border-0 group">
-                  <div class="text-xs font-bold text-slate-700 dark:text-slate-200 group-hover:text-indigo-600">{{ c.fullname }}</div>
-                  <div class="text-[10px] font-bold" :class="(c.balance || 0) >= 0 ? 'text-emerald-500' : 'text-rose-500'">{{ formatPrice(c.balance || 0) }}</div>
-                </button>
-              </div>
-            </div>
-          </transition>
+     
+<Select 
+  v-model="activeSessionData.customerId"
+  :options="customers"
+  label="Mijoz"
+  placeholder="Mijoz birini tanlang"
+  searchable
+  clearable
+  size="middle"
+  iconPre="fa-solid fa-user"
+  required
+  labelKey="fullname"
+  valueKey="_id"
+  allowAdd
+  @add="addNewCity"
+  dropdownWidth="350px"
+  
+    
+><template #option="{ option }">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-600">
+           <i class="fas fa-user"></i>
         </div>
-
-        <div class="relative" ref="supplierDropdownRef">
-          <label class="text-[9px] font-extrabold text-slate-400 uppercase tracking-widest mb-1 block pl-1">Haydovchilar</label>
-          <button @click="showDriverList = !showDriverList" class="w-full p-2.5 bg-slate-50 dark:bg-slate-900 border transition-all rounded-xl flex items-center justify-between group shadow-sm hover:border-orange-400" :class="!activeSessionData.supplierId ? 'border-slate-200 dark:border-slate-700' : 'border-orange-200 dark:border-slate-700'">
-            <div class="flex items-center gap-2 overflow-hidden">
-              <div class="w-8 h-8 rounded-lg bg-orange-100 text-orange-600 flex items-center justify-center font-bold text-xs shrink-0"><i class="fa-solid fa-truck"></i></div>
-              <div class="flex flex-col text-left truncate">
-                <span class="text-xs font-bold text-slate-800 dark:text-white leading-none mb-0.5 truncate">{{ activeDriver ? (activeDriver.company || activeDriver.fullname) : 'Zaxiradan' }}</span>
-                <span class="text-[10px] text-slate-400 font-mono">{{ activeDriver ? activeDriver.phone : 'Standart' }}</span>
-              </div>
-            </div>
-            <i class="fa-solid fa-chevron-down text-xs text-slate-400 transition-transform" :class="{'rotate-180': showDriverList}"></i>
-          </button>
-          <transition name="dropdown">
-            <div v-if="showDriverList" class="absolute top-[calc(100%+4px)] right-0 w-[200%] bg-white dark:bg-slate-800 rounded-xl shadow-2xl border border-slate-100 dark:border-slate-700 z-50 p-2 overflow-hidden">
-              <input v-model="driverSearch" type="text" placeholder="Izlash..." class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-xs outline-none focus:border-orange-500 mb-1">
-              <div class="max-h-40 overflow-y-auto thin-scroll">
-                <button @click="selectDriver(null)" class="w-full text-left px-3 py-2 text-xs font-bold text-indigo-500 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-lg border-b border-slate-50 dark:border-slate-700">Do'kon zaxirasidan</button>
-                <button v-for="s in filteredSuppliers" :key="s._id" @click="selectDriver(s)" class="w-full p-2.5 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-lg flex items-center justify-between transition text-left border-b border-slate-50 dark:border-slate-700 last:border-0 group">
-                  <div class="text-xs font-bold text-slate-700 dark:text-slate-200 group-hover:text-orange-600">{{ s.company || s.fullname }}</div>
-                </button>
-              </div>
-            </div>
-          </transition>
+        
+        <div class="flex flex-col">
+           <span class="font-black text-sm">{{ option.fullname }}</span>
+           <div class="flex items-center gap-2">
+              <span class="text-[10px] px-1.5 py-0.5 bg-slate-100 dark:bg-slate-800 rounded text-slate-500 uppercase">
+                {{ option.phoneNumber }}
+              </span>
+              <span class="text-[10px] text-indigo-500 font-bold italic">{{ option.position }}</span>
+           </div>
         </div>
+      </div>
+    </template></Select>
+<Select 
+ v-model="activeSessionData.supplierId"
+  :options="drivers"
+  label="Haydovchi"
+  placeholder="Haydovchidan birini tanlang"
+  searchable
+  clearable
+  size="middle"
+  iconPre="fa-solid fa-car"
+  required
+  labelKey="fullname"
+  valueKey="_id"
+  allowAdd
+  @add="addNewCity"
+    
+><template #option="{ option }">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-600">
+           <i class="fas fa-car"></i>
+        </div>
+        
+        <div class="flex flex-col">
+           <span class="font-black text-sm">{{ option.fullname }}</span>
+           <div class="flex items-center gap-2">
+              <span class="text-[10px] px-1.5 py-0.5 bg-slate-100 dark:bg-slate-800 rounded text-slate-500 uppercase">
+                {{ option.phoneNumber }}
+              </span>
+              <span class="text-[10px] text-indigo-500 font-bold italic">{{ option.position }}</span>
+           </div>
+        </div>
+      </div>
+    </template></Select>
       </div>
 
       <div class="flex-1 overflow-y-auto p-4 custom-scroll bg-white dark:bg-[#111827] relative pb-32 lg:pb-4">
@@ -315,247 +335,131 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onBeforeUnmount, reactive } from "vue"
+import { ref, computed, onMounted } from "vue"
 import { storeToRefs } from 'pinia';
-// --- PINIA STORES ---
+import { useToast } from "../../../UI/utils/useToast";
+import Select from "../../../UI/Select.vue"
+
+// --- STORES ---
 import { SaleposManagmentStore } from "../../../stores/Sale/salepos/salepos.store"
-import { ReadyWarehouseStore } from "../../../stores/Warehouses/r-warehouse/warehouse.store"
 import { ProductsManagmentStore } from "../../../stores/Sale/products/product.store"
 import { CustomerManagmentStore } from "../../../stores/Customers/c-managment/customer.store"
-import { EmployeeManagmentStore } from "../../../stores/HR/employee/employee.store" // EmployeeManagmentStore dan Haydovchilarni olamiz
+import { EmployeeManagmentStore } from "../../../stores/HR/employee/employee.store"
 
-// --- INSTANTIATE STORES ---
+const { toast } = useToast();
 const store_product = ProductsManagmentStore()
-
-const store_warehouse = ReadyWarehouseStore()
 const store_customer = CustomerManagmentStore()
 const store_drivers = EmployeeManagmentStore()
 const store_salepos = SaleposManagmentStore()
 
-// --- STORE TO REFS (HOLATLARNI ULASH) ---
-const { products:rawProducts } = storeToRefs(store_product)
+const { products: rawProducts } = storeToRefs(store_product)
 const { customers } = storeToRefs(store_customer) 
 const { employees: drivers } = storeToRefs(store_drivers)
 
 const { 
-    sessions, 
-    activeSessionId, 
-    // State'ni Pinia'dan ulash
-    discountPercent, 
-    taxEnabled, 
-    paymentType,
-    // Getters/Computed Pinia'dan ulash
-    activeSessionData, 
-    activeCustomer, 
-    activeDriver, 
-    grandTotal 
+    sessions, 
+    activeSessionId, 
+    discountPercent, 
+    taxEnabled, 
+    paymentType,
+    activeSessionData, 
+    grandTotal 
 } = storeToRefs(store_salepos)
 
-
-// --- MAHALLIY HOLATLAR ---
+// --- LOCAL STATES ---
 const isDark = ref(false)
 const mobileTab = ref('catalog')
 const productSearch = ref("")
-const activeCategory = ref("Barchasi")
+const searchCategoryData = ref(null) // Tanlangan kategoriya ID si
 const currentTime = ref("")
 
-// Dropdown States
-const showCategoryMenu = ref(false)
-const categorySearch = ref("")
-const categoryMenuRef = ref(null)
-const showCustomerList = ref(false)
-const customerSearch = ref("") 
-const customerDropdownRef = ref(null)
-const showDriverList = ref(false)
-const driverSearch = ref("") 
-const supplierDropdownRef = ref(null)
-
-// Toast State
-const toast = reactive({ show: false, message: "", type: "success" })
-let toastTimer
-const showToast = (msg, type="success") => {
-    toast.message = msg; toast.type = type; toast.show = true
-    clearTimeout(toastTimer)
-    toastTimer = setTimeout(() => toast.show = false, 2500)
-}
-
-
-// --- ASOSIY STATIK/MAHALLIY DATA ---
-const categories = [
-    { name: "Barchasi", icon: "fa-solid fa-layer-group" },
-    { name: "Elektronika", icon: "fa-solid fa-microchip" },
-    { name: "Oziq-ovqat", icon: "fa-solid fa-burger" },
-    { name: "Kiyim", icon: "fa-solid fa-shirt" },
-    { name: "Sport", icon: "fa-solid fa-person-running" }
-]
-
 const paymentMethods = [
-    { value: "naqd", label: "Naqd", icon: "fa-solid fa-money-bill-1-wave", color: "emerald" },
-    { value: "karta", label: "Karta", icon: "fa-regular fa-credit-card", color: "blue" },
-    { value: "click", label: "Click", icon: "fa-solid fa-mobile-screen", color: "sky" },
-    { value: "qarz", label: "Nasiya", icon: "fa-solid fa-file-invoice", color: "rose" }
+    { value: "naqd", label: "Naqd", icon: "fa-solid fa-money-bill-1-wave", color: "emerald" },
+    { value: "karta", label: "Karta", icon: "fa-regular fa-credit-card", color: "blue" },
+    { value: "click", label: "Click", icon: "fa-solid fa-mobile-screen", color: "sky" },
+    { value: "qarz", label: "Nasiya", icon: "fa-solid fa-file-invoice", color: "rose" }
 ]
 
-
-// --- COMPUTED PROPERTIES ---
-
-// 1. Mahsulot ma'lumotlarini formatlash (stock ma'lumoti bilan)
+// --- COMPUTED ---
 const products = computed(() => {
-    if (!rawProducts.value || !Array.isArray(rawProducts.value)) return [];
-
-    return rawProducts.value.map((item, index) => {
-        const productName = item.name || 'Nomsiz mahsulot';
-        
-        return {
-            id: item._id ,
-            name: item.name || item.name || 'Nomsiz mahsulot',
-            image: item.image || `https://picsum.photos/200/200?random=${index + 1}`,
-            price: item.salePrice|| 0,
-            stock: item.totalStock || 0, // Real stock ma'lumoti
-            unit: item.unit || 0, // Real stock ma'lumoti
-            category: item.category  || 'Barchasi'
-        }
-    })
+    if (!rawProducts.value) return [];
+    return rawProducts.value.map((item, index) => ({
+        id: item._id,
+        name: item.name || 'Nomsiz',
+        image: item.image || `https://picsum.photos/200/200?random=${index}`,
+        price: item.salePrice || 0,
+        stock: item.totalStock || 0,
+        unit: item.unit || 'dona',
+        category: item.category || 'Barchasi'
+    }))
 })
 
-const selectedCategoryIcon = computed(() => categories.find(c => c.name === activeCategory.value)?.icon || 'fa-solid fa-layer-group')
-const filteredCategories = computed(() => categorySearch.value ? categories.filter(c => c.name.toLowerCase().includes(categorySearch.value.toLowerCase())) : categories)
+const categories = computed(() => {
+    const list = [...new Set(products.value.map(p => p.category))];
+    return [{ _id: null, name: "Barchasi" }, ...list.map(c => ({ _id: c, name: c }))];
+})
 
-// 2. Mijozlarni Filtrlash (fullname va phoneNumber bo'yicha)
-const filteredCustomers = computed(() => {
-    if (!customerSearch.value) {
-        return customers.value;
-    }
-
-    const search = customerSearch.value.toLowerCase();
-    
-    return customers.value.filter(c => 
-        c.fullname?.toLowerCase().includes(search) || 
-        c.phoneNumber?.includes(search)
-    );
-});
-
-// 3. Agentlarni Filtrlash (company/fullname va phone bo'yicha)
-const filteredSuppliers = computed(() => {
-    if (!driverSearch.value) {
-        return drivers.value;
-    }
-
-    const search = driverSearch.value.toLowerCase();
-    
-    return drivers.value.filter(s => 
-        (s.company || s.fullname)?.toLowerCase().includes(search) || 
-        s.phoneNumber?.includes(search)
-    );
-});
-
-
-// 4. Mahsulotlarni Filtrlash
 const filteredProducts = computed(() => {
-    let list = products.value;
-    
-    if (activeCategory.value !== 'Barchasi') {
-        list = list.filter(p => p.category === activeCategory.value)
-    }
-    
-    if (productSearch.value) {
-        const search = productSearch.value.toLowerCase()
-        list = list.filter(p => String(p.name).toLowerCase().includes(search) || String(p.price).includes(search))
-    }
-    return list
+    let list = products.value;
+    if (searchCategoryData.value) {
+        list = list.filter(p => p.category === searchCategoryData.value);
+    }
+    if (productSearch.value) {
+        const s = productSearch.value.toLowerCase();
+        list = list.filter(p => p.name.toLowerCase().includes(s));
+    }
+    return list;
 })
 
-const showMobileCart = computed({
-    get: () => mobileTab.value === 'cart',
-    set: (val) => { mobileTab.value = val ? 'cart' : 'catalog' }
-})
-
-
-// --- ACTIONS / METHODS ---
-
-// Session management (Pinia'dan ulangan)
-const addSession = store_salepos.addSession 
-const removeSession = store_salepos.removeSession 
-
-// Selector actions
-const selectCategory = (cat) => { activeCategory.value = cat.name; showCategoryMenu.value = false; categorySearch.value = "" }
-
-const selectCustomer = (c) => { 
-    // MongoDB IDsi: c._id dan foydalanish
-    store_salepos.activeSessionData.customerId = c._id 
-    showCustomerList.value = false
-    customerSearch.value = "" 
-}
-
-const selectDriver = (s) => { 
-    // MongoDB IDsi: s._id dan foydalanish
-    store_salepos.activeSessionData.supplierId = s ? s._id : null
-    showDriverList.value = false 
-    driverSearch.value = "" 
-}
-
-// Cart actions
+// --- METHODS ---
 const getItemQty = (id) => activeSessionData.value.cart.find(i => i.id === id)?.qty || 0
 
-// Zaxira tekshiruvlari mavjud bo'lgan local cart actions
 const addToCart = (p) => {
-    if (p.stock <= 0) {
-        showToast("Mahsulot tugagan!", "error")
-        return
-    }
-
-    const item = activeSessionData.value.cart.find(i => i.id === p.id)
-    if (item) {
-        if (item.qty < p.stock) {
-            item.qty++
-        } else {
-            showToast(`Omborda faqat ${p.stock} dona bor`, "error")
-        }
-    } else {
-        // IDni Pinia modeliga moslash uchun _id/id o'tkaziladi
-        activeSessionData.value.cart.push({ ...p, qty: 1, id: p.id }) 
-    }
+    const item = activeSessionData.value.cart.find(i => i.id === p.id)
+    if (item) {
+        if (item.qty < p.stock) item.qty++;
+        else toast.error("Zaxira yetarli emas!");
+    } else {
+        activeSessionData.value.cart.push({ ...p, qty: 1 });
+    }
 }
 
 const changeQty = (item, delta) => {
-    const product = products.value.find(p => p.id === item.id)
-    const maxStock = product ? product.stock : item.stock
-    
-    if (delta > 0 && item.qty >= maxStock) {
-        showToast(`Zaxira yetarli emas! Maksimum: ${maxStock}`, "error")
-        return
-    }
-
-    if (item.qty + delta > 0) item.qty += delta
-    else removeItem(item.id)
+    const p = products.value.find(prod => prod.id === item.id);
+    if (delta > 0 && item.qty >= p.stock) {
+        toast.error("Maksimal miqdor!");
+        return;
+    }
+    if (item.qty + delta > 0) item.qty += delta;
+    else removeItem(item.id);
 }
 
-const validateInput = (item) => {
-    const product = products.value.find(p => p.id === item.id)
-    const maxStock = product ? product.stock : item.stock
-    
-    if (item.qty > maxStock) {
-        item.qty = maxStock
-        showToast(`Maksimum ${maxStock} dona bor!`, "error")
-    }
-    if (item.qty < 1 && item.qty !== "") {
-        item.qty = 1
-    }
+const removeItem = (id) => {
+    activeSessionData.value.cart = activeSessionData.value.cart.filter(i => i.id !== id);
 }
 
-const checkEmpty = (item) => {
-    if (!item.qty) item.qty = 1
-}
+// const processSale = async () => {
+//     const payload = {
+//         items: activeSessionData.value.cart.map(i => ({
+//             product: i.id,
+//             quantity: i.qty,
+//             salePrice: i.price
+//         })),
+//         customerId: activeSessionData.value.customerId,
+//         supplierId: activeSessionData.value.supplierId,
+//         discountPercent: discountPercent.value,
+//         taxEnabled: taxEnabled.value,
+//         paymentType: paymentType.value,
+//         grandTotal: grandTotal.value
+//     };
 
-const removeItem = (id) => { activeSessionData.value.cart = activeSessionData.value.cart.filter(i => i.id !== id) }
+//     const success = await store_salepos.CreateSaleTransaction(payload);
+//     if (success) {
+//         mobileTab.value = 'catalog';
+//         store_product.GetAll(); // Qoldiqlarni yangilash
+//     }
+// }
 
-
-/**
- * Yakunlash bosilganda Pinia Store'ga jo'natiladigan ma'lumotlarni shakllantiradi
- * va tranzaksiyani boshlaydi.
- * * Eslatma: Backendga yuborish uchun tayyorlanadigan yakuniy ma'lumotlar to'plami (payload) 
- * shu yerda Pinia Store actionga uzatiladi.
- */
 const processSale = async () => {
     // 1. Payloadni shakllantirish uchun zaruriy hisob-kitoblar va ma'lumotlarni yig'ish
 
@@ -624,36 +528,20 @@ const processSale = async () => {
 }
 
 
-// Utility functions
-const toggleTheme = () => { isDark.value = !isDark.value; document.documentElement.classList.toggle("dark", isDark.value) }
-const formatPrice = (v) => new Intl.NumberFormat('uz-UZ').format(v) + " so'm"
-const formatPriceCompact = (v) => new Intl.NumberFormat('uz-UZ', { notation: "compact", compactDisplay: "short" }).format(v)
-
-// Click Outside Logic
-const handleClickOutside = (e) => {
-    if (categoryMenuRef.value && !categoryMenuRef.value.contains(e.target)) showCategoryMenu.value = false
-    if (customerDropdownRef.value && !customerDropdownRef.value.contains(e.target)) showCustomerList.value = false
-    if (supplierDropdownRef.value && !supplierDropdownRef.value.contains(e.target)) showDriverList.value = false
+const toggleTheme = () => {
+    isDark.value = !isDark.value;
+    document.documentElement.classList.toggle("dark");
 }
 
-// Lifecycle
-let timer
-onMounted(() => {
-    document.addEventListener('click', handleClickOutside)
-    timer = setInterval(() => {
-        const d = new Date()
-        currentTime.value = d.toLocaleTimeString('uz-UZ', {hour:'2-digit', minute:'2-digit'})
-    }, 1000)
-    // API ma'lumotlarini yuklash
-    store_product.GetAll()
-    store_warehouse.GetAll()
-    store_customer.GetAll()
-    store_drivers.GetAll() // EmployeeManagmentStore dan Driverlarni yuklash
-})
+const formatPrice = (v) => new Intl.NumberFormat('uz-UZ').format(v) + " so'm";
 
-onBeforeUnmount(() => {
-    document.removeEventListener('click', handleClickOutside)
-    clearInterval(timer)
+onMounted(() => {
+    setInterval(() => {
+        currentTime.value = new Date().toLocaleTimeString('uz-UZ', { hour: '2-digit', minute: '2-digit' });
+    }, 1000);
+    store_product.GetAll();
+    store_customer.GetAll();
+    store_drivers.GetAll();
 })
 </script>
 
