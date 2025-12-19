@@ -7,31 +7,13 @@ import { ReadyWarehouseStore } from "../../Warehouses/r-warehouse/warehouse.stor
 import { useToast } from "../../../UI/utils/useToast";
 const {toast} = useToast();
 import { Loading } from "../../../utils/Loading";
-
 const loading = Loading();
 
-/** * @typedef {Object} CartItem 
- * @property {string} id - Mahsulot IDsi
- * @property {string} name - Mahsulot nomi
- * @property {number} price - Sotish narxi
- * @property {number} qty - Savatdagi miqdor
- * @property {number} stock - Joriy zaxira miqdori
- * @property {string} unit - Birlik
- */
-
-/** * @typedef {Object} SalesSession 
- * @property {number} id - Seans IDsi
- * @property {string} name - Seans nomi
- * @property {CartItem[]} cart - Savatdagi mahsulotlar
- * @property {string | null} customerId - Mijoz IDsi
- * @property {string | null} supplierId - Haydovchi/Agent IDsi
- */
 
 export const SaleposManagmentStore = defineStore("SaleposManagmentStore", {
   state: () => {
     return {
-      // ---------------- POS Session Management ----------------
-      /** @type {SalesSession[]} */
+        sales : [],
       sessions: [
         { 
             id: 1, 
@@ -124,18 +106,8 @@ export const SaleposManagmentStore = defineStore("SaleposManagmentStore", {
         // ... Logika
     },
 
-    // ---------------- TRANSACTION PROCESSING (YANGILANGAN VA PROFESSIONAL LOGIKA) ----------------
     
-    /**
-     * Yangi POS savdosini yaratish va yakunlash (ZAXIRA NAZORATI)
-     * @param {Object} payload - Vue komponentidan to'liq hisoblangan ma'lumotlar to'plami.
-     * @returns {Promise<boolean>} - Tranzaksiya muvaffaqiyatli yakunlansa true
-     */
     async CreateSaleTransaction(payload) {
-//       const warehouseStore = ReadyWarehouseStore();
-      // products state'ini to'g'ri bog'lash
-//       const { products } = storeToRefs(warehouseStore); 
-      
       const loader = loading.show();
       try {
         // =========================================================
@@ -195,7 +167,11 @@ export const SaleposManagmentStore = defineStore("SaleposManagmentStore", {
         loader.hide();
       }
     },
-    
+    async GetAll(payload) {
+        const sales = await SaleposManagmentService.GetAll(payload)
+        this.sales  = sales.data.data
+        
+    },
     // --- Legacy Actions for Modals/Details (o'zgarishsiz qoldi) ---
     async OrderGetById(id) {
         // ... Logika

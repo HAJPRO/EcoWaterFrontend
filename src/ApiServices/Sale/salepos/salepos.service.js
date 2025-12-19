@@ -11,9 +11,9 @@ export const SaleposManagmentService = {
      * Method: GET
      * Parametrlar (page, limit, search) URLda ketadi.
      */
-    GetAllSales(queryParams) {
+    GetAll(payload) {
         // Axios-da GET so'rovida body bo'lmaydi, parametrlar 'params' ichida beriladi
-        return api.get(RESOURCE, { params: queryParams });
+        return api.post(`${RESOURCE}/all`,payload);
     },
 
     /**
