@@ -347,7 +347,8 @@ const processSale = async () => {
         quantity: item.qty,
         salePrice: item.price,
         totalAmount: item.price * item.qty,
-        unit: item.unit
+        unit: item.unit,
+name : item.name
     }));
 
     // Hisoblangan qiymatlar

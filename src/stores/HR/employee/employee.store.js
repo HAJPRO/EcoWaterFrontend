@@ -4,6 +4,7 @@ import { Loading } from "../../../utils/Loading";
 import {CustomerManagmentService} from "../../../ApiServices/Customers/c-managment/customer.service";
 const loading = Loading()
 import { defineStore } from "pinia";
+import { SaleposManagmentService } from "../../../ApiServices/Sale/salepos/salepos.service";
 
 export const EmployeeManagmentStore = defineStore("EmployeeManagmentStore", {
     state: () => {
@@ -74,7 +75,17 @@ export const EmployeeManagmentStore = defineStore("EmployeeManagmentStore", {
             }
         },
         async DetailInfoEmployeeModal(id) {
-            this.GetOrdersByDriverId(id)
+             const loader = loading.show();
+              try {
+                const res = await SaleposManagmentService.GetByEmployeeId(id);
+                this.orders = res.data.data.orders; 
+                this.pagination = res.data.data.pagination; // Paginationni ham saqlab qo'yamiz
+                this.detail_modal = true
+              } catch (e) {
+                console.error(e);
+              } finally {
+                loader.hide();
+              }
             this.detail_employee_modal = true;
 
         },
@@ -150,42 +161,53 @@ export const EmployeeManagmentStore = defineStore("EmployeeManagmentStore", {
 
         },
 
-         async ExcelExportOrdersByCustomer(data) {
-              const loader = loading.show();
-              try {
-                const res = await CustomerManagmentService.ExcelExportOrdersByCustomer(data);
-            
-                // ✅ Fayl blob formatida res.data da
-                const blob = res.data;
-            
-                // Fayl nomini headers orqali olish (ixtiyoriy)
-                const contentDisposition = res.headers["content-disposition"];
-                const now = new Date();
-          const timestamp = now.toISOString().replace(/[:.-]/g, "");
-          let filename = `buyurtmalar_${timestamp}.xlsx`;
-            
-                if (contentDisposition && contentDisposition.includes("filename=")) {
-                  filename = contentDisposition
-                    .split("filename=")[1]
-                    .replace(/"/g, "")
-                    .trim();
-                }
-            
-                // Faylni brauzer orqali yuklab olish
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement("a");
-                a.href = url;
-                a.download = filename;
-                a.click();
-                window.URL.revokeObjectURL(url);
-                ElMessage.success(`Fayl muvaffaqiyatli yuklandi. ${filename}`);
-        
-              } catch (error) {
-                console.error("Xatolik:", error);
-              } finally {
-                loader.hide();
-               
-              }
-            }
+      async ExcelExportOrdersByCustomer(payload) {
+  const loader = loading.show();
+  try {
+    const res = await CustomerManagmentService.ExcelExportOrdersByCustomer(payload);
+
+    // 1. Ma'lumot kelganini tekshirish
+    if (!res || !res.data) {
+      throw new Error("Serverdan ma'lumot kelmadi");
+    }
+
+    // 2. Blob yaratish (Aniq Excel tipi bilan)
+    const blob = new Blob([res.data], { 
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" 
+    });
+
+    // 3. Fayl nomini generatsiya qilish
+    const contentDisposition = res.headers["content-disposition"];
+    let filename = `Hisobot_${new Date().getTime()}.xlsx`;
+
+    if (contentDisposition && contentDisposition.includes("filename=")) {
+      filename = contentDisposition
+        .split("filename=")[1]
+        .replace(/["']/g, "")
+        .trim();
+    }
+
+    // 4. Brauzer xotirasida vaqtinchalik URL yaratish
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", filename);
+    
+    // 5. Yuklab olishni boshlash
+    document.body.appendChild(link);
+    link.click();
+
+    // 6. Tozalash
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+
+    ElMessage.success("Fayl muvaffaqiyatli yuklab olindi");
+  } catch (error) {
+    console.error("Excel Export Error:", error);
+    ElMessage.error("Faylni tayyorlashda xatolik yuz berdi. Backend loglarini tekshiring.");
+  } finally {
+    loader.hide();
+  }
+}
     },
 });

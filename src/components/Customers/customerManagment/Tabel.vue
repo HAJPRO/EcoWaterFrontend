@@ -73,7 +73,7 @@ const rowActions = [
 
 const handleAction = (actionName, row) => {
   activeDropdown.value = null;
-  if (actionName === 'view') store.AddDetailModal({ id: row._id });
+  if (actionName === 'view') store.AddDetailModal(row._id);
   else if (actionName === 'edit') store.AddCustomModal({ id: row._id, action: "update", title: "Mijozni tahrirlash" });
   else if (actionName === 'delete') store.DeleteById({ id: row._id });
 };

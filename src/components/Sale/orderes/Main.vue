@@ -1,7 +1,7 @@
 <template>
     <Title>
       <template v-slot:title>
-        <h3><i class="fa-solid fa-boxes-stacked mr-3 fa-md"></i>Buyurtmalar boshqaruvi</h3> 
+        <h3><i class="fa-solid fa-boxes-stacked mr-3 fa-md"></i>Sotuvlar boshqaruvi</h3> 
       </template>
     </Title>
     <HeaderTabLink/>

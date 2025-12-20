@@ -75,7 +75,7 @@ const rowActions = [
 
 const handleAction = (actionName, row) => {
   activeDropdown.value = null; // Menyuni yopish
-  if (actionName === 'view') store.DetailInfoEmployeeModal({ id: row._id });
+  if (actionName === 'view') store.DetailInfoEmployeeModal(row._id );
   else if (actionName === 'edit') store.GetById({ id: row._id, status: "update" });
   else if (actionName === 'delete') store.DeleteById({ id: row._id });
 };

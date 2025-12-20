@@ -4,7 +4,7 @@ import { Loading } from "../../../utils/Loading";
 import { ElMessage } from "element-plus";
 const loading = Loading()
 import { defineStore } from "pinia";
-
+import {SaleposManagmentStore} from "../../Sale/salepos/salepos.store"
 export const CustomerManagmentStore = defineStore("CustomerManagmentStore", {
   state: () => {
     return {
@@ -70,7 +70,8 @@ export const CustomerManagmentStore = defineStore("CustomerManagmentStore", {
     },
 
     async AddDetailModal(id) {
-      this.GetOrdersByCustomerId(id)
+      const saleStore = SaleposManagmentStore();
+      await saleStore.GetByCustomerId(id)
       this.detail_modal = true;
     },
     async Create(model) {

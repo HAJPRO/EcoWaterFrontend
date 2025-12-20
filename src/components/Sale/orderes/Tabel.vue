@@ -30,9 +30,10 @@ const selectedOrder = ref(null);
 // --- CONFIGURATION ---
 const columns = [
   { key: 'orderNumber', label: 'Buyurtma', width: '130px', fixed: 'left', sortable: true },
+  { key: 'author.fullname', label: 'Sotuvchi', width: '130px', sortable: true },
   { key: 'customerId.fullname', label: 'Mijoz', width: '220px', sortable: true },
-  { key: 'paymentType', label: 'To\'lov', width: '110px', align: 'center' },
   { key: 'driverId.fullname', label: 'Haydovchi', width: '160px' },
+  { key: 'paymentType', label: 'To\'lov', width: '110px', align: 'center' },
   { key: 'date', label: 'Vaqt', width: '130px', align: 'center', sortable: true },
   { key: 'totalAmount', label: 'Summa', width: '150px', align: 'right', sortable: true },
   { key: 'status', label: 'Holat', width: '150px', align: 'center' },
@@ -116,7 +117,21 @@ onMounted(() => store_salepos.GetAll());
     </span>
   </div>
 </template>
-
+<template #author.fullname="{ row }">
+  <div class="flex items-center gap-2.5 py-1 text-left">
+    <div class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500 font-bold text-[10px] border border-slate-200 dark:border-slate-700">
+      {{ row.author?.fullname?.charAt(0) || '?' }}
+    </div>
+    <div class="flex flex-col min-w-0">
+      <span class="font-bold text-slate-800 dark:text-slate-200 text-[13px] leading-tight truncate">
+        {{ row.author?.fullname }}
+      </span>
+      <span class="text-[10.5px] text-slate-400 font-medium tracking-tight mt-0.5">
+        <i class="fa-solid fa-phone text-[9px] opacity-70 mr-1"></i>{{ row.author?.phoneNumber }}
+      </span>
+    </div>
+  </div>
+</template>
 <template #customerId.fullname="{ row }">
   <div class="flex items-center gap-2.5 py-1 text-left">
     <div class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500 font-bold text-[10px] border border-slate-200 dark:border-slate-700">
@@ -133,19 +148,7 @@ onMounted(() => store_salepos.GetAll());
   </div>
 </template>
 
-<template #paymentType="{ row }">
-  <div class="flex justify-center">
-    <div :class="[
-      'flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-tighter border',
-      row.paymentType === 'cash' 
-        ? 'bg-emerald-50 text-emerald-700 border-emerald-100 dark:bg-emerald-500/10 dark:text-emerald-400' 
-        : 'bg-blue-50 text-blue-700 border-blue-100 dark:bg-blue-500/10 dark:text-blue-400'
-    ]">
-      <i :class="row.paymentType === 'cash' ? 'fa-solid fa-money-bill-wave' : 'fa-solid fa-credit-card'"></i>
-      {{ row.paymentType === 'cash' ? 'Naqd' : 'Karta' }}
-    </div>
-  </div>
-</template>
+
 
 <template #driverId.fullname="{ row }">
   <div class="flex items-center gap-2">
@@ -158,6 +161,19 @@ onMounted(() => store_salepos.GetAll());
     <span class="text-[12px] font-semibold text-slate-600 dark:text-slate-400 truncate w-32">
       {{ row.driverId?.fullname || '—' }}
     </span>
+  </div>
+</template>
+<template #paymentType="{ row }">
+  <div class="flex justify-center">
+    <div :class="[
+      'flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-tighter border',
+      row.paymentType === 'cash' 
+        ? 'bg-emerald-50 text-emerald-700 border-emerald-100 dark:bg-emerald-500/10 dark:text-emerald-400' 
+        : 'bg-blue-50 text-blue-700 border-blue-100 dark:bg-blue-500/10 dark:text-blue-400'
+    ]">
+      <i :class="row.paymentType === 'cash' ? 'fa-solid fa-money-bill-wave' : 'fa-solid fa-credit-card'"></i>
+      {{ row.paymentType === 'cash' ? 'Naqd' : 'Karta' }}
+    </div>
   </div>
 </template>
 <template #date="{ row }">
@@ -225,8 +241,11 @@ onMounted(() => store_salepos.GetAll());
     <Modal v-model="isDetailModalOpen" title="Buyurtma tafsiloti" :subtitle="`Mijoz: ${selectedOrder?.customerId?.fullname}`" width="max-w-3xl" icon="fa-solid fa-file-invoice-dollar">
       <div class="space-y-6">
         
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-white dark:bg-slate-900 flex items-center justify-center text-emerald-500 shadow-sm"><i class="fa-solid fa-user "></i></div>
+            <div><p class="text-[10px] uppercase font-bold text-slate-400 leading-none mb-1">Sotuvchi</p><p class="text-sm font-bold truncate">{{ selectedOrder?.author?.fullname || '—' }}</p></div>
+          </div>
           <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 flex items-center gap-3">
             <div class="w-10 h-10 rounded-full bg-white dark:bg-slate-900 flex items-center justify-center text-emerald-500 shadow-sm"><i class="fa-solid fa-truck"></i></div>
             <div><p class="text-[10px] uppercase font-bold text-slate-400 leading-none mb-1">Haydovchi</p><p class="text-sm font-bold truncate">{{ selectedOrder?.driverId?.fullname || '—' }}</p></div>

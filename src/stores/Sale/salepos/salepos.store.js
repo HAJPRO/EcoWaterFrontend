@@ -14,6 +14,7 @@ export const SaleposManagmentStore = defineStore("SaleposManagmentStore", {
   state: () => {
     return {
         sales : [],
+        customerSalesById : [],
       sessions: [
         { 
             id: 1, 
@@ -36,7 +37,7 @@ export const SaleposManagmentStore = defineStore("SaleposManagmentStore", {
       paymentType: "naqd", 
       
       // ---------------- UI/API State ----------------
-      order_detail_modal: false, 
+      detail_modal: false, 
       order: null, 
     };
   },
@@ -98,10 +99,19 @@ export const SaleposManagmentStore = defineStore("SaleposManagmentStore", {
     },
 
     // --- Data Fetching Actions (Moslashtirish uchun o'zgarishsiz qoldi) ---
-    async GetAllCustomers() {
-        // ... Logika
+    async GetByCustomerId(id) {
+        const loader = loading.show();
+  try {
+    const res = await SaleposManagmentService.GetByCustomerId(id);
+    this.customerSalesById = res.data.data.orders; 
+    this.pagination = res.data.data.pagination; // Paginationni ham saqlab qo'yamiz
+    this.detail_modal = true
+  } catch (e) {
+    console.error(e);
+  } finally {
+    loader.hide();
+  }
     },
-
     async GetAllDriversAsSuppliers() {
         // ... Logika
     },

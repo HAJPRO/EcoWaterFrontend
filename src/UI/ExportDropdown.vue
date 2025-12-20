@@ -92,7 +92,7 @@ const getThemeClasses = (theme) => {
       class="group relative overflow-hidden bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 px-4 py-[4px] rounded-lg text-[13px] font-semibold hover:bg-slate-50 dark:hover:bg-slate-700 transition-all flex items-center justify-center active:scale-95 shadow-sm w-full sm:w-auto outline-none"
       :class="{'border-indigo-500 ring-1 ring-indigo-500/20': isOpen}"
     >
-      <span class="relative z-10 flex items-center gap-2.5">
+      <span class="relative z-60 flex items-center gap-2.5">
         <i class="fa-solid fa-cloud-arrow-down text-lg text-slate-400 group-hover:text-indigo-600 transition-colors"></i> 
         <span class="group-hover:text-indigo-700 dark:group-hover:text-indigo-400 transition-colors">Export</span>
         <i 
@@ -105,7 +105,7 @@ const getThemeClasses = (theme) => {
     <transition name="dropdown-zoom">
       <div 
         v-if="isOpen" 
-        class="absolute right-0 mt-2 w-72 bg-white dark:bg-slate-800 rounded-2xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.15)] border border-slate-100 dark:border-slate-700 z-50 overflow-hidden origin-top-right p-2 select-none"
+        class="absolute right-0 mt-2 w-72 bg-white dark:bg-slate-800 rounded-2xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.15)] border border-slate-100 dark:border-slate-700 z-[9999] overflow-hidden origin-top-right p-2 select-none"
       >
         <div class="px-2 pb-2 mb-1 border-b border-slate-50 dark:border-slate-700/50 flex justify-between items-center">
           <span class="text-[10px] font-extrabold tracking-widest text-slate-400 uppercase">Formatni tanlang</span>

@@ -1,10 +1,9 @@
 <script setup>
-import { onMounted, computed, ref, watch } from "vue";
-import moment from "moment-timezone";
+import { onMounted, computed, ref } from "vue";
 import { storeToRefs } from "pinia";
 import Title from "../../../../components/Title.vue";
 
-// --- ECHARTS IMPORTS ---
+// --- ECHARTS CORE ---
 import { use } from "echarts/core";
 import VChart from "vue-echarts";
 import { CanvasRenderer } from "echarts/renderers";
@@ -14,310 +13,271 @@ import {
   TooltipComponent,
   GridComponent,
   LegendComponent,
+  MarkLineComponent,
+  MarkPointComponent,
+  AxisPointerComponent,
 } from "echarts/components";
+import * as echarts from "echarts/core";
 
 // --- STORE ---
 import { SaleStatisticsStore } from "../../../../stores/Dashboard/statistics/saleStatistic.store";
-const store_sale_statistics = SaleStatisticsStore();
-const { metrics, barSeries, lineSeries, TopDrivers, TopCustomers } = storeToRefs(store_sale_statistics);
 
-// Echarts Register
+const store_sale_statistics = SaleStatisticsStore();
+const { metrics, charBarOptions, charLineOptions, topDrivers, topCustomers } = storeToRefs(store_sale_statistics);
+
 use([
-  CanvasRenderer,
-  BarChart,
-  LineChart,
-  TitleComponent,
-  TooltipComponent,
-  GridComponent,
-  LegendComponent,
+  CanvasRenderer, BarChart, LineChart, TitleComponent, TooltipComponent, 
+  GridComponent, LegendComponent, MarkLineComponent, MarkPointComponent,
+  AxisPointerComponent
 ]);
 
-// --- DARK MODE LOGIC (Loyiha global storiga ulash kerak) ---
-// Hozircha lokal test uchun:
-const isDark = ref(false); 
-const toggleTheme = () => {
-    isDark.value = !isDark.value;
-    if (isDark.value) document.documentElement.classList.add('dark');
-    else document.documentElement.classList.remove('dark');
-};
+const isDark = ref(document.documentElement.classList.contains('dark'));
 
-// --- CHART OPTIONS (Dinamik) ---
-const commonChartOptions = computed(() => ({
-  textStyle: { fontFamily: 'Inter, sans-serif' },
+// --- PREMIUM SMART CHART ENGINE ---
+const getSmartOptions = (seriesData, chartType) => ({
   backgroundColor: 'transparent',
-  grid: { top: '15%', left: '3%', right: '4%', bottom: '10%', containLabel: true },
-}));
-
-// Bar Chart
-const chartOptions = computed(() => ({
-  ...commonChartOptions.value,
-  title: { 
-      text: "Oylik sotuvlar (Kategoriya)", 
-      left: "left", 
-      textStyle: { fontSize: 14, color: isDark.value ? '#94a3b8' : '#64748b' } 
-  },
-  tooltip: { 
-      trigger: 'axis', 
-      backgroundColor: isDark.value ? '#1e293b' : 'rgba(255, 255, 255, 0.95)', 
-      borderColor: isDark.value ? '#334155' : '#e2e8f0',
-      textStyle: { color: isDark.value ? '#e2e8f0' : '#333' } 
+  animationDuration: 3500,
+  animationEasing: 'cubicInOut',
+  tooltip: {
+    trigger: 'axis',
+    axisPointer: {
+      type: 'cross',
+      lineStyle: { color: '#6366f1', width: 2, type: 'dashed', opacity: 0.5 }
+    },
+    backgroundColor: isDark.value ? 'rgba(15, 23, 42, 0.98)' : 'rgba(255, 255, 255, 0.98)',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: 'rgba(99, 102, 241, 0.2)',
+    padding: [12, 18],
+    shadowBlur: 20,
+    shadowColor: 'rgba(0,0,0,0.1)',
+    textStyle: { fontFamily: 'Inter', color: isDark.value ? '#f1f5f9' : '#1e293b' },
+    formatter: (params) => {
+      let res = `<div style="font-weight: 800; margin-bottom: 8px; font-size: 11px; text-transform: uppercase; color: #94a3b8;">${params[0].axisValue} tahlili</div>`;
+      params.forEach(p => {
+        res += `<div style="display: flex; justify-content: space-between; gap: 30px; margin-top: 5px;">
+                  <span style="font-size: 13px; font-weight: 600;"><span style="display:inline-block;width:10px;height:10px;border-radius:3px;background-color:${p.color};margin-right:8px;"></span>${p.seriesName}</span>
+                  <span style="font-weight: 900; color:${isDark.value ? '#fff' : '#000'}">${p.value.toLocaleString()} so'm</span>
+                </div>`;
+      });
+      return res;
+    }
   },
   legend: { 
-      bottom: 0, 
-      icon: 'circle',
-      textStyle: { color: isDark.value ? '#94a3b8' : '#64748b' }
+    top: '2%', 
+    right: '2%', 
+    icon: 'roundRect', 
+    itemWidth: 12,
+    textStyle: { color: '#94a3b8', fontWeight: 600, fontSize: 11 } 
   },
+  grid: { top: '15%', left: '1%', right: '1%', bottom: '5%', containLabel: true },
   xAxis: {
     type: 'category',
     data: ["Yan", "Fev", "Mar", "Apr", "May", "Iyun", "Iyul", "Avg", "Sen", "Okt", "Noy", "Dek"],
     axisLine: { show: false },
     axisTick: { show: false },
-    axisLabel: { color: isDark.value ? '#64748b' : '#94a3b8' }
+    axisLabel: { color: '#94a3b8', fontSize: 11, margin: 15 }
   },
-  yAxis: { 
-      type: 'value', 
-      splitLine: { lineStyle: { type: 'dashed', color: isDark.value ? '#334155' : '#e2e8f0' } },
-      axisLabel: { color: isDark.value ? '#64748b' : '#94a3b8' }
+  yAxis: {
+    type: 'value',
+    splitLine: { lineStyle: { color: isDark.value ? 'rgba(51, 65, 85, 0.3)' : 'rgba(226, 232, 240, 0.6)', type: 'dashed' } },
+    axisLabel: { color: '#94a3b8', fontSize: 11 }
   },
-  series: barSeries.value.map(s => ({ ...s, type: 'bar', barWidth: '15%', itemStyle: { borderRadius: [4, 4, 0, 0] } })),
-}));
-
-// Line Chart
-const lineChartOptions = computed(() => ({
-  ...commonChartOptions.value,
-  title: { 
-      text: "Oylik sotuvlar (Mahsulot)", 
-      left: "left", 
-      textStyle: { fontSize: 14, color: isDark.value ? '#94a3b8' : '#64748b' } 
-  },
-  tooltip: { 
-      trigger: "axis",
-      backgroundColor: isDark.value ? '#1e293b' : 'rgba(255, 255, 255, 0.95)', 
-      borderColor: isDark.value ? '#334155' : '#e2e8f0',
-      textStyle: { color: isDark.value ? '#e2e8f0' : '#333' }
-  },
-  legend: { 
-      bottom: 0, 
-      icon: 'roundRect',
-      textStyle: { color: isDark.value ? '#94a3b8' : '#64748b' }
-  },
-  xAxis: {
-    type: "category",
-    boundaryGap: false,
-    data: ["Yan", "Fev", "Mar", "Apr", "May", "Iyun", "Iyul", "Avg", "Sen", "Okt", "Noy", "Dek"],
-    axisLine: { show: false },
-    axisTick: { show: false },
-    axisLabel: { color: isDark.value ? '#64748b' : '#94a3b8' }
-  },
-  yAxis: { 
-      type: "value", 
-      splitLine: { lineStyle: { type: 'dashed', color: isDark.value ? '#334155' : '#e2e8f0' } },
-      axisLabel: { color: isDark.value ? '#64748b' : '#94a3b8' }
-  },
-  series: lineSeries.value.map(s => ({ ...s, type: 'line', smooth: true, symbolSize: 6, lineStyle: { width: 3 } })),
-}));
-
-// --- UTILS ---
-const formatPrice = (price) => {
-  return new Intl.NumberFormat("uz-UZ").format(price || 0);
-};
-
-// Hover state
-const hoveredRowId = ref(null);
-const setHover = (id) => hoveredRowId.value = id;
-const clearHover = () => hoveredRowId.value = null;
-
-onMounted(() => {
-  try {
-    store_sale_statistics.GetSaleStatistics();
-  } catch (error) {
-    console.error(error);
-  }
+  series: (seriesData.value || []).map(s => ({
+    name: s.name,
+    type: chartType,
+    smooth: 0.45,
+    showSymbol: false,
+    emphasis: { focus: 'series' },
+    data: s.data,
+    barWidth: '18%',
+    itemStyle: {
+      borderRadius: [4, 4, 0, 0],
+      color: chartType === 'bar' ? new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+        { offset: 0, color: s.name === 'Gazli' ? '#6366f1' : s.name === 'Gazsiz' ? '#a855f7' : '#ec4899' },
+        { offset: 1, color: 'rgba(99, 102, 241, 0.05)' }
+      ]) : null
+    },
+    lineStyle: { width: 4, cap: 'round', shadowBlur: 10, shadowColor: 'rgba(99, 102, 241, 0.2)' },
+    areaStyle: chartType === 'line' ? {
+      color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+        { offset: 0, color: s.name === 'Eco Water' ? 'rgba(16, 185, 129, 0.15)' : 'rgba(99, 102, 241, 0.15)' },
+        { offset: 1, color: 'transparent' }
+      ])
+    } : null,
+    markLine: {
+      silent: true,
+      symbol: 'none',
+      label: { show: false },
+      lineStyle: { color: '#94a3b8', opacity: 0.2, type: 'dotted' },
+      data: [{ type: 'average', name: 'O\'rtacha' }]
+    }
+  }))
 });
+
+const barOptions = computed(() => getSmartOptions(charBarOptions, 'bar'));
+const lineOptions = computed(() => getSmartOptions(charLineOptions, 'line'));
+
+const formatPrice = (p) => new Intl.NumberFormat("uz-UZ").format(p || 0);
+
+onMounted(() => store_sale_statistics.GetSaleStatistics());
 </script>
 
 <template>
-  <div class="p-2 font-sans text-slate-700 dark:text-slate-200 bg-slate-50/50 dark:bg-slate-900 min-h-screen transition-colors duration-300">
+  <div class="p-6 bg-[#f8fafc] dark:bg-[#030712] min-h-screen font-['Inter'] transition-colors duration-500">
     
- <Title>
+    <Title>
       <template v-slot:title>
         <h3><i class="fa-solid fa-chart-pie mr-3 fa-lg"></i>Sotuv statistikasi</h3> 
       </template>
     </Title>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-4 mt-2">
-      <div 
-        v-for="(metric, index) in metrics" 
-        :key="index"
-        class="bg-white dark:bg-slate-800 p-5 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700/50 relative overflow-hidden group hover:shadow-md transition-all duration-300"
-      >
-        <div class="absolute -right-6 -top-6 w-24 h-24 rounded-full opacity-10 dark:opacity-20 transition-transform group-hover:scale-110"
-             :class="metric.change >= 0 ? 'bg-emerald-500' : 'bg-rose-500'"></div>
-
-        <div class="flex justify-between items-start mb-2 relative z-10">
-            <div>
-                <p class="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">{{ metric.title }}</p>
-                <h3 class="text-2xl font-bold text-slate-800 dark:text-white mt-1">{{ metric.value?.toLocaleString() }}</h3>
-            </div>
-            <div class="w-8 h-8 rounded-lg flex items-center justify-center text-sm font-bold transition-colors"
-                 :class="metric.change >= 0 
-                    ? 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400' 
-                    : 'bg-rose-50 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400'">
-                 <i :class="metric.change >= 0 ? 'fa-solid fa-arrow-trend-up' : 'fa-solid fa-arrow-trend-down'"></i>
-            </div>
-        </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12 mt-4">
+      <div v-for="(m, idx) in metrics" :key="idx" 
+           class="group relative bg-white dark:bg-white/[0.02] backdrop-blur-3xl p-8 rounded-[3rem] border border-slate-100 dark:border-white/[0.05] shadow-[0_20px_50px_rgba(0,0,0,0.02)] hover:border-indigo-500/40 transition-all duration-700 animate-entrance overflow-hidden"
+           :style="{ animationDelay: (idx * 150) + 'ms' }">
         
-        <div class="flex items-center gap-2 text-xs font-medium relative z-10">
-            <span :class="metric.change >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'" class="flex items-center gap-1">
-                {{ metric.change > 0 ? '+' : '' }}{{ metric.change }}%
-            </span>
-            <span class="text-slate-400 dark:text-slate-500">{{ metric.text }}</span>
+        <div class="absolute -right-10 -top-10 w-40 h-40 bg-gradient-to-br from-indigo-500/10 to-transparent rounded-full blur-3xl group-hover:scale-150 transition-transform duration-1000"></div>
+
+        <div class="flex justify-between items-center relative z-10 mb-10">
+           <div :class="[
+             'w-16 h-16 rounded-[1.8rem] flex items-center justify-center text-3xl shadow-2xl transition-all duration-500 group-hover:rotate-[10deg]',
+             idx === 0 ? 'bg-indigo-600 text-white shadow-indigo-200' : 
+             idx === 1 ? 'bg-emerald-500 text-white shadow-emerald-200' : 'bg-pink-600 text-white shadow-pink-200'
+           ]">
+             <i :class="idx === 0 ? 'fa-solid fa-bolt-lightning' : idx === 1 ? 'fa-solid fa-users-viewfinder' : 'fa-solid fa-truck-fast'"></i>
+           </div>
+           <div :class="m.change >= 0 ? 'text-emerald-500 bg-emerald-500/10' : 'text-rose-500 bg-rose-500/10'" 
+                class="px-4 py-2 rounded-xl text-[11px] font-black tracking-tighter border border-transparent dark:border-white/5">
+             {{ m.change >= 0 ? '+' : '' }}{{ m.change }}%
+           </div>
+        </div>
+
+        <div class="relative z-10">
+          <p class="text-slate-400 dark:text-slate-500 text-[10px] font-black uppercase tracking-[0.3em] mb-2">{{ m.title }}</p>
+          <h3 class="text-4xl font-[1000] text-slate-900 dark:text-white mt-1 tabular-nums tracking-tighter">{{ formatPrice(m.value) }}</h3>
+          
+          <div class="mt-8 flex items-center gap-3">
+             <div class="flex-1 h-[3px] bg-slate-100 dark:bg-white/5 rounded-full overflow-hidden">
+                <div class="h-full bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 transition-all duration-1000 w-0 group-hover:w-full"></div>
+             </div>
+             <span class="text-[10px] text-slate-400 font-bold uppercase tracking-widest italic">{{ m.text }}</span>
+          </div>
         </div>
       </div>
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
-      <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700/50 transition-colors">
-        <v-chart class="h-80 w-full" :option="chartOptions" autoresize />
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 mb-12">
+      <div class="bg-white dark:bg-[#0c1120] p-10 rounded-[4rem] border border-slate-100 dark:border-white/5 shadow-2xl h-[540px] group transition-all animate-slide-up">
+        <div class="flex items-center justify-between mb-10">
+            <h3 class="text-xs font-black text-slate-400 uppercase tracking-[0.4em] flex items-center gap-3">
+               <span class="w-10 h-[2px] bg-indigo-500 rounded-full"></span> Kategoriya Tahlili
+            </h3>
+            <div class="w-10 h-10 rounded-2xl bg-slate-50 dark:bg-white/5 flex items-center justify-center text-xs text-indigo-500 group-hover:scale-110 transition-transform"><i class="fa-solid fa-chart-column"></i></div>
+        </div>
+        <v-chart :option="barOptions" autoresize />
       </div>
-      <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700/50 transition-colors">
-        <v-chart class="h-80 w-full" :option="lineChartOptions" autoresize />
+
+      <div class="bg-white dark:bg-[#0c1120] p-10 rounded-[4rem] border border-slate-100 dark:border-white/5 shadow-2xl h-[540px] group transition-all animate-slide-up" style="animation-delay: 200ms;">
+        <div class="flex items-center justify-between mb-10">
+            <h3 class="text-xs font-black text-slate-400 uppercase tracking-[0.4em] flex items-center gap-3">
+               <span class="w-10 h-[2px] bg-pink-500 rounded-full"></span> Brendlar Dinamikasi
+            </h3>
+            <div class="px-3 py-1 bg-emerald-500/10 text-emerald-500 text-[10px] font-black rounded-lg">FOCUS: ON</div>
+        </div>
+        <v-chart :option="lineOptions" autoresize />
       </div>
     </div>
 
-    <div class="grid grid-cols-1 xl:grid-cols-2 gap-4">
-        
-      <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700/50 flex flex-col transition-colors">
-        <div class="p-4 border-b border-slate-50 dark:border-slate-700 flex justify-between items-center">
-             <h3 class="font-bold text-slate-700 dark:text-slate-200 flex items-center gap-2">
-                <i class="fa-solid fa-trophy text-amber-400"></i> Top Haydovchilar
-             </h3>
-             <button class="text-xs text-indigo-600 dark:text-indigo-400 hover:underline">Barchasi</button>
+    <div class="grid grid-cols-1 xl:grid-cols-2 gap-10">
+      
+      <div class="bg-white dark:bg-white/[0.02] rounded-[4rem] shadow-2xl border border-slate-100 dark:border-white/5 overflow-hidden animate-slide-up" style="animation-delay: 400ms;">
+        <div class="px-12 py-10 border-b border-slate-50 dark:border-white/5 flex justify-between items-center bg-slate-50/50 dark:bg-white/[0.01]">
+          <h3 class="text-2xl font-[1000] text-slate-900 dark:text-white tracking-tighter">Elite Drivers</h3>
+          <i class="fa-solid fa-award text-3xl text-amber-500 animate-pulse"></i>
         </div>
-        <div class="flex-1 overflow-x-auto p-2">
-            <table class="w-full text-left text-xs">
-                <thead class="bg-slate-50 dark:bg-slate-700/50 text-slate-400 dark:text-slate-400 font-semibold uppercase">
-                    <tr>
-                        <th class="px-3 py-2 rounded-l-lg">№</th>
-                        <th class="px-3 py-2">Xodim</th>
-                        <th class="px-3 py-2">Bo'lim/Rol</th>
-                        <th class="px-3 py-2 text-right rounded-r-lg">Sotuv</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-slate-50 dark:divide-slate-700">
-                    <tr v-for="(row, i) in TopDrivers" :key="i" class="group hover:bg-slate-50/80 dark:hover:bg-slate-700/30 transition-colors relative">
-                        <td class="px-3 py-3 font-mono text-slate-400">{{ i + 1 }}</td>
-                        <td class="px-3 py-3 relative">
-                            <div class="flex items-center gap-3 cursor-pointer"
-                                 @mouseenter="setHover('d-'+i)" @mouseleave="clearHover()">
-                                <img :src="row.driver.avatar || 'https://ui-avatars.com/api/?name='+row.driver.fullname+'&background=random'" 
-                                     class="w-8 h-8 rounded-full object-cover border border-slate-200 dark:border-slate-600">
-                                <div>
-                                    <div class="font-semibold text-slate-700 dark:text-slate-200 group-hover:text-indigo-600 dark:group-hover:text-indigo-400">{{ row.driver.fullname }}</div>
-                                    <div class="text-[10px] text-slate-400 dark:text-slate-500">{{ row.driver.phoneNumber }}</div>
-                                </div>
-                            </div>
-                            
-                            <transition name="fade">
-                                <div v-if="hoveredRowId === 'd-'+i" 
-                                     class="absolute left-10 bottom-full mb-2 z-50 w-48 bg-white dark:bg-slate-800 p-1 rounded-xl shadow-xl border border-slate-100 dark:border-slate-600 pointer-events-none">
-                                    <img :src="row.driver.avatar || 'https://ui-avatars.com/api/?name='+row.driver.fullname+'&background=random'" 
-                                         class="w-full h-48 object-cover rounded-lg">
-                                    <div class="text-center p-1 font-bold text-xs text-slate-600 dark:text-slate-300">{{ row.driver.fullname }}</div>
-                                </div>
-                            </transition>
-                        </td>
-                        <td class="px-3 py-3">
-                            <div class="text-slate-600 dark:text-slate-300 font-medium">{{ row.driver.position }}</div>
-                            <div class="flex gap-1 mt-1">
-                                <span v-for="r in row.roles" :key="r.name" 
-                                      class="px-1.5 py-0.5 bg-indigo-50 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-300 rounded text-[9px] font-bold">
-                                    {{ r.name }}
-                                </span>
-                            </div>
-                        </td>
-                        <td class="px-3 py-3 text-right">
-                            <div class="font-bold text-emerald-600 dark:text-emerald-400">{{ formatPrice(row.driver.totalSales) }}</div>
-                            <div class="text-[9px] text-slate-400">so'm</div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+        <div class="p-10 space-y-6">
+          <div v-for="(row, i) in topDrivers" :key="i" class="group flex items-center justify-between p-6 bg-slate-50/30 dark:bg-white/[0.02] rounded-[2.8rem] border border-transparent hover:border-indigo-500/30 hover:bg-white dark:hover:bg-white/[0.05] transition-all duration-500 cursor-pointer">
+            <div class="flex items-center gap-6">
+              <div class="relative">
+                <img :src="`https://ui-avatars.com/api/?name=${row.info?.fullname || 'Driver'}&background=random&bold=true&size=128`" class="w-20 h-20 rounded-[2.2rem] object-cover shadow-2xl group-hover:scale-110 transition-transform duration-700">
+                <div class="absolute -top-3 -left-3 w-10 h-10 bg-slate-900 text-white text-[11px] flex items-center justify-center font-black rounded-2xl border-4 border-white dark:border-slate-800 shadow-xl group-hover:bg-indigo-600 transition-colors">#{{ i + 1 }}</div>
+              </div>
+              <div>
+                <h4 class="font-black text-slate-900 dark:text-white text-xl">{{ row.info?.fullname || 'Anonym' }}</h4>
+                <div class="flex items-center gap-3 mt-2">
+                    <span class="px-3 py-1 bg-indigo-500/10 text-indigo-500 text-[10px] font-black rounded-full uppercase">PRO</span>
+                    <span class="text-slate-400 text-xs font-bold">{{ row.info?.phoneNumber }}</span>
+                </div>
+              </div>
+            </div>
+            <div class="text-right">
+              <div class="text-2xl font-[1000] text-indigo-600 tabular-nums">{{ formatPrice(row.totalSales) }}</div>
+              <p class="text-[10px] font-black text-slate-400 uppercase mt-1 italic">{{ row.count }} orders</p>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700/50 flex flex-col transition-colors">
-        <div class="p-4 border-b border-slate-50 dark:border-slate-700 flex justify-between items-center">
-             <h3 class="font-bold text-slate-700 dark:text-slate-200 flex items-center gap-2">
-                <i class="fa-solid fa-users text-blue-400"></i> Top Mijozlar
-             </h3>
-             <button class="text-xs text-indigo-600 dark:text-indigo-400 hover:underline">Barchasi</button>
+      <div class="bg-white dark:bg-white/[0.02] rounded-[4rem] shadow-2xl border border-slate-100 dark:border-white/5 overflow-hidden animate-slide-up" style="animation-delay: 600ms;">
+        <div class="px-12 py-10 border-b border-slate-50 dark:border-white/5 flex justify-between items-center bg-slate-50/50 dark:bg-white/[0.01]">
+          <h3 class="text-2xl font-[1000] text-slate-900 dark:text-white tracking-tighter">Premium VIP</h3>
+          <i class="fa-solid fa-gem text-3xl text-indigo-500"></i>
         </div>
-        <div class="flex-1 overflow-x-auto p-2">
-            <table class="w-full text-left text-xs">
-                <thead class="bg-slate-50 dark:bg-slate-700/50 text-slate-400 dark:text-slate-400 font-semibold uppercase">
-                    <tr>
-                        <th class="px-3 py-2 rounded-l-lg">№</th>
-                        <th class="px-3 py-2">Mijoz</th>
-                        <th class="px-3 py-2">Manzil</th>
-                        <th class="px-3 py-2 text-right rounded-r-lg">Xarid</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-slate-50 dark:divide-slate-700">
-                    <tr v-for="(row, i) in TopCustomers" :key="i" class="group hover:bg-slate-50/80 dark:hover:bg-slate-700/30 transition-colors relative">
-                        <td class="px-3 py-3 font-mono text-slate-400">{{ i + 1 }}</td>
-                        <td class="px-3 py-3 relative">
-                             <div class="flex items-center gap-3 cursor-pointer"
-                                 @mouseenter="setHover('c-'+i)" @mouseleave="clearHover()">
-                                <img :src="row.customer.avatar || 'https://ui-avatars.com/api/?name='+row.customer.fullname+'&background=random'" 
-                                     class="w-8 h-8 rounded-full object-cover border border-slate-200 dark:border-slate-600">
-                                <div>
-                                    <div class="font-semibold text-slate-700 dark:text-slate-200 group-hover:text-blue-600 dark:group-hover:text-blue-400">{{ row.customer.fullname }}</div>
-                                    <div class="text-[10px] text-slate-400 dark:text-slate-500 flex items-center gap-1">
-                                        <span class="w-2 h-2 rounded-full" :class="row.customer.status === 'Active' ? 'bg-emerald-500' : 'bg-rose-500'"></span>
-                                        {{ row.customer.status }}
-                                    </div>
-                                </div>
-                            </div>
-
-                             <transition name="fade">
-                                <div v-if="hoveredRowId === 'c-'+i" 
-                                     class="absolute left-10 bottom-full mb-2 z-50 w-48 bg-white dark:bg-slate-800 p-1 rounded-xl shadow-xl border border-slate-100 dark:border-slate-600 pointer-events-none">
-                                    <img :src="row.customer.avatar || 'https://ui-avatars.com/api/?name='+row.customer.fullname+'&background=random'" 
-                                         class="w-full h-48 object-cover rounded-lg">
-                                    <div class="text-center p-1 font-bold text-xs text-slate-600 dark:text-slate-300">{{ row.customer.fullname }}</div>
-                                </div>
-                            </transition>
-                        </td>
-                        <td class="px-3 py-3">
-                            <div class="text-slate-600 dark:text-slate-300 font-medium">{{ row.customer.address?.region }}</div>
-                            <div class="text-[10px] text-slate-400 dark:text-slate-500">{{ row.customer.address?.district }}</div>
-                        </td>
-                        <td class="px-3 py-3 text-right">
-                            <div class="font-bold text-blue-600 dark:text-blue-400">{{ formatPrice(row.customer.totalSales) }}</div>
-                            <div class="text-[9px] text-slate-400">so'm</div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+        <div class="p-10 space-y-6">
+          <div v-for="(row, i) in topCustomers" :key="i" class="group flex items-center justify-between p-6 bg-slate-50/30 dark:bg-white/[0.02] rounded-[2.8rem] border border-transparent hover:border-emerald-500/30 transition-all duration-500 cursor-pointer">
+            <div class="flex items-center gap-6">
+              <div class="w-20 h-20 rounded-[2.2rem] bg-gradient-to-br from-indigo-500/10 to-emerald-500/10 flex items-center justify-center text-emerald-600 text-3xl font-black transition-all group-hover:rotate-12 group-hover:scale-110 shadow-inner">
+                {{ (row.info?.fullname || 'C').charAt(0) }}
+              </div>
+              <div>
+                <h4 class="font-black text-slate-900 dark:text-white text-xl">{{ row.info?.fullname || 'Client' }}</h4>
+                <p class="text-slate-400 text-[10px] font-black uppercase mt-1 tracking-widest italic text-emerald-500">Elite Loyalty</p>
+              </div>
+            </div>
+            <div class="text-right">
+              <div class="text-2xl font-[1000] text-emerald-600 tabular-nums">{{ formatPrice(row.totalSales) }}</div>
+              <div class="mt-4 w-32 h-[3px] bg-slate-100 dark:bg-white/5 rounded-full overflow-hidden">
+                <div class="h-full bg-emerald-500 w-0 group-hover:w-[95%] transition-all duration-1000 shadow-[0_0_10px_#10b981]"></div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
     </div>
-
   </div>
 </template>
 
 <style scoped>
-/* Tooltip animatsiyasi */
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.2s ease, transform 0.2s ease;
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
+
+/* --- PREMIUM KEYFRAME ANIMATIONS --- */
+@keyframes entrance {
+  0% { opacity: 0; transform: translateY(40px) scale(0.98); filter: blur(15px); }
+  100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
 }
 
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-  transform: translateY(10px) scale(0.95);
+@keyframes slideUp {
+  0% { opacity: 0; transform: translateY(80px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+.animate-entrance { animation: entrance 1s cubic-bezier(0.19, 1, 0.22, 1) forwards; opacity: 0; }
+.animate-slide-up { animation: slideUp 1.2s cubic-bezier(0.19, 1, 0.22, 1) forwards; opacity: 0; }
+
+/* Dashboard Design Elements */
+.tabular-nums { font-variant-numeric: tabular-nums; }
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-thumb { background: #6366f1; border-radius: 20px; }
+
+/* Ambient background effect */
+.p-6::before {
+  content: "";
+  position: fixed;
+  top: -10%; left: 50%; width: 60%; height: 60%;
+  background: radial-gradient(circle at center, rgba(99, 102, 241, 0.04) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
 }
 </style>

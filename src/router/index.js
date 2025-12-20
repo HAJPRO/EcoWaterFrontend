@@ -106,7 +106,7 @@ const routes = [
       },
       {
         path: "sale/orders",
-        name: "Orders",
+        name: "Sotuvlar",
         component: () => import("../pages/Explore/Sale/orders/index.vue"),
       },
         {

@@ -21,10 +21,12 @@ export const SaleposManagmentService = {
      * Method: GET
      * URL: /sale/salepos/:id
      */
-    GetSaleById(id) {
-        return api.get(`${RESOURCE}/${id}`);
+    GetByCustomerId(id) {
+        return api.post(`${RESOURCE}/customerId`,{id});
     },
-
+GetByEmployeeId(id) {
+        return api.post(`${RESOURCE}/employeeId`,{id});
+    },
     /**
      * Yangi Savdo Tranzaksiyasini yaratish (Chekni Yakunlash / To'lov)
      * Bu Pinia Store'dagi 'CreateSaleTransaction' actionidan chaqiriladi.
