@@ -1,170 +1,147 @@
 <script setup>
-import { ref, onMounted } from "vue";
-import { UserStore } from "../../../stores/Admin/user.store";
-const store_user = UserStore();
+import { ref, computed } from "vue";
 import { storeToRefs } from "pinia";
-const { is_modal, is_update, model, departments, permissions, roles } =
-  storeToRefs(store_user);
-const formRef = ref();
-const Save = async (formRef) => {
-  await formRef.validate((valid) => {
-    if (valid === true) {
-      store_user.CreateUser(model.value);
-    } else {
-      return false;
-    }
-  });
+import { UserStore } from "../../../stores/Admin/user.store";
+
+// --- CUSTOM UI COMPONENTS ---
+import Modal from "../../../UI/Modal.vue";
+import Button from "../../../UI/Button.vue";
+import Select from "../../../UI/Select.vue";
+import Input from "../../../UI/Input.vue"; // Agar Input komponenti bo'lsa
+
+const store_user = UserStore();
+const { is_modal, is_update, model, departments, permissions, roles } = storeToRefs(store_user);
+
+const actionsOptions = [
+  { label: "Create", value: 1 },
+  { label: "Read", value: 2 },
+  { label: "Update", value: 3 },
+  { label: "Delete", value: 4 },
+];
+
+const handleSave = async () => {
+  // Custom validatsiya mantiqi (oddiy tekshiruv)
+  if (!model.value.username || (!is_update.value && !model.value.password)) {
+    alert("Iltimos, barcha majburiy maydonlarni to'ldiring!");
+    return;
+  }
+
+  if (is_update.value) {
+    store_user.UpdateUser(model.value);
+  } else {
+    store_user.CreateUser(model.value);
+  }
 };
-const Update = async (formRef) => {
-  await formRef.validate((valid) => {
-    if (valid === true) {
-      store_user.UpdateUser(model.value);
-    } else {
-      return false;
-    }
-  });
-};
-const actions = ref([
-  { id: 1, name: "Create", value: 1 },
-  { id: 2, name: "Read", value: 2 },
-  { id: 3, name: "Update", value: 3 },
-  { id: 4, name: "Delete", value: 4 },
-]);
-const rules = ref({
-  required: true,
-  message: `Maydon to'ldirilishi zarur !`,
-  trigger: "blur",
-});
+
+const modalTitle = computed(() => 
+  is_update.value ? "Foydalanuvchini tahrirlash" : "Yangi foydalanuvchi qo'shish"
+);
 </script>
+
 <template>
-  <el-dialog v-model="is_modal" title="Add user modal" width="600">
-    <span>
-      <el-form
-        :model="model"
-        ref="formRef"
-        label-width="auto"
-        size="small"
-        label-position="top"
-        class="filter-box md:grid md:grid-cols-12 gap-2 sm:flex sm:flex-wrap rounded shadow-md bg-white p-2 mt-1 mb-1 text-[12px]"
-      >
-        <div class="mb-1 col-span-4">
-          <el-form-item label="Username" prop="username" :rules="rules">
-            <el-input
-              required
-              v-model="model.username"
-              clearable
-              class="w-[100%]"
-              size="smal"
-              type="String"
-              placeholder="..."
-            />
-          </el-form-item>
-        </div>
-        <div v-if="is_update === false" class="mb-1 col-span-4">
-          <el-form-item label="Password" prop="password" :rules="rules">
-            <el-input
-              required
-              v-model="model.password"
-              clearable
-              class="w-[100%]"
-              size="smal"
-              type="Password"
-              placeholder="..."
-            />
-          </el-form-item>
-        </div>
-        <div class="mb-1 col-span-4">
-          <el-form-item label="Department" prop="department" :rules="rules">
-            <el-select v-model="model.department" placeholder="..." size="smal">
-              <el-option
-                v-for="item in departments"
-                :key="item.id"
-                :label="item.name"
-                :value="item.name"
-              >
-              </el-option>
-            </el-select>
-          </el-form-item>
-        </div>
-        <div class="mb-1 col-span-4">
-          <el-form-item label="Role" prop="role" :rules="rules">
-            <el-select v-model="model.role" placeholder="..." size="smal">
-              <el-option
-                v-for="item in roles"
-                :key="item._id"
-                :label="item.role_name"
-                :value="item.value"
-              >
-              </el-option>
-            </el-select>
-          </el-form-item>
-        </div>
-        <div class="mb-1 col-span-4">
-          <el-form-item label="Permissions" prop="permissions" :rules="rules">
-            <el-select
-              v-model="model.permissions"
-              multiple
-              collapse-tags
-              placeholder="..."
-              size="smal"
-            >
-              <el-option
-                v-for="item in permissions"
-                :key="item._id"
-                :label="item.permission_name"
-                :value="item.permission_name"
-              >
-              </el-option>
-            </el-select>
-          </el-form-item>
-        </div>
-        <div class="mb-1 col-span-4">
-          <el-form-item label="Actions" prop="actions" :rules="rules">
-            <el-select
-              v-model="model.actions"
-              multiple
-              collapse-tags
-              placeholder="..."
-              size="smal"
-            >
-              <el-option
-                v-for="item in actions"
-                :key="item.id"
-                :label="item.name"
-                :value="item.value"
-              >
-              </el-option>
-            </el-select>
-          </el-form-item>
-        </div>
-      </el-form>
-    </span>
-    <el-dialog
-      v-model="innerVisible"
-      width="600"
-      title="Inner Dialog"
-      append-to-body
-    >
-    </el-dialog>
+  <Modal 
+    v-model="is_modal" 
+    :title="modalTitle" 
+     width="max-w-[85vw]"
+  >
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-5 p-2">
+      
+      <div class="col-span-12 md:col-span-6">
+        <label class="form-label">Username <span class="text-rose-500">*</span></label>
+        <Input 
+          v-model="model.username"
+          placeholder="Username kiriting..."
+          class="w-full"
+        />
+      </div>
+
+      <div v-if="!is_update" class="col-span-12 md:col-span-6">
+        <label class="form-label">Password <span class="text-rose-500">*</span></label>
+        <Input 
+          v-model="model.password"
+          type="password"
+          placeholder="Parol yarating..."
+          class="w-full"
+        />
+      </div>
+
+      <div class="col-span-12 md:col-span-6">
+        <label class="form-label">Department</label>
+        <Select 
+          v-model="model.department"
+          :options="departments"
+          option-label="name"
+          option-value="name"
+          placeholder="Bo'limni tanlang"
+          class="w-full"
+        />
+      </div>
+
+      <div class="col-span-12 md:col-span-6">
+        <label class="form-label">Role</label>
+        <Select 
+          v-model="model.role"
+          :options="roles"
+          option-label="role_name"
+          option-value="value"
+          placeholder="Rolni belgilang"
+          class="w-full"
+        />
+      </div>
+
+      <!-- <div class="col-span-12 md:col-span-6">
+        <label class="form-label">Permissions</label>
+        <Select 
+          v-model="model.permissions"
+          :options="permissions"
+          option-label="permission_name"
+          option-value="permission_name"
+          multiple
+          placeholder="Ruxsatlarni tanlang"
+          class="w-full"
+        />
+      </div>
+
+      <div class="col-span-12 md:col-span-6">
+        <label class="form-label">Actions</label>
+        <Select 
+          v-model="model.actions"
+          :options="actionsOptions"
+          multiple
+          placeholder="Amallarni tanlang"
+          class="w-full"
+        />
+      </div> -->
+
+    </div>
+
     <template #footer>
-      <div class="dialog-footer">
-        <router-link
-          v-if="is_update === false"
-          to=""
-          @click="Save(formRef)"
-          class="inline-flex text-[12px] items-center ml-2 px-3 py-1 mb-1 mt-2 text-sm font-medium text-center text-white bg-[#36d887] text-bold rounded"
+      <div class="flex justify-end gap-3 pt-4 border-t dark:border-slate-700">
+        <Button 
+          variant="secondary" 
+          @click="is_modal = false"
         >
-          <i class="mr-2 fa-solid fa-check fa-sm"></i>Yuborish</router-link
+          Bekor qilish
+        </Button>
+        <Button 
+          variant="primary" 
+          left-icon="fa-solid fa-cloud-arrow-up"
+          @click="handleSave"
         >
-        <router-link
-          v-if="is_update === true"
-          to=""
-          @click="Update(formRef)"
-          class="inline-flex text-[12px] items-center ml-2 px-3 py-1 mb-1 mt-2 text-sm font-medium text-center text-white bg-[#36d887] text-bold rounded"
-        >
-          <i class="mr-2 fa-solid fa-check fa-sm"></i>Yangilash</router-link
-        >
+          {{ is_update ? 'O\'zgarishlarni saqlash' : 'Foydalanuvchini yaratish' }}
+        </Button>
       </div>
     </template>
-  </el-dialog>
+  </Modal>
 </template>
+
+<style scoped>
+.form-label {
+  @apply block text-[12px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5 ml-1;
+}
+
+/* Modal ichidagi grid masofalari uchun */
+:deep(.custom-modal-content) {
+  @apply overflow-visible;
+}
+</style>

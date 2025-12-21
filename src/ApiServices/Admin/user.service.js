@@ -15,7 +15,7 @@ export const UserService = {
     return api.post(url, id);
   },
   GetUsers(status) {
-    let url = "admin/users";
+    let url = "admin/user/all";
     return api.post(url, status);
   },
   GetPermissions() {
