@@ -377,7 +377,7 @@ onMounted(() => store_salepos.GetAll());
           <div class="flex justify-center">
             <div :class="['flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-tighter border', row.paymentType === 'cash' ? 'bg-emerald-50 text-emerald-700 border-emerald-100 dark:bg-emerald-500/10 dark:text-emerald-400' : 'bg-blue-50 text-blue-700 border-blue-100 dark:bg-blue-500/10 dark:text-blue-400']">
               <i :class="row.paymentType === 'cash' ? 'fa-solid fa-money-bill-wave' : 'fa-solid fa-credit-card'"></i>
-              {{ row.paymentType === 'cash' ? 'Naqd' : 'Karta' }}
+              {{ row.paymentType }}
             </div>
           </div>
         </template>
