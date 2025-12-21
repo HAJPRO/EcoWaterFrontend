@@ -7,6 +7,7 @@ import { ReadyWarehouseStore } from "../../Warehouses/r-warehouse/warehouse.stor
 import { useToast } from "../../../UI/utils/useToast";
 const {toast} = useToast();
 import { Loading } from "../../../utils/Loading";
+import { downloadExcelFile } from "../../../utils/ExcelExport";
 const loading = Loading();
 
 
@@ -182,6 +183,23 @@ export const SaleposManagmentStore = defineStore("SaleposManagmentStore", {
         this.sales  = sales.data.data
         
     },
+async handleExcelExport({ serviceMethod, payload, fileName = 'Sotuvlar' }) {
+  console.log(payload);
+  const loader = loading.show(); // Agar loading instansi mavjud bo'lsa
+  try {
+    // 1. serviceMethod - bu siz uzatgan funksiya (masalan: CustomerManagmentService.ExcelExportOrdersByCustomer)
+    const res = await SaleposManagmentService.handleExcelExport(payload);
+    // 2. Universal yordamchi funksiyani chaqirish
+    downloadExcelFile(res, fileName);
+
+    toast.success("Fayl muvaffaqiyatli yuklab olindi");
+  } catch (error) {
+    console.error("Export Error:", error);
+    toast.error(error.message || "Eksportda xatolik yuz berdi");
+  } finally {
+    loader.hide();
+  }
+},
     // --- Legacy Actions for Modals/Details (o'zgarishsiz qoldi) ---
     async OrderGetById(id) {
         // ... Logika

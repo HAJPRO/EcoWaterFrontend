@@ -37,58 +37,119 @@ const getFullPeriodTemplate = (filterType) => {
 };
 
 const getOptions = computed(() => {
-  // Backenddan kelgan tayyor ma'lumotlar
-  // Agar ma'lumot kelmagan bo'lsa, xatolik bermasligi uchun bo'sh massivlar
-  const finalLabels = charLineOptions.value?.labels || [];
-  const finalSeries = charLineOptions.value?.series || [];
+  const labels = charLineOptions.value?.labels || [];
+  const series = charLineOptions.value?.series || [];
 
   return {
     backgroundColor: 'transparent',
-    tooltip: { 
-      trigger: 'axis', 
-      axisPointer: { type: 'cross' }, 
-      backgroundColor: isDark.value ? '#0f172a' : '#ffffff', 
-      borderRadius: 12, 
-      textStyle: { color: isDark.value ? '#f1f5f9' : '#1e293b' } 
-    },
-    legend: { show: true, top: '0%', textStyle: { color: '#94a3b8', fontWeight: '800' } },
-    grid: { top: '15%', left: '2%', right: '2%', bottom: '5%', containLabel: true },
-    xAxis: { 
-      type: 'category', 
-      data: finalLabels, 
-      axisLine: { show: false }, 
-      axisLabel: { 
-        color: '#94a3b8', 
-        fontSize: 10, 
-        // Kunlik filtrda soatlarni chiroyli ko'rsatish (har 2 tadan birini)
-        interval: activeFilter.value === 'day' ? 2 : 0 
-      } 
-    },
-    yAxis: { 
-      type: 'value', 
-      splitLine: { 
-        lineStyle: { color: isDark.value ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.05)', type: 'dashed' } 
-      }, 
-      axisLabel: { 
-        color: '#94a3b8', 
-        formatter: (v) => v >= 1000 ? (v/1000) + 'k' : v 
-      } 
-    },
-    series: finalSeries.map((s, idx) => ({
-      name: s.name, 
-      type: chartType.value, 
-      data: s.data, 
-      smooth: 0.45, 
-      symbolSize: 6,
-      itemStyle: { 
-        color: idx === 0 ? '#6366f1' : '#10b981', 
-        borderRadius: [4, 4, 0, 0] 
+    textStyle: { fontFamily: 'Inter, sans-serif' },
+
+    // Professional Tooltip: xiralashgan fon (blur) va soya bilan
+    tooltip: {
+      trigger: 'axis',
+      axisPointer: {
+        type: 'cross',
+        lineStyle: { color: '#6366f1', width: 2, type: 'dashed' },
+        label: { backgroundColor: '#6366f1', borderRadius: 8, fontWeight: '800' }
       },
-      areaStyle: chartType.value === 'line' ? { 
+      backgroundColor: isDark.value ? 'rgba(15, 23, 42, 0.9)' : 'rgba(255, 255, 255, 0.9)',
+      backdropFilter: 'blur(12px)',
+      borderRadius: 16,
+      padding: [12, 16],
+      borderWidth: 0,
+      shadowBlur: 20,
+      shadowColor: 'rgba(0, 0, 0, 0.1)',
+      textStyle: { color: isDark.value ? '#f1f5f9' : '#1e293b', fontSize: 13 }
+    },
+
+    legend: {
+      show: true,
+      top: '0%',
+      right: '5%',
+      icon: 'circle',
+      textStyle: { color: '#94a3b8', fontWeight: '700' }
+    },
+
+    grid: {
+      top: '12%',
+      left: '3%',
+      right: '3%',
+      bottom: labels.length > 10 ? '15%' : '8%',
+      containLabel: true
+    },
+
+    // --- 🟢 PROFESSIONAL SCROLLBAR (DataZoom) ---
+    dataZoom: labels.length > 12 ? [
+      {
+        type: 'inside',
+        start: 0,
+        end: (12 / labels.length) * 100
+      },
+      {
+        type: 'slider',
+        bottom: 12,
+        height: 8,
+        borderColor: 'transparent',
+        backgroundColor: isDark.value ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.03)',
+        fillerColor: 'rgba(99, 102, 241, 0.15)',
+        handleIcon: 'roundRect',
+        handleSize: '120%',
+        handleStyle: { color: '#6366f1', shadowBlur: 5, shadowColor: 'rgba(99, 102, 241, 0.3)' },
+        showDetail: false
+      }
+    ] : [],
+
+    xAxis: {
+      type: 'category',
+      data: labels,
+      boundaryGap: false,
+      axisLine: { show: false },
+      axisTick: { show: false },
+      axisLabel: {
+        color: '#94a3b8',
+        fontSize: 11,
+        fontWeight: '600',
+        margin: 15,
+        rotate: labels.length > 15 ? 35 : 0,
+        interval: labels.length > 20 ? 'auto' : 0
+      }
+    },
+
+    yAxis: {
+      type: 'value',
+      splitLine: { lineStyle: { color: isDark.value ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.05)', type: 'dashed' } },
+      axisLabel: {
+        color: '#94a3b8',
+        fontSize: 11,
+        fontWeight: '600',
+        formatter: (v) => v >= 1000 ? (v / 1000).toFixed(1) + 'k' : v
+      }
+    },
+
+    series: series.map((s, idx) => ({
+      name: s.name,
+      type: chartType.value,
+      data: s.data,
+      smooth: 0.4,
+      showSymbol: labels.length < 50,
+      symbol: 'circle',
+      symbolSize: 8,
+      itemStyle: {
+        color: idx === 0 ? '#6366f1' : '#10b981',
+        borderWidth: 2,
+        borderColor: isDark.value ? '#020617' : '#fff'
+      },
+      lineStyle: {
+        width: 4,
+        shadowBlur: 10,
+        shadowColor: idx === 0 ? 'rgba(99, 102, 241, 0.3)' : 'rgba(16, 185, 129, 0.3)',
+        shadowOffsetY: 5
+      },
+      areaStyle: chartType.value === 'line' ? {
         color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-          { offset: 0, color: idx === 0 ? 'rgba(99, 102, 241, 0.2)' : 'rgba(16, 185, 129, 0.1)' }, 
+          { offset: 0, color: idx === 0 ? 'rgba(99, 102, 241, 0.25)' : 'rgba(16, 185, 129, 0.2)' },
           { offset: 1, color: 'transparent' }
-        ]) 
+        ])
       } : null
     }))
   };

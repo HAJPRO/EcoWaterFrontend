@@ -15,6 +15,12 @@ export const SaleposManagmentService = {
         // Axios-da GET so'rovida body bo'lmaydi, parametrlar 'params' ichida beriladi
         return api.post(`${RESOURCE}/all`,payload);
     },
+  handleExcelExport(data) {
+    let url = `${RESOURCE}/excel` 
+        return api.post(url, data, {
+            responseType: "blob", // 👉 bu muhim
+        });
+    },
 
     /**
      * Bitta Sotuv Chekini/Tranzaksiyasini olish
