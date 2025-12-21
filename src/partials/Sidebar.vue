@@ -347,7 +347,7 @@
                 <ul class="pl-5 mt-2 space-y-1 border-l border-indigo-200 dark:border-indigo-400 transition-all duration-500 ease-in-out" :class="!parentLink.expanded && 'hidden'">
                   <li>
                     <router-link :to="{ name: 'Employees' }" class="flex items-center gap-2 px-2 py-2 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-indigo-500/10 transition-all duration-200">
-                      <span class="text-[13px] font-medium">Xodimlar boshqaruvi</span>
+                      <span class="text-[13px] font-medium">Xodimlar ro'yxati</span>
                     </router-link>
                   </li>
                   <li>
@@ -412,14 +412,20 @@
                       <span class="text-[13px] font-medium">Kirim qilish</span>
                     </router-link>
                   </li>
-                   <li>
-                    <router-link :to="{ name: 'Rivizya' }" class="flex items-center gap-2 px-2 py-2 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-indigo-500/10 transition-all duration-200">
-                      <span class="text-[13px] font-medium">Riviziya</span>
+                  
+                  <li>
+                    <router-link :to="{ name: 'ReadyWarehouse' }" class="flex items-center gap-2 px-2 py-2 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-indigo-500/10 transition-all duration-200">
+                      <span class="text-[13px] font-medium">Kirm ro'yxati</span>
                     </router-link>
                   </li>
                   <li>
-                    <router-link :to="{ name: 'ReadyWarehouse' }" class="flex items-center gap-2 px-2 py-2 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-indigo-500/10 transition-all duration-200">
-                      <span class="text-[13px] font-medium">Tayyor mahsulot (ombori)</span>
+                    <router-link :to="{ name: 'Products' }" class="flex items-center gap-2 px-2 py-2 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-indigo-500/10 transition-all duration-200">
+                      <span class="text-[13px] font-medium">Qoldiq</span>
+                    </router-link>
+                  </li>
+                   <li>
+                    <router-link :to="{ name: 'Rivizya' }" class="flex items-center gap-2 px-2 py-2 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-indigo-500/10 transition-all duration-200">
+                      <span class="text-[13px] font-medium">Riviziya</span>
                     </router-link>
                   </li>
                   <li>

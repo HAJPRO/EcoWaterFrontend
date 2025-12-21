@@ -30,7 +30,8 @@ export const InputWarehouseService = {
      * Parametrlar query orqali ketadi: ?page=1&limit=10&search=...
      */
     GetAll(params) {
-        return api.get(RESOURCE, { params });
+        let url = `${RESOURCE}/all`
+        return api.post(url,  params );
     },
 
     /**

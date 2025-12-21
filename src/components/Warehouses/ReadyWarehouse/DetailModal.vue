@@ -1,869 +1,261 @@
 <script setup>
-import { ElMessage } from "element-plus";
-import { Check } from "@element-plus/icons-vue";
-import { onMounted, ref, computed, watch } from "vue";
-import { v4 as uuidv4 } from "uuid";
-import moment from "moment-timezone";
-import TransferModal from "./TransferModal.vue";
+import { computed } from 'vue';
+import { storeToRefs } from 'pinia';
+import moment from 'moment-timezone';
 
+// --- UI COMPONENTS ---
+import Modal from "../../../UI/Modal.vue"; 
+import DataTable from "../../../UI/DataTable.vue"; 
+
+// --- STORE ---
 import { ReadyWarehouseStore } from "../../../stores/Warehouses/r-warehouse/warehouse.store";
 const store_rw = ReadyWarehouseStore();
-import { storeToRefs } from "pinia";
 const { detail_modal, product } = storeToRefs(store_rw);
 
-const dialogWidth = ref("");
-const updateDialogWidth = () => {
-  const w = window.innerWidth;
-  dialogWidth.value =
-    w > 1600
-      ? 1400
-      : w > 1200
-      ? 1100
-      : w > 992
-      ? 980
-      : w > 768
-      ? 750
-      : w > 480
-      ? 470
-      : 350;
-};
-
-const total_amount = ref(0); // dona soni
-const total_price_amount = ref(0); // umumiy summa (totalPrice)
-
-const getSummaries = ({ columns, data }) => {
-  const sums = [];
-
-  columns.forEach((column, index) => {
-    if (index === 0) {
-      sums[index] = "Jami:";
-      return;
-    }
-
-    const prop = column.property;
-
-    if (prop === "quantity") {
-      const totalQty = data.reduce((acc, row) => {
-        const qty = Number(row.quantity);
-        return isNaN(qty) ? acc : acc + qty;
-      }, 0);
-
-      sums[index] = `${totalQty.toLocaleString()} dona`;
-      total_amount.value = totalQty;
-    } else if (prop === "totalPrice") {
-      const totalPrice = data.reduce((acc, row) => {
-        const price = Number(row.totalPrice);
-        return isNaN(price) ? acc : acc + price;
-      }, 0);
-
-      sums[index] = `${totalPrice.toLocaleString()} so'm`;
-      total_price_amount.value = totalPrice;
-    } else {
-      sums[index] = "";
-    }
-  });
-
-  return sums;
-};
-
-const formatPrice = (price) => {
-  return new Intl.NumberFormat("uz-UZ").format(price);
-};
-const deleteById = (payload) => {
-  store_rw.DeleteById(payload);
-};
-const isActive = ref(1);
-const Title = ref("Kiritilgan");
-const ActiveTabLink = (num) => {
-  if (num === 1) {
-    Title.value = "Kiritilgan";
-    isActive.value = 1;
-  }
-  if (num === 3) {
-    Title.value = "Chiqarilgan";
-    isActive.value = 3;
-  }
-  if (num === 2) {
-    Title.value = "Qolgan";
-    isActive.value = 2;
-  }
-};
-
-const currentData = computed(() => {
-  if (!product.value) return [];
-  if (isActive.value === 1) return product.value.input || [];
-  if (isActive.value === 2) return product.value.products || [];
-  if (isActive.value === 3) return product.value.output || [];
-
-  return [];
-});
-const transfer = ref(false);
-const outputQuantity = ref();
-const ProductOutputModal = (id) => {
-  transfer.value = !transfer.value;
-
-  // store_rw.TransferModal({ id, action: "output" });
-};
-const onDialogClose = () => {
-  transfer.value = false;
-};
-const OutputSave = (data) => {
-  // 1. Chiqarilayotgan qiymat mavjudligini tekshirish
-  if (
-    data.outputQuantity === undefined ||
-    data.outputQuantity === null ||
-    data.outputQuantity === "" ||
-    isNaN(data.outputQuantity)
-  ) {
-    ElMessage.error("Iltimos, chiqarilayotgan miqdorni kiriting");
-    return false;
-  }
-
-  // 2. Qiymat manfiy bo'lmasligi kerak
-  if (Number(data.outputQuantity) < 0 || Number(data.outputQuantity) === 0) {
-    ElMessage.error("Qiymat manfiy yoki nol bo'lishi mumkin emas");
-    return false;
-  }
-
-  // 3. Chiqarilayotgan miqdor mavjud miqdordan oshmasligi kerak
-  if (Number(data.outputQuantity) > Number(data.quantity)) {
-    ElMessage.error("Chiqarilayotgan miqdor mavjud miqdordan oshib ketdi");
-    return false;
-  }
-
-  // ✅ Hammasi yaxshi bo‘lsa
-  store_rw.OutputProduct(data);
-};
-const OutputSaveAll = () => {
-  const validRows = [];
-
-  for (const row of product.value.products) {
-    if (
-      row.outputQuantity === undefined ||
-      row.outputQuantity === null ||
-      row.outputQuantity === "" ||
-      isNaN(row.outputQuantity)
-    ) {
-      continue; // qiymat yo'q — tashlab ketamiz
-    }
-
-    if (Number(row.outputQuantity) <= 0) {
-      ElMessage.error(
-        `Qiymat 0 yoki manfiy bo'lishi mumkin emas (Mahsulot: ${row.product})`
-      );
-      return;
-    }
-
-    if (Number(row.outputQuantity) > Number(row.quantity)) {
-      ElMessage.error(
-        `Mahsulot: ${row.product} — chiqarilayotgan miqdor mavjudidan oshib ketdi`
-      );
-      return;
-    }
-
-    validRows.push(row);
-  }
-
-  if (validRows.length === 0) {
-    ElMessage.warning("Hech qanday to'g'ri kiritilgan qator yo‘q");
-    return;
-  }
-
-  // Barchasini backendga yuborish (yoki store orqali)
-  store_rw.OutputProduct(validRows); // bu siz yaratadigan massiv saqlovchi funksiya
-
-  ElMessage.success("Barcha to‘g‘ri kiritilgan miqdorlar saqlandi");
-};
-
-const ProductInputModal = (id) => {
-  store_rw.TransferModal({ id, action: "input" });
-};
-const ReturnProduct = (id) => {};
-const AddProductModal = (id) => {
-  store_rw.AddProductModal({
-    id: product.value._id,
-    title: "Mahsulotni kirim qilish",
-    action: "update",
-  });
-};
-const recipientes = ref([
-  { id: 2, name: "Sotuv" },
-  { id: 1, name: "Sklad 2" },
+// --- TABLE COLUMNS ---
+const columns = computed(() => [
+  { key: 'productInfo', label: 'Mahsulot Tafsiloti', width: '300px' },
+  { key: 'dates', label: 'Sana va Muddatlar', width: '250px' },
+  { key: 'stockInfo', label: 'Ombordagi qoldiq', width: '150px', align: 'center' },
+  { key: 'financials', label: 'Narxlar (UZS)', width: '200px', align: 'right' },
+  { key: 'amount', label: 'Jami Qiymat', width: '200px', align: 'right' },
+  { key: 'actions', label: 'Amallar', width: '80px', fixed: 'right', align: 'center' },
 ]);
-onMounted(() => {
-  updateDialogWidth();
-  window.addEventListener("resize", updateDialogWidth);
-});
-</script>
-<template>
-  <TransferModal />
-  <div>
-    <el-dialog
-      v-model="detail_modal"
-      :width="dialogWidth"
-      :before-close="handleClose"
-      class="rounded-md p-4 shadow-lg custom-modal mt-4"
-      @close="onDialogClose"
-    >
-      <template #header>
-        <div class="flex items-center justify-between border-b pb-1">
-          <div class="flex items-center gap-2">
-            <i class="fa-solid fa-box text-lg text-blue-500"></i>
-            <h3 class="text-xl font-semibold text-gray-500">
-              {{ product?.partyNumber }}
-            </h3>
-          </div>
-          <div class="flex flex-wrap bg-white rounded-md">
-            <!-- Kiritilgan mahsulotlar -->
-            <router-link
-              @click="ActiveTabLink(1)"
-              to=""
-              :class="[
-                'inline-flex text-[12px] items-center mr-2 px-4 py-1 mb-1 font-medium rounded transition-colors duration-200',
-                isActive === 1
-                  ? 'bg-green-200 text-green-900'
-                  : 'bg-gray-200 text-gray-700',
-              ]"
-            >
-              <i
-                class="fa-solid fa-circle-arrow-down mr-2 fa-lg"
-                :class="isActive === 1 ? 'text-green-700' : 'text-gray-500'"
-              ></i>
-              Kiritilgan mahsulotlar
-              <div class="flex flex-shrink-0 ml-2">
-                <span
-                  class="inline-flex items-center justify-center h-5 text-[11px] font-medium text-white px-3 py-2 rounded"
-                  :class="isActive === 1 ? 'bg-green-600' : 'bg-red-600'"
-                >
-                  {{ product.input ? product.input.length : 0 }}
-                </span>
-              </div>
-            </router-link>
-            <!-- Qolgan mahsulotlar -->
-            <router-link
-              @click="ActiveTabLink(2)"
-              to=""
-              :class="[
-                'inline-flex text-[12px] items-center mr-2 px-4 py-1 mb-1 font-medium rounded transition-colors duration-200',
-                isActive === 2
-                  ? 'bg-blue-200 text-blue-900'
-                  : 'bg-gray-200 text-gray-700',
-              ]"
-            >
-              <i
-                class="fa-solid fa-boxes-stacked mr-2"
-                :class="isActive === 2 ? 'text-blue-700' : 'text-gray-500'"
-              ></i>
-              Qolgan mahsulotlar
-              <div class="flex flex-shrink-0 ml-2">
-                <span
-                  class="inline-flex items-center justify-center h-5 text-[11px] font-medium text-white px-3 py-2 rounded"
-                  :class="isActive === 2 ? 'bg-blue-600' : 'bg-red-600'"
-                >
-                  {{ product.products ? product.products.length : 0 }}
-                </span>
-              </div>
-            </router-link>
 
-            <!-- Chiqarilgan mahsulotlar -->
-            <router-link
-              @click="ActiveTabLink(3)"
-              to=""
-              :class="[
-                'inline-flex text-[12px] items-center mr-2 px-4 py-1 mb-1 font-medium rounded transition-colors duration-200',
-                isActive === 3
-                  ? 'bg-purple-200 text-purple-900'
-                  : 'bg-gray-200 text-gray-700',
-              ]"
-            >
-              <i
-                class="fa-solid fa-circle-arrow-up mr-2 fa-lg"
-                :class="isActive === 3 ? 'text-purple-700' : 'text-gray-500'"
-              ></i>
-              Chiqarilgan mahsulotlar
-              <div class="flex flex-shrink-0 ml-2">
-                <span
-                  class="inline-flex items-center justify-center h-5 text-[11px] font-medium text-white px-3 py-2 rounded"
-                  :class="isActive === 3 ? 'bg-purple-600' : 'bg-red-600'"
-                >
-                  {{ product.output ? product.output.length : 0 }}
-                </span>
-              </div>
-            </router-link>
+// --- FORMATTING METHODS ---
+const formatPrice = (p) => new Intl.NumberFormat("uz-UZ").format(p || 0);
+
+// Kirim qilingan sana va vaqt uchun professional format
+const formatEntryDate = (d) => d ? moment(d).tz("Asia/Tashkent").format("DD.MM.YYYY") : "---";
+const formatEntryTime = (d) => d ? moment(d).tz("Asia/Tashkent").format("HH:mm") : "--:--";
+
+const formatDateOnly = (d) => d ? moment(d).tz("Asia/Tashkent").format("DD.MM.YYYY") : "-";
+
+const closeDetail = () => {
+  store_rw.$patch({ detail_modal: false });
+};
+
+const isExpired = (date) => moment().isAfter(date);
+const isNearExpiry = (date) => moment().add(2, 'months').isAfter(date) && !isExpired(date);
+</script>
+
+<template>
+  <Modal 
+    v-model="detail_modal" 
+    :title="`Partiya Tafsiloti: ${product?.partyNumber}`"
+    width="95vw"
+    custom-class="modern-modal"
+    @close="closeDetail"
+  >
+    <div class="space-y-6">
+      
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="stat-card group hover:border-blue-500/50">
+          <div class="icon-box bg-blue-500/10 text-blue-600 group-hover:scale-110 transition-transform">
+            <i class="fa-solid fa-hashtag text-xl"></i>
+          </div>
+          <div class="flex flex-col">
+            <span class="stat-label">Partiya raqami</span>
+            <span class="stat-value font-mono">{{ product?.partyNumber || '---' }}</span>
           </div>
         </div>
-      </template>
 
-      <div class="grid 2xl:grid-cols-12 xs:grid-cols-6 gap-2 mt-1 text-sm">
-        <!--  mahsulotlar jadvali-->
-        <div
-          class="col-span-12 bg-white border rounded-lg shadow-sm overflow-hidden"
-        >
-          <div
-            class="bg-gradient-to-r from-green-500 to-indigo-500 text-white px-4 py-1 text-center"
-          >
-            <i class="fa-solid fa-boxes-stacked mr-3 fa-md"></i> {{ Title }}
-            mahsulotlar jadvali
+        <div class="stat-card group hover:border-emerald-500/50">
+          <div class="icon-box bg-emerald-500/10 text-emerald-600 group-hover:scale-110 transition-transform">
+            <i class="fa-solid fa-wallet text-xl"></i>
           </div>
-          <el-table
-            :data="currentData"
-            show-summary
-            :summary-method="getSummaries"
-            :header-cell-style="{
-              background: '#E3F4FB', // Soft, light cyan-blue
-              border: '1px solid #D1E3ED', // Very light border for separation
-              color: '#1E3A8A', // Deep indigo for strong text contrast
-              fontWeight: '600', // Semi-bold for emphasis
-              textAlign: 'center',
-              fontSize: '10px', // Optional: for tidiness
-            }"
-            stripe
-            highlight-current-row
-            load
-            style="font-size: 11px"
-            size="small"
-            class="el-table-custom w-full text-gray-700 bg-white rounded-md shadow-sm"
-            header-align="center"
-            empty-text="Mahsulot qo'shilmagan... "
-            border="true"
-            max-height="500"
-          >
-            <el-table-column
-              header-align="center"
-              align="center"
-              type="index"
-              prop="index"
-              fixed="left"
-              label="🔢 №"
-              width="60"
-            />
-            <el-table-column
-              label=" Nomi"
-              prop="product"
-              :min-width="100"
-              :max-width="400"
-              header-align="center"
-              align="center"
-            />
-            <el-table-column
-              label="Kodi"
-              prop="code"
-              :min-width="100"
-              :max-width="400"
-              header-align="center"
-              align="center"
-            />
-            <el-table-column
-              label="Qadoq turi"
-              prop="packagingType"
-              :min-width="100"
-              :max-width="400"
-              header-align="center"
-              align="center"
-            />
-            <el-table-column
-              label="Sotuv narxi dona (sum)"
-              prop="costPrice"
-              :min-width="200"
-              :max-width="400"
-              header-align="center"
-              align="center"
-            />
+          <div class="flex flex-col">
+            <span class="stat-label">Jami kirim qiymati</span>
+            <span class="stat-value text-emerald-600">
+              {{ formatPrice(product?.totalAmount) }} <small class="text-[10px] font-bold">UZS</small>
+            </span>
+          </div>
+        </div>
 
-            <el-table-column
-              label="🕒 Vaqt maydoni"
-              :min-width="150"
-              :max-width="400"
-              header-align="center"
-              align="center"
-            >
-              <el-table-column
-                label="Ishlab chiqarilgan"
-                :min-width="150"
-                :max-width="400"
-                header-align="center"
-                align="center"
-                ><template #default="scope">
-                  <div class="text-gray-900 font-semibold">
-                    {{
-                      scope.row.manufactureDate
-                        ? moment
-                            .utc(scope.row.manufactureDate) // 🟢 UTC formatda olish
-                            .tz("Asia/Tashkent") // 🟢 UTC+5 ga aylantirish
-                            .format("DD.MM.YYYY HH:mm:ss") // 🟢 To‘g‘ri formatda chiqarish
-                        : "-"
-                    }}
-                  </div>
-                </template></el-table-column
-              >
-              <el-table-column
-                label="Yaroqli muddati"
-                :min-width="150"
-                :max-width="400"
-                header-align="center"
-                align="center"
-                ><template #default="scope">
-                  <div class="text-gray-900 font-semibold">
-                    {{
-                      scope.row.expireDate
-                        ? moment
-                            .utc(scope.row.expireDate) // 🟢 UTC formatda olish
-                            .tz("Asia/Tashkent") // 🟢 UTC+5 ga aylantirish
-                            .format("DD.MM.YYYY HH:mm:ss") // 🟢 To‘g‘ri formatda chiqarish
-                        : "-"
-                    }}
-                  </div>
-                </template></el-table-column
-              >
-              <el-table-column
-                label="Registratsiya"
-                :min-width="150"
-                :max-width="400"
-                header-align="center"
-                align="center"
-                ><template #default="scope">
-                  <div class="text-gray-900 font-semibold">
-                    {{
-                      scope.row.registeredAt
-                        ? moment
-                            .utc(scope.row.registeredAt) // 🟢 UTC formatda olish
-                            .tz("Asia/Tashkent") // 🟢 UTC+5 ga aylantirish
-                            .format("DD.MM.YYYY HH:mm:ss") // 🟢 To‘g‘ri formatda chiqarish
-                        : "-"
-                    }}
-                  </div>
-                </template></el-table-column
-              >
-            </el-table-column>
-            <el-table-column
-              label="Holati"
-              :min-width="170"
-              :max-width="400"
-              header-align="center"
-              align="center"
-            >
-              <template #default="{ row }">
-                <router-link
-                  to=""
-                  :class="[
-                    'cursor-pointer inline-flex items-center gap-1 hover:bg-opacity-90 font-medium rounded-md text-[12px] w-full p-[5px] sm:w-auto text-center',
-                    row.status
-                      ? 'bg-green-200 text-green-900'
-                      : 'bg-red-200 text-red-900',
-                  ]"
-                >
-                  <i
-                    :class="
-                      row.status
-                        ? 'fa-solid fa-circle-check text-green-700'
-                        : 'fa-solid fa-hourglass-start text-red-700'
-                    "
-                  ></i>
-                  {{ row.status ? row.status : "Dastlab kiritilgan" }}
-                </router-link>
-              </template>
-            </el-table-column>
-            <el-table-column
-              fixed="right"
-              label="Miqdori"
-              prop="quantity"
-              :min-width="100"
-              :max-width="400"
-              header-align="center"
-              align="center"
-              ><template #default="{ row }"
-                ><div class="text-blue-600">
-                  {{ row.quantity }} {{ row.unit ? row.unit : "" }}
-                </div></template
-              ></el-table-column
-            >
-            <el-table-column
-              label="Jami (sum)"
-              prop="totalPrice"
-              :min-width="200"
-              :max-width="400"
-              header-align="center"
-              align="center"
-              ><template #default="{ row }"
-                ><div class="text-center text-red-500 font-semibold">
-                  {{ row.totalPrice ? formatPrice(row.totalPrice) : 0 }} sum
-                </div></template
-              ></el-table-column
-            >
-
-            <el-table-column
-              fixed="right"
-              v-if="transfer && isActive === 2"
-              :min-width="600"
-              :max-width="800"
-              header-align="center"
-              prop="outputInfo"
-              align="center"
-              label="Mahsulot chiqarish malumotlarini kiritish !"
-            >
-              <template #default="{ row }">
-                <div class="flex gap-2 items-center text-center">
-                  <el-input
-                    v-model="row.outputQuantity"
-                    type="number"
-                    placeholder="Miqdor kiriting"
-                    :rules="[
-                      {
-                        required: true,
-                        message: 'Miqdorni kiriting',
-                        trigger: 'blur',
-                      },
-                      {
-                        validator: (rule, value, callback) => {
-                          const quantity = Number(value);
-                          const max = Number(row.quantity); // mavjud miqdor
-                          if (quantity > max) {
-                            callback(
-                              new Error(`Miqdor ${max} dan oshmasligi kerak`)
-                            );
-                          } else {
-                            callback();
-                          }
-                        },
-                        trigger: 'blur',
-                      },
-                    ]"
-                  />
-
-                  <el-select
-                    v-model="row.outputRecipient"
-                    placeholder="Qayerga chiqarilyapti"
-                    size="smal"
-                    style="width: 100%"
-                    @change="ChangeProductName($event)"
-                  >
-                    <template #prefix>
-                      <i
-                        @click.stop="AddProductNameModal()"
-                        class="fa-solid fa-plus cursor-pointer"
-                      ></i>
-                    </template>
-                    <el-option
-                      v-for="item in recipientes"
-                      :key="item.id"
-                      :label="item.name"
-                      :value="item.name"
-                    >
-                      <template #default>
-                        <div class="flex justify-between items-center w-full">
-                          <span>{{ item.name }}</span>
-                          <i
-                            class="fa-solid fa-trash text-red-500 cursor-pointer fa-xs ml-8"
-                            @click.stop="RemoveItem(item.id)"
-                          ></i>
-                        </div>
-                      </template>
-                    </el-option>
-                  </el-select>
-                  <el-date-picker
-                    v-model="row.outputRegisteredAt"
-                    style="width: 100%"
-                    clearable
-                    type="date"
-                    placeholder="..."
-                    size="smal"
-                  />
-                  <div
-                    class="mb-1 col-span-3 w-auto text-center text-white text-[12px] font-semibold bg-indigo-500 rounded-[4px] px-3 py-[4px] hover:bg-indigo-600 cursor-pointer"
-                    @click="OutputSave(row)"
-                  >
-                    Saqlash
-                  </div>
-                </div>
-              </template>
-            </el-table-column>
-
-            <el-table-column
-              fixed="right"
-              prop="id"
-              label=""
-              width="60"
-              header-align="center"
-              align="center"
-            >
-              <template #default="{ row }">
-                <!-- Dropdown -->
-                <el-dropdown
-                  trigger="click"
-                  class="relative"
-                  :popper-options="{
-                    modifiers: [
-                      {
-                        name: 'preventOverflow',
-                        options: { boundary: 'window' },
-                      },
-                    ],
-                  }"
-                >
-                  <el-button type="text" class="text-sm; text-gray-500">
-                    <i class="fa-solid fa-ellipsis-vertical"></i>
-                  </el-button>
-                  <template #dropdown>
-                    <el-dropdown-menu
-                      slot="dropdown"
-                      append-to-body
-                      class="z-50"
-                    >
-                      <el-dropdown-item
-                        v-if="isActive === 2"
-                        class="text-[13px] text-green-600"
-                        @click="ProductOutputModal(row._id)"
-                        ><template #default=""
-                          ><div>
-                            <i
-                              class="text-black fa-solid fa-angles-left fa-sm mr-2"
-                            ></i
-                            >Mahsulot chiqarish
-                          </div>
-                        </template></el-dropdown-item
-                      >
-                      <el-dropdown-item
-                        v-if="Title === `Chiqarilgan`"
-                        class="text-[13px] text-green-600"
-                        @click="ReturnProduct(row._id)"
-                        ><template #default=""
-                          ><div>
-                            <i
-                              class="text-black fa-solid fa-angles-down fa-sm mr-2"
-                            ></i
-                            >Mahsulotni qaytarish (возврат)
-                          </div>
-                        </template></el-dropdown-item
-                      >
-                      <el-dropdown-item
-                        v-if="Title === `Kiritilgan`"
-                        class="text-[13px]"
-                        @click="ProductInputModal(row._id)"
-                        ><template #default="{}"
-                          ><div>
-                            <i
-                              class="text-black fa-solid fa-angles-right fa-sm mr-2"
-                            ></i>
-                            Mahsulot kiritish
-                          </div>
-                        </template></el-dropdown-item
-                      >
-
-                      <el-dropdown-item
-                        class="text-[13px] text-indigo-600"
-                        @click="UpdateById(row._id)"
-                        ><template #default="{}"
-                          ><div>
-                            <i
-                              class="text-black fa-solid fa-pen fa-sm mr-1"
-                            ></i>
-                            O'zgatirish
-                          </div>
-                        </template></el-dropdown-item
-                      >
-                      <el-dropdown-item
-                        class="text-[13px] text-yellow-500"
-                        @click="ExportExcel(row._id)"
-                        ><template #default="{}"
-                          ><div>
-                            <i
-                              class="text-black fa-solid fa-file-excel fa-sm mr-1"
-                            ></i>
-                            Excel
-                          </div>
-                        </template></el-dropdown-item
-                      >
-                      <el-dropdown-item
-                        @click="deleteById({ id: row._id, action: isActive })"
-                        class="text-red-500 text-[13px]"
-                      >
-                        <template #default=""
-                          ><div>
-                            <i
-                              class="text-black fa-solid fa-trash fa-sm mr-1"
-                            ></i>
-                            O'chirish
-                          </div>
-                        </template>
-                      </el-dropdown-item>
-                    </el-dropdown-menu>
-                  </template>
-                </el-dropdown>
-              </template>
-            </el-table-column>
-          </el-table>
-
-          <!-- <div
-            class="bg-white text-gray-600 text-[12px] font-semibold px-4 py-1 text-center flex items-center justify-between"
-          >
-            <div>
-              Kirim:
-              {{ product.totalAmount ? formatPrice(product.totalAmount) : 0 }}
-              so'm
+        <div class="stat-card group hover:border-indigo-500/50">
+          <div class="icon-box bg-indigo-500/10 text-indigo-600 group-hover:scale-110 transition-transform">
+            <i class="fa-solid fa-clock-rotate-left text-xl"></i>
+          </div>
+          <div class="flex flex-col">
+            <span class="stat-label">Kirim qilingan vaqt</span>
+            <div class="flex items-center gap-2">
+              <span class="stat-value text-indigo-600">{{ formatEntryDate(product?.createdAt) }}</span>
+              <span class="bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300 px-2 py-0.5 rounded-lg text-sm font-bold font-mono">
+                {{ formatEntryTime(product?.createdAt) }}
+              </span>
             </div>
-            <div>
-              Qoldiq:
-              {{
-                product.totalRemainderPrice
-                  ? formatPrice(product.totalRemainderPrice)
-                  : 0
-              }}
-              so'm
-            </div>
-            <div>
-              Chiqim
-              {{
-                product.totalOutputPrice
-                  ? formatPrice(product.totalOutputPrice)
-                  : 0
-              }}
-              so'm
-            </div>
-          </div> -->
+          </div>
         </div>
       </div>
 
-      <template #footer>
-        <div class="flex justify-between items-center mt-2 border-t pt-2">
-          <div class="flex gap-2">
-            <div
-              class="text-[11px] items-center font-medium text-center text-white"
-            >
-              <el-input
-                clearable
-                size="smal"
-                type="String"
-                placeholder="Izlash..."
-                style="width: 150px; font-size: 12px"
-              />
+      <div class="table-container shadow-2xl shadow-slate-200/50 dark:shadow-none">
+        <div class="table-header">
+          <div class="flex items-center justify-between w-full">
+            <div class="flex items-center gap-4">
+              <div class="w-1.5 h-6 bg-gradient-to-b from-indigo-500 to-blue-600 rounded-full"></div>
+              <h4 class="header-title">Ombordagi mavjud mahsulotlar</h4>
             </div>
-            <el-select placeholder="Export" class="w-32">
-              <el-option @click="ExportExcel()" label="Excel" value="excel">
-                <i class="fa-solid fa-file-excel mr-2 fa-xm"></i> Excel
-              </el-option>
-              <el-option label="Pdf" value="pdf">
-                <i class="fa-solid fa-file-pdf mr-2 fa-xm"></i> Pdf
-              </el-option>
-              <el-option label="Word" value="word">
-                <i class="fa-solid fa-file-word mr-2 fa-xm"></i> Word
-              </el-option>
-            </el-select>
-          </div>
-
-          <div class="flex gap-3">
-            <!-- <div
-              class="mb-1 col-span-3 w-auto text-center text-white text-[13px] font-semibold bg-red-600 rounded-[4px] px-4 py-[5px] hover:bg-red-700"
-              @click="driverBindingModal(order._id)"
-            >
-              <i class="fa-solid fa-xmark mr-2 fa-md"></i> Bekor qilish
-            </div> -->
-
-            <div class="flex justify-start bg-white p-2 gap-2">
-              <div
-                v-if="isActive === 1"
-                @click="AddProductModal()"
-                class="text-white text-[12px] font-semibold bg-green-500 rounded-[4px] px-4 py-[6px] hover:bg-green-600 cursor-pointer"
-              >
-                <i
-                  class="fa-solid fa-circle-arrow-down mr-2 text-white fa-md fa-lg"
-                ></i>
-                Mahsulot kirim qilish (Приход)
-              </div>
-              <div
-                v-if="transfer && isActive === 2"
-                @click="OutputSaveAll()"
-                class="text-white text-[12px] font-semibold bg-purple-500 rounded-[4px] px-4 py-[6px] hover:bg-purple-600 cursor-pointer"
-              >
-                <i
-                  class="fa-solid fa-circle-check mr-2 fa-md text-white fa-md"
-                ></i>
-                Barchasini saqlash
-              </div>
-              <div
-                v-if="isActive === 2"
-                @click="ProductOutputModal()"
-                class="text-white text-[12px] font-semibold bg-blue-500 rounded-[4px] px-4 py-[6px] hover:bg-blue-600 cursor-pointer"
-              >
-                <i
-                  v-if="transfer === false"
-                  class="fa-solid fa-circle-arrow-up mr-2 text-white fa-lg"
-                ></i>
-                <i
-                  v-if="transfer === true"
-                  class="fa-solid fa-xmark mr-2 text-white fa-md"
-                ></i>
-                {{
-                  transfer === false ? ` Mahsulot chiqarish (расход)` : `Yopish`
-                }}
-              </div>
-              <div
-                v-if="isActive === 3"
-                @click="ProductOutputModal()"
-                class="text-white text-[12px] font-semibold bg-purple-500 rounded-[4px] px-4 py-[6px] hover:bg-purple-600 cursor-pointer"
-              >
-                <i
-                  v-if="transfer === false"
-                  class="fa-solid fa-circle-arrow-left mr-2 text-white fa-lg"
-                ></i>
-                <i
-                  v-if="transfer === true"
-                  class="fa-solid fa-xmark mr-2 text-white fa-md"
-                ></i>
-                {{
-                  transfer === false
-                    ? ` Mahsulotni qaytarish (возврат)`
-                    : `Yopish`
-                }}
-              </div>
+            <div class="text-[10px] bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-full font-bold text-slate-500">
+              Jami: {{ product?.items?.length || 0 }} turdagi mahsulot
             </div>
           </div>
         </div>
-      </template>
-    </el-dialog>
-  </div>
+
+        <DataTable :items="product?.items || []" :columns="columns" height="55vh">
+          
+          <template #productInfo="{ row }">
+            <div class="flex items-center gap-4 py-3">
+              <div class="product-icon group">
+                <i class="fa-solid fa-box group-hover:scale-110 transition-transform"></i>
+              </div>
+              <div class="flex flex-col">
+                <span class="product-name">{{ row.product?.name || 'Mahsulot nomi' }}</span>
+                <span class="product-uid uppercase tracking-widest font-bold">UID: {{ row._id?.slice(-8) }}</span>
+              </div>
+            </div>
+          </template>
+
+          <template #dates="{ row }">
+            <div class="flex flex-col gap-2">
+              <div class="date-row">
+                <i class="fa-solid fa-calendar-plus text-slate-400"></i>
+                <span class="text-slate-500">Kirim:</span>
+                <span class="font-bold text-slate-700 dark:text-slate-300">{{ formatDateOnly(row.createdAt) }}</span>
+              </div>
+              <div :class="['date-row p-1 rounded-md px-2 border', isExpired(row.expireDate) ? 'bg-rose-50 border-rose-100 text-rose-600' : isNearExpiry(row.expireDate) ? 'bg-amber-50 border-amber-100 text-amber-600' : 'bg-slate-50 border-slate-100 text-slate-600 dark:bg-slate-800/50 dark:border-slate-700 dark:text-slate-400']">
+                <i class="fa-solid fa-hourglass-half"></i>
+                <span class="font-bold">Muddati: {{ formatDateOnly(row.expireDate) }}</span>
+              </div>
+            </div>
+          </template>
+
+          <template #stockInfo="{ row }">
+            <div class="flex flex-col items-center">
+              <span class="text-lg font-black text-slate-800 dark:text-white leading-none">{{ row.qty }}</span>
+              <span class="text-[9px] font-bold uppercase text-slate-400 mt-1 tracking-widest">{{ row.unit || 'dona' }}</span>
+            </div>
+          </template>
+
+          <template #financials="{ row }">
+            <div class="price-stack">
+              <div class="flex items-center justify-end gap-2">
+                <span class="text-[10px] text-slate-400 font-bold uppercase">Sotuv:</span>
+                <span class="font-black text-slate-800 dark:text-slate-200">{{ formatPrice(row.salePrice) }}</span>
+              </div>
+              <div class="flex items-center justify-end gap-2">
+                <span class="text-[10px] text-emerald-500 font-bold uppercase">Tan:</span>
+                <span class="font-bold text-emerald-600 italic">{{ formatPrice(row.costPrice) }}</span>
+              </div>
+            </div>
+          </template>
+
+          <template #amount="{ row }">
+            <div class="flex flex-col items-end">
+              <span class="text-sm font-black text-slate-800 dark:text-white">{{ formatPrice(row.salePrice * row.qty) }}</span>
+              <span class="text-[9px] font-bold text-slate-400 uppercase italic">Tan: {{ formatPrice(row.costPrice * row.qty) }}</span>
+            </div>
+          </template>
+
+          <template #actions="{ row }">
+            <el-dropdown trigger="click">
+              <button class="action-btn"><i class="fa-solid fa-ellipsis-h"></i></button>
+              <template #dropdown>
+                <el-dropdown-menu class="modern-dropdown">
+                  <el-dropdown-item @click="store_rw.UpdateProduct(row._id)">
+                    <i class="fa-solid fa-pen-to-square text-blue-500 mr-2"></i> Tahrirlash
+                  </el-dropdown-item>
+                  <el-dropdown-item divided class="text-rose-500" @click="store_rw.DeleteById({ id: row._id, action: 2 })">
+                    <i class="fa-solid fa-trash-can mr-2"></i> O'chirish
+                  </el-dropdown-item>
+                </el-dropdown-menu>
+              </template>
+            </el-dropdown>
+          </template>
+
+        </DataTable>
+      </div>
+
+      <div class="footer-bar">
+        <div class="flex items-center gap-4">
+          <div class="legend-item"><span class="dot bg-emerald-500 shadow-emerald-500/50 shadow-lg"></span>Sifatli</div>
+          <div class="legend-item"><span class="dot bg-amber-500 shadow-amber-500/50 shadow-lg"></span>Yaroqlilik muddati yaqin</div>
+          <div class="legend-item"><span class="dot bg-rose-500 shadow-rose-500/50 shadow-lg animate-pulse"></span>Muddati o'tgan</div>
+        </div>
+        <div class="update-tag">
+          <i class="fa-solid fa-sync-alt animate-spin-slow"></i>
+          Ma'lumotlar yangilandi: {{ formatEntryDate(new Date()) }}
+        </div>
+      </div>
+    </div>
+  </Modal>
 </template>
 
 <style scoped>
-.custom-modal {
-  background-color: #fefefe;
-  transition: all 0.3s ease;
+/* CARD & UI ELEMENTS */
+.stat-card {
+  @apply bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 p-6 rounded-[2rem] flex items-center gap-5 transition-all duration-300;
+}
+.icon-box {
+  @apply w-14 h-14 rounded-2xl flex items-center justify-center shrink-0;
+}
+.stat-label {
+  @apply text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-1;
+}
+.stat-value {
+  @apply text-xl font-black text-slate-800 dark:text-white tracking-tight;
 }
 
-.custom-modal .el-dialog__body {
-  padding: 20px 24px;
+/* TABLE STYLES */
+.table-container {
+  @apply rounded-[2.5rem] border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden;
+}
+.table-header {
+  @apply px-8 py-5 border-b border-slate-50 dark:border-slate-800 bg-slate-50/20 backdrop-blur-sm;
+}
+.header-title {
+  @apply text-xs font-black uppercase tracking-[0.2em] text-slate-500;
 }
 
-.custom-modal .el-dialog__footer {
-  padding: 20px 24px;
+.product-icon {
+  @apply w-11 h-11 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-indigo-500 shadow-sm border border-slate-200 dark:border-slate-700;
+}
+.product-name {
+  @apply font-black text-slate-700 dark:text-slate-100 text-sm;
+}
+.product-uid {
+  @apply text-[8px] font-mono text-indigo-400 mt-0.5;
 }
 
-.el-tag {
-  font-size: 12px;
+.date-row {
+  @apply flex items-center gap-2 text-[11px] font-medium;
 }
 
-.el-table th {
-  background: #f4f7fa;
-  color: #333;
-  font-weight: 600;
+.price-stack {
+  @apply flex flex-col gap-0.5;
 }
 
-.el-button {
-  transition: 0.2s ease-in-out;
+.action-btn {
+  @apply w-9 h-9 flex items-center justify-center rounded-xl hover:bg-indigo-50 dark:hover:bg-indigo-900/40 text-slate-400 hover:text-indigo-600 transition-all;
 }
 
-.el-button:hover {
-  transform: translateY(-1px);
+.footer-bar {
+  @apply flex flex-col md:flex-row justify-between items-center px-8 py-5 bg-slate-50/50 dark:bg-slate-800/20 rounded-[2rem] border border-slate-100 dark:border-slate-800;
 }
-.activeTab {
-  transition-duration: 0.6s;
-  background: #36d887;
-  color: whitesmoke;
-  box-sizing: border-box;
-  font-size: 14px;
-  font-weight: bold;
+.legend-item {
+  @apply flex items-center gap-2 text-[10px] font-black uppercase text-slate-500;
 }
-.activeTabIcon {
-  background: whitesmoke;
-  color: black;
+.legend-item .dot {
+  @apply w-2.5 h-2.5 rounded-full;
+}
+.update-tag {
+  @apply flex items-center gap-2 text-[10px] font-bold text-indigo-500 uppercase tracking-widest;
+}
+
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.animate-spin-slow {
+  animation: spin-slow 8s linear infinite;
 }
 </style>

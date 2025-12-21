@@ -348,7 +348,7 @@ const processSale = async () => {
         salePrice: item.price,
         totalAmount: item.price * item.qty,
         unit: item.unit,
-name : item.name
+        name : item.name
     }));
 
     // Hisoblangan qiymatlar
@@ -363,14 +363,11 @@ name : item.name
         // Asosiy ma'lumotlar
         type: 'sale', 
         branchId: 1, // Joriy filial IDsi (dynamic bo'lishi kerak)
-
         // Savat ma'lumotlari
         items: cartItems,
-        
         // Mijoz va Haydovchi/Yetkazib beruvchi IDlari
         customerId: activeSessionData.value.customerId || null,
         driverId: activeSessionData.value.supplierId || null, 
-        
         // Narx va To'lov hisobi (Bu Pinia'dan olingan grandTotal bilan mos kelishi shart)
         subtotal: subtotal, 
         discountPercent: discountPercent.value,
@@ -380,11 +377,9 @@ name : item.name
         taxRate: taxRate,
         taxAmount: calculatedTaxAmount,
         grandTotal: grandTotal.value,
-        
         // To'lov turi
         paymentType: paymentType.value,
         paymentStatus: paymentType.value === 'qarz' ? 'pending' : 'cash',
-
         // Vaqt tamg'asi
         date: new Date().toISOString()
     };
@@ -395,7 +390,7 @@ name : item.name
     // 3. Pinia actionni chaqirish va payloadni uzatish
     // store_salepos.CreateSaleTransaction endi to'g'ridan-to'g'ri payloadni qabul qiladi
     const success = await store_salepos.CreateSaleTransaction(payload);
-
+ store_product.GetAll();
     // 4. Muvaffaqiyatli bo'lsa UI feedback berish
     if (success) { 
         showToast(`To'lov qabul qilindi: ${formatPrice(store_salepos.grandTotal)}`, 'success');

@@ -194,6 +194,16 @@ export const WarehouseInputStore = defineStore("WarehouseInputStore", {
         this.isSubmitting = false;
         loader.hide();
       }
-    }
+    },
+
+
+async GetAllInputHistory(){
+  try {
+   const data = await InputWarehouseService.GetAll() 
+  } catch (error) {
+    console.log(error.msg)
+    toast.error(error.msg)
+  }
+}
   }
 });
