@@ -1,11 +1,11 @@
 import api from "@/helpers/api";
-// import $api from "../../helpers/$api";
+const RESOURCE = "dashboard/statistics/sale"; 
 
 export const SaleStatisticsService = {
 
-    GetAllDayStatistics(state) {
-        let url = "dashboard/statistics/sale/all";
-        return api.post(url, state);
+    GetAllDayStatistics(params) {
+        let url = `${RESOURCE}/all`;
+        return api.get(url, params);
     },
 
 };
