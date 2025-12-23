@@ -96,7 +96,7 @@ onMounted(() => {
     title="Rol yaratish"
     subtitle="Yangi foydalanuvchi roli va huquqlari"
     icon="fa-solid fa-shield-halved"
-    width="max-w-5xl"
+    width="max-w-[85whv]"
     @close="handleClose"
   >
     
