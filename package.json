@@ -22,6 +22,7 @@
     "js-cookie": "^3.0.5",
     "jspdf": "^2.5.2",
     "jspdf-autotable": "^3.7.1",
+    "jwt-decode": "^4.0.0",
     "leaflet": "^1.9.4",
     "moment-timezone": "^0.5.48",
     "pinia": "^2.2.6",

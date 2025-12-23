@@ -166,7 +166,7 @@ const handlePageChange = (page) => {
               <button  @click="openAddModal(2)" class="btn-secondary w-full sm:w-auto">
             <i class="fa-solid fa-plus mr-2 text-sm"></i> 
             <span class="text-sm">
-                {{ status === 2 ? "Rol qo'shish" : "Ruxsat qo'shish" }}
+                {{ status === 2 ? "Ruxsats qo'shish" : "Ruxsat qo'shish" }}
             </span>
          </button>
       </div>

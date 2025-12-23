@@ -59,50 +59,93 @@
             </button>
           </div>
         </div>
-        
+
         <div
           v-if="sidebarExpanded"
           class="flex items-center justify-between px-1 py-1 bg-white dark:bg-slate-700 backdrop-blur-md rounded-md shadow border border-white/10 w-full mt-1 gap-2"
         >
           <div class="flex items-center gap-2">
-            <div @click="openEdoSidebar" class="inline-flex text-[11px] items-center px-1 py-1 font-medium text-center text-white bg-slate-300 rounded-[50%] text-bold cursor-pointer">
-              <img class="rounded-full w-[25px] h-[25px]" src="https://play-lh.googleusercontent.com/iG3OBZOG3jaX4h8CZOEOl_ZNHeMSC6_HFiQX63NdnhzgvzEDemi0eAXT5ng62ov7Ag" alt="EDO" />
+            <div
+              @click="openEdoSidebar"
+              class="inline-flex text-[11px] items-center px-1 py-1 font-medium text-center text-white bg-slate-300 rounded-[50%] text-bold cursor-pointer"
+            >
+              <img
+                class="rounded-full w-[25px] h-[25px]"
+                src="https://play-lh.googleusercontent.com/iG3OBZOG3jaX4h8CZOEOl_ZNHeMSC6_HFiQX63NdnhzgvzEDemi0eAXT5ng62ov7Ag"
+                alt="EDO"
+              />
             </div>
-            <div @click="openChatSidebar" class="inline-flex text-[11px] items-center px-1 py-1 font-medium text-center text-white bg-slate-300 rounded-[50%] text-bold cursor-pointer">
-              <img width="24px" height="24px" src="https://static.tildacdn.com/tild6536-3666-4039-b131-666165613134/_2.png" alt="Telegram" />
+            <div
+              @click="openChatSidebar"
+              class="inline-flex text-[11px] items-center px-1 py-1 font-medium text-center text-white bg-slate-300 rounded-[50%] text-bold cursor-pointer"
+            >
+              <img
+                width="24px"
+                height="24px"
+                src="https://static.tildacdn.com/tild6536-3666-4039-b131-666165613134/_2.png"
+                alt="Telegram"
+              />
             </div>
-            <div class="inline-flex text-[11px] items-center px-1 py-1 font-medium text-center text-white bg-slate-300 rounded-[50%] text-bold cursor-pointer">
+            <div
+              class="inline-flex text-[11px] items-center px-1 py-1 font-medium text-center text-white bg-slate-300 rounded-[50%] text-bold cursor-pointer"
+            >
               <a href="https://didox.uz" target="_blank">
-                <img src="https://aloqabusiness.uz/upload/iblock/b38/e2pseped973eqvb9pipop1yosmi6b1aw/logo_partner_didox.webp" alt="DIDOX" style="width: 24px; height: 24px; border-radius: 50%" />
+                <img
+                  src="https://aloqabusiness.uz/upload/iblock/b38/e2pseped973eqvb9pipop1yosmi6b1aw/logo_partner_didox.webp"
+                  alt="DIDOX"
+                  style="width: 24px; height: 24px; border-radius: 50%"
+                />
               </a>
             </div>
-             <div class="inline-flex text-[11px] items-center px-1 py-1 font-medium text-center text-white bg-slate-300 rounded-[50%] text-bold cursor-pointer">
+            <div
+              class="inline-flex text-[11px] items-center px-1 py-1 font-medium text-center text-white bg-slate-300 rounded-[50%] text-bold cursor-pointer"
+            >
               <a href="#" target="_blank">
-                <img src="https://kassa.bifit.com/wiki/images/thumb/7/72/Product-1c.svg/2048px-Product-1c.svg.png" alt="1C" style="width: 24px; height: 24px; border-radius: 50%" />
+                <img
+                  src="https://kassa.bifit.com/wiki/images/thumb/7/72/Product-1c.svg/2048px-Product-1c.svg.png"
+                  alt="1C"
+                  style="width: 24px; height: 24px; border-radius: 50%"
+                />
               </a>
             </div>
-             <div class="inline-flex text-[11px] items-center px-1 py-1 font-medium text-center text-white bg-slate-300 rounded-[50%] text-bold cursor-pointer">
+            <div
+              class="inline-flex text-[11px] items-center px-1 py-1 font-medium text-center text-white bg-slate-300 rounded-[50%] text-bold cursor-pointer"
+            >
               <a href="https://click.uz/uz" target="_blank">
-                <img src="https://play-lh.googleusercontent.com/vinYJkoh5f-UTTHgiV2DZ9YssEEfk69esYFrasVirZ5Wfp_-da5ahAel63pY-Q2IMnc" alt="CLICK" style="width: 24px; height: 24px; border-radius: 50%" />
+                <img
+                  src="https://play-lh.googleusercontent.com/vinYJkoh5f-UTTHgiV2DZ9YssEEfk69esYFrasVirZ5Wfp_-da5ahAel63pY-Q2IMnc"
+                  alt="CLICK"
+                  style="width: 24px; height: 24px; border-radius: 50%"
+                />
               </a>
             </div>
           </div>
           <div>
-            <i @click="removeFile" class="fa-solid fa-xmark mr-2 fa-sm text-red-500 cursor-pointer"></i>
+            <i
+              @click="removeFile"
+              class="fa-solid fa-xmark mr-2 fa-sm text-red-500 cursor-pointer"
+            ></i>
           </div>
         </div>
       </div>
 
       <div class="space-y-5">
-        
         <div>
           <h3
             @click="is_dashboard = !is_dashboard"
             class="text-xs uppercase text-slate-500 dark:text-white font-semibold ml-[-9px] mr-[-9px]"
           >
-            <div class="flex justify-between bg-white dark:bg-slate-700 p-2 rounded w-full cursor-pointer">
-              <span class="lg:hidden lg:sidebar-expanded:block 2xl:sidebar-expanded:block 2xl:hidden">Dashboard</span>
-              <i v-if="is_dashboard" class="fa-solid fa-angle-up fa-sm mt-2"></i>
+            <div
+              class="flex justify-between bg-white dark:bg-slate-700 p-2 rounded w-full cursor-pointer"
+            >
+              <span
+                class="lg:hidden lg:sidebar-expanded:block 2xl:sidebar-expanded:block 2xl:hidden"
+                >Dashboard</span
+              >
+              <i
+                v-if="is_dashboard"
+                class="fa-solid fa-angle-up fa-sm mt-2"
+              ></i>
               <i v-else class="fa-solid fa-angle-down fa-sm mt-2"></i>
             </div>
           </h3>
@@ -112,46 +155,89 @@
             class="p-2.5 mt-1 rounded-lg border bg-white border-slate-200 dark:border-slate-600 dark:bg-slate-700 shadow-md transition"
           >
             <ul>
-              <SidebarLinkGroup v-slot="parentLink" :activeCondition="currentRoute.fullPath.includes('ecommerce')">
+              <SidebarLinkGroup
+                v-slot="parentLink"
+                :activeCondition="currentRoute.fullPath.includes('ecommerce')"
+              >
                 <a
                   class="block text-slate-200 truncate transition duration-150"
-                  :class="currentRoute.fullPath.includes('ecommerce') ? 'hover:text-slate-500' : 'hover:text-white'"
+                  :class="
+                    currentRoute.fullPath.includes('ecommerce')
+                      ? 'hover:text-slate-500'
+                      : 'hover:text-white'
+                  "
                   href="#0"
-                  @click.prevent="sidebarExpanded ? parentLink.handleClick() : (sidebarExpanded = true)"
+                  @click.prevent="
+                    sidebarExpanded
+                      ? parentLink.handleClick()
+                      : (sidebarExpanded = true)
+                  "
                 >
                   <div class="flex items-center justify-between">
                     <div class="flex items-center">
-                      <i class="fa-solid fa-chart-line text-indigo-400 text-lg"></i>
-                      <span class="text-sm font-medium ml-3 text-slate-500 dark:text-white truncate max-w-[150px]">Statistika</span>
+                      <i
+                        class="fa-solid fa-chart-line text-indigo-400 text-lg"
+                      ></i>
+                      <span
+                        class="text-sm font-medium ml-3 text-slate-500 dark:text-white truncate max-w-[150px]"
+                        >Statistika</span
+                      >
                     </div>
-                    <svg class="w-3 h-3 shrink-0 ml-1 fill-current text-slate-400 transition-transform duration-300" :class="parentLink.expanded && 'rotate-180'" viewBox="0 0 12 12">
+                    <svg
+                      class="w-3 h-3 shrink-0 ml-1 fill-current text-slate-400 transition-transform duration-300"
+                      :class="parentLink.expanded && 'rotate-180'"
+                      viewBox="0 0 12 12"
+                    >
                       <path d="M5.9 11.4L.5 6l1.4-1.4 4 4 4-4L11.3 6z" />
                     </svg>
                   </div>
                 </a>
-                <ul class="pl-5 mt-2 space-y-1 border-l border-indigo-200 dark:border-indigo-400 transition-all duration-500 ease-in-out" :class="!parentLink.expanded && 'hidden'">
+                <ul
+                  class="pl-5 mt-2 space-y-1 border-l border-indigo-200 dark:border-indigo-400 transition-all duration-500 ease-in-out"
+                  :class="!parentLink.expanded && 'hidden'"
+                >
                   <li>
-                    <router-link :to="{ name: 'StatisticSale' }" class="flex items-center gap-2 px-2 py-2 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-indigo-500/10 transition-all duration-200">
+                    <router-link
+                      :to="{ name: 'StatisticSale' }"
+                      class="flex items-center gap-2 px-2 py-2 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-indigo-500/10 transition-all duration-200"
+                    >
                       <i class="fa-solid fa-chart-pie text-indigo-400"></i>
-                      <span class="text-[13px] font-medium">Sotuv statistikasi</span>
+                      <span class="text-[13px] font-medium"
+                        >Sotuv statistikasi</span
+                      >
                     </router-link>
                   </li>
                   <li>
-                    <router-link to="" class="flex items-center gap-2 px-2 py-2 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-indigo-500/10 transition-all duration-200">
+                    <router-link
+                      to=""
+                      class="flex items-center gap-2 px-2 py-2 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-indigo-500/10 transition-all duration-200"
+                    >
                       <i class="fa-solid fa-warehouse text-indigo-400"></i>
-                      <span class="text-[13px] font-medium">Ombor zaxirasi</span>
+                      <span class="text-[13px] font-medium"
+                        >Ombor zaxirasi</span
+                      >
                     </router-link>
                   </li>
                   <li>
-                    <router-link to="" class="flex items-center gap-2 px-2 py-2 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-indigo-500/10 transition-all duration-200">
+                    <router-link
+                      to=""
+                      class="flex items-center gap-2 px-2 py-2 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-indigo-500/10 transition-all duration-200"
+                    >
                       <i class="fa-solid fa-industry text-indigo-400"></i>
-                      <span class="text-[13px] font-medium">Ishlab chiqarish hajmi</span>
+                      <span class="text-[13px] font-medium"
+                        >Ishlab chiqarish hajmi</span
+                      >
                     </router-link>
                   </li>
-                   <li>
-                    <router-link to="" class="flex items-center gap-2 px-2 py-2 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-indigo-500/10 transition-all duration-200">
+                  <li>
+                    <router-link
+                      to=""
+                      class="flex items-center gap-2 px-2 py-2 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-indigo-500/10 transition-all duration-200"
+                    >
                       <i class="fa-solid fa-user-clock text-indigo-400"></i>
-                      <span class="text-[13px] font-medium">Ishchilar samaradorligi</span>
+                      <span class="text-[13px] font-medium"
+                        >Ishchilar samaradorligi</span
+                      >
                     </router-link>
                   </li>
                 </ul>
@@ -165,10 +251,22 @@
             @click="is_production = !is_production"
             class="text-xs uppercase text-slate-500 dark:text-white font-semibold ml-[-9px] mr-[-9px]"
           >
-            <span class="hidden lg:block lg:sidebar-expanded:hidden 2xl:hidden text-center w-6" aria-hidden="true">•••</span>
-            <div class="flex justify-between bg-white dark:bg-slate-700 p-2 rounded w-full cursor-pointer">
-              <span class="lg:hidden lg:sidebar-expanded:block 2xl:sidebar-expanded:block 2xl:hidden">Ishlab chiqarish</span>
-              <i v-if="is_production" class="fa-solid fa-angle-up fa-sm mt-2"></i>
+            <span
+              class="hidden lg:block lg:sidebar-expanded:hidden 2xl:hidden text-center w-6"
+              aria-hidden="true"
+              >•••</span
+            >
+            <div
+              class="flex justify-between bg-white dark:bg-slate-700 p-2 rounded w-full cursor-pointer"
+            >
+              <span
+                class="lg:hidden lg:sidebar-expanded:block 2xl:sidebar-expanded:block 2xl:hidden"
+                >Ishlab chiqarish</span
+              >
+              <i
+                v-if="is_production"
+                class="fa-solid fa-angle-up fa-sm mt-2"
+              ></i>
               <i v-else class="fa-solid fa-angle-down fa-sm mt-2"></i>
             </div>
           </h3>
@@ -179,20 +277,41 @@
           >
             <ul>
               <SidebarLinkGroup v-slot="parentLink">
-                <a class="block text-slate-200 truncate transition duration-150 hover:text-white" href="#0" @click.prevent="sidebarExpanded ? parentLink.handleClick() : (sidebarExpanded = true)">
+                <a
+                  class="block text-slate-200 truncate transition duration-150 hover:text-white"
+                  href="#0"
+                  @click.prevent="
+                    sidebarExpanded
+                      ? parentLink.handleClick()
+                      : (sidebarExpanded = true)
+                  "
+                >
                   <div class="flex items-center justify-between">
                     <div class="flex items-center">
                       <i class="fa-solid fa-water text-indigo-400 text-lg"></i>
-                      <span class="text-sm font-medium ml-3 text-slate-500 dark:text-white">Suv tozalash</span>
+                      <span
+                        class="text-sm font-medium ml-3 text-slate-500 dark:text-white"
+                        >Suv tozalash</span
+                      >
                     </div>
-                    <svg class="w-3 h-3 shrink-0 ml-1 fill-current text-slate-400 transition-transform duration-300" :class="parentLink.expanded && 'rotate-180'" viewBox="0 0 12 12">
+                    <svg
+                      class="w-3 h-3 shrink-0 ml-1 fill-current text-slate-400 transition-transform duration-300"
+                      :class="parentLink.expanded && 'rotate-180'"
+                      viewBox="0 0 12 12"
+                    >
                       <path d="M5.9 11.4L.5 6l1.4-1.4 4 4 4-4L11.3 6z" />
                     </svg>
                   </div>
                 </a>
-                <ul class="pl-5 mt-2 space-y-1 border-l border-indigo-200 dark:border-indigo-400 transition-all duration-500 ease-in-out" :class="!parentLink.expanded && 'hidden'">
-                   <li>
-                    <router-link :to="{ name: 'Employees' }" class="flex items-center gap-2 px-2 py-2 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-indigo-500/10 transition-all duration-200">
+                <ul
+                  class="pl-5 mt-2 space-y-1 border-l border-indigo-200 dark:border-indigo-400 transition-all duration-500 ease-in-out"
+                  :class="!parentLink.expanded && 'hidden'"
+                >
+                  <li>
+                    <router-link
+                      :to="{ name: 'Employees' }"
+                      class="flex items-center gap-2 px-2 py-2 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-indigo-500/10 transition-all duration-200"
+                    >
                       <span class="text-[13px] font-medium">Xodimlar</span>
                     </router-link>
                   </li>
@@ -202,20 +321,43 @@
 
             <ul class="mt-1">
               <SidebarLinkGroup v-slot="parentLink">
-                <a class="block text-slate-200 truncate transition duration-150 hover:text-white" href="#0" @click.prevent="sidebarExpanded ? parentLink.handleClick() : (sidebarExpanded = true)">
+                <a
+                  class="block text-slate-200 truncate transition duration-150 hover:text-white"
+                  href="#0"
+                  @click.prevent="
+                    sidebarExpanded
+                      ? parentLink.handleClick()
+                      : (sidebarExpanded = true)
+                  "
+                >
                   <div class="flex items-center justify-between">
                     <div class="flex items-center">
-                      <i class="fa-solid fa-bottle-water text-indigo-400 text-lg"></i>
-                      <span class="text-sm font-medium ml-3 text-slate-500 dark:text-white">Idish to'ldirish</span>
+                      <i
+                        class="fa-solid fa-bottle-water text-indigo-400 text-lg"
+                      ></i>
+                      <span
+                        class="text-sm font-medium ml-3 text-slate-500 dark:text-white"
+                        >Idish to'ldirish</span
+                      >
                     </div>
-                    <svg class="w-3 h-3 shrink-0 ml-1 fill-current text-slate-400 transition-transform duration-300" :class="parentLink.expanded && 'rotate-180'" viewBox="0 0 12 12">
+                    <svg
+                      class="w-3 h-3 shrink-0 ml-1 fill-current text-slate-400 transition-transform duration-300"
+                      :class="parentLink.expanded && 'rotate-180'"
+                      viewBox="0 0 12 12"
+                    >
                       <path d="M5.9 11.4L.5 6l1.4-1.4 4 4 4-4L11.3 6z" />
                     </svg>
                   </div>
                 </a>
-                <ul class="pl-5 mt-2 space-y-1 border-l border-indigo-200 dark:border-indigo-400 transition-all duration-500 ease-in-out" :class="!parentLink.expanded && 'hidden'">
+                <ul
+                  class="pl-5 mt-2 space-y-1 border-l border-indigo-200 dark:border-indigo-400 transition-all duration-500 ease-in-out"
+                  :class="!parentLink.expanded && 'hidden'"
+                >
                   <li>
-                    <router-link :to="{ name: 'Employees' }" class="flex items-center gap-2 px-2 py-2 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-indigo-500/10 transition-all duration-200">
+                    <router-link
+                      :to="{ name: 'Employees' }"
+                      class="flex items-center gap-2 px-2 py-2 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-indigo-500/10 transition-all duration-200"
+                    >
                       <span class="text-[13px] font-medium">Xodimlar</span>
                     </router-link>
                   </li>
@@ -225,20 +367,43 @@
 
             <ul class="mt-1">
               <SidebarLinkGroup v-slot="parentLink">
-                <a class="block text-slate-200 truncate transition duration-150 hover:text-white" href="#0" @click.prevent="sidebarExpanded ? parentLink.handleClick() : (sidebarExpanded = true)">
+                <a
+                  class="block text-slate-200 truncate transition duration-150 hover:text-white"
+                  href="#0"
+                  @click.prevent="
+                    sidebarExpanded
+                      ? parentLink.handleClick()
+                      : (sidebarExpanded = true)
+                  "
+                >
                   <div class="flex items-center justify-between">
                     <div class="flex items-center">
-                      <i class="fa-solid fa-box-open text-indigo-400 text-lg"></i>
-                      <span class="text-sm font-medium ml-3 text-slate-500 dark:text-white">Qadoqlash</span>
+                      <i
+                        class="fa-solid fa-box-open text-indigo-400 text-lg"
+                      ></i>
+                      <span
+                        class="text-sm font-medium ml-3 text-slate-500 dark:text-white"
+                        >Qadoqlash</span
+                      >
                     </div>
-                    <svg class="w-3 h-3 shrink-0 ml-1 fill-current text-slate-400 transition-transform duration-300" :class="parentLink.expanded && 'rotate-180'" viewBox="0 0 12 12">
+                    <svg
+                      class="w-3 h-3 shrink-0 ml-1 fill-current text-slate-400 transition-transform duration-300"
+                      :class="parentLink.expanded && 'rotate-180'"
+                      viewBox="0 0 12 12"
+                    >
                       <path d="M5.9 11.4L.5 6l1.4-1.4 4 4 4-4L11.3 6z" />
                     </svg>
                   </div>
                 </a>
-                <ul class="pl-5 mt-2 space-y-1 border-l border-indigo-200 dark:border-indigo-400 transition-all duration-500 ease-in-out" :class="!parentLink.expanded && 'hidden'">
+                <ul
+                  class="pl-5 mt-2 space-y-1 border-l border-indigo-200 dark:border-indigo-400 transition-all duration-500 ease-in-out"
+                  :class="!parentLink.expanded && 'hidden'"
+                >
                   <li>
-                    <router-link :to="{ name: 'Orders' }" class="flex items-center gap-2 px-2 py-2 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-indigo-500/10 transition-all duration-200">
+                    <router-link
+                      :to="{ name: 'Orders' }"
+                      class="flex items-center gap-2 px-2 py-2 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-indigo-500/10 transition-all duration-200"
+                    >
                       <span class="text-[13px] font-medium">Buyurtmalar</span>
                     </router-link>
                   </li>
@@ -248,31 +413,66 @@
 
             <ul class="mt-1">
               <SidebarLinkGroup v-slot="parentLink">
-                <a class="block text-slate-200 truncate transition duration-150 hover:text-white" href="#0" @click.prevent="sidebarExpanded ? parentLink.handleClick() : (sidebarExpanded = true)">
+                <a
+                  class="block text-slate-200 truncate transition duration-150 hover:text-white"
+                  href="#0"
+                  @click.prevent="
+                    sidebarExpanded
+                      ? parentLink.handleClick()
+                      : (sidebarExpanded = true)
+                  "
+                >
                   <div class="flex items-center justify-between">
                     <div class="flex items-center">
-                      <i class="fa-solid fa-clipboard-check text-indigo-400 text-lg"></i>
-                      <span class="text-sm font-medium ml-3 text-slate-500 dark:text-white">Sifat nazorati</span>
+                      <i
+                        class="fa-solid fa-clipboard-check text-indigo-400 text-lg"
+                      ></i>
+                      <span
+                        class="text-sm font-medium ml-3 text-slate-500 dark:text-white"
+                        >Sifat nazorati</span
+                      >
                     </div>
-                    <svg class="w-3 h-3 shrink-0 ml-1 fill-current text-slate-400 transition-transform duration-300" :class="parentLink.expanded && 'rotate-180'" viewBox="0 0 12 12">
+                    <svg
+                      class="w-3 h-3 shrink-0 ml-1 fill-current text-slate-400 transition-transform duration-300"
+                      :class="parentLink.expanded && 'rotate-180'"
+                      viewBox="0 0 12 12"
+                    >
                       <path d="M5.9 11.4L.5 6l1.4-1.4 4 4 4-4L11.3 6z" />
                     </svg>
                   </div>
                 </a>
-                <ul class="pl-5 mt-2 space-y-1 border-l border-indigo-200 dark:border-indigo-400 transition-all duration-500 ease-in-out" :class="!parentLink.expanded && 'hidden'">
+                <ul
+                  class="pl-5 mt-2 space-y-1 border-l border-indigo-200 dark:border-indigo-400 transition-all duration-500 ease-in-out"
+                  :class="!parentLink.expanded && 'hidden'"
+                >
                   <li>
-                    <router-link :to="{ name: 'Orders' }" class="flex items-center gap-2 px-2 py-2 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-indigo-500/10 transition-all duration-200">
-                      <span class="text-[13px] font-medium">Laboratoriya natijalari</span>
+                    <router-link
+                      :to="{ name: 'Orders' }"
+                      class="flex items-center gap-2 px-2 py-2 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-indigo-500/10 transition-all duration-200"
+                    >
+                      <span class="text-[13px] font-medium"
+                        >Laboratoriya natijalari</span
+                      >
                     </router-link>
                   </li>
                   <li>
-                    <router-link :to="{ name: 'Orders' }" class="flex items-center gap-2 px-2 py-2 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-indigo-500/10 transition-all duration-200">
-                      <span class="text-[13px] font-medium">Qayta ishlashga yuborilganlari</span>
+                    <router-link
+                      :to="{ name: 'Orders' }"
+                      class="flex items-center gap-2 px-2 py-2 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-indigo-500/10 transition-all duration-200"
+                    >
+                      <span class="text-[13px] font-medium"
+                        >Qayta ishlashga yuborilganlari</span
+                      >
                     </router-link>
                   </li>
                   <li>
-                    <router-link :to="{ name: 'Orders' }" class="flex items-center gap-2 px-2 py-2 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-indigo-500/10 transition-all duration-200">
-                      <span class="text-[13px] font-medium">Rad etilgan partiyalar</span>
+                    <router-link
+                      :to="{ name: 'Orders' }"
+                      class="flex items-center gap-2 px-2 py-2 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-indigo-500/10 transition-all duration-200"
+                    >
+                      <span class="text-[13px] font-medium"
+                        >Rad etilgan partiyalar</span
+                      >
                     </router-link>
                   </li>
                 </ul>
@@ -286,10 +486,22 @@
             @click="is_departments = !is_departments"
             class="text-xs uppercase text-slate-500 dark:text-white font-semibold ml-[-9px] mr-[-9px]"
           >
-            <span class="hidden lg:block lg:sidebar-expanded:hidden 2xl:hidden text-center w-6" aria-hidden="true">•••</span>
-            <div class="flex justify-between bg-white dark:bg-slate-700 p-2 rounded w-full cursor-pointer">
-              <span class="lg:hidden lg:sidebar-expanded:block 2xl:sidebar-expanded:block 2xl:hidden">Bo'limlar</span>
-              <i v-if="is_departments" class="fa-solid fa-angle-up fa-sm mt-2"></i>
+            <span
+              class="hidden lg:block lg:sidebar-expanded:hidden 2xl:hidden text-center w-6"
+              aria-hidden="true"
+              >•••</span
+            >
+            <div
+              class="flex justify-between bg-white dark:bg-slate-700 p-2 rounded w-full cursor-pointer"
+            >
+              <span
+                class="lg:hidden lg:sidebar-expanded:block 2xl:sidebar-expanded:block 2xl:hidden"
+                >Bo'limlar</span
+              >
+              <i
+                v-if="is_departments"
+                class="fa-solid fa-angle-up fa-sm mt-2"
+              ></i>
               <i v-else class="fa-solid fa-angle-down fa-sm mt-2"></i>
             </div>
           </h3>
@@ -298,166 +510,340 @@
             v-if="is_departments === true"
             class="p-2.5 mt-1 rounded-lg border bg-white border-slate-200 dark:border-slate-600 dark:bg-slate-700 shadow-md transition"
           >
-            <ul class="">
-              <SidebarLinkGroup v-slot="parentLink">
-                <a class="block text-slate-200 truncate transition duration-150 hover:text-white" href="#0" @click.prevent="sidebarExpanded ? parentLink.handleClick() : (sidebarExpanded = true)">
-                  <div class="flex items-center justify-between">
-                    <div class="flex items-center">
-                      <i class="fa-solid fa-calculator text-indigo-400 text-lg"></i>
-                      <span class="text-sm font-medium ml-3 text-slate-500 dark:text-white">Buhgalteriya</span>
+            <Guard :roles="['30', '1000', '2000']">
+              <ul class="">
+                <SidebarLinkGroup v-slot="parentLink">
+                  <a
+                    class="block text-slate-200 truncate transition duration-150 hover:text-white"
+                    href="#0"
+                    @click.prevent="
+                      sidebarExpanded
+                        ? parentLink.handleClick()
+                        : (sidebarExpanded = true)
+                    "
+                  >
+                    <div class="flex items-center justify-between">
+                      <div class="flex items-center">
+                        <i
+                          class="fa-solid fa-calculator text-indigo-400 text-lg"
+                        ></i>
+                        <span
+                          class="text-sm font-medium ml-3 text-slate-500 dark:text-white"
+                          >Buxgalteriya</span
+                        >
+                      </div>
+                      <svg
+                        class="w-3 h-3 shrink-0 ml-1 fill-current text-slate-400 transition-transform duration-300"
+                        :class="parentLink.expanded && 'rotate-180'"
+                        viewBox="0 0 12 12"
+                      >
+                        <path d="M5.9 11.4L.5 6l1.4-1.4 4 4 4-4L11.3 6z" />
+                      </svg>
                     </div>
-                    <svg class="w-3 h-3 shrink-0 ml-1 fill-current text-slate-400 transition-transform duration-300" :class="parentLink.expanded && 'rotate-180'" viewBox="0 0 12 12">
-                      <path d="M5.9 11.4L.5 6l1.4-1.4 4 4 4-4L11.3 6z" />
-                    </svg>
-                  </div>
-                </a>
-                <ul class="pl-5 mt-2 space-y-1 border-l border-indigo-200 dark:border-indigo-400 transition-all duration-500 ease-in-out" :class="!parentLink.expanded && 'hidden'">
-                  <li>
-                    <router-link :to="{ name: 'Employees' }" class="flex items-center gap-2 px-2 py-2 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-indigo-500/10 transition-all duration-200">
-                      <span class="text-[13px] font-medium">Hisobvaraqlar reestri</span>
-                    </router-link>
-                  </li>
-                  <li>
-                    <router-link :to="{ name: 'Employees' }" class="flex items-center gap-2 px-2 py-2 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-indigo-500/10 transition-all duration-200">
-                      <span class="text-[13px] font-medium">Kassa operatsiyalari</span>
-                    </router-link>
-                  </li>
-                  <li>
-                    <router-link :to="{ name: 'Employees' }" class="flex items-center gap-2 px-2 py-2 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-indigo-500/10 transition-all duration-200">
-                      <span class="text-[13px] font-medium">Debit/Kredit</span>
-                    </router-link>
-                  </li>
-                </ul>
-              </SidebarLinkGroup>
-            </ul>
+                  </a>
+                  <ul
+                    class="pl-5 mt-2 space-y-1 border-l border-indigo-200 dark:border-indigo-400 transition-all duration-500 ease-in-out"
+                    :class="!parentLink.expanded && 'hidden'"
+                  >
+                    <li>
+                      <router-link
+                        :to="{ name: 'Employees' }"
+                        class="flex items-center gap-2 px-2 py-2 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-indigo-500/10 transition-all duration-200"
+                      >
+                        <span class="text-[13px] font-medium"
+                          >Hisobvaraqlar reestri</span
+                        >
+                      </router-link>
+                    </li>
+                    <li>
+                      <router-link
+                        :to="{ name: 'Employees' }"
+                        class="flex items-center gap-2 px-2 py-2 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-indigo-500/10 transition-all duration-200"
+                      >
+                        <span class="text-[13px] font-medium"
+                          >Kassa operatsiyalari</span
+                        >
+                      </router-link>
+                    </li>
+                    <li>
+                      <router-link
+                        :to="{ name: 'Employees' }"
+                        class="flex items-center gap-2 px-2 py-2 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-indigo-500/10 transition-all duration-200"
+                      >
+                        <span class="text-[13px] font-medium"
+                          >Debit/Kredit</span
+                        >
+                      </router-link>
+                    </li>
+                  </ul>
+                </SidebarLinkGroup>
+              </ul>
+            </Guard>
+            <Guard :roles="['30', '1000', '2000']">
+              <ul class="mt-1">
+                <SidebarLinkGroup v-slot="parentLink">
+                  <a
+                    class="block text-slate-200 truncate transition duration-150 hover:text-white"
+                    href="#0"
+                    @click.prevent="
+                      sidebarExpanded
+                        ? parentLink.handleClick()
+                        : (sidebarExpanded = true)
+                    "
+                  >
+                    <div class="flex items-center justify-between">
+                      <div class="flex items-center">
+                        <i
+                          class="fa-solid fa-user-tie text-indigo-400 text-lg"
+                        ></i>
+                        <span
+                          class="text-sm font-medium ml-3 text-slate-500 dark:text-white"
+                          >Kadrlar</span
+                        >
+                      </div>
+                      <svg
+                        class="w-3 h-3 shrink-0 ml-1 fill-current text-slate-400 transition-transform duration-300"
+                        :class="parentLink.expanded && 'rotate-180'"
+                        viewBox="0 0 12 12"
+                      >
+                        <path d="M5.9 11.4L.5 6l1.4-1.4 4 4 4-4L11.3 6z" />
+                      </svg>
+                    </div>
+                  </a>
+                  <ul
+                    class="pl-5 mt-2 space-y-1 border-l border-indigo-200 dark:border-indigo-400 transition-all duration-500 ease-in-out"
+                    :class="!parentLink.expanded && 'hidden'"
+                  >
+                    <li>
+                      <router-link
+                        :to="{ name: 'Employees' }"
+                        class="flex items-center gap-2 px-2 py-2 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-indigo-500/10 transition-all duration-200"
+                      >
+                        <span class="text-[13px] font-medium"
+                          >Xodimlar ro'yxati</span
+                        >
+                      </router-link>
+                    </li>
+                    <li>
+                      <router-link
+                        :to="{ name: 'Employees' }"
+                        class="flex items-center gap-2 px-2 py-2 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-indigo-500/10 transition-all duration-200"
+                      >
+                        <span class="text-[13px] font-medium"
+                          >Ish haqi va bonuslar</span
+                        >
+                      </router-link>
+                    </li>
+                  </ul>
+                </SidebarLinkGroup>
+              </ul>
+            </Guard>
+            <Guard :roles="['20','1000','2000']">
+              <ul class="mt-1">
+                <SidebarLinkGroup v-slot="parentLink">
+                  <a
+                    class="block text-slate-200 truncate transition duration-150 hover:text-white"
+                    href="#0"
+                    @click.prevent="
+                      sidebarExpanded
+                        ? parentLink.handleClick()
+                        : (sidebarExpanded = true)
+                    "
+                  >
+                    <div class="flex items-center justify-between">
+                      <div class="flex items-center">
+                        <i
+                          class="fa-solid fa-cart-shopping text-indigo-400 text-lg"
+                        ></i>
+                        <span
+                          class="text-sm font-medium ml-3 text-slate-500 dark:text-white"
+                          >Sotuv</span
+                        >
+                      </div>
+                      <svg
+                        class="w-3 h-3 shrink-0 ml-1 fill-current text-slate-400 transition-transform duration-300"
+                        :class="parentLink.expanded && 'rotate-180'"
+                        viewBox="0 0 12 12"
+                      >
+                        <path d="M5.9 11.4L.5 6l1.4-1.4 4 4 4-4L11.3 6z" />
+                      </svg>
+                    </div>
+                  </a>
+                  <ul
+                    class="pl-5 mt-2 space-y-1 border-l border-indigo-200 dark:border-indigo-400 transition-all duration-500 ease-in-out"
+                    :class="!parentLink.expanded && 'hidden'"
+                  >
+                    <li>
+                      <router-link
+                        :to="{ name: 'Sotuv (POS)' }"
+                        class="flex items-center gap-2 px-2 py-2 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-indigo-500/10 transition-all duration-200"
+                      >
+                        <span class="text-[13px] font-medium">Sotuv (POS)</span>
+                      </router-link>
+                    </li>
+                    <li>
+                      <router-link
+                        :to="{ name: 'Sotuvlar' }"
+                        class="flex items-center gap-2 px-2 py-2 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-indigo-500/10 transition-all duration-200"
+                      >
+                        <span class="text-[13px] font-medium"
+                          >Sotuv ro'yxati</span
+                        >
+                      </router-link>
+                    </li>
+                    <li>
+                      <router-link
+                        :to="{ name: 'Products' }"
+                        class="flex items-center gap-2 px-2 py-2 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-indigo-500/10 transition-all duration-200"
+                      >
+                        <span class="text-[13px] font-medium"
+                          >Mahsulotlar ro'yxati</span
+                        >
+                      </router-link>
+                    </li>
+                  </ul>
+                </SidebarLinkGroup>
+              </ul>
+            </Guard>
+            <Guard :roles="['40', '1000', '2000']">
+              <ul class="mt-1">
+                <SidebarLinkGroup v-slot="parentLink">
+                  <a
+                    class="block text-slate-200 truncate transition duration-150 hover:text-white"
+                    href="#0"
+                    @click.prevent="
+                      sidebarExpanded
+                        ? parentLink.handleClick()
+                        : (sidebarExpanded = true)
+                    "
+                  >
+                    <div class="flex items-center justify-between">
+                      <div class="flex items-center">
+                        <i
+                          class="fa-solid fa-warehouse text-indigo-400 text-lg"
+                        ></i>
+                        <span
+                          class="text-sm font-medium ml-3 text-slate-500 dark:text-white"
+                          >Omborlar</span
+                        >
+                      </div>
+                      <svg
+                        class="w-3 h-3 shrink-0 ml-1 fill-current text-slate-400 transition-transform duration-300"
+                        :class="parentLink.expanded && 'rotate-180'"
+                        viewBox="0 0 12 12"
+                      >
+                        <path d="M5.9 11.4L.5 6l1.4-1.4 4 4 4-4L11.3 6z" />
+                      </svg>
+                    </div>
+                  </a>
+                  <ul
+                    class="pl-5 mt-2 space-y-1 border-l border-indigo-200 dark:border-indigo-400 transition-all duration-500 ease-in-out"
+                    :class="!parentLink.expanded && 'hidden'"
+                  >
+                    <li>
+                      <router-link
+                        :to="{ name: 'Kirim qilish' }"
+                        class="flex items-center gap-2 px-2 py-2 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-indigo-500/10 transition-all duration-200"
+                      >
+                        <span class="text-[13px] font-medium"
+                          >Kirim qilish</span
+                        >
+                      </router-link>
+                    </li>
+
+                    <li>
+                      <router-link
+                        :to="{ name: 'ReadyWarehouse' }"
+                        class="flex items-center gap-2 px-2 py-2 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-indigo-500/10 transition-all duration-200"
+                      >
+                        <span class="text-[13px] font-medium"
+                          >Kirm ro'yxati</span
+                        >
+                      </router-link>
+                    </li>
+                    <li>
+                      <router-link
+                        :to="{ name: 'Products' }"
+                        class="flex items-center gap-2 px-2 py-2 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-indigo-500/10 transition-all duration-200"
+                      >
+                        <span class="text-[13px] font-medium">Qoldiq</span>
+                      </router-link>
+                    </li>
+                    <li>
+                      <router-link
+                        :to="{ name: 'Rivizya' }"
+                        class="flex items-center gap-2 px-2 py-2 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-indigo-500/10 transition-all duration-200"
+                      >
+                        <span class="text-[13px] font-medium">Riviziya</span>
+                      </router-link>
+                    </li>
+                    <li>
+                      <router-link
+                        :to="{ name: 'ReadyWarehouse' }"
+                        class="flex items-center gap-2 px-2 py-2 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-indigo-500/10 transition-all duration-200"
+                      >
+                        <span class="text-[13px] font-medium"
+                          >Xom ashyo (ombori)</span
+                        >
+                      </router-link>
+                    </li>
+                  </ul>
+                </SidebarLinkGroup>
+              </ul>
+            </Guard>
 
             <ul class="mt-1">
               <SidebarLinkGroup v-slot="parentLink">
-                <a class="block text-slate-200 truncate transition duration-150 hover:text-white" href="#0" @click.prevent="sidebarExpanded ? parentLink.handleClick() : (sidebarExpanded = true)">
+                <a
+                  class="block text-slate-200 truncate transition duration-150 hover:text-white"
+                  href="#0"
+                  @click.prevent="
+                    sidebarExpanded
+                      ? parentLink.handleClick()
+                      : (sidebarExpanded = true)
+                  "
+                >
                   <div class="flex items-center justify-between">
                     <div class="flex items-center">
-                      <i class="fa-solid fa-user-tie text-indigo-400 text-lg"></i>
-                      <span class="text-sm font-medium ml-3 text-slate-500 dark:text-white">Kadrlar</span>
+                      <i
+                        class="fa-solid fa-person-circle-question text-indigo-400 text-lg"
+                      ></i>
+                      <span
+                        class="text-sm font-medium ml-3 text-slate-500 dark:text-white"
+                        >Mijozlar</span
+                      >
                     </div>
-                    <svg class="w-3 h-3 shrink-0 ml-1 fill-current text-slate-400 transition-transform duration-300" :class="parentLink.expanded && 'rotate-180'" viewBox="0 0 12 12">
+                    <svg
+                      class="w-3 h-3 shrink-0 ml-1 fill-current text-slate-400 transition-transform duration-300"
+                      :class="parentLink.expanded && 'rotate-180'"
+                      viewBox="0 0 12 12"
+                    >
                       <path d="M5.9 11.4L.5 6l1.4-1.4 4 4 4-4L11.3 6z" />
                     </svg>
                   </div>
                 </a>
-                <ul class="pl-5 mt-2 space-y-1 border-l border-indigo-200 dark:border-indigo-400 transition-all duration-500 ease-in-out" :class="!parentLink.expanded && 'hidden'">
+                <ul
+                  class="pl-5 mt-2 space-y-1 border-l border-indigo-200 dark:border-indigo-400 transition-all duration-500 ease-in-out"
+                  :class="!parentLink.expanded && 'hidden'"
+                >
                   <li>
-                    <router-link :to="{ name: 'Employees' }" class="flex items-center gap-2 px-2 py-2 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-indigo-500/10 transition-all duration-200">
-                      <span class="text-[13px] font-medium">Xodimlar ro'yxati</span>
-                    </router-link>
-                  </li>
-                  <li>
-                    <router-link :to="{ name: 'Employees' }" class="flex items-center gap-2 px-2 py-2 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-indigo-500/10 transition-all duration-200">
-                      <span class="text-[13px] font-medium">Ish haqi va bonuslar</span>
-                    </router-link>
-                  </li>
-                </ul>
-              </SidebarLinkGroup>
-            </ul>
-
-            <ul class="mt-1">
-              <SidebarLinkGroup v-slot="parentLink">
-                <a class="block text-slate-200 truncate transition duration-150 hover:text-white" href="#0" @click.prevent="sidebarExpanded ? parentLink.handleClick() : (sidebarExpanded = true)">
-                  <div class="flex items-center justify-between">
-                    <div class="flex items-center">
-                      <i class="fa-solid fa-cart-shopping text-indigo-400 text-lg"></i>
-                      <span class="text-sm font-medium ml-3 text-slate-500 dark:text-white">Sotuv</span>
-                    </div>
-                    <svg class="w-3 h-3 shrink-0 ml-1 fill-current text-slate-400 transition-transform duration-300" :class="parentLink.expanded && 'rotate-180'" viewBox="0 0 12 12">
-                      <path d="M5.9 11.4L.5 6l1.4-1.4 4 4 4-4L11.3 6z" />
-                    </svg>
-                  </div>
-                </a>
-                <ul class="pl-5 mt-2 space-y-1 border-l border-indigo-200 dark:border-indigo-400 transition-all duration-500 ease-in-out" :class="!parentLink.expanded && 'hidden'">
-                 <li>
-                    <router-link :to="{ name: 'Sotuv (POS)' }" class="flex items-center gap-2 px-2 py-2 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-indigo-500/10 transition-all duration-200">
-                      <span class="text-[13px] font-medium">Sotuv (POS)</span>
-                    </router-link>
-                  </li>
-                   <li>
-                    <router-link :to="{ name: 'Sotuvlar' }" class="flex items-center gap-2 px-2 py-2 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-indigo-500/10 transition-all duration-200">
-                      <span class="text-[13px] font-medium">Sotuv ro'yxati</span>
+                    <router-link
+                      :to="{ name: `Mijozlar ro'yxati` }"
+                      class="flex items-center gap-2 px-2 py-2 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-indigo-500/10 transition-all duration-200"
+                    >
+                      <span class="text-[13px] font-medium"
+                        >Mijozlar ro'yxati</span
+                      >
                     </router-link>
                   </li>
                   <li>
-                    <router-link :to="{ name: 'Products' }" class="flex items-center gap-2 px-2 py-2 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-indigo-500/10 transition-all duration-200">
-                      <span class="text-[13px] font-medium">Mahsulotlar ro'yxati</span>
-                    </router-link>
-                  </li>
-                 
-                </ul>
-              </SidebarLinkGroup>
-            </ul>
-
-            <ul class="mt-1">
-              <SidebarLinkGroup v-slot="parentLink">
-                <a class="block text-slate-200 truncate transition duration-150 hover:text-white" href="#0" @click.prevent="sidebarExpanded ? parentLink.handleClick() : (sidebarExpanded = true)">
-                  <div class="flex items-center justify-between">
-                    <div class="flex items-center">
-                      <i class="fa-solid fa-warehouse text-indigo-400 text-lg"></i>
-                      <span class="text-sm font-medium ml-3 text-slate-500 dark:text-white">Omborlar</span>
-                    </div>
-                    <svg class="w-3 h-3 shrink-0 ml-1 fill-current text-slate-400 transition-transform duration-300" :class="parentLink.expanded && 'rotate-180'" viewBox="0 0 12 12">
-                      <path d="M5.9 11.4L.5 6l1.4-1.4 4 4 4-4L11.3 6z" />
-                    </svg>
-                  </div>
-                </a>
-                <ul class="pl-5 mt-2 space-y-1 border-l border-indigo-200 dark:border-indigo-400 transition-all duration-500 ease-in-out" :class="!parentLink.expanded && 'hidden'">
-                   <li>
-                    <router-link :to="{ name: 'Kirim qilish' }" class="flex items-center gap-2 px-2 py-2 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-indigo-500/10 transition-all duration-200">
-                      <span class="text-[13px] font-medium">Kirim qilish</span>
-                    </router-link>
-                  </li>
-                  
-                  <li>
-                    <router-link :to="{ name: 'ReadyWarehouse' }" class="flex items-center gap-2 px-2 py-2 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-indigo-500/10 transition-all duration-200">
-                      <span class="text-[13px] font-medium">Kirm ro'yxati</span>
-                    </router-link>
-                  </li>
-                  <li>
-                    <router-link :to="{ name: 'Products' }" class="flex items-center gap-2 px-2 py-2 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-indigo-500/10 transition-all duration-200">
-                      <span class="text-[13px] font-medium">Qoldiq</span>
-                    </router-link>
-                  </li>
-                   <li>
-                    <router-link :to="{ name: 'Rivizya' }" class="flex items-center gap-2 px-2 py-2 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-indigo-500/10 transition-all duration-200">
-                      <span class="text-[13px] font-medium">Riviziya</span>
-                    </router-link>
-                  </li>
-                  <li>
-                    <router-link :to="{ name: 'ReadyWarehouse' }" class="flex items-center gap-2 px-2 py-2 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-indigo-500/10 transition-all duration-200">
-                      <span class="text-[13px] font-medium">Xom ashyo (ombori)</span>
-                    </router-link>
-                  </li>
-                </ul>
-              </SidebarLinkGroup>
-            </ul>
-   <ul class="mt-1">
-              <SidebarLinkGroup v-slot="parentLink">
-                <a class="block text-slate-200 truncate transition duration-150 hover:text-white" href="#0" @click.prevent="sidebarExpanded ? parentLink.handleClick() : (sidebarExpanded = true)">
-                  <div class="flex items-center justify-between">
-                    <div class="flex items-center">
-                      <i class="fa-solid fa-person-circle-question text-indigo-400 text-lg"></i>
-                      <span class="text-sm font-medium ml-3 text-slate-500 dark:text-white">Mijozlar</span>
-                    </div>
-                    <svg class="w-3 h-3 shrink-0 ml-1 fill-current text-slate-400 transition-transform duration-300" :class="parentLink.expanded && 'rotate-180'" viewBox="0 0 12 12">
-                      <path d="M5.9 11.4L.5 6l1.4-1.4 4 4 4-4L11.3 6z" />
-                    </svg>
-                  </div>
-                </a>
-                <ul class="pl-5 mt-2 space-y-1 border-l border-indigo-200 dark:border-indigo-400 transition-all duration-500 ease-in-out" :class="!parentLink.expanded && 'hidden'">
-                  <li>
-                    <router-link :to="{ name: `Mijozlar ro'yxati`}" class="flex items-center gap-2 px-2 py-2 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-indigo-500/10 transition-all duration-200">
-                      <span class="text-[13px] font-medium">Mijozlar ro'yxati</span>
-                    </router-link>
-                  </li>
-                  <li>
-                    <router-link :to="{ name: 'Monitoring' }" class="flex items-center gap-2 px-2 py-2 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-indigo-500/10 transition-all duration-200">
-                      <span class="text-[13px] font-medium">Kontragentlar ro'yxati</span>
+                    <router-link
+                      :to="{ name: 'Monitoring' }"
+                      class="flex items-center gap-2 px-2 py-2 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-indigo-500/10 transition-all duration-200"
+                    >
+                      <span class="text-[13px] font-medium"
+                        >Kontragentlar ro'yxati</span
+                      >
                     </router-link>
                   </li>
                 </ul>
@@ -465,25 +851,51 @@
             </ul>
             <ul class="mt-1">
               <SidebarLinkGroup v-slot="parentLink">
-                <a class="block text-slate-200 truncate transition duration-150 hover:text-white" href="#0" @click.prevent="sidebarExpanded ? parentLink.handleClick() : (sidebarExpanded = true)">
+                <a
+                  class="block text-slate-200 truncate transition duration-150 hover:text-white"
+                  href="#0"
+                  @click.prevent="
+                    sidebarExpanded
+                      ? parentLink.handleClick()
+                      : (sidebarExpanded = true)
+                  "
+                >
                   <div class="flex items-center justify-between">
                     <div class="flex items-center">
-                      <i class="fa-solid fa-truck-fast text-indigo-400 text-lg"></i>
-                      <span class="text-sm font-medium ml-3 text-slate-500 dark:text-white">Logistika</span>
+                      <i
+                        class="fa-solid fa-truck-fast text-indigo-400 text-lg"
+                      ></i>
+                      <span
+                        class="text-sm font-medium ml-3 text-slate-500 dark:text-white"
+                        >Logistika</span
+                      >
                     </div>
-                    <svg class="w-3 h-3 shrink-0 ml-1 fill-current text-slate-400 transition-transform duration-300" :class="parentLink.expanded && 'rotate-180'" viewBox="0 0 12 12">
+                    <svg
+                      class="w-3 h-3 shrink-0 ml-1 fill-current text-slate-400 transition-transform duration-300"
+                      :class="parentLink.expanded && 'rotate-180'"
+                      viewBox="0 0 12 12"
+                    >
                       <path d="M5.9 11.4L.5 6l1.4-1.4 4 4 4-4L11.3 6z" />
                     </svg>
                   </div>
                 </a>
-                <ul class="pl-5 mt-2 space-y-1 border-l border-indigo-200 dark:border-indigo-400 transition-all duration-500 ease-in-out" :class="!parentLink.expanded && 'hidden'">
+                <ul
+                  class="pl-5 mt-2 space-y-1 border-l border-indigo-200 dark:border-indigo-400 transition-all duration-500 ease-in-out"
+                  :class="!parentLink.expanded && 'hidden'"
+                >
                   <li>
-                    <router-link :to="{ name: 'Monitoring' }" class="flex items-center gap-2 px-2 py-2 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-indigo-500/10 transition-all duration-200">
+                    <router-link
+                      :to="{ name: 'Monitoring' }"
+                      class="flex items-center gap-2 px-2 py-2 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-indigo-500/10 transition-all duration-200"
+                    >
                       <span class="text-[13px] font-medium">GPS nazorati</span>
                     </router-link>
                   </li>
                   <li>
-                    <router-link :to="{ name: 'Monitoring' }" class="flex items-center gap-2 px-2 py-2 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-indigo-500/10 transition-all duration-200">
+                    <router-link
+                      :to="{ name: 'Monitoring' }"
+                      class="flex items-center gap-2 px-2 py-2 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-indigo-500/10 transition-all duration-200"
+                    >
                       <span class="text-[13px] font-medium">Haydovchilar</span>
                     </router-link>
                   </li>
@@ -494,102 +906,121 @@
         </div>
 
         <div>
-          <h3 @click="is_reports = !is_reports" class="text-xs uppercase text-slate-500 dark:text-white font-semibold ml-[-9px] mr-[-9px]">
-            <span class="hidden lg:block lg:sidebar-expanded:hidden 2xl:hidden text-center w-6" aria-hidden="true">•••</span>
-            <div class="flex justify-between bg-white dark:bg-slate-700 p-2 rounded w-full cursor-pointer">
-              <span class="lg:hidden lg:sidebar-expanded:block 2xl:sidebar-expanded:block 2xl:hidden">Hisobotlar</span>
+          <h3
+            @click="is_reports = !is_reports"
+            class="text-xs uppercase text-slate-500 dark:text-white font-semibold ml-[-9px] mr-[-9px]"
+          >
+            <span
+              class="hidden lg:block lg:sidebar-expanded:hidden 2xl:hidden text-center w-6"
+              aria-hidden="true"
+              >•••</span
+            >
+            <div
+              class="flex justify-between bg-white dark:bg-slate-700 p-2 rounded w-full cursor-pointer"
+            >
+              <span
+                class="lg:hidden lg:sidebar-expanded:block 2xl:sidebar-expanded:block 2xl:hidden"
+                >Hisobotlar</span
+              >
               <i v-if="is_reports" class="fa-solid fa-angle-up fa-sm mt-2"></i>
               <i v-else class="fa-solid fa-angle-down fa-sm mt-2"></i>
             </div>
           </h3>
-          
-          <div v-if="is_reports === true" class="p-2.5 mt-1 rounded-lg border bg-white border-slate-200 dark:border-slate-600 dark:bg-slate-700 shadow-md transition">
-              <ul class="mt-1">
-                <SidebarLinkGroup v-slot="parentLink">
-                  <a class="block text-slate-200 truncate transition duration-150 hover:text-white" href="#0" @click.prevent="sidebarExpanded ? parentLink.handleClick() : (sidebarExpanded = true)">
-                    <div class="flex items-center justify-between">
-                      <div class="flex items-center">
-                        <i class="fa-solid fa-file-invoice text-indigo-400 text-lg"></i>
-                        <span class="text-sm font-medium ml-3 text-slate-500 dark:text-white">Buhgalteriya hisoboti</span>
-                      </div>
-                      <svg class="w-3 h-3 shrink-0 ml-1 fill-current text-slate-400 transition-transform duration-300" :class="parentLink.expanded && 'rotate-180'" viewBox="0 0 12 12">
-                        <path d="M5.9 11.4L.5 6l1.4-1.4 4 4 4-4L11.3 6z" />
-                      </svg>
-                    </div>
-                  </a>
-                  <ul class="pl-5 mt-2 space-y-1 border-l border-indigo-200 dark:border-indigo-400 transition-all duration-500 ease-in-out" :class="!parentLink.expanded && 'hidden'">
-                    <li>
-                      <router-link to="#" class="flex items-center gap-2 px-2 py-2 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-indigo-500/10 transition-all duration-200">
-                        <span class="text-[13px] font-medium">Batafsil ko'rish</span>
-                      </router-link>
-                    </li>
-                  </ul>
-                </SidebarLinkGroup>
-              </ul>
-              
-              <ul class="mt-1">
-                <SidebarLinkGroup v-slot="parentLink">
-                  <a class="block text-slate-200 truncate transition duration-150 hover:text-white" href="#0" @click.prevent="sidebarExpanded ? parentLink.handleClick() : (sidebarExpanded = true)">
-                    <div class="flex items-center justify-between">
-                      <div class="flex items-center">
-                        <i class="fa-solid fa-users-viewfinder text-indigo-400 text-lg"></i>
-                        <span class="text-sm font-medium ml-3 text-slate-500 dark:text-white">Kadrlar hisoboti</span>
-                      </div>
-                      <svg class="w-3 h-3 shrink-0 ml-1 fill-current text-slate-400 transition-transform duration-300" :class="parentLink.expanded && 'rotate-180'" viewBox="0 0 12 12">
-                        <path d="M5.9 11.4L.5 6l1.4-1.4 4 4 4-4L11.3 6z" />
-                      </svg>
-                    </div>
-                  </a>
-                  <ul class="pl-5 mt-2 space-y-1 border-l border-indigo-200 dark:border-indigo-400 transition-all duration-500 ease-in-out" :class="!parentLink.expanded && 'hidden'">
-                    <li>
-                      <router-link to="#" class="flex items-center gap-2 px-2 py-2 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-indigo-500/10 transition-all duration-200">
-                        <span class="text-[13px] font-medium">Batafsil ko'rish</span>
-                      </router-link>
-                    </li>
-                  </ul>
-                </SidebarLinkGroup>
-              </ul>
-          </div>
-        </div>
 
-        <div>
-          <h3 @click="is_settings = !is_settings" class="text-xs uppercase text-slate-500 dark:text-white font-semibold ml-[-9px] mr-[-9px]">
-            <span class="hidden lg:block lg:sidebar-expanded:hidden 2xl:hidden text-center w-6" aria-hidden="true">•••</span>
-            <div class="flex justify-between bg-white dark:bg-slate-700 p-2 rounded w-full cursor-pointer">
-              <span class="lg:hidden lg:sidebar-expanded:block 2xl:sidebar-expanded:block 2xl:hidden">Sozlamalar</span>
-              <i v-if="is_settings" class="fa-solid fa-angle-up fa-sm mt-2"></i>
-              <i v-else class="fa-solid fa-angle-down fa-sm mt-2"></i>
-            </div>
-          </h3>
-          
-          <div v-if="is_settings === true" class="p-2.5 mt-1 rounded-lg border bg-white border-slate-200 dark:border-slate-600 dark:bg-slate-700 shadow-md transition">
-            <ul class="">
+          <div
+            v-if="is_reports === true"
+            class="p-2.5 mt-1 rounded-lg border bg-white border-slate-200 dark:border-slate-600 dark:bg-slate-700 shadow-md transition"
+          >
+            <ul class="mt-1">
               <SidebarLinkGroup v-slot="parentLink">
-                <a class="block text-slate-200 truncate transition duration-150 hover:text-white" href="#0" @click.prevent="sidebarExpanded ? parentLink.handleClick() : (sidebarExpanded = true)">
+                <a
+                  class="block text-slate-200 truncate transition duration-150 hover:text-white"
+                  href="#0"
+                  @click.prevent="
+                    sidebarExpanded
+                      ? parentLink.handleClick()
+                      : (sidebarExpanded = true)
+                  "
+                >
                   <div class="flex items-center justify-between">
                     <div class="flex items-center">
-                      <i class="fa-solid fa-gear text-indigo-400 text-lg"></i>
-                      <span class="text-sm font-medium ml-3 text-slate-500 dark:text-white">Tizim sozlamalari</span>
+                      <i
+                        class="fa-solid fa-file-invoice text-indigo-400 text-lg"
+                      ></i>
+                      <span
+                        class="text-sm font-medium ml-3 text-slate-500 dark:text-white"
+                        >Buhgalteriya hisoboti</span
+                      >
                     </div>
-                    <svg class="w-3 h-3 shrink-0 ml-1 fill-current text-slate-400 transition-transform duration-300" :class="parentLink.expanded && 'rotate-180'" viewBox="0 0 12 12">
+                    <svg
+                      class="w-3 h-3 shrink-0 ml-1 fill-current text-slate-400 transition-transform duration-300"
+                      :class="parentLink.expanded && 'rotate-180'"
+                      viewBox="0 0 12 12"
+                    >
                       <path d="M5.9 11.4L.5 6l1.4-1.4 4 4 4-4L11.3 6z" />
                     </svg>
                   </div>
                 </a>
-                <ul class="pl-5 mt-2 space-y-1 border-l border-indigo-200 dark:border-indigo-400 transition-all duration-500 ease-in-out" :class="!parentLink.expanded && 'hidden'">
+                <ul
+                  class="pl-5 mt-2 space-y-1 border-l border-indigo-200 dark:border-indigo-400 transition-all duration-500 ease-in-out"
+                  :class="!parentLink.expanded && 'hidden'"
+                >
                   <li>
-                    <router-link :to="{name:`Foydalanuvchilar`}" class="flex items-center gap-2 px-2 py-2 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-indigo-500/10 transition-all duration-200">
-                      <span class="text-[13px] font-medium">Foydalanuvchilar</span>
+                    <router-link
+                      to="#"
+                      class="flex items-center gap-2 px-2 py-2 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-indigo-500/10 transition-all duration-200"
+                    >
+                      <span class="text-[13px] font-medium"
+                        >Batafsil ko'rish</span
+                      >
                     </router-link>
                   </li>
+                </ul>
+              </SidebarLinkGroup>
+            </ul>
+
+            <ul class="mt-1">
+              <SidebarLinkGroup v-slot="parentLink">
+                <a
+                  class="block text-slate-200 truncate transition duration-150 hover:text-white"
+                  href="#0"
+                  @click.prevent="
+                    sidebarExpanded
+                      ? parentLink.handleClick()
+                      : (sidebarExpanded = true)
+                  "
+                >
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                      <i
+                        class="fa-solid fa-users-viewfinder text-indigo-400 text-lg"
+                      ></i>
+                      <span
+                        class="text-sm font-medium ml-3 text-slate-500 dark:text-white"
+                        >Kadrlar hisoboti</span
+                      >
+                    </div>
+                    <svg
+                      class="w-3 h-3 shrink-0 ml-1 fill-current text-slate-400 transition-transform duration-300"
+                      :class="parentLink.expanded && 'rotate-180'"
+                      viewBox="0 0 12 12"
+                    >
+                      <path d="M5.9 11.4L.5 6l1.4-1.4 4 4 4-4L11.3 6z" />
+                    </svg>
+                  </div>
+                </a>
+                <ul
+                  class="pl-5 mt-2 space-y-1 border-l border-indigo-200 dark:border-indigo-400 transition-all duration-500 ease-in-out"
+                  :class="!parentLink.expanded && 'hidden'"
+                >
                   <li>
-                    <router-link :to="{name:`Foydalanuvchilar`}"  class="flex items-center gap-2 px-2 py-2 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-indigo-500/10 transition-all duration-200">
-                      <span class="text-[13px] font-medium">Bo'limlar</span>
-                    </router-link>
-                  </li>
-                  <li>
-                    <router-link :to="{name:`Rollar boshqaruvi`}"  class="flex items-center gap-2 px-2 py-2 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-indigo-500/10 transition-all duration-200">
-                      <span class="text-[13px] font-medium">Ruxsatlar boshqaruvi</span>
+                    <router-link
+                      to="#"
+                      class="flex items-center gap-2 px-2 py-2 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-indigo-500/10 transition-all duration-200"
+                    >
+                      <span class="text-[13px] font-medium"
+                        >Batafsil ko'rish</span
+                      >
                     </router-link>
                   </li>
                 </ul>
@@ -597,7 +1028,103 @@
             </ul>
           </div>
         </div>
- <!-- More group -->
+        <Guard :roles="['1000']">
+          <div>
+            <h3
+              @click="is_settings = !is_settings"
+              class="text-xs uppercase text-slate-500 dark:text-white font-semibold ml-[-9px] mr-[-9px]"
+            >
+              <span
+                class="hidden lg:block lg:sidebar-expanded:hidden 2xl:hidden text-center w-6"
+                aria-hidden="true"
+                >•••</span
+              >
+              <div
+                class="flex justify-between bg-white dark:bg-slate-700 p-2 rounded w-full cursor-pointer"
+              >
+                <span
+                  class="lg:hidden lg:sidebar-expanded:block 2xl:sidebar-expanded:block 2xl:hidden"
+                  >Sozlamalar</span
+                >
+                <i
+                  v-if="is_settings"
+                  class="fa-solid fa-angle-up fa-sm mt-2"
+                ></i>
+                <i v-else class="fa-solid fa-angle-down fa-sm mt-2"></i>
+              </div>
+            </h3>
+
+            <div
+              v-if="is_settings === true"
+              class="p-2.5 mt-1 rounded-lg border bg-white border-slate-200 dark:border-slate-600 dark:bg-slate-700 shadow-md transition"
+            >
+              <ul class="">
+                <SidebarLinkGroup v-slot="parentLink">
+                  <a
+                    class="block text-slate-200 truncate transition duration-150 hover:text-white"
+                    href="#0"
+                    @click.prevent="
+                      sidebarExpanded
+                        ? parentLink.handleClick()
+                        : (sidebarExpanded = true)
+                    "
+                  >
+                    <div class="flex items-center justify-between">
+                      <div class="flex items-center">
+                        <i class="fa-solid fa-gear text-indigo-400 text-lg"></i>
+                        <span
+                          class="text-sm font-medium ml-3 text-slate-500 dark:text-white"
+                          >Tizim sozlamalari</span
+                        >
+                      </div>
+                      <svg
+                        class="w-3 h-3 shrink-0 ml-1 fill-current text-slate-400 transition-transform duration-300"
+                        :class="parentLink.expanded && 'rotate-180'"
+                        viewBox="0 0 12 12"
+                      >
+                        <path d="M5.9 11.4L.5 6l1.4-1.4 4 4 4-4L11.3 6z" />
+                      </svg>
+                    </div>
+                  </a>
+                  <ul
+                    class="pl-5 mt-2 space-y-1 border-l border-indigo-200 dark:border-indigo-400 transition-all duration-500 ease-in-out"
+                    :class="!parentLink.expanded && 'hidden'"
+                  >
+                    <li>
+                      <router-link
+                        :to="{ name: `Foydalanuvchilar` }"
+                        class="flex items-center gap-2 px-2 py-2 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-indigo-500/10 transition-all duration-200"
+                      >
+                        <span class="text-[13px] font-medium"
+                          >Foydalanuvchilar</span
+                        >
+                      </router-link>
+                    </li>
+                    <li>
+                      <router-link
+                        :to="{ name: `Foydalanuvchilar` }"
+                        class="flex items-center gap-2 px-2 py-2 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-indigo-500/10 transition-all duration-200"
+                      >
+                        <span class="text-[13px] font-medium">Bo'limlar</span>
+                      </router-link>
+                    </li>
+                    <li>
+                      <router-link
+                        :to="{ name: `Rollar boshqaruvi` }"
+                        class="flex items-center gap-2 px-2 py-2 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-indigo-500/10 transition-all duration-200"
+                      >
+                        <span class="text-[13px] font-medium"
+                          >Ruxsatlar boshqaruvi</span
+                        >
+                      </router-link>
+                    </li>
+                  </ul>
+                </SidebarLinkGroup>
+              </ul>
+            </div>
+          </div>
+        </Guard>
+        <!-- More group -->
         <div>
           <h3
             @click="is_mores = !is_mores"
@@ -826,8 +1353,14 @@
         <div class="px-3 py-2">
           <button @click.prevent="sidebarExpanded = !sidebarExpanded">
             <span class="sr-only">Expand / collapse sidebar</span>
-            <svg class="w-6 h-6 fill-current sidebar-expanded:rotate-180" viewBox="0 0 24 24">
-              <path class="text-slate-400" d="M19.586 11l-5-5L16 4.586 23.414 12 16 19.414 14.586 18l5-5H7v-2z" />
+            <svg
+              class="w-6 h-6 fill-current sidebar-expanded:rotate-180"
+              viewBox="0 0 24 24"
+            >
+              <path
+                class="text-slate-400"
+                d="M19.586 11l-5-5L16 4.586 23.414 12 16 19.414 14.586 18l5-5H7v-2z"
+              />
               <path class="text-slate-600" d="M3 23H1V1h2z" />
             </svg>
           </button>
@@ -838,17 +1371,28 @@
         :class="sidebarExpanded ? 'w-60 px-4' : 'hidden'"
         class="sticky bottom-0 z-50 w-full py-2 bordered border-slate-200 dark:border-slate-700 bg-white/90 dark:bg-slate-800/80 backdrop-blur-sm rounded-md shadow-sm transition-all duration-300 ease-in-out"
       >
-        <div class="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
+        <div
+          class="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400"
+        >
           <span class="font-medium tracking-wide">eco</span>
-          <span class="font-semibold text-[11px] text-slate-700 dark:text-slate-200">v1.0.0</span>
+          <span
+            class="font-semibold text-[11px] text-slate-700 dark:text-slate-200"
+            >v1.0.0</span
+          >
         </div>
       </div>
 
       <div
-        :class="sidebarExpanded ? 'w-60 px-3' : 'w-16 px-1 text-center items-center mr-4'"
+        :class="
+          sidebarExpanded
+            ? 'w-60 px-3'
+            : 'w-16 px-1 text-center items-center mr-4'
+        "
         class="sticky bottom-0 z-50 w-full px-3 py-2 border dark:border-slate-700 bg-white dark:bg-slate-800 rounded-md"
       >
-        <div class="flex items-center justify-between dark:text-white text-slate-600">
+        <div
+          class="flex items-center justify-between dark:text-white text-slate-600"
+        >
           <div class="flex items-center gap-3">
             <div
               :class="{ 'ml-[-8px]': !sidebarExpanded }"
@@ -878,6 +1422,7 @@ import { ref, onMounted, onUnmounted, watch } from "vue";
 import { useRouter } from "vue-router";
 import SidebarLinkGroup from "./SidebarLinkGroup.vue";
 import HeaderAnimatsion from "./Settings/HeaderAnimatsion.vue";
+import Guard from "../Guard/AppGuard.vue";
 
 export default {
   name: "Sidebar",
@@ -885,6 +1430,7 @@ export default {
   components: {
     SidebarLinkGroup,
     HeaderAnimatsion,
+    Guard,
   },
   emits: ["close-sidebar"],
   setup(props, { emit }) {
@@ -898,9 +1444,9 @@ export default {
     const is_departments = ref(false);
     const is_mores = ref(false);
     const is_settings = ref(false);
-    
+
     // Cookie logic
-    const role = ref(JSON.parse(Cookies.get("account") || '{}').role); 
+    const role = ref(JSON.parse(Cookies.get("account") || "{}").role);
 
     // --- Sidebar expanded state from localStorage ---
     const storedSidebarExpanded = localStorage.getItem("sidebar-expanded");
@@ -974,12 +1520,12 @@ export default {
         document.querySelector("body").classList.remove("sidebar-expanded");
       }
     });
-    
+
     const handleSidebarClose = () => {
       sidebarExpanded.value = true;
       emit("close-sidebar");
     };
-    
+
     const openEdoSidebar = () => {
       window.dispatchEvent(new Event("toggle-edo-sidebar"));
     };

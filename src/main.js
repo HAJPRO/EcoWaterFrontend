@@ -1,6 +1,6 @@
 import { createApp } from "vue";
 import { createPinia } from "pinia";
-
+import AppGuard from './Guard/AppGuard.vue';
 import ElementPlus from 'element-plus';
 import 'element-plus/dist/index.css';
 import * as ElementPlusIconsVue from '@element-plus/icons-vue';  // faqat 1 marta import qilamiz
@@ -22,7 +22,7 @@ app.use(ElementPlus, { locale: en });
 app.use(QrReader);
 app.use(toast);
 app.use(Loading);
-
+app.component('AuthGuard', AppGuard);
 // Element Plus ikonalarni global ro‘yxatga olish
 Object.entries(ElementPlusIconsVue).forEach(([key, component]) => {
     app.component(key, component);

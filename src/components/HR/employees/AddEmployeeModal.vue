@@ -175,6 +175,7 @@ onMounted(() => {
             class="form-input" 
             :class="{'!border-rose-500': errors.fullname}"
             placeholder="Familiya Ism Sharif" 
+            
           />
         </div>
 
@@ -189,6 +190,8 @@ onMounted(() => {
             allowAdd
             :error="!!errors.department"
             @add="handleAddOption('department')"
+            searchable
+            clearable
           />
         </div>
 
@@ -203,6 +206,8 @@ onMounted(() => {
             allowAdd
             :error="!!errors.position"
             @add="handleAddOption('position')"
+            searchable
+            clearable
           />
         </div>
 
@@ -213,8 +218,11 @@ onMounted(() => {
             :options="roles"
             labelKey="name"
             valueKey="_id"
+            multiple=""
             placeholder="Tanlang..."
             :error="!!errors.roles"
+            searchable
+            clearable
           />
           </div>
 
@@ -271,6 +279,9 @@ onMounted(() => {
             valueKey="name"
             placeholder="Tanlang..."
             @update:modelValue="(val) => handleRegionChange(regions.find(r => r.name === val))"
+             :error="!!errors.roles"
+            searchable
+            clearable
           />
         </div>
 
@@ -283,6 +294,9 @@ onMounted(() => {
             valueKey="name"
             placeholder="Tanlang..."
             @update:modelValue="(val) => handleDistrictChange(districts.find(d => d.name === val))"
+             :error="!!errors.roles"
+            searchable
+            clearable
           />
         </div>
 
@@ -295,6 +309,9 @@ onMounted(() => {
             valueKey="name"
             placeholder="Tanlang..."
             @update:modelValue="(val) => handleNeighborhoodChange(neighborhoods.find(n => n.name === val))"
+             :error="!!errors.roles"
+            searchable
+            clearable
           />
         </div>
 
@@ -333,11 +350,15 @@ onMounted(() => {
       <div class="grid grid-cols-12 gap-5">
          <div class="col-span-12 sm:col-span-4">
             <label class="form-label">Mashina rusumi</label>
-            <Select v-model="modal.model.carType" :options="carTypes" labelKey="name" valueKey="name" allowAdd @add="handleAddOption('carType')" />
+            <Select v-model="modal.model.carType" :options="carTypes" labelKey="name" valueKey="name" allowAdd @add="handleAddOption('carType')"  :error="!!errors.roles"
+            searchable
+            clearable/>
          </div>
          <div class="col-span-12 sm:col-span-4">
             <label class="form-label">Mashina rangi</label>
-            <Select v-model="modal.model.carColor" :options="carColors" labelKey="name" valueKey="name" allowAdd @add="handleAddOption('carColor')" />
+            <Select v-model="modal.model.carColor" :options="carColors" labelKey="name" valueKey="name" allowAdd @add="handleAddOption('carColor')"  :error="!!errors.roles"
+            searchable
+            clearable />
          </div>
          <div class="col-span-12 sm:col-span-4">
             <label class="form-label">Davlat raqami</label>
