@@ -67,11 +67,11 @@ watch(searchQuery, (val) => {
 const openAddModal = () => {
   store.openAddModal(); // Store ichidagi methodni chaqiramiz
 };
-
 const handleExport = (type) => {
-  isExportDropdownOpen.value = false;
-  ElMessage.success(`${type.toUpperCase()} yuklanmoqda...`);
+  store.handleExcelExport({payload : products.value });
 };
+
+
 
 // Actions Konfiguratsiyasi
 const rowActions = [

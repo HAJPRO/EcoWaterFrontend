@@ -50,4 +50,10 @@ export const ProductManagmentService = {
     DeleteById(id) {
         return api.delete(`${RESOURCE}/${id}`);
     },
+     handleExcelExport(data) {
+        let url = `${RESOURCE}/excel` 
+            return api.post(url, data, {
+                responseType: "blob", // 👉 bu muhim
+            });
+        },
 };

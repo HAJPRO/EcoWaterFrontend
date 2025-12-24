@@ -5,6 +5,7 @@ import { useToast } from "../../../UI/utils/useToast";
 const { toast } = useToast();
 
 import { Loading } from "../../../utils/Loading";
+import { downloadExcelFile } from "../../../utils/ExcelExport";
 
 const loading = Loading();
 
@@ -181,7 +182,6 @@ export const ProductsManagmentStore = defineStore("ProductsManagmentStore", {
     },
 
     // --- 3. HELPER FUNCTIONS ---
-    
     resetModel() {
       this.model = {
         _id: null,
@@ -208,6 +208,19 @@ export const ProductsManagmentStore = defineStore("ProductsManagmentStore", {
       this.searchQuery = query;
       this.pagination.page = 1; // Qidirganda 1-betga qaytish
       this.GetAll();
-    }
+    },
+
+     async handleExcelExport({ payload, fileName = 'Sotuvlar' }) {
+          const loader = loading.show();
+          try {
+            const res = await ProductManagmentService.handleExcelExport(payload);
+            downloadExcelFile(res, fileName);
+            toast.success("Fayl yuklab olindi");
+          } catch (error) {
+            toast.error("Eksportda xatolik: " + error.message);
+          } finally {
+            loader.hide();
+          }
+        },
   },
 });
