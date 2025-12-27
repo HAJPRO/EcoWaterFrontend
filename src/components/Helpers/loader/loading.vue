@@ -8,10 +8,10 @@
         <!-- Outer glowing animated ring -->
         <div class="absolute inset-0 animate-gradient ring-glow"></div>
 
-        <!-- Cemtrix logo -->
+        <!-- Safy logo -->
         <img
-           src="/public/eco_logo.jpg"
-          alt="Cemtrix Logo"
+           src="/public/Flowbit_logo_3.jpg"
+          alt="Safy Logo"
           class="w-32 h-32 drop-shadow-2xl animate-pulse-slow animate-rotate-logo rounded-full"
         />
       </div>
@@ -20,7 +20,7 @@
       <p
         class="mt-6 text-indigo-200 font-semibold text-lg tracking-widest animate-fade-in"
       >
-        Loading Ecowater...
+        Loading Safymilk...
       </p>
     </div>
   </div>

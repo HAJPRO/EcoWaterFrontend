@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref, useAttrs, useSlots, nextTick } from 'vue'; // 🟢 useSlots qo'shildi
+import { computed, ref, useAttrs, useSlots } from 'vue';
 
 defineOptions({ inheritAttrs: false });
 
@@ -7,20 +7,14 @@ const props = defineProps({
   modelValue: { type: [String, Number, Object], default: '' },
   type: { type: String, default: 'text' },
   id: { type: String, default: () => `input-${Math.random().toString(36).substr(2, 9)}` },
-  
-  // Size
   size: { 
     type: String, 
     default: 'middle',
     validator: (v) => ['small', 'middle', 'large'].includes(v)
   },
-
-  // Content
   label: { type: String, default: '' },
   placeholder: { type: String, default: '' },
   help: { type: String, default: '' },
-  
-  // States
   error: { type: [String, Boolean], default: false },
   success: { type: Boolean, default: false },
   disabled: { type: Boolean, default: false },
@@ -28,16 +22,15 @@ const props = defineProps({
   loading: { type: Boolean, default: false },
   required: { type: Boolean, default: false },
   clearable: { type: Boolean, default: false },
-  
-  // Icons
   iconPre: { type: String, default: '' },
   iconPost: { type: String, default: '' },
-  rows: { type: [String, Number], default: 3 }
+  rows: { type: [String, Number], default: 3 },
+  suffix: { type: String, default: '' }
 });
 
 const emit = defineEmits(['update:modelValue', 'clear', 'focus', 'blur', 'enter', 'change']);
 const attrs = useAttrs();
-const slots = useSlots(); // 🟢 slots o'zgaruvchisi aniqlandi
+const slots = useSlots();
 
 const inputRef = ref(null);
 const fileInputRef = ref(null);
@@ -45,230 +38,174 @@ const isFocused = ref(false);
 const showPassword = ref(false);
 const fileName = ref('');
 
-// --- SIZE CONFIG ---
+// --- SIZE CONFIGURATION ---
 const sizeConfig = computed(() => {
   const configs = {
-    small: {
-      height: 'h-[38px]',
-      padding: 'px-3',
-      fontSize: 'text-xs',
-      iconSize: 'text-xs',
-      labelPos: '-top-2 left-2.5',
-      labelSize: 'text-[10px]',
-      radius: 'rounded-lg'
-    },
-    middle: { 
-      height: 'h-[48px]',
-      padding: 'px-3.5',
-      fontSize: 'text-[14px]',
-      iconSize: 'text-sm',
-      labelPos: '-top-2.5 left-3',
-      labelSize: 'text-[11px]',
-      radius: 'rounded-xl'
-    },
-    large: {
-      height: 'h-[56px]',
-      padding: 'px-4',
-      fontSize: 'text-base',
-      iconSize: 'text-lg',
-      labelPos: '-top-3 left-4',
-      labelSize: 'text-xs',
-      radius: 'rounded-2xl'
-    }
+    small: { h: 'min-h-[38px]', font: 'text-[12px]', icon: 'text-sm', rounded: 'rounded-xl' },
+    middle: { h: 'min-h-[46px]', font: 'text-[14px]', icon: 'text-base', rounded: 'rounded-2xl' },
+    large: { h: 'min-h-[54px]', font: 'text-[16px]', icon: 'text-lg', rounded: 'rounded-[22px]' }
   };
   return configs[props.size] || configs.middle;
 });
 
-// --- LOGIC ---
-
 const hasContent = computed(() => {
   if (props.type === 'file') return !!fileName.value;
-  if (['date', 'time', 'datetime-local', 'color'].includes(props.type)) return true;
   return props.modelValue !== '' && props.modelValue !== null && props.modelValue !== undefined;
 });
 
-const inputType = computed(() => {
-  if (props.type === 'password') return showPassword.value ? 'text' : 'password';
-  return props.type;
-});
+const inputType = computed(() => (props.type === 'password' && showPassword.value) ? 'text' : props.type);
 
-const getIconForType = () => {
-  const map = { email: 'fa-regular fa-envelope', tel: 'fa-solid fa-phone', date: 'fa-regular fa-calendar', time: 'fa-regular fa-clock', search: 'fa-solid fa-magnifying-glass', url: 'fa-solid fa-link', password: 'fa-solid fa-lock' };
-  return map[props.type] || null;
+const getAutoIcon = () => {
+  const icons = { 
+    email: 'fa-regular fa-envelope', tel: 'fa-solid fa-phone', 
+    date: 'fa-regular fa-calendar', search: 'fa-solid fa-magnifying-glass', 
+    password: 'fa-solid fa-shield-halved' 
+  };
+  return icons[props.type] || null;
 };
 
-// Wrapper Classes
+// --- STYLES ---
 const wrapperClasses = computed(() => [
-  'relative flex items-center w-full transition-all duration-300 ease-[cubic-bezier(0.25,0.8,0.25,1)] border group/wrapper',
-  'bg-white dark:bg-[#0f172a]', 
-  
-  sizeConfig.value.radius,
-  props.type === 'textarea' ? 'items-start' : 'items-center',
-  
-  props.error 
-    ? 'border-rose-300 dark:border-rose-500/50 text-rose-600' 
-    : props.success 
-      ? 'border-emerald-400 dark:border-emerald-500/50 text-emerald-700'
-      : props.disabled
-        ? 'bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-800 opacity-60 cursor-not-allowed'
-        : props.readonly
-          ? 'bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-800 cursor-default'
-          : isFocused.value
-            ? 'border-indigo-500 ring-4 ring-indigo-500/10 shadow-sm' 
-            : 'border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600',
+  'relative flex items-center w-full transition-all duration-300 border shadow-sm group/wrapper',
+  'bg-white dark:bg-slate-950',
+  sizeConfig.value.rounded,
+  props.type === 'textarea' ? 'items-start min-h-[100px]' : 'items-center',
+  props.error ? 'border-rose-400 ring-rose-500/10' : 
+  props.success ? 'border-emerald-400 ring-emerald-500/10' : 
+  isFocused.value ? 'border-indigo-500 ring-4 ring-indigo-500/10 shadow-indigo-100 dark:shadow-none' : 
+  'border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700',
+  (props.disabled || props.loading) ? 'opacity-60 cursor-not-allowed bg-slate-50 dark:bg-slate-900/50' : ''
 ]);
 
-// Label Classes
 const labelClasses = computed(() => {
-  // Label chapda turishi kerak bo'lgan masofani hisoblash
-  // Bu yerda `slots` ishlatiladi
-  const hasPrefixIcon = !!slots.prefix || !!props.iconPre || !!getIconForType();
-  const leftPos = hasPrefixIcon 
-    ? (props.size === 'small' ? 'left-8' : props.size === 'large' ? 'left-11' : 'left-9') 
-    : 'left-3';
+  const hasPrefix = !!slots.prefix || !!props.iconPre || !!getAutoIcon();
+  const leftPadding = hasPrefix ? (props.size === 'small' ? 'left-9' : 'left-10') : 'left-4';
 
   return [
-    'absolute px-1 font-medium transition-all duration-200 select-none z-10 pointer-events-none',
-    'bg-white dark:bg-[#0f172a]', // Background mask
-    
-    // Dynamic positioning
-    (isFocused.value || hasContent.value) 
-      ? `${sizeConfig.value.labelPos} ${sizeConfig.value.labelSize} text-indigo-600 dark:text-indigo-400`
-      : `top-1/2 -translate-y-1/2 text-slate-400 ${sizeConfig.value.fontSize} ${leftPos}`,
-    
-    props.error ? '!text-rose-500' : ''
+    'absolute font-bold transition-all duration-200 select-none z-10 pointer-events-none tracking-wide uppercase text-[10px]',
+    'bg-white dark:bg-slate-950 px-1.5 rounded',
+    (isFocused.value || hasContent.value || props.type === 'date')
+      ? `-top-2.5 ${leftPadding} text-indigo-600 dark:text-indigo-400`
+      : `top-1/2 -translate-y-1/2 ${leftPadding} text-slate-400`
   ];
 });
 
-// Input Element Classes
-const inputElementClasses = computed(() => [
-  'w-full bg-transparent border-none outline-none font-medium text-slate-900 dark:text-white placeholder-slate-400/50 transition-colors',
-  sizeConfig.value.fontSize,
-  sizeConfig.value.padding,
-  
-  props.type === 'textarea' ? 'py-3 leading-relaxed' : sizeConfig.value.height,
-  props.type === 'color' ? `p-1 ${sizeConfig.value.height} w-[60px] cursor-pointer` : '',
-  props.type === 'file' ? 'hidden' : '', 
-  (props.disabled || props.readonly) ? 'cursor-not-allowed' : ''
-]);
-
 // --- HANDLERS ---
-const handleInput = (event) => { if (props.type !== 'file') emit('update:modelValue', event.target.value); };
-const handleFileChange = (event) => { const file = event.target.files[0]; if (file) { fileName.value = file.name; emit('update:modelValue', file); emit('change', file); } };
-const triggerFileUpload = () => { if (!props.disabled && !props.readonly) fileInputRef.value?.click(); };
-const handleClear = () => { emit('update:modelValue', ''); if (props.type === 'file') { fileName.value = ''; if (fileInputRef.value) fileInputRef.value.value = ''; } emit('clear'); nextTick(() => { if(inputRef.value && props.type !== 'file') inputRef.value.focus(); }); };
-
+const handleInput = (e) => emit('update:modelValue', e.target.value);
+const handleFileChange = (e) => {
+  const file = e.target.files[0];
+  if (file) {
+    fileName.value = file.name;
+    emit('update:modelValue', file);
+    emit('change', file);
+  }
+};
+const triggerFile = () => !props.disabled && fileInputRef.value?.click();
+const clear = () => {
+  emit('update:modelValue', '');
+  fileName.value = '';
+  if (fileInputRef.value) fileInputRef.value.value = '';
+  emit('clear');
+};
 </script>
 
 <template>
-  <div class="flex flex-col w-full relative group/input">
+  <div class="flex flex-col w-full group/input">
     
-    <div :class="wrapperClasses" @click="type === 'file' ? triggerFileUpload() : null">
+    <div :class="wrapperClasses" @click="type === 'file' ? triggerFile() : null">
       
-      <label v-if="label && type !== 'file'" :for="id" :class="labelClasses">
-        {{ label }} <span v-if="required" class="text-rose-500 ml-0.5">*</span>
+      <label v-if="label" :class="labelClasses">
+        {{ label }} <span v-if="required" class="text-rose-500">*</span>
       </label>
 
       <div 
-        v-if="$slots.prefix || iconPre || getIconForType()" 
-        class="flex items-center justify-center shrink-0 transition-colors duration-200" 
+        v-if="$slots.prefix || iconPre || getAutoIcon()"
+        class="flex items-center justify-center shrink-0 transition-all duration-300 pl-4"
         :class="[
-           size === 'small' ? 'pl-2.5 pr-1' : size === 'large' ? 'pl-4 pr-2' : 'pl-3.5 pr-1.5',
-           (isFocused) ? 'text-indigo-500' : 'text-slate-400',
-           sizeConfig.iconSize,
-           {'pt-3': type === 'textarea'}
+          sizeConfig.icon,
+          isFocused ? 'text-indigo-500 scale-110' : 'text-slate-400',
+          { 'pt-4': type === 'textarea' }
         ]"
       >
         <slot name="prefix">
-          <i :class="iconPre || getIconForType()"></i>
+          <i :class="iconPre || getAutoIcon()"></i>
         </slot>
       </div>
 
-      <div v-if="type === 'file'" :class="[sizeConfig.height, sizeConfig.padding]" class="w-full flex items-center cursor-pointer select-none relative">
-         <span class="absolute -top-2.5 left-3 bg-white dark:bg-[#0f172a] px-1 text-[11px] font-medium text-slate-500 dark:text-slate-400">{{ label }}</span>
-         <div class="flex-1 flex flex-col justify-center overflow-hidden mr-2">
-            <span v-if="fileName" :class="sizeConfig.fontSize" class="font-bold text-slate-700 dark:text-slate-200 truncate">{{ fileName }}</span>
-            <span v-else :class="sizeConfig.fontSize" class="text-slate-400 truncate opacity-60">{{ placeholder || 'Fayl tanlang...' }}</span>
-         </div>
-         <span 
-           class="bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-[11px] font-semibold px-2.5 py-1 rounded-lg border border-slate-200 dark:border-slate-700 group-hover/wrapper:bg-white group-hover/wrapper:text-indigo-600 group-hover/wrapper:border-indigo-200 transition-all shadow-sm"
-         >
-            Yuklash
-         </span>
-      </div>
-
-      <component
-        :is="type === 'textarea' ? 'textarea' : 'input'"
-        ref="inputRef"
-        :id="id"
-        :type="inputType"
-        :value="type !== 'file' ? modelValue : undefined"
-        :placeholder="isFocused ? placeholder : ''"
-        :disabled="disabled || loading"
-        :readonly="readonly"
-        :rows="type === 'textarea' ? rows : undefined"
-        :class="inputElementClasses"
-        v-bind="attrs"
-        @input="handleInput"
-        @change="type === 'file' ? handleFileChange($event) : emit('change', $event.target.value)"
-        @focus="isFocused = true; emit('focus')"
-        @blur="isFocused = false; emit('blur')"
-        @keydown.enter="emit('enter')"
-      />
-      
-      <input v-if="type === 'file'" ref="fileInputRef" type="file" class="hidden" @change="handleFileChange" v-bind="attrs" />
-
-      <div class="flex items-center gap-2 shrink-0 text-slate-400" 
-           :class="[
-             size === 'small' ? 'pr-2 pl-1' : size === 'large' ? 'pr-4 pl-2' : 'pr-3 pl-1',
-             {'pt-3': type === 'textarea'}
-           ]">
+      <div class="relative flex-1 flex items-center min-w-0">
         
-        <i v-if="loading" :class="sizeConfig.iconSize" class="fa-solid fa-circle-notch fa-spin text-indigo-500"></i>
-
-        <transition name="scale">
-          <button 
-            v-if="clearable && (modelValue || fileName) && !disabled && !readonly && !loading" 
-            @click.stop="handleClear" 
-            type="button"
-            class="flex items-center justify-center rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-300 hover:text-rose-500 transition-all cursor-pointer"
-            :class="[
-               size === 'small' ? 'w-4 h-4' : 'w-6 h-6'
-            ]"
-            tabindex="-1"
-          >
-            <i class="fa-solid fa-xmark" :class="size === 'small' ? 'text-[9px]' : 'text-[11px]'"></i>
-          </button>
-        </transition>
-
-        <button 
-          v-if="type === 'password' && !disabled" 
-          @click.stop="showPassword = !showPassword" 
-          type="button"
-          class="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors cursor-pointer flex items-center justify-center p-1 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700"
-          tabindex="-1"
-        >
-          <i :class="[showPassword ? 'fa-regular fa-eye-slash' : 'fa-regular fa-eye', sizeConfig.iconSize]"></i>
-        </button>
-
-        <div v-if="$slots.suffix || iconPost" class="flex items-center">
-          <slot name="suffix">
-            <i :class="[iconPost, sizeConfig.iconSize]"></i>
-          </slot>
+        <div v-if="type === 'file'" class="w-full flex items-center justify-between gap-2 px-4 select-none">
+          <span :class="[sizeConfig.font, fileName ? 'text-slate-700 dark:text-slate-200 font-bold' : 'text-slate-400 italic']" class="truncate">
+            {{ fileName || placeholder || 'Faylni tanlang...' }}
+          </span>
+          <span class="shrink-0 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 text-[10px] font-black uppercase px-2 py-1 rounded-md border border-indigo-100 dark:border-indigo-500/20">
+            Browse
+          </span>
         </div>
 
-        <i v-if="error && !loading" :class="sizeConfig.iconSize" class="fa-solid fa-circle-exclamation text-rose-500 animate-pulse"></i>
-        <i v-if="success && !loading" :class="sizeConfig.iconSize" class="fa-solid fa-circle-check text-emerald-500"></i>
+        <component
+          :is="type === 'textarea' ? 'textarea' : 'input'"
+          v-else
+          ref="inputRef"
+          :id="id"
+          :type="inputType"
+          :value="modelValue"
+          :placeholder="isFocused ? placeholder : ''"
+          :disabled="disabled || loading"
+          :readonly="readonly"
+          :rows="rows"
+          class="w-full bg-transparent border-none outline-none focus:outline-none focus:ring-0 font-bold text-slate-700 dark:text-slate-100 placeholder-slate-300 dark:placeholder-slate-600 transition-all"
+          :class="[
+             sizeConfig.font, 
+             type === 'textarea' ? 'py-4 px-4 resize-none' : sizeConfig.h + ' pl-4 pr-10',
+             attrs.class 
+          ]"
+          v-bind="attrs"
+          @input="handleInput"
+          @focus="isFocused = true; emit('focus')"
+          @blur="isFocused = false; emit('blur')"
+          @keydown.enter="emit('enter')"
+        />
 
+        <transition name="fade">
+          <button 
+            v-if="clearable && hasContent && !disabled && !loading"
+            @click.stop="clear"
+            type="button"
+            class="p-1 rounded-full text-slate-300 hover:text-rose-500 transition-colors"
+          >
+            <i class="fa-solid fa-circle-xmark text-sm"></i>
+          </button>
+        </transition>
       </div>
+
+      <div class="flex items-center gap-2 shrink-0 pr-4 ml-1">
+        <i v-if="loading" class="fa-solid fa-spinner fa-spin text-indigo-500" :class="sizeConfig.icon"></i>
+
+        <button 
+          v-if="type === 'password' && !disabled"
+          @click.stop="showPassword = !showPassword"
+          type="button"
+          class="w-7 h-7 flex items-center justify-center rounded-lg text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+        >
+          <i :class="[showPassword ? 'fa-regular fa-eye-slash' : 'fa-regular fa-eye', sizeConfig.icon]"></i>
+        </button>
+
+        <span v-if="suffix" class="text-[10px] font-black text-slate-400 uppercase select-none">{{ suffix }}</span>
+
+        <i v-if="error && !loading" class="fa-solid fa-circle-exclamation text-rose-500 animate-pulse" :class="sizeConfig.icon"></i>
+        <i v-if="success && !loading" class="fa-solid fa-circle-check text-emerald-500" :class="sizeConfig.icon"></i>
+      </div>
+
+      <input v-if="type === 'file'" ref="fileInputRef" type="file" class="hidden" @change="handleFileChange" />
     </div>
 
-    <div v-if="error || help" class="px-1 mt-1 min-h-[16px]">
-      <transition name="slide-fade">
-        <p v-if="error" class="font-semibold text-rose-500 flex items-center gap-1" :class="size === 'small' ? 'text-[10px]' : 'text-[11px]'">
-           {{ typeof error === 'string' ? error : '' }}
+    <div class="min-h-[20px] pt-1 px-2">
+      <transition name="msg">
+        <p v-if="error" class="text-[10px] font-bold text-rose-500 flex items-center gap-1">
+          <span class="w-1 h-1 bg-rose-500 rounded-full"></span> {{ typeof error === 'string' ? error : 'Majburiy maydon' }}
         </p>
-        <p v-else-if="help" class="font-medium text-slate-400 dark:text-slate-500" :class="size === 'small' ? 'text-[10px]' : 'text-[11px]'">
+        <p v-else-if="help" class="text-[10px] font-medium text-slate-400 italic">
           {{ help }}
         </p>
       </transition>
@@ -278,17 +215,31 @@ const handleClear = () => { emit('update:modelValue', ''); if (props.type === 'f
 </template>
 
 <style scoped>
-/* Browser Defautlarni O'chirish */
-input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+/* Standart outline'larni butunlay o'chirish */
+input, textarea, button {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 input[type=number] { -moz-appearance: textfield; }
-input[type="date"]::-webkit-calendar-picker-indicator { cursor: pointer; filter: invert(0.5); opacity: 0.6; transition: 0.2s; }
-input[type="date"]::-webkit-calendar-picker-indicator:hover { opacity: 1; filter: invert(0.3) sepia(1) saturate(3) hue-rotate(220deg); }
-.dark input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(0.7); }
-input:-webkit-autofill, textarea:-webkit-autofill { -webkit-box-shadow: 0 0 0px 1000px transparent inset; transition: background-color 5000s ease-in-out 0s; }
+
+input::placeholder { font-weight: 500; font-style: italic; opacity: 0.6; }
 
 /* Animatsiyalar */
-.slide-fade-enter-active, .slide-fade-leave-active { transition: all 0.2s ease; }
-.slide-fade-enter-from, .slide-fade-leave-to { opacity: 0; transform: translateY(-3px); }
-.scale-enter-active, .scale-leave-active { transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1); }
-.scale-enter-from, .scale-leave-to { opacity: 0; transform: scale(0.5); }
+.msg-enter-active, .msg-leave-active { transition: all 0.3s ease; }
+.msg-enter-from, .msg-leave-to { opacity: 0; transform: translateX(-10px); }
+
+.fade-enter-active, .fade-leave-active { transition: opacity 0.2s ease, transform 0.2s ease; }
+.fade-enter-from, .fade-leave-to { opacity: 0; transform: scale(0.8); }
+
+/* Autofill tozalash */
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus {
+  -webkit-text-fill-color: inherit;
+  -webkit-box-shadow: 0 0 0px 1000px transparent inset;
+  transition: background-color 5000s ease-in-out 0s;
+}
 </style>

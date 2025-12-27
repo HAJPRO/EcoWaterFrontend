@@ -53,7 +53,7 @@
                <div>
                   <h1 class="text-2xl font-bold tracking-tight transition-colors duration-500"
                       :class="isDarkMode ? 'text-white' : 'text-slate-800'">
-                    Eco Water <span class="text-indigo-500">ERP</span>
+                    Safymilk <span class="text-indigo-500">ERP</span>
                   </h1>
                   <div class="flex items-center gap-2">
                      <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
@@ -241,7 +241,7 @@
                  <i class="fas fa-leaf text-sm"></i>
               </div>
               <div>
-                 <div class="text-[10px]" :class="isDarkMode ? 'text-slate-300' : 'text-slate-500'">Eco Mode</div>
+                 <div class="text-[10px]" :class="isDarkMode ? 'text-slate-300' : 'text-slate-500'">Safymilk Mode</div>
                  <div class="text-xs font-bold" :class="isDarkMode ? 'text-white' : 'text-slate-800'">Active</div>
               </div>
           </div>

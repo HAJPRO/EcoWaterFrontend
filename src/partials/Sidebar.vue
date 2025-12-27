@@ -30,8 +30,8 @@
               :class="!sidebarExpanded ? 'justify-center' : ''"
             >
               <img
-                src="../../public/eco_logo.jpg"
-                alt="eco logo"
+                src="../../public/Flowbit_logo_3.jpg"
+                alt="safy logo"
                 class="rounded-full border dark:border-white border-slate-200 shadow object-cover cursor-pointer transition-all duration-300"
                 :class="sidebarExpanded ? 'w-14 h-14' : 'w-10 h-10'"
                 @click="handleSidebarClose"
@@ -41,7 +41,7 @@
                 <h1
                   class="text-slate-600 dark:text-white text-xl font-sans tracking-wide font-bold mb-[0.5]"
                 >
-                  Eco water
+                  Safymilk
                 </h1>
                 <p
                   class="text-[10px] dark:text-slate-400 text-slate-500 font-sans tracking-wide font-medium"
@@ -902,6 +902,75 @@
                 </ul>
               </SidebarLinkGroup>
             </ul>
+             <ul class="mt-1">
+              <SidebarLinkGroup v-slot="parentLink">
+                <a
+                  class="block text-slate-200 truncate transition duration-150 hover:text-white"
+                  href="#0"
+                  @click.prevent="
+                    sidebarExpanded
+                      ? parentLink.handleClick()
+                      : (sidebarExpanded = true)
+                  "
+                >
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                      <i
+                        class="fa-solid fa-info-circle text-indigo-400 text-lg"
+                      ></i>
+                      <span
+                        class="text-sm font-medium ml-3 text-slate-500 dark:text-white"
+                        >Ma'lumot uchun</span
+                      >
+                    </div>
+                    <svg
+                      class="w-3 h-3 shrink-0 ml-1 fill-current text-slate-400 transition-transform duration-300"
+                      :class="parentLink.expanded && 'rotate-180'"
+                      viewBox="0 0 12 12"
+                    >
+                      <path d="M5.9 11.4L.5 6l1.4-1.4 4 4 4-4L11.3 6z" />
+                    </svg>
+                  </div>
+                </a>
+                <ul
+                  class="pl-5 mt-2 space-y-1 border-l border-indigo-200 dark:border-indigo-400 transition-all duration-500 ease-in-out"
+                  :class="!parentLink.expanded && 'hidden'"
+                >
+                  <li>
+                    <router-link
+                      :to="{ name: 'Monitoring' }"
+                      class="flex items-center gap-2 px-2 py-2 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-indigo-500/10 transition-all duration-200"
+                    >
+                      <span class="text-[13px] font-medium">Kategorya ro'yxati</span>
+                    </router-link>
+                  </li>
+                  <li>
+                    <router-link
+                      :to="{ name: 'Monitoring' }"
+                      class="flex items-center gap-2 px-2 py-2 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-indigo-500/10 transition-all duration-200"
+                    >
+                      <span class="text-[13px] font-medium">Birlik ro'yxati</span>
+                    </router-link>
+                  </li>
+                   <li>
+                    <router-link
+                      :to="{ name: 'Monitoring' }"
+                      class="flex items-center gap-2 px-2 py-2 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-indigo-500/10 transition-all duration-200"
+                    >
+                      <span class="text-[13px] font-medium">Ombor ro'yxati</span>
+                    </router-link>
+                  </li>
+                   <li>
+                    <router-link
+                      :to="{ name: 'Monitoring' }"
+                      class="flex items-center gap-2 px-2 py-2 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-indigo-500/10 transition-all duration-200"
+                    >
+                      <span class="text-[13px] font-medium">Asosiy vosita ro'yxati</span>
+                    </router-link>
+                  </li>
+                </ul>
+              </SidebarLinkGroup>
+            </ul>
           </div>
         </div>
 
@@ -1374,7 +1443,7 @@
         <div
           class="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400"
         >
-          <span class="font-medium tracking-wide">eco</span>
+          <span class="font-medium tracking-wide">safymilk</span>
           <span
             class="font-semibold text-[11px] text-slate-700 dark:text-slate-200"
             >v1.0.0</span
@@ -1406,7 +1475,7 @@
                 href="tel:+998930043936"
                 class="text-[11px] font-semibold opacity-80 text-indigo-500 hover:underline"
               >
-                +998 93 123 45 67
+                +998 93 004 39 36
               </a>
             </div>
           </div>

@@ -64,7 +64,7 @@ const baseClasses = `
 
 // 2. O'lchamlar
 const sizeClasses = {
- sm:  'h-[38px] px-4 text-xs gap-x-1.5 rounded-lg',      // Input small: 38px
+  sm:  'h-[38px] px-4 text-xs gap-x-1.5 rounded-lg',      // Input small: 38px
   md: 'h-[48px] px-6 text-[13px] gap-x-2 rounded-xl',    // Input middle: 48px
   lg:  'h-[58px] px-8 text-sm gap-x-2.5 rounded-2xl',
 };
